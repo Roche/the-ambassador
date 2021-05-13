@@ -5,6 +5,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>ambassador-model</module>
+		<module>ambassador-gitlab</module>
     </modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
