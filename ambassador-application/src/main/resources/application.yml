@@ -1,0 +1,27 @@
+spring:
+  main:
+    banner-mode: console
+
+  datasource:
+    initialization-mode: always
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  devtools:
+    livereload:
+      enabled: false
+
+ambassador:
+  source: GITLAB
+
+#  logging.level.org.springframework=ERROR
+
+#spring.jpa.hibernate.ddl-auto=none
+
+#spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
