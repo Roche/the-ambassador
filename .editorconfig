@@ -1,0 +1,42 @@
+root = true
+
+[*.{java, groovy, kt, xml}]
+indent_style = space
+indent_size = 4
+max_line_length = 180
+ij_any_keep_first_column_comment = true
+ij_java_do_not_wrap_after_single_annotation = true
+ij_java_align_multiline_annotation_parameters = true
+ij_java_class_count_to_use_import_on_demand = 99
+ij_java_imports_layout = *, |, java.**, javax.**, |, $*
+ij_any_keep_control_statement_in_one_line = false
+ij_any_keep_blank_lines_in_declarations = 1
+ij_any_keep_blank_lines_in_code = 1
+ij_any_keep_blank_lines_before_right_brace = 1
+ij_any_blank_lines_around_field = 1
+ij_any_align_multiline_chained_methods = true
+ij_any_align_multiline_parameters_in_calls = true
+ij_any_align_multiline_resources = true
+ij_any_align_multiline_throws_list = true
+ij_any_align_multiline_extends_list = true
+ij_any_spaces_within_array_initializer_braces = true
+ij_any_space_before_array_initializer_left_brace = true
+
+ij_any_call_parameters_wrap = normal
+ij_any_method_parameters_wrap = normal
+# ij_any_resource_list_wrap = split_into_lines
+ij_any_extends_list_wrap = normal
+ij_any_throws_list_wrap = normal
+ij_any_extends_keyword_wrap = normal
+ij_any_throws_keyword_wrap = normal
+ij_any_method_call_chain_wrap = normal
+ij_any_binary_operation_wrap = normal
+ij_any_binary_operation_sign_on_next_line = true
+# ij_any_ternary_operation_wrap = 5
+ij_any_array_initializer_wrap = normal
+ij_any_if_brace_force = if_multiline
+ij_any_do_while_brace_force = if_multiline
+ij_any_while_brace_force = if_multiline
+ij_any_parameter_annotation_wrap = normal
+ij_any_variable_annotation_wrap = normal
+ij_any_use_relative_indents = true
