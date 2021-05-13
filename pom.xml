@@ -6,6 +6,7 @@
 	<modules>
 		<module>ambassador-model</module>
 		<module>ambassador-gitlab</module>
+        <module>ambassador-storage</module>
     </modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
