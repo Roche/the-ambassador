@@ -9,13 +9,14 @@ import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import org.gitlab4j.api.GitLabApi
 import org.slf4j.LoggerFactory
-import pl.filipowm.opensource.ambassador.document.Hash
 import pl.filipowm.opensource.ambassador.document.Language
 import pl.filipowm.opensource.ambassador.document.TextAnalyzingService
+import pl.filipowm.opensource.ambassador.document.TextDetails
 import pl.filipowm.opensource.ambassador.model.*
 import pl.filipowm.opensource.ambassador.model.files.Documentation
 import pl.filipowm.opensource.ambassador.model.files.File
 import pl.filipowm.opensource.ambassador.model.files.License
+import pl.filipowm.opensource.ambassador.model.stats.Statistics
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -81,7 +82,7 @@ class GitLabProjectRepository(
             val commits = reader.readCommits()
             val members = reader.readMembers()
             val license = Optional.ofNullable(gitlabProject.license)
-                .map { License(Language.ENGLISH.name, it.name, it.key, true, it.htmlUrl, null, it.sourceUrl) }
+                .map { License(it.name, it.key, Language.ENGLISH.name, true, null, null, it.htmlUrl) }
                 .orElse(License.notExistent())
             val files = Files(
                 readme = readme.await(),
@@ -91,6 +92,17 @@ class GitLabProjectRepository(
                 license = license,
                 gitignore = gitignore.await()
             )
+            val stats = Statistics(
+                gitlabProject.forksCount,
+                gitlabProject.starCount,
+                gitlabProject.statistics.commitCount,
+                gitlabProject.statistics.jobArtifactsSize,
+                gitlabProject.statistics.lfsObjectsSize,
+                gitlabProject.statistics.packagesSize,
+                gitlabProject.statistics.repositorySize,
+                gitlabProject.statistics.storageSize,
+                gitlabProject.statistics.wikiSize
+            )
             Project(
                 id = gitlabProject.id.toLong(),
                 url = gitlabProject.webUrl,
@@ -98,8 +110,7 @@ class GitLabProjectRepository(
                 name = gitlabProject.name,
                 description = gitlabProject.description,
                 visibility = visibility,
-                forksCount = gitlabProject.forksCount,
-                starsCount = gitlabProject.starCount,
+                stats = stats,
                 tags = gitlabProject.tagList,
                 createdDate = toLocalDate(gitlabProject.createdAt),
                 lastUpdatedDate = toLocalDate(gitlabProject.lastActivityAt),
@@ -116,15 +127,15 @@ class GitLabProjectRepository(
         TODO("Not yet implemented")
     }
 
-    private fun analyzeDocument(content: Optional<String>): Documentation {
+    private fun analyzeDocument(content: Optional<TextDetails>): Documentation {
         return content
             .map { textAnalyzingService.analyze(it) }
             .orElseGet { Documentation.notExistent() }
     }
 
-    private fun contentToFile(content: Optional<String>): File {
+    private fun contentToFile(content: Optional<TextDetails>): File {
         return content
-            .map { File(true, Hash.sha256OrNull(it), null, it.length, "xa") }
+            .map { File(true, it.hash, null, it.size, it.path) }
             .orElseGet { File.notExistent() }
     }
 }

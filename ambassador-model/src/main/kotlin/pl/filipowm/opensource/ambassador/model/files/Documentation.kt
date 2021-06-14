@@ -1,15 +1,23 @@
 package pl.filipowm.opensource.ambassador.model.files
 
 open class Documentation(
-    open var language: String?,
-    open var length: Int?,
-    open var hash: String?,
+    language: String?,
+    hash: String?,
     open var complexity: DocumentationComplexity?,
-    open var exists: Boolean
-) {
+    exists: Boolean,
+    contentLength: Int?,
+    url: String?
+) : File(exists, hash, language, contentLength, url) {
     companion object {
         fun notExistent(): Documentation {
-            return Documentation(null, null, null, null, false)
+            return Documentation(
+                null,
+                null,
+                null,
+                false,
+                null,
+                null
+            )
         }
     }
 }

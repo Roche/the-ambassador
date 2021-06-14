@@ -1,6 +1,7 @@
 package pl.filipowm.opensource.ambassador.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import pl.filipowm.opensource.ambassador.model.stats.Statistics
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -11,8 +12,7 @@ data class Project(
     val name: String,
     val description: String?,
     val visibility: Visibility,
-    val forksCount: Int?,
-    val starsCount: Int?,
+    val stats: Statistics,
     val tags: List<String>?,
     val createdDate: LocalDate?,
     val lastUpdatedDate: LocalDate?,
