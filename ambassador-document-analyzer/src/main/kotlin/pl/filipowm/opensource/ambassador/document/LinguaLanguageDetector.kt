@@ -5,6 +5,10 @@ import com.github.pemistahl.lingua.api.LanguageDetector as DelegateLinguaLanguag
 
 class LinguaLanguageDetector(private val delegate: DelegateLinguaLanguageDetector) : LanguageDetector {
 
+    override fun warmUp() {
+        detectLanguageOf("this is a warm up")
+    }
+
     override fun detectLanguageOf(text: String): Language {
         val linguaLang = delegate.detectLanguageOf(text)
         return matchLanguage(linguaLang)

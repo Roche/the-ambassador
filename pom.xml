@@ -6,31 +6,31 @@
 	<modules>
 		<module>ambassador-model</module>
 		<module>ambassador-gitlab</module>
-		<module>ambassador-application</module>
-		<module>ambassador-document-analyzer</module>
+        <module>ambassador-application</module>
+        <module>ambassador-document-analyzer</module>
         <module>ambassador-storage</module>
     </modules>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.5</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>pl.filipowm.innersource</groupId>
-	<artifactId>ambassador</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>The Ambassador</name>
-	<description>InnerSource Ambassador promotes good practices of code sharing</description>
-	<properties>
-		<java.version>11</java.version>
-		<kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
-		<kotlin.version>1.4.32</kotlin.version>
-		<testcontainers.version>1.15.2</testcontainers.version>
-		<vavr.version>0.10.3</vavr.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.jetbrains.kotlin</groupId>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.5</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>pl.filipowm.opensource</groupId>
+    <artifactId>ambassador</artifactId>
+    <version>0.0.1-SNAPSHOT</version>s
+    <name>The Ambassador</name>
+    <description>opensource Ambassador promotes good practices of code sharing</description>
+    <properties>
+        <java.version>11</java.version>
+        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
+        <kotlin.version>1.4.32</kotlin.version>
+        <testcontainers.version>1.15.2</testcontainers.version>
+        <vavr.version>0.10.3</vavr.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-reflect</artifactId>
 		</dependency>
 		<dependency>

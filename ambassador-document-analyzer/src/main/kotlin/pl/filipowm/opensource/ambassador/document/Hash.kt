@@ -19,12 +19,16 @@ class Hash private constructor() {
                 val digest = md.digest(bytes)
                 val result = digest.fold("", { str, it -> str + "%02x".format(it) })
                 Optional.of(result)
-            } catch (e : GeneralSecurityException) {
-                when(e) {
+            } catch (e: GeneralSecurityException) {
+                when (e) {
                     is DigestException, is NoSuchAlgorithmException -> Optional.empty()
                     else -> throw e
                 }
             }
+        }
+
+        fun sha256OrNull(text: String): String? {
+            return sha256(text).orElse(null)
         }
     }
 }

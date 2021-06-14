@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ambassador</artifactId>
-        <groupId>pl.filipowm.innersource</groupId>
+        <groupId>pl.filipowm.opensource</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -44,7 +44,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>pl.filipowm.innersource</groupId>
+            <groupId>pl.filipowm.opensource</groupId>
             <artifactId>ambassador-model</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>

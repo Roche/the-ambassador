@@ -3,13 +3,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pl.filipowm.innersource</groupId>
+    <groupId>pl.filipowm.opensource</groupId>
     <artifactId>ambassador-application</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <parent>
         <artifactId>ambassador</artifactId>
-        <groupId>pl.filipowm.innersource</groupId>
+        <groupId>pl.filipowm.opensource</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -22,18 +22,23 @@
 
     <dependencies>
         <dependency>
-            <groupId>pl.filipowm.innersource</groupId>
+            <groupId>pl.filipowm.opensource</groupId>
             <artifactId>ambassador-model</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>pl.filipowm.innersource</groupId>
+            <groupId>pl.filipowm.opensource</groupId>
             <artifactId>ambassador-storage</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>pl.filipowm.innersource</groupId>
+            <groupId>pl.filipowm.opensource</groupId>
             <artifactId>ambassador-gitlab</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.filipowm.opensource</groupId>
+            <artifactId>ambassador-document-analyzer</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

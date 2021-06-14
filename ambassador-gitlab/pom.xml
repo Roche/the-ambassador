@@ -10,7 +10,7 @@
     <name>ambassador-gitlab</name>
     <parent>
         <artifactId>ambassador</artifactId>
-        <groupId>pl.filipowm.innersource</groupId>
+        <groupId>pl.filipowm.opensource</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -22,14 +22,23 @@
 
     <dependencies>
         <dependency>
-            <groupId>pl.filipowm.innersource</groupId>
+            <groupId>pl.filipowm.opensource</groupId>
             <artifactId>ambassador-model</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.filipowm.opensource</groupId>
+            <artifactId>ambassador-document-analyzer</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.gitlab4j</groupId>
             <artifactId>gitlab4j-api</artifactId>
             <version>${gitlab4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
