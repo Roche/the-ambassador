@@ -18,7 +18,7 @@
     </parent>
     <groupId>pl.filipowm.opensource</groupId>
     <artifactId>ambassador</artifactId>
-    <version>0.0.1-SNAPSHOT</version>s
+    <version>0.0.1-SNAPSHOT</version>
     <name>The Ambassador</name>
     <description>opensource Ambassador promotes good practices of code sharing</description>
     <properties>

@@ -3,7 +3,6 @@ spring:
     banner-mode: console
 
   datasource:
-    initialization-mode: always
     platform: postgres
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
@@ -11,14 +10,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
 
   devtools:
     livereload:
       enabled: false
-
-ambassador:
-  source: GITLAB
 
 #  logging.level.org.springframework=ERROR
 
