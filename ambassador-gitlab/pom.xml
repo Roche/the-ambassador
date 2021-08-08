@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <gitlab4j.version>4.16.0</gitlab4j.version>
+        <gitlab4j.version>4.17.0</gitlab4j.version>
     </properties>
 
     <dependencies>

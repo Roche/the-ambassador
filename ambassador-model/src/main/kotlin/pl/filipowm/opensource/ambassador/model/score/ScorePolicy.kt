@@ -1,13 +1,10 @@
 package pl.filipowm.opensource.ambassador.model.score
 
-import io.vavr.control.Either
 import pl.filipowm.opensource.ambassador.model.Project
-import pl.filipowm.opensource.ambassador.model.score.Score.Fail
-import pl.filipowm.opensource.ambassador.model.score.Score.Pass
 
 interface ScorePolicy<T> {
 
-    fun calculateScoreOf(project: Project) : Either<Pass<T>, Fail>
+    fun calculateScoreOf(project: Project): T
 
     companion object {
         fun activity() : ScorePolicy<Double> {

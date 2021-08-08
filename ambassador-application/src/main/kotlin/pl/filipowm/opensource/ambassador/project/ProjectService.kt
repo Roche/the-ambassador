@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import pl.filipowm.opensource.ambassador.commons.exceptions.NotFoundException
 import pl.filipowm.opensource.ambassador.model.Project
+import pl.filipowm.opensource.ambassador.model.ProjectFilter
 import pl.filipowm.opensource.ambassador.model.ProjectRepository
 import pl.filipowm.opensource.ambassador.storage.ProjectEntity
 import pl.filipowm.opensource.ambassador.storage.ProjectEntityRepository
@@ -42,5 +43,16 @@ open class ProjectService(
             .doOnNext { projectEntityRepository.save(it) }
             .doOnNext { log.info("Project {} (id={}) reindexed", it.name, it.id) }
             .map(ProjectEntity::project)
+    }
+
+    @Transactional(readOnly = false)
+    open fun reindex() {
+        val filter = ProjectFilter.internal()
+        projectRepository.list(filter)
+            .map { ProjectEntity.from(it) }
+            .subscribe {
+                projectEntityRepository.save(it)
+                log.info("Project {} (id={}) indexed", it.name, it.id)
+            }
     }
 }

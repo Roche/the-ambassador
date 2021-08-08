@@ -94,10 +94,13 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
         }
 
         private fun expand(data: MutableMap<LocalDate, Int>, chronoUnit: ChronoUnit) {
+            if (data.isEmpty()) {
+                return
+            }
             val min = data.minOf { it.key }
             val max = data.maxOf { it.key }
             val dateRange = min..max
-            val stepper = when(chronoUnit) {
+            val stepper = when (chronoUnit) {
                 ChronoUnit.YEARS -> dateRange stepYears 1
                 ChronoUnit.WEEKS -> dateRange stepWeeks 1
                 ChronoUnit.DAYS -> dateRange stepDays 1

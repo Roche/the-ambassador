@@ -1,7 +1,11 @@
 package pl.filipowm.opensource.ambassador.model
 
+import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
+import pl.filipowm.opensource.ambassador.model.score.ActivityScorePolicy
+import pl.filipowm.opensource.ambassador.model.score.CriticalityScorePolicy
 import pl.filipowm.opensource.ambassador.model.stats.Statistics
+import pl.filipowm.opensource.ambassador.model.stats.Timeline
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -11,17 +15,37 @@ data class Project(
     val avatarUrl: String?,
     val name: String,
     val description: String?,
+    val tags: List<String>,
     val visibility: Visibility,
+    val defaultBranch: String?,
+    val protectedBranches: List<ProtectedBranch>,
     val stats: Statistics,
-    val tags: List<String>?,
-    val createdDate: LocalDate?,
+    val createdDate: LocalDate,
     val lastUpdatedDate: LocalDate?,
-    val commits: Commits?,
-    val issues: Issues?,
+    @JsonIgnore val issues: Issues?,
+    @JsonIgnore val commits: Timeline?,
+    @JsonIgnore val releases: Timeline?,
+    val features: Features,
     val files: Files,
     val languages: Map<String, Float>?,
-    val members: Members?
+    val contributors: Contributors
 ) {
+
+    private var scores: Scores? = null
+
+    //
+    @JsonGetter("scores")
+    fun getScores(): Scores {
+        if (scores == null) {
+            val activityScore = ActivityScorePolicy.calculateScoreOf(this)
+            val criticalityScore = CriticalityScorePolicy.calculateScoreOf(this)
+            this.scores = Scores(
+                activity = activityScore,
+                criticality = criticalityScore
+            )
+        }
+        return scores as Scores
+    }
 
     @JsonIgnore
     fun getDaysSinceLastUpdate(): Long {

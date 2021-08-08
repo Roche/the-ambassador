@@ -7,6 +7,7 @@ import pl.filipowm.opensource.ambassador.commons.exceptions.AmbassadorException
 import pl.filipowm.opensource.ambassador.configuration.source.ProjectSourceProperties.System.GITLAB
 import pl.filipowm.opensource.ambassador.document.TextAnalyzingService
 import pl.filipowm.opensource.ambassador.gitlab.GitLabProjectRepository
+import pl.filipowm.opensource.ambassador.gitlab.ProjectMapper
 import pl.filipowm.opensource.ambassador.model.ProjectRepository
 
 @Configuration
@@ -26,6 +27,7 @@ open class ProjectSourceConfiguration {
         textAnalyzingService: TextAnalyzingService
     ): ProjectRepository {
         val gitlabApi = GitLabApi(projectSourceProperties.url, projectSourceProperties.token)
-        return GitLabProjectRepository(gitlabApi, textAnalyzingService)
+        val gitlabMapper = ProjectMapper(gitlabApi, textAnalyzingService)
+        return GitLabProjectRepository(gitlabApi, gitlabMapper)
     }
 }
