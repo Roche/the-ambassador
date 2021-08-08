@@ -4,6 +4,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import pl.filipowm.opensource.ambassador.commons.exceptions.NotFoundException
@@ -54,5 +56,10 @@ open class ProjectService(
                 projectEntityRepository.save(it)
                 log.info("Project {} (id={}) indexed", it.name, it.id)
             }
+    }
+
+    open fun list(pageable: Pageable): Page<SimpleProjectDto> {
+        return projectEntityRepository.findAll(pageable)
+            .map { SimpleProjectDto.from(it.project!!) }
     }
 }

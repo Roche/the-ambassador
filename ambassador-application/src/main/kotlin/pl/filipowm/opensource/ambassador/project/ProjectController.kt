@@ -1,5 +1,7 @@
 package pl.filipowm.opensource.ambassador.project
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,6 +22,11 @@ open class ProjectController(private val projectService: ProjectService) {
             return projectService.reindex(query.id)
         }
         return projectService.getProject(query.id)
+    }
+
+    @GetMapping
+    open fun list(pageable: Pageable): Page<SimpleProjectDto> {
+        return projectService.list(pageable)
     }
 
     @GetMapping("/reindex")
