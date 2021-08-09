@@ -34,6 +34,7 @@ open class JsonConfiguration : ObjectMapperSupplier {
             .configure(MapperFeature.AUTO_DETECT_FIELDS, true)
             .configure(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS, false)
             .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
+            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
     }
 
     @Bean
