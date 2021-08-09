@@ -1,6 +1,5 @@
 package pl.filipowm.opensource.ambassador.project
 
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import pl.filipowm.opensource.ambassador.commons.api.Paged
 import pl.filipowm.opensource.ambassador.model.Project
 import reactor.core.publisher.Mono
 
@@ -25,8 +25,8 @@ open class ProjectController(private val projectService: ProjectService) {
     }
 
     @GetMapping
-    open fun list(pageable: Pageable): Page<SimpleProjectDto> {
-        return projectService.list(pageable)
+    open fun list(query: ListProjectsQuery, pageable: Pageable): Paged<SimpleProjectDto> {
+        return projectService.list(query, pageable)
     }
 
     @GetMapping("/reindex")
@@ -34,4 +34,5 @@ open class ProjectController(private val projectService: ProjectService) {
     open fun index() {
         projectService.reindex()
     }
+
 }

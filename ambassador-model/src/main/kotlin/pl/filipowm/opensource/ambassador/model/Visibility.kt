@@ -5,4 +5,9 @@ enum class Visibility(val level: Int) {
     INTERNAL(1),
     PRIVATE(2),
     UNKNOWN(99)
+    ;
+
+    fun getThisAndLessStrict() : List<Visibility>{
+        return values().filter { it.level <= this.level }
+    }
 }

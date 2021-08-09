@@ -19,7 +19,9 @@ class ProjectEntity(
     @Column(name = "criticality_score")
     var criticalityScore: Double? = 0.0,
     @Column(name = "activity_score")
-    var activityScore: Double? = 0.0
+    var activityScore: Double? = 0.0,
+    @Column(name = "score")
+    var score: Double? = 0.0
 ) {
     companion object Factory {
 
@@ -35,7 +37,8 @@ class ProjectEntity(
                 project,
                 project.stats.stars,
                 project.getScores().criticality,
-                project.getScores().activity
+                project.getScores().activity,
+                project.getScores().total
             )
         }
     }

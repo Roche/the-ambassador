@@ -12,6 +12,7 @@ import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ResponseStatusException
 import pl.filipowm.opensource.ambassador.commons.exceptions.NotFoundException
 import pl.filipowm.opensource.ambassador.commons.validation.ValidationError
+import pl.filipowm.opensource.ambassador.storage.InvalidSortFieldException
 import javax.validation.ConstraintViolationException
 
 
@@ -25,6 +26,10 @@ class ExceptionHandlingAdvice {
     fun resourceNotFoundException(ex: NotFoundException): ErrorMessage? {
         return ErrorMessage("Not found")
     }
+
+    @ExceptionHandler(InvalidSortFieldException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun invalidSorting(ex: InvalidSortFieldException): ValidationError = ValidationError.just(ex.message!!, ex.field, "Field does not exist")
 
     @ExceptionHandler(ResponseStatusException::class)
     fun x(ex: ResponseStatusException): ResponseEntity<ErrorMessage?> {

@@ -15,6 +15,10 @@ class ValidationError(
 ) {
 
     companion object {
+        fun just(message: String, field: String, error: String) : ValidationError {
+            return ValidationError(message, 1, mapOf(Pair(field, error)), listOf())
+        }
+
         fun from(bindingResult: BindingResult): ValidationError {
             val fieldErrors = bindingResult.fieldErrors
                 .stream()
@@ -45,16 +49,5 @@ class ValidationError(
                 emptyList()
             )
         }
-
-//        fun from(constraintViolations: BindingResult) : ValidationError {
-//            val fieldErrors = bindingResult.fieldErrors
-//                .stream()
-//                .collect(Collectors.toMap(
-//                    FieldError::getField, FieldError::getDefaultMessage
-//                ))
-//            val globalErrors = bindingResult.globalErrors
-//                .map { it.defaultMessage }
-//            return ValidationError("Failed validating input", bindingResult.errorCount, fieldErrors.toMap(), globalErrors)
-//        }
     }
 }
