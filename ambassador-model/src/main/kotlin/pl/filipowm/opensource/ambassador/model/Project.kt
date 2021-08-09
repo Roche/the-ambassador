@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import pl.filipowm.opensource.ambassador.model.score.ActivityScorePolicy
 import pl.filipowm.opensource.ambassador.model.score.CriticalityScorePolicy
+import pl.filipowm.opensource.ambassador.model.score.CriticalityScorePolicy.round
 import pl.filipowm.opensource.ambassador.model.stats.Statistics
 import pl.filipowm.opensource.ambassador.model.stats.Timeline
 import java.time.LocalDate
@@ -41,7 +42,8 @@ data class Project(
             val criticalityScore = CriticalityScorePolicy.calculateScoreOf(this)
             this.scores = Scores(
                 activity = activityScore,
-                criticality = criticalityScore
+                criticality = criticalityScore,
+                total = criticalityScore * activityScore.round(2)
             )
         }
         return scores as Scores
