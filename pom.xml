@@ -9,6 +9,7 @@
         <module>ambassador-application</module>
         <module>ambassador-document-analyzer</module>
         <module>ambassador-storage</module>
+        <module>ambassador-commons</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

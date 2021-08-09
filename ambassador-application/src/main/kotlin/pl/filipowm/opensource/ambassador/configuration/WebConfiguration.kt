@@ -8,14 +8,14 @@ import org.springframework.web.reactive.config.WebFluxConfigurer
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer
 
 @Configuration
-class WebConfiguration : WebFluxConfigurer {
+open class WebConfiguration : WebFluxConfigurer {
 
     override fun configureArgumentResolvers(configurer: ArgumentResolverConfigurer) {
         configurer.addCustomResolver(ReactivePageableHandlerMethodArgumentResolver())
     }
 
     @Bean
-    fun initConverter(registry: ConverterRegistry): ConverterRegistry {
+    open fun initConverter(registry: ConverterRegistry): ConverterRegistry {
         registry.addConverterFactory(StringToEnumConverter())
         return registry
     }
