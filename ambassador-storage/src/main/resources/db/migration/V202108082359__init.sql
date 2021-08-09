@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS project (
     stars INTEGER NOT NULL DEFAULT 0,
     criticality_score REAL NOT NULL DEFAULT 0.0,
     activity_score REAL NOT NULL DEFAULT 0.0,
-    total_score REAL NOT NULL DEFAULT 0.0,
+    score REAL NOT NULL DEFAULT 0.0,
     project JSONB NOT NULL
 );
 
