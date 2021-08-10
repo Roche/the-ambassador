@@ -1,4 +1,4 @@
 package pl.filipowm.opensource.ambassador.commons.api
 
-data class ErrorMessage(val message: String) {
+data class Message(val message: String) {
 }

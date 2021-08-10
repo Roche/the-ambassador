@@ -23,9 +23,9 @@ class ExceptionHandlingAdvice {
 
     @ExceptionHandler(NotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun resourceNotFoundException(ex: NotFoundException): ErrorMessage {
+    fun resourceNotFoundException(ex: NotFoundException): Message {
         val message = if (ex.message != null) ex.message else "Not found"
-        return ErrorMessage(message!!)
+        return Message(message!!)
     }
 
     @ExceptionHandler(InvalidSortFieldException::class)
@@ -33,9 +33,9 @@ class ExceptionHandlingAdvice {
     fun invalidSorting(ex: InvalidSortFieldException): ValidationError = ValidationError.just(ex.message!!, ex.field, "Field does not exist")
 
     @ExceptionHandler(ResponseStatusException::class)
-    fun x(ex: ResponseStatusException): ResponseEntity<ErrorMessage?> {
+    fun x(ex: ResponseStatusException): ResponseEntity<Message?> {
         log.error("Error occured", ex)
-        val msg = ErrorMessage(
+        val msg = Message(
             "${ex.reason}"
         )
         return ResponseEntity
@@ -46,16 +46,16 @@ class ExceptionHandlingAdvice {
 
     @ExceptionHandler(Throwable::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    fun unexpectedError(ex: Throwable): ErrorMessage {
+    fun unexpectedError(ex: Throwable): Message {
         log.error("Error occurred", ex)
-        return ErrorMessage("Unexpected issue occurred")
+        return Message("Unexpected issue occurred")
     }
 
     @ExceptionHandler(IndexingAlreadyStartedException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    fun indexingConflict(ex: IndexingAlreadyStartedException): ErrorMessage {
+    fun indexingConflict(ex: IndexingAlreadyStartedException): Message {
         log.warn(ex.message)
-        return ErrorMessage(ex.message!!)
+        return Message(ex.message!!)
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
