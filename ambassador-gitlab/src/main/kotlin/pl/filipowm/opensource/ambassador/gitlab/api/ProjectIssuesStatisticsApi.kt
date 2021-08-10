@@ -1,4 +1,4 @@
-package pl.filipowm.opensource.ambassador.gitlab
+package pl.filipowm.opensource.ambassador.gitlab.api
 
 import org.gitlab4j.api.AbstractApi
 import org.gitlab4j.api.GitLabApi

@@ -20,11 +20,11 @@ object Exceptions {
         )
     }
 
-    class RateLimitReachedException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
-    class UnauthorizedException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
-    class ForbiddenException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
-    class NotFoundException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
-    class RequestTimeoutException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
+    open class RateLimitReachedException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
+    open class UnauthorizedException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
+    open class ForbiddenException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
+    open class NotFoundException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
+    open class RequestTimeoutException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
     open class ServerErrorException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
     open class IndexingException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
 

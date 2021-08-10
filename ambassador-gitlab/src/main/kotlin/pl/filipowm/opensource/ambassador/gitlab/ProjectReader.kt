@@ -11,7 +11,7 @@ import org.gitlab4j.api.models.IssuesStatisticsFilter
 import org.gitlab4j.api.models.Project
 import org.slf4j.LoggerFactory
 import pl.filipowm.opensource.ambassador.document.TextDetails
-import pl.filipowm.opensource.ambassador.gitlab.ExceptionHandler.withGitLabException
+import pl.filipowm.opensource.ambassador.gitlab.api.ProjectIssuesStatisticsApi
 import pl.filipowm.opensource.ambassador.model.Contributor
 import pl.filipowm.opensource.ambassador.model.Contributors
 import pl.filipowm.opensource.ambassador.model.Issues
@@ -51,17 +51,15 @@ class ProjectReader(
 
     fun readIssues(): Deferred<Issues> {
         return async {
-            withGitLabException {
-                log.info("Reading project {} issues", project.id)
-                val filter = IssuesStatisticsFilter().withIn(project.nameWithNamespace)
-                val actual = projectIssuesStatisticsApi.getProjectIssuesStatistics(project.id, filter).counts
-                val nowMinus90Days = LocalDate.now().minusDays(90)
-                val nowMinus90DaysDate = Date.from(nowMinus90Days.atStartOfDay(ZoneId.systemDefault()).toInstant())
-                val filterAfter90Days = filter.withUpdatedAfter(nowMinus90DaysDate)
-                val last90Days = projectIssuesStatisticsApi.getProjectIssuesStatistics(project.id, filterAfter90Days).counts
-                log.info("Finished reading project {} issues", project.id)
-                Issues(actual.all, actual.opened, actual.closed, last90Days.closed, last90Days.opened)
-            }.orElseGet { Issues(0, 0, 0, 0, 0) }
+            log.info("Reading project {} issues", project.id)
+            val filter = IssuesStatisticsFilter().withIn(project.nameWithNamespace)
+            val actual = projectIssuesStatisticsApi.getProjectIssuesStatistics(project.id, filter).counts
+            val nowMinus90Days = LocalDate.now().minusDays(90)
+            val nowMinus90DaysDate = Date.from(nowMinus90Days.atStartOfDay(ZoneId.systemDefault()).toInstant())
+            val filterAfter90Days = filter.withUpdatedAfter(nowMinus90DaysDate)
+            val last90Days = projectIssuesStatisticsApi.getProjectIssuesStatistics(project.id, filterAfter90Days).counts
+            log.info("Finished reading project {} issues", project.id)
+            Issues(actual.all, actual.opened, actual.closed, last90Days.closed, last90Days.opened)
         }
     }
 
@@ -73,13 +71,13 @@ class ProjectReader(
     fun readContributors(): Deferred<Contributors> {
         return async {
             log.info("Reading project {} contributors", project.id)
-            val all = withGitLabException {
+            val all =
                 gitLabApi.repositoryApi
                     .getContributorsStream(project.id)
                     .map { Contributor(it.name, it.email, it.commits, it.avatarUrl) }
                     .toList()
-            }
-            val data = all.orElseGet { listOf() }
+
+            val data = all
             val top3 = data.stream()
                 .sorted { contributor, contributor2 -> contributor2.commits.compareTo(contributor.commits) }
                 .limit(3)
@@ -92,14 +90,13 @@ class ProjectReader(
     fun readProtectedBranches(): Deferred<List<ProtectedBranch>> {
         return async {
             log.info("Reading project {} protected branches setup", project.id)
-            val data = withGitLabException {
-                gitLabApi.protectedBranchesApi
-                    .getProtectedBranchesStream(project.id)
-                    .map { ProtectedBranch(it.name, checkHasNoAccess(it.mergeAccessLevels), checkHasNoAccess(it.pushAccessLevels)) }
-                    .toList()
-            }
+            val data = gitLabApi.protectedBranchesApi
+                .getProtectedBranchesStream(project.id)
+                .map { ProtectedBranch(it.name, checkHasNoAccess(it.mergeAccessLevels), checkHasNoAccess(it.pushAccessLevels)) }
+                .toList()
+
             log.info("Finished reading project {} protected branches", project.id)
-            data.orElseGet { listOf() }
+            data
         }
     }
 
@@ -111,12 +108,11 @@ class ProjectReader(
         return async {
             log.info("Reading project {} releases timeline", project.id)
             val timeline = Timeline()
-            withGitLabException {
-                gitLabApi.releasesApi
-                    .getReleasesStream(project.id)
-                    .filter { it.releasedAt != null }
-                    .forEach { timeline.add(it.releasedAt, 1) }
-            }
+            gitLabApi.releasesApi
+                .getReleasesStream(project.id)
+                .filter { it.releasedAt != null }
+                .forEach { timeline.add(it.releasedAt, 1) }
+
             log.info("Finished reading project {} releases timeline", project.id)
             timeline
         }
@@ -127,14 +123,12 @@ class ProjectReader(
             val timeline = Timeline()
             if (project.defaultBranch != null) {
                 log.info("Reading project {} commits timeline", project.id)
-                withGitLabException {
-                    gitLabApi.commitsApi.getCommitsStream(
-                        project.id,
-                        project.defaultBranch,
-                        get90DaysAgo(), Date()
-                    )
-                        .forEach { timeline.add(it.createdAt, 1) }
-                }
+                gitLabApi.commitsApi.getCommitsStream(
+                    project.id,
+                    project.defaultBranch,
+                    get90DaysAgo(), Date()
+                )
+                    .forEach { timeline.add(it.createdAt, 1) }
             } else {
                 log.warn("No default branch in repo in project {}. Skipping reading commits.", project.id)
             }
@@ -145,22 +139,19 @@ class ProjectReader(
 
     fun readFetches(): Deferred<Int> {
         return async {
-            val data = withGitLabException {
-                gitLabApi.projectApi.getOptionalProjectStatistics(project.id)
-                    .map { it.fetches }
-                    .map { it.total }
-                    .orElse(null)
-            }
-            data.orElse(0)
+            gitLabApi.projectApi.getOptionalProjectStatistics(project.id)
+                .map { it.fetches }
+                .map { it.total }
+                .orElse(0)
         }
     }
 
     fun readLanguages(): Deferred<Map<String, Float>> {
         return async {
             log.info("Reading project {} languages", project.id)
-            val languages = withGitLabException { gitLabApi.projectApi.getProjectLanguages(project.id) }
+            val languages = gitLabApi.projectApi.getProjectLanguages(project.id)
             log.info("Read project {} languages", project.id)
-            languages.orElseGet { mapOf() }
+            languages
         }
     }
 

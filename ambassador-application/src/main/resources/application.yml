@@ -25,4 +25,4 @@ logging.level.pl.filipowm.opensource.ambassador.gitlab.ProjectReader: WARN
 ambassador:
   indexer:
     concurrency:
-      concurrencyLevel: 2
+      concurrencyLevel: 50

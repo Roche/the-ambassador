@@ -1,6 +1,5 @@
 package pl.filipowm.opensource.ambassador.configuration.source
 
-import org.gitlab4j.api.GitLabApi
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import pl.filipowm.opensource.ambassador.ConcurrencyProvider
@@ -9,6 +8,7 @@ import pl.filipowm.opensource.ambassador.document.TextAnalyzingService
 import pl.filipowm.opensource.ambassador.exceptions.AmbassadorException
 import pl.filipowm.opensource.ambassador.gitlab.GitLabProjectMapper
 import pl.filipowm.opensource.ambassador.gitlab.GitLabSourceRepository
+import pl.filipowm.opensource.ambassador.gitlab.api.GitLabApiBuilder
 
 @Configuration
 open class ProjectSourceConfiguration {
@@ -28,7 +28,10 @@ open class ProjectSourceConfiguration {
         textAnalyzingService: TextAnalyzingService,
         concurrencyProvider: ConcurrencyProvider
     ): GitLabSourceRepository {
-        val gitlabApi = GitLabApi(projectSourceProperties.url, projectSourceProperties.token)
+
+        val gitlabApi = GitLabApiBuilder(projectSourceProperties.url, projectSourceProperties.token)
+            .enableExceptionHandling()
+            .build()
         val gitlabMapper = GitLabProjectMapper(gitlabApi, textAnalyzingService, concurrencyProvider)
         return GitLabSourceRepository(gitlabApi, gitlabMapper)
     }
