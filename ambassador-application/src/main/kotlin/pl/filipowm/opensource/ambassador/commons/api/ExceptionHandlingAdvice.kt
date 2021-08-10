@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ResponseStatusException
-import pl.filipowm.opensource.ambassador.commons.exceptions.NotFoundException
 import pl.filipowm.opensource.ambassador.commons.validation.ValidationError
+import pl.filipowm.opensource.ambassador.exceptions.Exceptions.NotFoundException
 import pl.filipowm.opensource.ambassador.storage.InvalidSortFieldException
 import javax.validation.ConstraintViolationException
 
@@ -23,8 +23,9 @@ class ExceptionHandlingAdvice {
 
     @ExceptionHandler(NotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun resourceNotFoundException(ex: NotFoundException): ErrorMessage? {
-        return ErrorMessage("Not found")
+    fun resourceNotFoundException(ex: NotFoundException): ErrorMessage {
+        val message = if (ex.message != null) ex.message else "Not found"
+        return ErrorMessage(message!!)
     }
 
     @ExceptionHandler(InvalidSortFieldException::class)

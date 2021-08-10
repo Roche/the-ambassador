@@ -2,6 +2,7 @@ package pl.filipowm.opensource.ambassador.gitlab
 
 import org.gitlab4j.api.GitLabApiException
 import org.slf4j.LoggerFactory
+import pl.filipowm.opensource.ambassador.exceptions.Exceptions
 import java.util.*
 
 object ExceptionHandler {

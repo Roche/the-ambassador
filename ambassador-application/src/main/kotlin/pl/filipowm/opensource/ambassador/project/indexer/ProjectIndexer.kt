@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import pl.filipowm.opensource.ambassador.ConcurrencyProvider
-import pl.filipowm.opensource.ambassador.commons.exceptions.NotFoundException
+import pl.filipowm.opensource.ambassador.exceptions.Exceptions
 import pl.filipowm.opensource.ambassador.gitlab.GitLabSourceRepository
 import pl.filipowm.opensource.ambassador.model.Project
 import pl.filipowm.opensource.ambassador.model.ProjectFilter
@@ -33,7 +33,7 @@ internal open class ProjectIndexer(
             .map { ProjectEntity.from(it) }
             .map { projectEntityRepository.save(it) }
             .map { it.project }
-            .orElseThrow { NotFoundException("Project $id not found") }
+            .orElseThrow { Exceptions.NotFoundException("Project $id not found") }
     }
 
     open suspend fun reindex() {

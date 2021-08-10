@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import pl.filipowm.opensource.ambassador.commons.api.Paged
-import pl.filipowm.opensource.ambassador.commons.exceptions.NotFoundException
+import pl.filipowm.opensource.ambassador.exceptions.Exceptions
 import pl.filipowm.opensource.ambassador.model.Project
 import pl.filipowm.opensource.ambassador.model.Visibility
 import pl.filipowm.opensource.ambassador.storage.ProjectEntityRepository
@@ -29,7 +29,7 @@ open class ProjectService(
         log.info("Retrieving project $id")
         return projectEntityRepository.findById(id)
             .map { it.project }
-            .orElseThrow { NotFoundException("Project $id not found") }
+            .orElseThrow { Exceptions.NotFoundException("Project $id not found") }
     }
 
     @Transactional(readOnly = true)
