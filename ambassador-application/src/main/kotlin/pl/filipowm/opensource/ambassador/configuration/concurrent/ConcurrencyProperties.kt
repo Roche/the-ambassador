@@ -8,4 +8,4 @@ import javax.validation.constraints.Min
 @ConfigurationProperties(prefix = "ambassador.indexer.concurrency")
 @ConstructorBinding
 @Validated
-data class ConcurrencyProperties(@Min(2) val concurrencyLevel: Int = 10, val threadPrefix: String = "project-indexer-")
+data class ConcurrencyProperties(@Min(2) val concurrencyLevel: Int = 10, val threadPrefix: String = "prj-indxr-")

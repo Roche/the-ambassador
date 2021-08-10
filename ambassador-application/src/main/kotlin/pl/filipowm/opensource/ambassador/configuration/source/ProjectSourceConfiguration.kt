@@ -7,9 +7,8 @@ import pl.filipowm.opensource.ambassador.ConcurrencyProvider
 import pl.filipowm.opensource.ambassador.commons.exceptions.AmbassadorException
 import pl.filipowm.opensource.ambassador.configuration.source.ProjectSourceProperties.System.GITLAB
 import pl.filipowm.opensource.ambassador.document.TextAnalyzingService
-import pl.filipowm.opensource.ambassador.gitlab.GitLabProjectRepository
-import pl.filipowm.opensource.ambassador.gitlab.ProjectMapper
-import pl.filipowm.opensource.ambassador.model.ProjectRepository
+import pl.filipowm.opensource.ambassador.gitlab.GitLabProjectMapper
+import pl.filipowm.opensource.ambassador.gitlab.GitLabSourceRepository
 
 @Configuration
 open class ProjectSourceConfiguration {
@@ -19,7 +18,7 @@ open class ProjectSourceConfiguration {
         projectSourceProperties: ProjectSourceProperties,
         textAnalyzingService: TextAnalyzingService,
         concurrencyProvider: ConcurrencyProvider
-    ): ProjectRepository = when (projectSourceProperties.system) {
+    ): GitLabSourceRepository = when (projectSourceProperties.system) {
         GITLAB -> configureGitLab(projectSourceProperties, textAnalyzingService, concurrencyProvider)
         else -> throw AmbassadorException("Unsupported source system: ${projectSourceProperties.system}")
     }
@@ -28,9 +27,9 @@ open class ProjectSourceConfiguration {
         projectSourceProperties: ProjectSourceProperties,
         textAnalyzingService: TextAnalyzingService,
         concurrencyProvider: ConcurrencyProvider
-    ): ProjectRepository {
+    ): GitLabSourceRepository {
         val gitlabApi = GitLabApi(projectSourceProperties.url, projectSourceProperties.token)
-        val gitlabMapper = ProjectMapper(gitlabApi, textAnalyzingService, concurrencyProvider)
-        return GitLabProjectRepository(gitlabApi, gitlabMapper, concurrencyProvider)
+        val gitlabMapper = GitLabProjectMapper(gitlabApi, textAnalyzingService, concurrencyProvider)
+        return GitLabSourceRepository(gitlabApi, gitlabMapper)
     }
 }

@@ -5,13 +5,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import org.gitlab4j.api.GitLabApi
-import org.gitlab4j.api.GitLabApiException
 import org.gitlab4j.api.models.AccessLevel
 import org.gitlab4j.api.models.BranchAccessLevel
 import org.gitlab4j.api.models.IssuesStatisticsFilter
 import org.gitlab4j.api.models.Project
 import org.slf4j.LoggerFactory
 import pl.filipowm.opensource.ambassador.document.TextDetails
+import pl.filipowm.opensource.ambassador.gitlab.ExceptionHandler.withGitLabException
 import pl.filipowm.opensource.ambassador.model.Contributor
 import pl.filipowm.opensource.ambassador.model.Contributors
 import pl.filipowm.opensource.ambassador.model.Issues
@@ -45,20 +45,23 @@ class ProjectReader(
     private val log = LoggerFactory.getLogger(ProjectReader::class.java)
 
     private fun <T> async(block: suspend CoroutineScope.() -> T): Deferred<T> {
+
         return scope.async(dispatcher, block = block)
     }
 
     fun readIssues(): Deferred<Issues> {
         return async {
-            log.info("Reading project {} issues", project.id)
-            val filter = IssuesStatisticsFilter().withIn(project.nameWithNamespace)
-            val actual = projectIssuesStatisticsApi.getProjectIssuesStatistics(project.id, filter).counts
-            val nowMinus90Days = LocalDate.now().minusDays(90)
-            val nowMinus90DaysDate = Date.from(nowMinus90Days.atStartOfDay(ZoneId.systemDefault()).toInstant())
-            val filterAfter90Days = filter.withUpdatedAfter(nowMinus90DaysDate)
-            val last90Days = projectIssuesStatisticsApi.getProjectIssuesStatistics(project.id, filterAfter90Days).counts
-            log.info("Finished reading project {} issues", project.id)
-            Issues(actual.all, actual.opened, actual.closed, last90Days.closed, last90Days.opened)
+            withGitLabException {
+                log.info("Reading project {} issues", project.id)
+                val filter = IssuesStatisticsFilter().withIn(project.nameWithNamespace)
+                val actual = projectIssuesStatisticsApi.getProjectIssuesStatistics(project.id, filter).counts
+                val nowMinus90Days = LocalDate.now().minusDays(90)
+                val nowMinus90DaysDate = Date.from(nowMinus90Days.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                val filterAfter90Days = filter.withUpdatedAfter(nowMinus90DaysDate)
+                val last90Days = projectIssuesStatisticsApi.getProjectIssuesStatistics(project.id, filterAfter90Days).counts
+                log.info("Finished reading project {} issues", project.id)
+                Issues(actual.all, actual.opened, actual.closed, last90Days.closed, last90Days.opened)
+            }.orElseGet { Issues(0, 0, 0, 0, 0) }
         }
     }
 
@@ -76,7 +79,7 @@ class ProjectReader(
                     .map { Contributor(it.name, it.email, it.commits, it.avatarUrl) }
                     .toList()
             }
-            val data = all ?: listOf()
+            val data = all.orElseGet { listOf() }
             val top3 = data.stream()
                 .sorted { contributor, contributor2 -> contributor2.commits.compareTo(contributor.commits) }
                 .limit(3)
@@ -96,7 +99,7 @@ class ProjectReader(
                     .toList()
             }
             log.info("Finished reading project {} protected branches", project.id)
-            data ?: listOf()
+            data.orElseGet { listOf() }
         }
     }
 
@@ -148,7 +151,7 @@ class ProjectReader(
                     .map { it.total }
                     .orElse(null)
             }
-            data ?: 0
+            data.orElse(0)
         }
     }
 
@@ -157,10 +160,9 @@ class ProjectReader(
             log.info("Reading project {} languages", project.id)
             val languages = withGitLabException { gitLabApi.projectApi.getProjectLanguages(project.id) }
             log.info("Read project {} languages", project.id)
-            languages ?: mapOf()
+            languages.orElseGet { mapOf() }
         }
     }
-
 
     private fun toFullPath(path: String): String {
         return "${project.webUrl}/-/blob/${project.defaultBranch}/${path}"
@@ -187,18 +189,6 @@ class ProjectReader(
             }
             var transformed = transform(content)
             transformed
-        }
-    }
-
-    private fun <T> withGitLabException(handler: () -> T): T? {
-        try {
-            return handler()
-        } catch (ex: GitLabApiException) {
-            log.error("Request to GitLab failed", ex)
-            if (ex.hasValidationErrors()) {
-                log.error("Found validation errors: {}", ex.validationErrors)
-            }
-            return null
         }
     }
 

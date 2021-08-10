@@ -3,7 +3,6 @@ spring:
     banner-mode: console
 
   datasource:
-    platform: postgres
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
@@ -19,5 +18,11 @@ spring:
 #  logging.level.org.springframework=ERROR
 
 #spring.jpa.hibernate.ddl-auto=none
-
 #spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+
+logging.level.org.jooq.Constants: DEBUG
+logging.level.pl.filipowm.opensource.ambassador.gitlab.ProjectReader: WARN
+ambassador:
+  indexer:
+    concurrency:
+      concurrencyLevel: 2
