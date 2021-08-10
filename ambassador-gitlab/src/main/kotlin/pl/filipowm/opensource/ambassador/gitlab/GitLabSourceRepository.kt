@@ -33,7 +33,6 @@ class GitLabSourceRepository(
             .withArchived(filter.archived)
             .withStatistics(true)
             .withCustomAttributes(false)
-            .withIdAfter(20000)
         if (filter.visibility != null) {
             glFilter.withVisibility(VisibilityMapper.fromAmbassador(filter.visibility!!))
         }

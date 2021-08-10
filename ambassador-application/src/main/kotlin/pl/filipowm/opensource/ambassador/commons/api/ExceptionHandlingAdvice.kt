@@ -12,9 +12,9 @@ import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ResponseStatusException
 import pl.filipowm.opensource.ambassador.commons.validation.ValidationError
 import pl.filipowm.opensource.ambassador.exceptions.Exceptions.NotFoundException
+import pl.filipowm.opensource.ambassador.project.indexer.IndexingAlreadyStartedException
 import pl.filipowm.opensource.ambassador.storage.InvalidSortFieldException
 import javax.validation.ConstraintViolationException
-
 
 @RestControllerAdvice
 class ExceptionHandlingAdvice {
@@ -46,9 +46,16 @@ class ExceptionHandlingAdvice {
 
     @ExceptionHandler(Throwable::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    fun unexpectedError(ex: Throwable): ErrorMessage? {
-        log.error("Error occured", ex)
+    fun unexpectedError(ex: Throwable): ErrorMessage {
+        log.error("Error occurred", ex)
         return ErrorMessage("Unexpected issue occurred")
+    }
+
+    @ExceptionHandler(IndexingAlreadyStartedException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun indexingConflict(ex: IndexingAlreadyStartedException): ErrorMessage {
+        log.warn(ex.message)
+        return ErrorMessage(ex.message!!)
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -3,6 +3,7 @@ package pl.filipowm.opensource.ambassador.project.indexer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -25,6 +26,7 @@ internal open class ProjectIndexer(
 ) {
 
     private val log = LoggerFactory.getLogger(ProjectService::class.java)
+    private val indexingSemaphore = TimelyBlockingSemaphore(1, 3000)
 
     @Transactional(readOnly = false)
     open suspend fun reindex(id: Long): Project? {
@@ -37,18 +39,32 @@ internal open class ProjectIndexer(
     }
 
     open suspend fun reindex() {
+        log.info("Starting indexing all projects within source repository")
+        if (indexingSemaphore.tryAcquire()) {
+            startIndexing()
+        } else {
+            log.warn("Indexing locked. May be unclocked in {}ms", indexingSemaphore.unlocksIn())
+            throw IndexingAlreadyStartedException("Unable to start new projects indexing, because it is already running")
+        }
+    }
+
+    private suspend fun startIndexing() {
         val filter = ProjectFilter.internal()
         val scope = CoroutineScope(concurrencyProvider.getCoroutineDispatcher())
         scope.launch {
             log.info("Indexing started")
+            indexingSemaphore.touch()
             projectRepository.flow(filter)
+                .onEach { indexingSemaphore.touch() }
 //                .flowOn(concurrencyProvider.getCoroutineDispatcher())
                 .filter { hasRepositorySetUp(it) }
                 .collect {
                     launch {
+                        indexingSemaphore.touch()
                         Optional.ofNullable(projectRepository.mapper().invoke(it))
                             .map { ProjectEntity.from(it) }
                             .ifPresent {
+                                indexingSemaphore.touch()
                                 projectEntityRepository.save(it)
                                 log.info("Project {} (id={}) indexed", it.name, it.id)
                             }
