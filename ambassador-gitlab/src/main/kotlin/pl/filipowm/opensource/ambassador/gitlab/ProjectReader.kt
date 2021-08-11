@@ -1,6 +1,5 @@
 package pl.filipowm.opensource.ambassador.gitlab
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -27,7 +26,6 @@ class ProjectReader(
     private val project: Project,
     private val gitLabApi: GitLabApi,
     private val scope: CoroutineScope,
-    private val dispatcher: CoroutineDispatcher,
     private val projectIssuesStatisticsApi: ProjectIssuesStatisticsApi = ProjectIssuesStatisticsApi(gitLabApi)
 ) {
 
@@ -46,7 +44,7 @@ class ProjectReader(
 
     private fun <T> async(block: suspend CoroutineScope.() -> T): Deferred<T> {
 
-        return scope.async(dispatcher, block = block)
+        return scope.async(block = block)
     }
 
     fun readIssues(): Deferred<Issues> {

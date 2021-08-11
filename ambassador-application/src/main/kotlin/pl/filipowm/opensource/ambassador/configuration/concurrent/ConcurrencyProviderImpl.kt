@@ -6,30 +6,32 @@ import org.slf4j.MDC
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory
 import org.springframework.stereotype.Component
 import pl.filipowm.opensource.ambassador.ConcurrencyProvider
-import reactor.core.scheduler.Scheduler
-import reactor.core.scheduler.Schedulers
 import java.util.concurrent.*
+import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.roundToInt
 
 @Component
 class ConcurrencyProviderImpl(properties: ConcurrencyProperties) : ConcurrencyProvider {
 
-    private val executor: ExecutorService
+    private val producerExecutor: ExecutorService
+    private val consumerExecutor: ExecutorService
 
     init {
-        val threadFactory = CustomizableThreadFactory(properties.threadPrefix)
-        executor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(properties.concurrencyLevel, threadFactory)
+        val consumerThreadFactory = CustomizableThreadFactory(properties.consumerThreadPrefix)
+        val producerThreadFactory = CustomizableThreadFactory(properties.producerThreadPrefix)
+        val producerExecutorThreads = max(1, ceil(properties.concurrencyLevel * 0.1).roundToInt())
+        val consumerExecutorThreads = max(1, properties.concurrencyLevel - producerExecutorThreads)
+        producerExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(producerExecutorThreads, producerThreadFactory)
+        consumerExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(consumerExecutorThreads, consumerThreadFactory)
     }
 
-    override fun getExecutor(): ExecutorService {
-        return executor
+    override fun getSourceProjectProducerDispatcher(): CoroutineDispatcher {
+        return producerExecutor.asCoroutineDispatcher()
     }
 
-    override fun getCoroutineDispatcher(): CoroutineDispatcher {
-        return executor.asCoroutineDispatcher()
-    }
-
-    override fun getScheduler(): Scheduler {
-        return Schedulers.fromExecutor(executor)
+    override fun getIndexingConsumerDispatcher(): CoroutineDispatcher {
+        return consumerExecutor.asCoroutineDispatcher()
     }
 
     class MdcThreadPoolExecutor private constructor(

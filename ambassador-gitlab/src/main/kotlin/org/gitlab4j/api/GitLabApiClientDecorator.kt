@@ -17,6 +17,9 @@ import javax.ws.rs.core.StreamingOutput
  * and any calls are sent to wrapped client.
  */
 abstract class GitLabApiClientDecorator(private val wrapped: GitLabApiClient) : GitLabApiClient("http://dummy", "dummy") {
+
+    protected abstract fun decorate(handler: () -> Response): Response
+
     override fun close() {
         wrapped.close()
     }
@@ -61,101 +64,58 @@ abstract class GitLabApiClientDecorator(private val wrapped: GitLabApiClient) : 
         return wrapped.validateSecretToken(response)
     }
 
-    override fun get(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response {
-        return wrapped.get(queryParams, *pathArgs)
-    }
+    override fun get(queryParams: MultivaluedMap<String, String>?, url: URL?): Response = decorate { wrapped.get(queryParams, url) }
 
-    override fun get(queryParams: MultivaluedMap<String, String>?, url: URL?): Response {
-        return wrapped.get(queryParams, url)
-    }
+    override fun get(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response = decorate { wrapped.get(queryParams, *pathArgs) }
 
-    override fun getWithAccepts(queryParams: MultivaluedMap<String, String>?, accepts: String?, vararg pathArgs: Any?): Response {
-        return wrapped.getWithAccepts(queryParams, accepts, *pathArgs)
-    }
+    override fun getWithAccepts(queryParams: MultivaluedMap<String, String>?, accepts: String?, vararg pathArgs: Any?): Response =
+        decorate { wrapped.getWithAccepts(queryParams, accepts, *pathArgs) }
 
-    override fun getWithAccepts(queryParams: MultivaluedMap<String, String>?, url: URL?, accepts: String?): Response {
-        return wrapped.getWithAccepts(queryParams, url, accepts)
-    }
+    override fun getWithAccepts(queryParams: MultivaluedMap<String, String>?, url: URL?, accepts: String?): Response =
+        decorate { wrapped.getWithAccepts(queryParams, url, accepts) }
 
-    override fun head(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response {
-        return wrapped.head(queryParams, *pathArgs)
-    }
+    override fun head(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response = decorate { wrapped.head(queryParams, *pathArgs) }
 
-    override fun head(queryParams: MultivaluedMap<String, String>?, url: URL?): Response {
-        return wrapped.head(queryParams, url)
-    }
+    override fun head(queryParams: MultivaluedMap<String, String>?, url: URL?): Response = decorate { wrapped.head(queryParams, url) }
 
-    override fun post(formData: Form?, vararg pathArgs: Any?): Response {
-        return wrapped.post(formData, *pathArgs)
-    }
+    override fun post(formData: Form?, vararg pathArgs: Any?): Response = decorate { wrapped.post(formData, *pathArgs) }
 
-    override fun post(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response {
-        return wrapped.post(queryParams, *pathArgs)
-    }
+    override fun post(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response = decorate { wrapped.post(queryParams, *pathArgs) }
 
-    override fun post(formData: Form?, url: URL?): Response {
-        return wrapped.post(formData, url)
-    }
+    override fun post(formData: Form?, url: URL?): Response = decorate { wrapped.post(formData, url) }
 
-    override fun post(queryParams: MultivaluedMap<String, String>?, url: URL?): Response {
-        return wrapped.post(queryParams, url)
-    }
+    override fun post(queryParams: MultivaluedMap<String, String>?, url: URL?): Response = decorate { wrapped.post(queryParams, url) }
 
-    override fun post(payload: Any?, vararg pathArgs: Any?): Response {
-        return wrapped.post(payload, *pathArgs)
-    }
+    override fun post(payload: Any?, vararg pathArgs: Any?): Response = decorate { wrapped.post(payload, *pathArgs) }
 
-    override fun post(stream: StreamingOutput?, mediaType: String?, vararg pathArgs: Any?): Response {
-        return wrapped.post(stream, mediaType, *pathArgs)
-    }
+    override fun post(stream: StreamingOutput?, mediaType: String?, vararg pathArgs: Any?): Response = decorate { wrapped.post(stream, mediaType, *pathArgs) }
 
-    override fun upload(name: String?, fileToUpload: File?, mediaTypeString: String?, vararg pathArgs: Any?): Response {
-        return wrapped.upload(name, fileToUpload, mediaTypeString, *pathArgs)
-    }
+    override fun upload(name: String?, fileToUpload: File?, mediaTypeString: String?, vararg pathArgs: Any?): Response =
+        decorate { wrapped.upload(name, fileToUpload, mediaTypeString, *pathArgs) }
 
-    override fun upload(name: String?, fileToUpload: File?, mediaTypeString: String?, formData: Form?, vararg pathArgs: Any?): Response {
-        return wrapped.upload(name, fileToUpload, mediaTypeString, formData, *pathArgs)
-    }
+    override fun upload(name: String?, fileToUpload: File?, mediaTypeString: String?, formData: Form?, vararg pathArgs: Any?): Response =
+        decorate { wrapped.upload(name, fileToUpload, mediaTypeString, formData, *pathArgs) }
 
-    override fun upload(name: String?, fileToUpload: File?, mediaTypeString: String?, formData: Form?, url: URL?): Response {
-        return wrapped.upload(name, fileToUpload, mediaTypeString, formData, url)
-    }
+    override fun upload(name: String?, fileToUpload: File?, mediaTypeString: String?, formData: Form?, url: URL?): Response =
+        decorate { wrapped.upload(name, fileToUpload, mediaTypeString, formData, url) }
 
-    override fun putUpload(name: String?, fileToUpload: File?, vararg pathArgs: Any?): Response {
-        return wrapped.putUpload(name, fileToUpload, *pathArgs)
-    }
+    override fun putUpload(name: String?, fileToUpload: File?, vararg pathArgs: Any?): Response = decorate { wrapped.putUpload(name, fileToUpload, *pathArgs) }
 
-    override fun putUpload(name: String?, fileToUpload: File?, url: URL?): Response {
-        return wrapped.putUpload(name, fileToUpload, url)
-    }
+    override fun putUpload(name: String?, fileToUpload: File?, url: URL?): Response = decorate { wrapped.putUpload(name, fileToUpload, url) }
 
-    override fun put(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response {
-        return wrapped.put(queryParams, *pathArgs)
-    }
+    override fun put(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response = decorate { wrapped.put(queryParams, *pathArgs) }
 
-    override fun put(queryParams: MultivaluedMap<String, String>?, url: URL?): Response {
-        return wrapped.put(queryParams, url)
-    }
+    override fun put(queryParams: MultivaluedMap<String, String>?, url: URL?): Response = decorate { wrapped.put(queryParams, url) }
 
-    override fun put(formData: Form?, vararg pathArgs: Any?): Response {
-        return wrapped.put(formData, *pathArgs)
-    }
+    override fun put(formData: Form?, vararg pathArgs: Any?): Response = decorate { wrapped.put(formData, *pathArgs) }
 
-    override fun put(formData: Form?, url: URL?): Response {
-        return wrapped.put(formData, url)
-    }
+    override fun put(formData: Form?, url: URL?): Response = decorate { wrapped.put(formData, url) }
 
-    override fun put(payload: Any?, vararg pathArgs: Any?): Response {
-        return wrapped.put(payload, *pathArgs)
-    }
+    override fun put(payload: Any?, vararg pathArgs: Any?): Response = decorate { wrapped.put(payload, *pathArgs) }
 
-    override fun delete(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response {
-        return wrapped.delete(queryParams, *pathArgs)
-    }
+    override fun delete(queryParams: MultivaluedMap<String, String>?, vararg pathArgs: Any?): Response = decorate { wrapped.delete(queryParams, *pathArgs) }
 
-    override fun delete(queryParams: MultivaluedMap<String, String>?, url: URL?): Response {
-        return wrapped.delete(queryParams, url)
-    }
+    override fun delete(queryParams: MultivaluedMap<String, String>?, url: URL?): Response = decorate { wrapped.delete(queryParams, url) }
 
     override fun invocation(url: URL?, queryParams: MultivaluedMap<String, String>?): Invocation.Builder {
         return wrapped.invocation(url, queryParams)
