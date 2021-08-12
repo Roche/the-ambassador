@@ -54,7 +54,6 @@ internal open class ProjectIndexer(
         val filter = ProjectFilter.internal()
         val producerScope = CoroutineScope(concurrencyProvider.getSourceProjectProducerDispatcher())
         val consumerScope = CoroutineScope(concurrencyProvider.getIndexingConsumerDispatcher())
-
         producerScope.launch {
             supervisorScope {
                 log.info("Indexing started")
@@ -64,17 +63,18 @@ internal open class ProjectIndexer(
                     .filter { it.hasRepositorySetUp() }
                     .onCompletion { log.info("Finished producing projects to index from source") }
                     .catch { log.error("Failed processing project", it) }
-                    .flowOn(producerScope.coroutineContext)
                     .collect {
                         consumerScope.launch {
                             try {
-                                log.info("Indexing project {}", it.name)
+                                log.info("Indexing project '{}' (id={})", it.nameWithNamespace, it.id)
                                 index(it)
+                                log.info("Indexed project '{}' (id={})", it.nameWithNamespace, it.id)
                             } catch (e: Throwable) {
-                                log.error("Failed processing project: {}", e.message, e)
+                                log.error("Failed while indexing project '{}' (id={}): {}", it.nameWithNamespace, it.id, e.message)
                             }
                         }
                     }
+
             }
         }
     }
@@ -85,11 +85,10 @@ internal open class ProjectIndexer(
             .map { ProjectEntity.from(it) }
             .ifPresent {
                 projectEntityRepository.save(it)
-                log.info("Project {} (id={}) indexed", it.name, it.id)
             }
     }
 
-    private suspend fun GitLabProject.hasRepositorySetUp(): Boolean {
+    private fun GitLabProject.hasRepositorySetUp(): Boolean {
         val hasRepo = this.defaultBranch != null && !this.emptyRepo
         if (!hasRepo) {
             log.warn("Project {} (id={}) does not have repo set up. Skipping indexing.", this.name, this.id)
