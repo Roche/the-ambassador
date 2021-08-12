@@ -3,7 +3,8 @@ package pl.filipowm.opensource.ambassador.gitlab
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.gitlab4j.api.GitLabApi
-import org.slf4j.LoggerFactory
+import pl.filipowm.opensource.ambassador.exceptions.Exceptions
+import pl.filipowm.opensource.ambassador.extensions.LoggerDelegate
 import pl.filipowm.opensource.ambassador.model.Project
 import pl.filipowm.opensource.ambassador.model.ProjectFilter
 import pl.filipowm.opensource.ambassador.model.ProjectMapper
@@ -16,12 +17,16 @@ class GitLabSourceRepository(
     private val gitLabProjectMapper: GitLabProjectMapper
 ) : SourceProjectRepository<GitLabProject> {
 
-    private val log = LoggerFactory.getLogger(GitLabSourceRepository::class.java)
+    companion object {
+        private val log by LoggerDelegate()
+    }
 
     override suspend fun getById(id: String): Optional<Project> {
-        return gitlabApi.projectApi
+        log.info("Reading project {}", id)
+        val prj = gitlabApi.projectApi
             .getOptionalProject(id, true, true, true)
-            .map(gitLabProjectMapper::mapGitLabProjectToOpenSourceProject)
+            .orElseThrow { Exceptions.NotFoundException("Project with ID $id not found") }
+        return Optional.ofNullable(gitLabProjectMapper.mapGitLabProjectToOpenSourceProject(prj))
     }
 
     override suspend fun getByPath(path: String): Optional<Project> {
@@ -36,7 +41,6 @@ class GitLabSourceRepository(
         if (filter.visibility != null) {
             glFilter.withVisibility(VisibilityMapper.fromAmbassador(filter.visibility!!))
         }
-
         return flow {
             val pager = gitlabApi.projectApi.getProjects(glFilter, 50)
             while (pager.hasNext()) {
