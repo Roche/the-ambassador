@@ -1,8 +1,11 @@
 package com.filipowm.ambassador.model
 
-class ProjectFilter private constructor(
+import java.time.LocalDateTime
+
+data class ProjectFilter constructor(
     val visibility: Visibility?,
-    val archived: Boolean?
+    val archived: Boolean?,
+    val lastActivityAfter: LocalDateTime?
 ) {
 
     data class Builder(
@@ -15,7 +18,7 @@ class ProjectFilter private constructor(
         fun internal() = this.visibility(Visibility.INTERNAL)
         fun public() = this.visibility(Visibility.PUBLIC)
         fun archived(archived: Boolean? = true) = apply { this.archived = archived }
-        fun build() = ProjectFilter(visibility, archived)
+        fun build() = ProjectFilter(visibility, archived, null)
     }
 
     companion object {

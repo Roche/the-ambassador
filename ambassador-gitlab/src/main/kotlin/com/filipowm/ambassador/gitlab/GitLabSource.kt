@@ -40,7 +40,8 @@ class GitLabSource(
             withStatistics = true,
             withCustomAttributes = false,
             archived = filter.archived,
-            visibility = visibility
+            visibility = visibility,
+            lastActivityAfter = filter.lastActivityAfter
         )
         return channelFlow {
             val pager = gitlab.projects().paging(query, Pagination(itemsPerPage = 50))

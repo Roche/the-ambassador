@@ -5,6 +5,7 @@ import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.Project
 import com.filipowm.ambassador.model.ProjectFilter
+import com.filipowm.ambassador.model.Visibility
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.storage.ProjectEntity
 import com.filipowm.ambassador.storage.ProjectEntityRepository
@@ -52,10 +53,11 @@ internal class CoreProjectIndexer(
         onProjectIndexingError: ProjectIndexingErrorCallback,
         onProjectIndexingFinished: ProjectIndexingFinishedCallback
     ) {
-        val filter = ProjectFilter.internal()
+        val lastActivityAfterHalfYear = LocalDateTime.now().minusDays(183)
+        val filter = ProjectFilter(Visibility.INTERNAL, false, lastActivityAfterHalfYear)
         producerScope.launch {
             supervisorScope {
-                log.info("Indexing started on {}", source.getName())
+                log.info("Indexing started on {} with source filter {}", source.getName(), filter)
                 onStarted()
                 source.flow(filter)
                     .buffer(1000)
@@ -123,7 +125,8 @@ internal class CoreProjectIndexer(
     private fun tryFinish(onFinished: IndexingFinishedCallback) {
         if (projectToIndexCount.get() == 0
             && sourceFinishedProducing.get()
-            && finished.compareAndSet(false, true)) {
+            && finished.compareAndSet(false, true)
+        ) {
             onFinished()
             log.info("Indexing of projects has finished")
         }

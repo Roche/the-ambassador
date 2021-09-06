@@ -3,7 +3,7 @@ package com.filipowm.gitlab.api.project
 import com.filipowm.gitlab.api.model.AccessLevelName
 import com.filipowm.gitlab.api.model.Visibility
 import com.filipowm.gitlab.api.utils.QueryParam
-import java.util.*
+import java.time.LocalDateTime
 
 data class ProjectListQuery(
     @QueryParam val archived: Boolean? = null,
@@ -24,8 +24,8 @@ data class ProjectListQuery(
     @QueryParam("min_access_level") val minAccessLevel: AccessLevelName? = null,
     @QueryParam("id_after") val idAfter: Int? = null,
     @QueryParam("id_before") val idBefore: Int? = null,
-    @QueryParam("last_activity_after") val lastActivityAfter: Date? = null,
-    @QueryParam("last_activity_before") val lastActivityBefore: Date? = null,
+    @QueryParam("last_activity_after") val lastActivityAfter: LocalDateTime? = null,
+    @QueryParam("last_activity_before") val lastActivityBefore: LocalDateTime? = null,
     @QueryParam("repository_storage") val repositoryStorage: String? = null,
     @QueryParam val topic: String? = null,
 )
