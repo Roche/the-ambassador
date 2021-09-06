@@ -5,6 +5,7 @@ import com.filipowm.ambassador.configuration.source.ProjectSources
 import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.Project
+import com.filipowm.ambassador.model.source.ProjectDetailsResolver
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.storage.ProjectEntityRepository
 import org.springframework.stereotype.Component
@@ -36,6 +37,22 @@ internal class ProjectIndexingService(
         }
     }
 
+    private fun handleExcludedProject(
+        projectDetailsResolver: ProjectDetailsResolver<Any>,
+        stats: Statistics,
+        failedCriteria: List<IndexingCriterion<Any>>,
+        project: Any
+    ) {
+        val failedCriteriaString = failedCriteria.joinToString(", ") { it.name }
+        log.warn(
+            "Project '{}' (id={}) is excluded from indexing because not meet criteria: {}",
+            projectDetailsResolver.resolveName(project),
+            projectDetailsResolver.resolveId(project),
+            failedCriteriaString
+        )
+        stats.recordExclusion(failedCriteria)
+    }
+
     suspend fun reindex() {
         log.info("Starting indexing all projects within source repository")
         if (indexingLock.tryLock()) {
@@ -47,6 +64,7 @@ internal class ProjectIndexingService(
                 onProjectIndexingStarted = { stats.recordStarted() },
                 onProjectIndexingFinished = { stats.recordFinished() },
                 onProjectIndexingError = { t, _ -> stats.recordError(t) },
+                onProjectExcludedByCriteria = { criteria, project -> handleExcludedProject(indexer.getSource(), stats, criteria, project) },
                 onFinished = {
                     currentIndexerUsed = null
                     indexingLock.unlock()

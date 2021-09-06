@@ -8,21 +8,32 @@ internal class Statistics {
 
     private val started = AtomicLong()
     private val finished = AtomicLong()
+    private val exclusionsCount = AtomicLong()
+    private val exclusions = ConcurrentHashMap<String, AtomicLong>()
     private val errors = ConcurrentHashMap<String, AtomicLong>()
     private val timer = Timer()
 
     fun recordStarted() = started.incrementAndGet()
     fun recordFinished() = finished.incrementAndGet()
     fun recordError(t: Throwable) = errors.computeIfAbsent(t.javaClass.simpleName) { AtomicLong() }.incrementAndGet()
+    fun recordExclusion(failedCriteria: List<IndexingCriterion<Any>>) {
+        exclusionsCount.incrementAndGet()
+        failedCriteria
+            .map { it.name }
+            .forEach { exclusions.computeIfAbsent(it) { AtomicLong() }.incrementAndGet() }
+    }
 
     fun getProjectsStarted() = started.get()
     fun getProjectsIndexed() = finished.get()
     fun getDuration() = timer.getDuration()
-    fun getTotalErrors(): Long {
-        if (errors.isEmpty()) {
+    fun getTotalErrors(): Long = getTotalFromAggregate(errors)
+    fun getTotalExclusions(): Long = exclusionsCount.get()
+
+    private fun getTotalFromAggregate(aggregate: Map<*, AtomicLong>): Long {
+        if (aggregate.isEmpty()) {
             return 0L
         }
-        return errors.values
+        return aggregate.values
             .map { it.get() }
             .reduce { acc, value -> acc + value }
     }
@@ -34,9 +45,13 @@ internal class Statistics {
         val sb = StringBuilder()
         sb.appendLine("Total projects: ${getProjectsStarted()}")
         sb.appendLine("Indexed projects: ${getProjectsIndexed()}")
+        sb.appendLine("Excluded projects: ${getTotalExclusions()}")
         sb.appendLine("Total errors: ${getTotalErrors()}")
         sb.appendLine("Total indexing time: ${getDuration().humanReadableFormat()}")
         sb.appendLine("Avg time per project: ${timer.getDurationAsMillis() / getProjectsIndexed()}ms")
+        if (getTotalExclusions() > 0)
+            sb.appendLine("Most occurring exclusions:")
+            exclusions.forEach { (exclusion, count) -> sb.appendLine("  - ${exclusion}: ${count.get()}") }
         if (getTotalErrors() > 0) {
             sb.appendLine("Most occurring errors:")
             errors.forEach { (error, count) -> sb.appendLine("  - ${error}: ${count.get()}") }

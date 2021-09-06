@@ -4,7 +4,7 @@ import java.util.function.Predicate
 
 interface Criterion<T>: Predicate<T> {
 
-    fun getFailureMessage(input: T): String = "Evaluation of ${this.javaClass.simpleName} criteria failed"
+    fun getFailureMessage(input: T): String = "Evaluation of ${this.javaClass.simpleName} criterion failed"
     fun evaluate(input: T): Boolean
 
     override fun test(p0: T): Boolean = evaluate(p0)

@@ -48,6 +48,7 @@ internal class CoreProjectIndexer(
         onFinished: IndexingFinishedCallback,
         onError: IndexingErrorCallback,
         onProjectIndexingStarted: ProjectIndexingStartedCallback,
+        onProjectExcludedByCriteria: ProjectExcludedByCriteriaCallback,
         onProjectIndexingError: ProjectIndexingErrorCallback,
         onProjectIndexingFinished: ProjectIndexingFinishedCallback
     ) {
@@ -59,7 +60,14 @@ internal class CoreProjectIndexer(
                 source.flow(filter)
                     .buffer(1000)
                     .filter { it.isProjectWithinIndexingPeriod() }
-                    .filter { indexingCriteria.evaluate(it) }
+                    .onEach { onProjectIndexingStarted(it) }
+                    .filter {
+                        val result = indexingCriteria.evaluate(it)
+                        if (result.failure) {
+                            onProjectExcludedByCriteria(result.failedCriteria, it)
+                        }
+                        result.success
+                    }
                     .onEach { projectToIndexCount.incrementAndGet() }
                     .onCompletion {
                         log.info("Finished producing projects to index from source")
@@ -77,7 +85,6 @@ internal class CoreProjectIndexer(
                             val name = source.resolveName(it)
                             val id = source.resolveId(it)
                             try {
-                                onProjectIndexingStarted(it)
                                 log.info("Indexing project '{}' (id={})", name, id)
                                 val projectToSave = Optional.ofNullable(source.map(it))
                                 if (projectToSave.isPresent) {
@@ -105,6 +112,8 @@ internal class CoreProjectIndexer(
         producerScope.cancel("Forcibly cancelled producer")
         consumerScope.cancel("Forcibly cancelled consumer")
     }
+
+    override fun getSource(): ProjectSource<Any> = source
 
     private fun tryFinish(onFinished: IndexingFinishedCallback) {
         if (projectToIndexCount.get() == 0
