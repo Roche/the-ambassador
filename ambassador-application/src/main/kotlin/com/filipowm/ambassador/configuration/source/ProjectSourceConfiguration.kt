@@ -1,10 +1,10 @@
 package com.filipowm.ambassador.configuration.source
 
-import com.filipowm.ambassador.configuration.source.ProjectSourceProperties.System.GITLAB
+import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties.System.GITLAB
 import com.filipowm.ambassador.document.TextAnalyzingService
 import com.filipowm.ambassador.exceptions.AmbassadorException
 import com.filipowm.ambassador.gitlab.GitLabProjectMapper
-import com.filipowm.ambassador.gitlab.GitLabSourceRepository
+import com.filipowm.ambassador.gitlab.GitLabSource
 import com.filipowm.gitlab.api.GitLab
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,24 +13,27 @@ import org.springframework.context.annotation.Configuration
 open class ProjectSourceConfiguration {
 
     @Bean
-    open fun projectSourceRepository(
-        projectSourceProperties: ProjectSourceProperties,
+    open fun sources(
+        projectSourcesProperties: ProjectSourcesProperties,
         textAnalyzingService: TextAnalyzingService
-    ): GitLabSourceRepository = when (projectSourceProperties.system) {
-        GITLAB -> configureGitLab(projectSourceProperties, textAnalyzingService)
-        else -> throw AmbassadorException("Unsupported source system: ${projectSourceProperties.system}")
+    ): ProjectSources {
+        val source = when (projectSourcesProperties.system) {
+            GITLAB -> configureGitLab(projectSourcesProperties, textAnalyzingService)
+            else -> throw AmbassadorException("Unsupported source system: ${projectSourcesProperties.system}")
+        }
+        return ProjectSources(mapOf(projectSourcesProperties.name to source))
     }
 
     private fun configureGitLab(
-        projectSourceProperties: ProjectSourceProperties,
+        projectSourcesProperties: ProjectSourcesProperties,
         textAnalyzingService: TextAnalyzingService
-    ): GitLabSourceRepository {
+    ): GitLabSource {
 
         val gitlabApi = GitLab.builder()
-            .authenticated().withPersonalAccessToken(projectSourceProperties.token)
-            .url(projectSourceProperties.url)
+            .authenticated().withPersonalAccessToken(projectSourcesProperties.token)
+            .url(projectSourcesProperties.url)
             .build()
         val gitlabMapper = GitLabProjectMapper(gitlabApi, textAnalyzingService)
-        return GitLabSourceRepository(gitlabApi, gitlabMapper)
+        return GitLabSource(gitlabApi, gitlabMapper)
     }
 }

@@ -4,8 +4,7 @@ import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.Project
 import com.filipowm.ambassador.model.ProjectFilter
-import com.filipowm.ambassador.model.ProjectMapper
-import com.filipowm.ambassador.model.SourceProjectRepository
+import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.gitlab.api.GitLab
 import com.filipowm.gitlab.api.project.ProjectListQuery
 import com.filipowm.gitlab.api.project.ProjectQuery
@@ -15,10 +14,10 @@ import kotlinx.coroutines.flow.channelFlow
 import java.util.*
 import com.filipowm.gitlab.api.project.model.Project as GitLabProject
 
-class GitLabSourceRepository(
+class GitLabSource(
     private val gitlab: GitLab,
     private val gitLabProjectMapper: GitLabProjectMapper
-) : SourceProjectRepository<GitLabProject> {
+) : ProjectSource<GitLabProject> {
 
     companion object {
         private val log by LoggerDelegate()
@@ -31,10 +30,6 @@ class GitLabSourceRepository(
             .get(ProjectQuery(true, true, true))
             .orElseThrow { Exceptions.NotFoundException("Project with ID $id not found") }
         return Optional.ofNullable(gitLabProjectMapper.mapGitLabProjectToOpenSourceProject(prj))
-    }
-
-    override suspend fun getByPath(path: String): Optional<Project> {
-        return getById(path)
     }
 
     override suspend fun flow(filter: ProjectFilter): Flow<GitLabProject> {
@@ -56,5 +51,11 @@ class GitLabSourceRepository(
         }
     }
 
-    override fun mapper(): ProjectMapper<GitLabProject> = gitLabProjectMapper::mapGitLabProjectToOpenSourceProject
+    override fun getName() = "GitLab"
+
+    override suspend fun map(input: GitLabProject) = gitLabProjectMapper.mapGitLabProjectToOpenSourceProject(input)
+
+//    override fun getInvalidProjectCriterions(): InvalidProjectCriterions<GitLabProject> = GitLabInvalidProjectCriterions
+    override fun resolveName(project: GitLabProject): String = project.nameWithNamespace!!
+    override fun resolveId(project: GitLabProject): String = project.id!!.toString()
 }

@@ -1,10 +1,10 @@
 package com.filipowm.ambassador.configuration
 
 import com.filipowm.ambassador.configuration.concurrent.ConcurrencyProperties
-import com.filipowm.ambassador.configuration.source.ProjectSourceProperties
+import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@EnableConfigurationProperties(ConcurrencyProperties::class, ProjectSourceProperties::class)
+@EnableConfigurationProperties(ConcurrencyProperties::class, ProjectSourcesProperties::class)
 open class ConfigurationPropertiesDiscovery

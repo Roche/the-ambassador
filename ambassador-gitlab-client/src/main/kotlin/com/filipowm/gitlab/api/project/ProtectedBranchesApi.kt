@@ -1,6 +1,7 @@
 package com.filipowm.gitlab.api.project
 
 import com.filipowm.gitlab.api.Api
+import com.filipowm.gitlab.api.project.model.ProtectedBranch
 import io.ktor.client.*
 import java.util.*
 import java.util.stream.Stream
