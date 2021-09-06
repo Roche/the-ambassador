@@ -5,7 +5,6 @@ import com.filipowm.ambassador.configuration.source.ProjectSources
 import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.Project
-import com.filipowm.ambassador.model.criteria.IndexingCriteria
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.storage.ProjectEntityRepository
 import org.springframework.stereotype.Component
@@ -69,14 +68,15 @@ internal class ProjectIndexingService(
 
     private fun createIndexer(): ProjectIndexer {
         val source = sources.get("gitlab").get() as ProjectSource<Any>
+        val criteria = IndexingCriteria.forProvider(source, source)
         val indexer = CoreProjectIndexer(
             source,
             projectEntityRepository,
             concurrencyProvider,
             projectSourceProperties.indexEvery,
-            IndexingCriteria(source.getInvalidProjectCriterions().hasRepositorySetUp())
+            criteria
         )
-        log.info("Using '{}' for indexing projects", indexer.javaClass.canonicalName)
+        log.info("Using '{}' with criteria: '{}' for indexing projects", indexer.javaClass.canonicalName, criteria.getAllCriteriaNames())
         return indexer
     }
 }

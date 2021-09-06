@@ -5,7 +5,6 @@ import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.Project
 import com.filipowm.ambassador.model.ProjectFilter
-import com.filipowm.ambassador.model.criteria.IndexingCriteria
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.storage.ProjectEntity
 import com.filipowm.ambassador.storage.ProjectEntityRepository
