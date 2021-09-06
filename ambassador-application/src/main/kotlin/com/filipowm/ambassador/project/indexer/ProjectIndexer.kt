@@ -88,7 +88,7 @@ internal open class ProjectIndexer(
         val shouldBeIndexed = projectEntityRepository.findById(gitlabProject.id!!.toLong())
             .filter { it.wasIndexedBefore(LocalDateTime.now().minus(projectSourceProperties.indexEvery)) }
             .isEmpty
-        if (shouldBeIndexed) {
+        if (!shouldBeIndexed) {
             log.info("Project '{}' (id={}) was indexed recently and does not need to be reindex now. Skipping...", gitlabProject.nameWithNamespace, gitlabProject.id)
         }
         return shouldBeIndexed
@@ -106,7 +106,7 @@ internal open class ProjectIndexer(
     private fun GitLabProject.hasRepositorySetUp(): Boolean {
         val hasRepo = this.defaultBranch != null
         if (!hasRepo) {
-            log.warn("Project {} (id={}) does not have repo set up. Skipping indexing.", this.name, this.id)
+            log.warn("Project '{}' (id={}) does not have repo set up. Skipping indexing.", this.nameWithNamespace, this.id)
         }
         return hasRepo
     }
