@@ -1,7 +1,7 @@
 package com.filipowm.gitlab.api.utils
 
+import com.filipowm.gitlab.api.client.GitLabHttpClient
 import com.filipowm.gitlab.api.exceptions.Exceptions
-import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -58,10 +58,10 @@ suspend inline fun <reified T> HttpResponse.receiveWithExpandedErasure(): T {
     return call.receive(reworkedType) as T
 }
 
-suspend inline fun <reified T> HttpClient.getPage(
+suspend inline fun <reified T> GitLabHttpClient.getPage(
     path: String,
     pagination: Pagination,
-    block: HttpRequestBuilder.() -> Unit = {}
+    noinline block: HttpRequestBuilder.() -> Unit = {}
 ): Page<T> {
     val response: HttpResponse = this.get(path = path) {
         block.invoke(this)
@@ -72,9 +72,9 @@ suspend inline fun <reified T> HttpClient.getPage(
     return Page(content, pageInfo)
 }
 
-suspend inline fun <reified T> HttpClient.getList(
+suspend inline fun <reified T> GitLabHttpClient.getList(
     path: String,
-    block: HttpRequestBuilder.() -> Unit = {}
+    noinline block: HttpRequestBuilder.() -> Unit = {}
 ): List<T> {
     val response: HttpResponse = this.get(path = path) {
         block.invoke(this)
@@ -82,7 +82,7 @@ suspend inline fun <reified T> HttpClient.getList(
     return response.receiveWithExpandedErasure()
 }
 
-suspend inline fun <reified T> HttpClient.optionally(action: HttpClient.() -> T): Optional<T> {
+suspend inline fun <reified T> GitLabHttpClient.optionally(action: suspend GitLabHttpClient.() -> T): Optional<T> {
     return try {
         Optional.ofNullable(action.invoke(this))
     } catch (ex: ClientRequestException) {

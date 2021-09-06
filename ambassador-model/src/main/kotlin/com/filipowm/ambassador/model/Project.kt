@@ -43,7 +43,7 @@ data class Project(
             this.scores = Scores(
                 activity = activityScore,
                 criticality = criticalityScore,
-                total = criticalityScore * activityScore.round(2)
+                total = (criticalityScore * activityScore).round(2)
             )
         }
         return scores as Scores

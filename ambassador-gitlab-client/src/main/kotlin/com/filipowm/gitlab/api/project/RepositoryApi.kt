@@ -1,12 +1,12 @@
 package com.filipowm.gitlab.api.project
 
 import com.filipowm.gitlab.api.Api
+import com.filipowm.gitlab.api.client.GitLabHttpClient
 import com.filipowm.gitlab.api.project.model.Contributor
 import com.filipowm.gitlab.api.utils.Sort
-import io.ktor.client.*
 import java.util.stream.Stream
 
-class RepositoryApi(basePath: String, client: HttpClient) : Api(basePath, client) {
+class RepositoryApi(basePath: String, client: GitLabHttpClient) : Api(basePath, client) {
 
     suspend fun getContributors(sort: Sort = Sort.none()): List<Contributor> {
         return doGetList(path = "contributors", sort)

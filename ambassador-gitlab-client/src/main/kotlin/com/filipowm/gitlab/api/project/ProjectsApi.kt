@@ -1,14 +1,14 @@
 package com.filipowm.gitlab.api.project
 
 import com.filipowm.gitlab.api.Api
+import com.filipowm.gitlab.api.client.GitLabHttpClient
 import com.filipowm.gitlab.api.project.model.Project
 import com.filipowm.gitlab.api.utils.Page
 import com.filipowm.gitlab.api.utils.PageProvider
 import com.filipowm.gitlab.api.utils.Pager
 import com.filipowm.gitlab.api.utils.Pagination
-import io.ktor.client.*
 
-class ProjectsApi(basePath: String, httpClient: HttpClient) : Api(basePath, httpClient) {
+class ProjectsApi(basePath: String, httpClient: GitLabHttpClient) : Api(basePath, httpClient) {
 
     suspend fun create(project: Project): Project {
         return doPost(body = project)

@@ -12,8 +12,15 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.filipowm.gitlab.api.auth.AnonyomusAuthProvider
 import com.filipowm.gitlab.api.auth.PrivateTokenAuthProvider
+import com.filipowm.gitlab.api.client.GitLabHttpClient
+import com.filipowm.gitlab.api.client.RetryIntervalProvider
 import com.filipowm.gitlab.api.exceptions.ExceptionHandler
+import com.filipowm.gitlab.api.exceptions.Exceptions
 import com.filipowm.gitlab.api.utils.jackson.GitLabModule
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException
+import io.github.resilience4j.core.IntervalFunction
+import io.github.resilience4j.retry.RetryConfig
+import io.github.resilience4j.retry.RetryRegistry
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
@@ -22,8 +29,17 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.network.sockets.ConnectTimeoutException
+import org.slf4j.LoggerFactory
+import java.io.IOException
+import java.time.Duration
+import java.util.concurrent.TimeoutException
 
 class GitLabApiBuilder internal constructor() {
+
+    companion object {
+        private val log = LoggerFactory.getLogger(GitLab::class.java)
+    }
 
     private var authProvider: AuthProvider = AnonyomusAuthProvider
     private var url: String = "https://gitlab.com"
@@ -31,9 +47,24 @@ class GitLabApiBuilder internal constructor() {
     private var httpClientBuilder: HttpClientBuilder =
         HttpClientBuilder(this)
 
+    private val retryConfigBuilder = RetryConfig.custom<Any>()
+        .retryExceptions(
+            HttpRequestTimeoutException::class.java,
+            TimeoutException::class.java, ConnectTimeoutException::class.java,
+            Exceptions.RequestTimeoutException::class.java,
+            Exceptions.RateLimitReachedException::class.java,
+            Exceptions.ServerErrorException::class.java,
+            CallNotPermittedException::class.java,
+            IOException::class.java
+        )
+
     fun url(url: String): GitLabApiBuilder {
         this.url = url
         return this
+    }
+
+    fun retry(): RetryBuilder {
+        return RetryBuilder(this)
     }
 
     fun apiVersion(apiVersion: GitLab.ApiVersion): GitLabApiBuilder {
@@ -50,8 +81,9 @@ class GitLabApiBuilder internal constructor() {
     }
 
     fun build(): GitLab {
-        val httpClient = httpClientBuilder.build()
-        return GitLabApi("/api/v4", httpClient)
+        val retryRegistry = RetryRegistry.of(retryConfigBuilder.build())
+        val gitLabHttpClient = GitLabHttpClient(httpClientBuilder.build(), retryRegistry.retry("gitlab"))
+        return GitLabApi("/api/v4", gitLabHttpClient)
     }
 
     class LoggingBuilder internal constructor(private val httpClientBuilder: HttpClientBuilder) {
@@ -79,6 +111,41 @@ class GitLabApiBuilder internal constructor() {
 
         fun all(): HttpClientBuilder {
             return logLevel(LogLevel.ALL)
+        }
+    }
+
+    class CircuitBreakerBuilder internal constructor(private val gitLabApiBuilder: GitLabApiBuilder) {
+        fun build(): GitLabApiBuilder {
+            return gitLabApiBuilder
+        }
+    }
+
+    class RetryBuilder internal constructor(private val gitLabApiBuilder: GitLabApiBuilder) {
+        private var intervalFunctionSupplier: (Duration) -> IntervalFunction = { IntervalFunction.ofExponentialBackoff(it, 2.5, Duration.ofSeconds(60)) }
+        private var initialInterval = Duration.ofSeconds(5)
+        private var maxAttempts = 5
+
+        fun maxAttempts(maxAttempts: Int): RetryBuilder {
+            this.maxAttempts = maxAttempts
+            return this
+        }
+
+        fun exponentialBackoff(multiplier: Double, maxInterval: Duration): RetryBuilder {
+            this.intervalFunctionSupplier = { IntervalFunction.ofExponentialBackoff(it, multiplier, maxInterval)}
+            return this
+        }
+
+        fun linear(): RetryBuilder {
+            this.intervalFunctionSupplier = { IntervalFunction.of(it) }
+            return this
+        }
+
+        fun build(): GitLabApiBuilder {
+            val intervalProvider = RetryIntervalProvider(initialInterval, intervalFunctionSupplier)
+            gitLabApiBuilder.retryConfigBuilder
+                .intervalBiFunction(intervalProvider)
+                .maxAttempts(maxAttempts)
+            return gitLabApiBuilder
         }
     }
 

@@ -3,6 +3,7 @@ package com.filipowm.ambassador.project
 import com.filipowm.ambassador.model.Project
 import com.filipowm.ambassador.model.Visibility
 import java.time.LocalDate
+import kotlin.math.min
 
 data class SimpleProjectDto(
     val id: Long,
@@ -17,7 +18,8 @@ data class SimpleProjectDto(
     val mainLanguage: String?,
     val criticalityScore: Double,
     val activityScore: Int,
-    val stars: Int
+    val stars: Int,
+    val score: Double
 ) {
 
     companion object {
@@ -27,7 +29,7 @@ data class SimpleProjectDto(
                 url = project.url!!,
                 avatarUrl = project.avatarUrl,
                 name = project.name,
-                description = project.description,
+                description = project.description?.substring(0, min(project.description!!.length, 300)),
                 tags = project.tags,
                 visibility = project.visibility,
                 createdDate = project.createdDate,
@@ -35,7 +37,8 @@ data class SimpleProjectDto(
                 mainLanguage = project.getMainLanguage(),
                 criticalityScore = project.getScores().criticality,
                 activityScore = project.getScores().activity.toInt(),
-                stars = project.stats.stars
+                stars = project.stats.stars,
+                score = project.getScores().total
             )
         }
     }

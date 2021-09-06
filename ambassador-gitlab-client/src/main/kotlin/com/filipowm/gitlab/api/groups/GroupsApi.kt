@@ -1,7 +1,6 @@
 package com.filipowm.gitlab.api.groups
 
 import com.filipowm.gitlab.api.Api
-import io.ktor.client.*
+import com.filipowm.gitlab.api.client.GitLabHttpClient
 
-class GroupsApi(basePath: String, client: HttpClient) : Api(basePath, client) {
-}
+class GroupsApi(basePath: String, client: GitLabHttpClient) : Api(basePath, client)

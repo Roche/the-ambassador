@@ -8,6 +8,7 @@ import com.filipowm.ambassador.gitlab.GitLabSource
 import com.filipowm.gitlab.api.GitLab
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.time.Duration
 
 @Configuration
 open class ProjectSourceConfiguration {
@@ -30,6 +31,10 @@ open class ProjectSourceConfiguration {
     ): GitLabSource {
 
         val gitlabApi = GitLab.builder()
+            .retry()
+                .maxAttempts(10)
+                .exponentialBackoff(2.0, Duration.ofMinutes(5))
+                .build()
             .authenticated().withPersonalAccessToken(projectSourcesProperties.token)
             .url(projectSourcesProperties.url)
             .build()

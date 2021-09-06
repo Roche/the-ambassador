@@ -14,7 +14,7 @@ data class ProjectListQuery(
     @QueryParam val owned: Boolean? = null,
     @QueryParam val membership: Boolean? = null,
     @QueryParam val starred: Boolean? = null,
-    @QueryParam("with_statistics") val withStatistics: Boolean? = null,
+    @QueryParam("statistics") val withStatistics: Boolean? = null,
     @QueryParam("with_custom_attributes") val withCustomAttributes: Boolean? = null,
     @QueryParam("with_issues_enabled") val withIssuesEnabled: Boolean? = null,
     @QueryParam("with_merge_requests_enabled") val withMergeRequestsEnabled: Boolean? = null,

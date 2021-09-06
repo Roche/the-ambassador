@@ -1,6 +1,7 @@
 package com.filipowm.gitlab.api.utils
 
 import kotlinx.coroutines.channels.ChannelIterator
+import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 class Pager<T>(
@@ -22,6 +23,15 @@ class Pager<T>(
         return this
     }
 
+    suspend fun get(): List<T> {
+        val page = if (hasNext()) {
+            Optional.ofNullable(next())
+        } else {
+            Optional.empty()
+        }
+        return page.map { it.content }.orElseGet { listOf() }
+    }
+
     override suspend fun hasNext(): Boolean {
         // FIXME: do not block, rather delegate coroutine scope here!
         val currentPagination = nextPagination.getAndSet(null)
@@ -35,9 +45,11 @@ class Pager<T>(
             } else {
                 nextPagination.set(null)
             }
+        } else {
+            currentPageData.set(null)
         }
 
-        return nextPagination.get() != null
+        return currentPageData.get() != null
     }
 
     override fun next(): Page<T> {

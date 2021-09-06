@@ -2,11 +2,11 @@ package com.filipowm.gitlab.api.project
 
 import com.filipowm.gitlab.api.Api
 import com.filipowm.gitlab.api.IssueStatisticsApi
+import com.filipowm.gitlab.api.client.GitLabHttpClient
 import com.filipowm.gitlab.api.project.model.Project
-import io.ktor.client.*
 import java.util.*
 
-class ProjectApi internal constructor(basePath: String, client: HttpClient) : Api(basePath, client) {
+class ProjectApi internal constructor(basePath: String, client: GitLabHttpClient) : Api(basePath, client) {
 
     suspend fun get(
         withLicense: Boolean = false,
