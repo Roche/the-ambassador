@@ -47,8 +47,12 @@ data class Project(
     override val defaultBranch: String? = null,
     @JsonProperty("description")
     override val description: String? = null,
+    @JsonProperty("empty_repo")
+    val emptyRepo: Boolean? = null,
     @JsonProperty("external_authorization_classification_label")
     val externalAuthorizationClassificationLabel: Any? = null,
+    @JsonProperty("forking_access_level")
+    val forkingAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("forks_count")
     override val forksCount: Int? = null,
     @JsonProperty("http_url_to_repo")
@@ -81,6 +85,8 @@ data class Project(
     val mergeMethod: String? = null,
     @JsonProperty("merge_requests_enabled")
     val mergeRequestsEnabled: Boolean? = null,
+    @JsonProperty("merge_requests_access_level")
+    val mergeRequestsAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("mirror")
     val mirror: Boolean? = null,
     @JsonProperty("mirror_overwrites_diverged_branches")
