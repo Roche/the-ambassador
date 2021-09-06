@@ -46,10 +46,10 @@ class GitLabSourceRepository(
             visibility = visibility
         )
         return channelFlow {
-            val pager = gitlab.projects().paging(query, Pagination(itemsPerPage = 10))
+            val pager = gitlab.projects().paging(query, Pagination(itemsPerPage = 50))
             for (page in pager) {
                 for (project in page) {
-                    log.warn("Publishing project {}", project.id)
+                    log.debug("Publishing project {}", project.id)
                     send(project)
                 }
             }
@@ -57,7 +57,4 @@ class GitLabSourceRepository(
     }
 
     override fun mapper(): ProjectMapper<GitLabProject> = gitLabProjectMapper::mapGitLabProjectToOpenSourceProject
-
 }
-
-
