@@ -1,6 +1,7 @@
 package com.filipowm.gitlab.api.project.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.filipowm.gitlab.api.model.Visibility
 import com.filipowm.gitlab.api.utils.Dates
@@ -20,7 +21,7 @@ data class Project(
     @JsonProperty("autoclose_referenced_issues")
     val autocloseReferencedIssues: Boolean? = null,
     @JsonProperty("avatar_url")
-    val avatarUrl: String? = null,
+    override val avatarUrl: String? = null,
     @JsonProperty("can_create_merge_request_in")
     val canCreateMergeRequestIn: Boolean? = null,
     @JsonProperty("ci_default_git_depth")
@@ -39,21 +40,21 @@ data class Project(
     val containerRegistryImagePrefix: String? = null,
     @JsonProperty("created_at")
     @JsonFormat(pattern = Dates.ISO_DATE_TIME_FORMAT)
-    val createdAt: LocalDateTime? = null,
+    override val createdAt: LocalDateTime? = null,
     @JsonProperty("creator_id")
     val creatorId: Int? = null,
     @JsonProperty("default_branch")
-    val defaultBranch: String? = null,
+    override val defaultBranch: String? = null,
     @JsonProperty("description")
-    val description: String? = null,
+    override val description: String? = null,
     @JsonProperty("external_authorization_classification_label")
     val externalAuthorizationClassificationLabel: Any? = null,
     @JsonProperty("forks_count")
-    val forksCount: Int? = null,
+    override val forksCount: Int? = null,
     @JsonProperty("http_url_to_repo")
-    val httpUrlToRepo: String? = null,
+    override val httpUrlToRepo: String? = null,
     @JsonProperty("id")
-    val id: Int? = null,
+    override val id: Int? = null,
     @JsonProperty("import_error")
     val importError: Any? = null,
     @JsonProperty("import_status")
@@ -66,7 +67,7 @@ data class Project(
     val lfsEnabled: Boolean? = null,
     @JsonProperty("last_activity_at")
     @JsonFormat(pattern = Dates.ISO_DATE_TIME_FORMAT)
-    val lastActivityAt: LocalDateTime? = null,
+    override val lastActivityAt: LocalDateTime? = null,
     @JsonProperty("license")
     val license: License? = null,
     @JsonProperty("license_url")
@@ -89,11 +90,11 @@ data class Project(
     @JsonProperty("mirror_user_id")
     val mirrorUserId: Int? = null,
     @JsonProperty("name")
-    val name: String,
+    override val name: String,
     @JsonProperty("name_with_namespace")
-    val nameWithNamespace: String? = null,
+    override val nameWithNamespace: String? = null,
     @JsonProperty("namespace")
-    val namespace: Namespace? = null,
+    override val namespace: Namespace? = null,
     @JsonProperty("only_allow_merge_if_all_discussions_are_resolved")
     val onlyAllowMergeIfAllDiscussionsAreResolved: Boolean? = null,
     @JsonProperty("only_allow_merge_if_pipeline_succeeds")
@@ -107,9 +108,9 @@ data class Project(
     @JsonProperty("packages_enabled")
     val packagesEnabled: Boolean? = null,
     @JsonProperty("path")
-    val path: String,
+    override val path: String,
     @JsonProperty("path_with_namespace")
-    val pathWithNamespace: String? = null,
+    override val pathWithNamespace: String? = null,
     @JsonProperty("permissions")
     val permissions: Permissions? = null,
     @JsonProperty("printing_merge_requests_link_enabled")
@@ -117,7 +118,7 @@ data class Project(
     @JsonProperty("public_jobs")
     val publicJobs: Boolean? = null,
     @JsonProperty("readme_url")
-    val readmeUrl: String? = null,
+    override val readmeUrl: String? = null,
     @JsonProperty("remove_source_branch_after_merge")
     val removeSourceBranchAfterMerge: Boolean? = null,
     @JsonProperty("repository_storage")
@@ -143,29 +144,33 @@ data class Project(
     @JsonProperty("squash_option")
     val squashOption: String? = null,
     @JsonProperty("ssh_url_to_repo")
-    val sshUrlToRepo: String? = null,
+    override val sshUrlToRepo: String? = null,
     @JsonProperty("star_count")
-    val starCount: Int? = null,
+    override val starCount: Int? = null,
     @JsonProperty("statistics")
     val statistics: Statistics? = null,
     @JsonProperty("suggestion_commit_message")
     val suggestionCommitMessage: Any? = null,
     @JsonProperty("tag_list")
-    val tagList: List<String>? = null,
+    override val tagList: List<String>? = null,
     @JsonProperty("topics")
-    val topics: List<String>? = null,
+    override val topics: List<String>? = null,
     @JsonProperty("visibility")
     val visibility: Visibility? = null,
     @JsonProperty("web_url")
-    val webUrl: String? = null,
+    override val webUrl: String? = null,
     @JsonProperty("wiki_enabled")
-    val wikiEnabled: Boolean? = null
+    val wikiEnabled: Boolean? = null,
+    @JsonProperty("forked_from_project")
+    val forkedFrom: SimpleProject? = null,
+
+    ) : SimpleProject(
+    avatarUrl, createdAt, defaultBranch, description, forksCount, httpUrlToRepo, id, lastActivityAt, name, nameWithNamespace, namespace, path, pathWithNamespace, readmeUrl,
+    sshUrlToRepo, starCount, tagList, topics, webUrl
 ) {
 
-    @JsonProperty("namespace_id")
-    fun getNamespaceId(): Int? {
-        return namespace?.id
-    }
+    @JsonIgnore
+    fun isForked(): Boolean = forkedFrom != null
 
     companion object {
         fun forCreate(name: String, path: String, namespaceId: Int? = null, description: String? = null): Project {
