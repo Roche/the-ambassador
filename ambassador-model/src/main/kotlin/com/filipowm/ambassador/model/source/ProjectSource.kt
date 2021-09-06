@@ -18,4 +18,5 @@ interface ProjectSource<T>: Specification {
     fun resolveName(project: T): String
     fun resolveId(project: T): String
 
+    fun getInvalidProjectCriterions(): InvalidProjectCriterions<T>
 }

@@ -10,7 +10,8 @@ import javax.validation.constraints.NotNull
 @ConfigurationProperties("ambassador.source")
 @ConstructorBinding
 @Validated
-data class ProjectSourceProperties(
+data class ProjectSourcesProperties(
+    @NotBlank val name: String,
     @NotBlank val url: String,
     @NotBlank val token: String,
     @NotNull val system: System,

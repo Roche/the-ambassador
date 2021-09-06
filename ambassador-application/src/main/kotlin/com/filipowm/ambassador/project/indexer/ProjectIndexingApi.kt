@@ -21,4 +21,10 @@ internal open class ProjectIndexingApi(private val service: ProjectIndexingServi
     suspend fun reindexOne(@PathVariable @Min(1) id: Long): Project? {
         return service.reindex(id)
     }
+
+    @DeleteMapping
+    @GetMapping("/stop")
+    suspend fun forciblyStop() {
+        service.forciblyStop()
+    }
 }

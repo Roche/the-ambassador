@@ -4,6 +4,7 @@ import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.Project
 import com.filipowm.ambassador.model.ProjectFilter
+import com.filipowm.ambassador.model.source.InvalidProjectCriterions
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.gitlab.api.GitLab
 import com.filipowm.gitlab.api.project.ProjectListQuery
@@ -55,7 +56,7 @@ class GitLabSource(
 
     override suspend fun map(input: GitLabProject) = gitLabProjectMapper.mapGitLabProjectToOpenSourceProject(input)
 
-//    override fun getInvalidProjectCriterions(): InvalidProjectCriterions<GitLabProject> = GitLabInvalidProjectCriterions
+    override fun getInvalidProjectCriterions(): InvalidProjectCriterions<GitLabProject> = GitLabInvalidProjectCriterions
     override fun resolveName(project: GitLabProject): String = project.nameWithNamespace!!
     override fun resolveId(project: GitLabProject): String = project.id!!.toString()
 }
