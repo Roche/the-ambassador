@@ -1,4 +1,4 @@
-package pl.filipowm.opensource
+package com.filipowm
 
 class HelloTest {
 

@@ -1,4 +1,4 @@
-package pl.filipowm.opensource.ambassador.gradle.jooq
+package com.filipowm.ambassador.gradle.jooq
 
 import org.gradle.api.Action
 import org.gradle.api.Project

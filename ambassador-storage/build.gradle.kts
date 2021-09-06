@@ -1,8 +1,14 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
     id("kotlin-conventions")
     id("testing-conventions")
     id("spring-conventions")
     id("jooq-conventions")
+}
+
+tasks.getByName<BootJar>("bootJar") {
+    enabled = false
 }
 
 dependencies {
@@ -27,11 +33,12 @@ jooq {
             username = "postgres"
             password = "postgres"
             driver = "org.testcontainers.jdbc.ContainerDatabaseDriver"
-            url = "jdbc:tc:postgresql:13:///ambassador?TC_TMPFS=/testtmpfs:rw&amp;TC_INITFUNCTION=pl.filipowm.opensource.ambassador.gradle.utils.DatabaseInit::flyway"
+            url =
+                "jdbc:tc:postgresql:13:///ambassador?TC_TMPFS=/testtmpfs:rw&amp;TC_INITFUNCTION=com.filipowm.ambassador.gradle.utils.DatabaseInit::flyway"
         }
         generator {
             target {
-                packageName = "pl.filipowm.opensource.ambassador.storage.jooq"
+                packageName = "com.filipowm.ambassador.storage.jooq"
                 directory = "build/generated-src/jooq/main"
             }
             database {

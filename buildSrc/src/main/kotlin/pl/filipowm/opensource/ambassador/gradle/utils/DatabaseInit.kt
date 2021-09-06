@@ -1,4 +1,4 @@
-package pl.filipowm.opensource.ambassador.gradle.utils
+package com.filipowm.ambassador.gradle.utils
 
 import org.flywaydb.core.Flyway
 import org.jooq.tools.jdbc.SingleConnectionDataSource

@@ -1,0 +1,10 @@
+package com.filipowm.ambassador.configuration
+
+import com.filipowm.ambassador.configuration.concurrent.ConcurrencyProperties
+import com.filipowm.ambassador.configuration.source.ProjectSourceProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.Configuration
+
+@Configuration
+@EnableConfigurationProperties(ConcurrencyProperties::class, ProjectSourceProperties::class)
+open class ConfigurationPropertiesDiscovery

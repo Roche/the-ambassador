@@ -1,4 +1,4 @@
-package pl.filipowm.opensource.ambassador.gradle.utils
+package com.filipowm.ambassador.gradle.utils
 
 import java.io.File
 import java.net.URL

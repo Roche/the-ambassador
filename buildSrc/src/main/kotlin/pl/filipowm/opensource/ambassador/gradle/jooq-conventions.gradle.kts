@@ -1,4 +1,4 @@
-import pl.filipowm.opensource.ambassador.gradle.jooq.JooqPlugin
+import com.filipowm.ambassador.gradle.jooq.JooqPlugin
 
 apply<JooqPlugin>()
 

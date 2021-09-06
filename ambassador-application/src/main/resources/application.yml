@@ -15,15 +15,20 @@ spring:
     livereload:
       enabled: false
 
+  profiles:
+    include:
+      - secrets
+
 #  logging.level.org.springframework=ERROR
 
 #spring.jpa.hibernate.ddl-auto=none
 #spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 
 logging.level.org.jooq.Constants: ERROR
-logging.level.pl.filipowm.opensource.ambassador.gitlab.ProjectReader: WARN
+logging.level.com.filipowm.ambassador.gitlab.ProjectReader: WARN
+logging.level.com.filipowm.ambassador.gitlab.ProjectReaderNon: WARN
 
 ambassador:
   indexer:
     concurrency:
-      concurrencyLevel: 120
+      concurrencyLevel: 50

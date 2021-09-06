@@ -1,6 +1,8 @@
-package pl.filipowm.opensource.ambassador.gradle.jooq
+package com.filipowm.ambassador.gradle.jooq
 
-//import pl.filipowm.opensource.ambassador.gradle.jooq.util.Objects.cloneObject
+//import com.filipowm.ambassador.gradle.jooq.util.Objects.cloneObject
+import com.filipowm.ambassador.gradle.utils.ClassLoaderHelper
+import com.filipowm.ambassador.gradle.utils.DatabaseInit
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.Directory
@@ -14,8 +16,6 @@ import org.jooq.meta.jaxb.Configuration
 import org.jooq.meta.jaxb.Generator
 import org.jooq.meta.jaxb.Jdbc
 import org.jooq.meta.jaxb.Strategy
-import pl.filipowm.opensource.ambassador.gradle.utils.ClassLoaderHelper
-import pl.filipowm.opensource.ambassador.gradle.utils.DatabaseInit
 import javax.inject.Inject
 
 abstract class JooqGenerate @Inject constructor(
