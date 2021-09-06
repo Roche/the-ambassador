@@ -9,17 +9,15 @@ import java.util.function.Supplier
 
 const val MAX_CONFIDENCE = 10
 
-
 sealed class AggregatedScore<T> : Score<MutableMap<Source, Score<T>>>(Source.BASICS, mutableMapOf(), MAX_CONFIDENCE) {
 
-    fun add(score: Score<T>) : AggregatedScore<T> {
+    fun add(score: Score<T>): AggregatedScore<T> {
         this.data[score.source] = score
         return this
     }
 }
 
 sealed class Score<T>(val source: Source, val data: T, val confidence: Int) {
-
 
     class Pass<T>(source: Source, data: T, confidence: Int) : Score<T>(source, data, confidence) {
         fun unless(predicate: Predicate<T>): Either<Pass<T>, Fail> {

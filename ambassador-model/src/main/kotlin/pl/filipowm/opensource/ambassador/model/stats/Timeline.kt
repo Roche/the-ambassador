@@ -17,7 +17,7 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
     }
 
     fun sum(): Long {
-        return data.values.fold(0) { acc, v -> acc + v}
+        return data.values.fold(0) { acc, v -> acc + v }
     }
 
     fun average(): Double {
@@ -58,22 +58,17 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
 
     fun movingAverage(size: Int, step: Int): List<Pair<LocalDate, Double>> {
         return data.entries
-                .sortedBy { it.key }
-                .windowed(size, step)
-                .map { x -> Pair(x.first().key, x.sumBy { it.value }.toDouble() / x.size) }
-
-
+            .sortedBy { it.key }
+            .windowed(size, step)
+            .map { x -> Pair(x.first().key, x.sumOf { it.value }.toDouble() / x.size) }
     }
 
-    inner class Moving(val size: Int, val step : Int) {
+    inner class Moving(val size: Int, val step: Int) {
 
         val sorted = TreeMap(data)
+
         init {
-
-
         }
-
-
     }
 
     inner class Aggregator {
@@ -111,23 +106,27 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
             }
         }
 
-        private fun remap(chronoUnit: ChronoUnit, keyMapper: (MutableMap.MutableEntry<LocalDate, Int>) -> (LocalDate)) : Timeline {
+        private fun remap(chronoUnit: ChronoUnit, keyMapper: (MutableMap.MutableEntry<LocalDate, Int>) -> (LocalDate)): Timeline {
             val new = data.entries
-                    .stream()
-                    .collect(Collectors.toMap(
-                            keyMapper,
-                            { it.value },
-                            Integer::sum
-                    ))
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        keyMapper,
+                        { it.value },
+                        Integer::sum
+                    )
+                )
             expand(new, chronoUnit)
             return Timeline(new)
         }
     }
 
-    class DateIterator(startDate: LocalDate,
-                       val endDateInclusive: LocalDate,
-                       val step: Long,
-                       val stepUnit: ChronoUnit = ChronoUnit.MONTHS): Iterator<LocalDate> {
+    class DateIterator(
+        startDate: LocalDate,
+        val endDateInclusive: LocalDate,
+        val step: Long,
+        val stepUnit: ChronoUnit = ChronoUnit.MONTHS
+    ) : Iterator<LocalDate> {
         private var currentDate = startDate
 
         override fun hasNext() = currentDate <= endDateInclusive
@@ -138,15 +137,15 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
             currentDate = currentDate.plus(step, stepUnit)
 
             return next
-
         }
-
     }
 
-    class DateProgression(override val start: LocalDate,
-                          override val endInclusive: LocalDate,
-                          val step: Long = 1,
-                          val stepUnit: ChronoUnit = ChronoUnit.MONTHS) :
+    class DateProgression(
+        override val start: LocalDate,
+        override val endInclusive: LocalDate,
+        val step: Long = 1,
+        val stepUnit: ChronoUnit = ChronoUnit.MONTHS
+    ) :
         Iterable<LocalDate>, ClosedRange<LocalDate> {
 
         override fun iterator(): Iterator<LocalDate> =
@@ -158,11 +157,9 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
         infix fun stepMonths(step: Long) = step(step, ChronoUnit.MONTHS)
         infix fun stepWeeks(step: Long) = step(step, ChronoUnit.WEEKS)
         infix fun stepYears(step: Long) = step(step, ChronoUnit.YEARS)
-
     }
 
     operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
-
 
     inner class LastPeriodPicker(private val last: Long) {
         fun days(): Timeline {
@@ -187,4 +184,3 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
     companion object {
     }
 }
-

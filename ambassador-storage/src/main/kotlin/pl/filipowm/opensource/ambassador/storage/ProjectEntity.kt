@@ -1,12 +1,15 @@
 package pl.filipowm.opensource.ambassador.storage
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
 import pl.filipowm.opensource.ambassador.model.Project
 import java.util.*
 import javax.persistence.*
 
 @Entity
 @Table(name = "project")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
 class ProjectEntity(
     @Id var id: Long? = null,
     var name: String? = null,
@@ -25,7 +28,7 @@ class ProjectEntity(
 ) {
     companion object Factory {
 
-        val EXCERPT_LENGTH = 1024;
+        val EXCERPT_LENGTH = 1024
 
         fun from(project: Project): ProjectEntity {
             val excerpt = Optional.ofNullable(project.description)

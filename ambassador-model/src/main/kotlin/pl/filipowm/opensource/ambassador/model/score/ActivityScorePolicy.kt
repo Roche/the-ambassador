@@ -15,7 +15,7 @@ object ActivityScorePolicy : ScorePolicy<Double> {
     override fun calculateScoreOf(project: Project): Double {
         var score = INITIAL_SCORE
         // weighting: forks and stars count
-        score += project.stats.forks * 5 + project.stats.stars / 3
+        score += project.stats.forks * 5 + project.stats.stars * 5
         // add some little score for open issues, too
         score += withNotNull(project.issues) { it.open.toDouble() / 5 }
         val daysSinceLastUpdate = project.getDaysSinceLastUpdate()
@@ -51,7 +51,7 @@ object ActivityScorePolicy : ScorePolicy<Double> {
         score *= if (project.visibility == Visibility.PRIVATE) .3f else 1f
         // build in a logarithmic scale for very active projects (open ended but stabilizing around 5000)
         if (score > 3000) {
-            score = 3000 + log(score, 10.0) * 100;
+            score = 3000 + log(score, 10.0) * 100
         }
         // final score is a rounded value starting from 0 (subtract the initial value)
         return max(round(score - INITIAL_SCORE), 0.0)

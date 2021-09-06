@@ -7,13 +7,13 @@ import org.springframework.data.domain.Sort
 
 object Sorting {
 
-    fun within(table: Table<*>) : SortingBuilder {
+    fun within(table: Table<*>): SortingBuilder {
         return SortingBuilder(table)
     }
 
     class SortingBuilder(private val table: Table<*>) {
 
-        fun by(specification: Sort) : List<SortField<*>> {
+        fun by(specification: Sort): List<SortField<*>> {
             return specification.map { createSortField(table, it) }.toList()
         }
 

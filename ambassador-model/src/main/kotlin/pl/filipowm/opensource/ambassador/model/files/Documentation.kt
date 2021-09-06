@@ -21,4 +21,3 @@ open class Documentation(
         }
     }
 }
-

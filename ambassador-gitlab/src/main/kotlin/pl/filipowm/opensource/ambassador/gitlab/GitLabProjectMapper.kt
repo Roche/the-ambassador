@@ -31,6 +31,7 @@ class GitLabProjectMapper(
         private val log by LoggerDelegate()
     }
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     suspend fun mapGitLabProjectToOpenSourceProject(gitlabProject: GitLabProject): Project {
         log.info("Mapping project {} to OS project", gitlabProject.name)
         val visibility = VisibilityMapper.fromGitLab(gitlabProject.visibility)
@@ -39,10 +40,11 @@ class GitLabProjectMapper(
                 MDC.put("project-id", gitlabProject.id.toString())
                 val reader = ProjectReader(gitlabProject, gitlabApi, this)
                 val languages = reader.readLanguages()
-                val readme = if (gitlabProject.readmeUrl != null)
+                val readme = if (gitlabProject.readmeUrl != null) {
                     reader.withFile(gitlabProject.readmeUrl) { analyzeDocument(it) }
-                else
+                } else {
                     async { Documentation.notExistent() }
+                }
                 val contributing = reader.withFile(Files.CONTRIBUTING_DEFAULT) { analyzeDocument(it) }
                 val ci = reader.withFile(".gitlab-ci.yml") { contentToFile(it) }
                 val changelog = reader.withFile(Files.CHANGELOG_DEFAULT) { contentToFile(it) }
@@ -111,6 +113,7 @@ class GitLabProjectMapper(
         }
     }
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     private fun analyzeDocument(content: Optional<TextDetails>): Documentation {
         return content
             .map { textAnalyzingService.analyze(it) }
@@ -122,7 +125,6 @@ class GitLabProjectMapper(
             .map { File(true, it.hash, null, it.size, it.path) }
             .orElseGet { File.notExistent() }
     }
-
 }
 
 private fun toLocalDate(date: Date): LocalDate {

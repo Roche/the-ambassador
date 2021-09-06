@@ -9,7 +9,7 @@ interface AcronymDetector {
     fun extractClosestAcronymFrom(text: String): Optional<Acronym>
 
     companion object : AcronymDetector {
-        fun none() : AcronymDetector {
+        fun none(): AcronymDetector {
             return AcronymDetector
         }
 

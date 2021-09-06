@@ -154,7 +154,7 @@ class ProjectReader(
     }
 
     private fun toFullPath(path: String): String {
-        return "${project.webUrl}/-/blob/${project.defaultBranch}/${path}"
+        return "${project.webUrl}/-/blob/${project.defaultBranch}/$path"
     }
 
     private fun unbaseContent(content: String): String {
@@ -180,5 +180,4 @@ class ProjectReader(
             transformed
         }
     }
-
 }

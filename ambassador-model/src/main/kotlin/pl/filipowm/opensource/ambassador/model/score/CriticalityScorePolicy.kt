@@ -50,5 +50,4 @@ object CriticalityScorePolicy : ScorePolicy<Double> {
 
         return (criticalitySum / CriticalityCheck.sumWeights()).round(4)
     }
-
 }

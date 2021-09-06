@@ -13,10 +13,10 @@ data class Files(
     val gitignore: File
 ) {
     companion object {
-        val CHANGELOG_DEFAULT = "CHANGELOG.md"
-        val GITIGNORE_DEFAULT = ".gitignore"
-        val CONTRIBUTING_DEFAULT = "CONTRIBUTING.md"
-        val LICENSE_DEFAULT = "LICENSE"
-        val README_DEFAULT = "README.md"
+        const val CHANGELOG_DEFAULT = "CHANGELOG.md"
+        const val GITIGNORE_DEFAULT = ".gitignore"
+        const val CONTRIBUTING_DEFAULT = "CONTRIBUTING.md"
+        const val LICENSE_DEFAULT = "LICENSE"
+        const val README_DEFAULT = "README.md"
     }
 }

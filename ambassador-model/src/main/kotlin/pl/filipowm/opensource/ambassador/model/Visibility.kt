@@ -7,7 +7,7 @@ enum class Visibility(val level: Int) {
     UNKNOWN(99)
     ;
 
-    fun getThisAndLessStrict() : List<Visibility>{
+    fun getThisAndLessStrict(): List<Visibility> {
         return values().filter { it.level <= this.level }
     }
 }

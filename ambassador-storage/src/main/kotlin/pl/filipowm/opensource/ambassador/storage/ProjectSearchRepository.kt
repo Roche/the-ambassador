@@ -5,6 +5,5 @@ import org.springframework.data.domain.Pageable
 
 interface ProjectSearchRepository {
 
-    fun search(query : SearchQuery, pageable : Pageable) : Page<ProjectEntity>
-
+    fun search(query: SearchQuery, pageable: Pageable): Page<ProjectEntity>
 }

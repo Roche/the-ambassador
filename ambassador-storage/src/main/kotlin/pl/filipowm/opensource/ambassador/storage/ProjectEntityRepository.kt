@@ -5,6 +5,5 @@ import java.util.*
 
 interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Long> {
 
-    override fun findById(id: Long) : Optional<ProjectEntity>
-
+    override fun findById(id: Long): Optional<ProjectEntity>
 }

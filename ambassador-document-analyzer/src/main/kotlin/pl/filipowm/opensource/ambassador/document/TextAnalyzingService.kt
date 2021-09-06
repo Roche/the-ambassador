@@ -26,10 +26,13 @@ data class TextAnalyzingService(
             }
 //            }
         } catch (e: TimeoutCancellationException) {
-            throw e
+            return async(ctx) {
+                default.invoke()
+            }
         }
     }
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     fun analyze(details: TextDetails): Documentation {
         val text = details.content
         if (text.isNullOrBlank()) {
@@ -42,9 +45,9 @@ data class TextAnalyzingService(
                 languageDetector.detectLanguageOf(text)
             }
 
-            val r1 = withTimeoutOr(dispatcher, { }) {
-                readabilityTest.calculateReadabilityScoreOf(text)
-            }
+//            val r1 = withTimeoutOr(dispatcher, { }) {
+//                readabilityTest.calculateReadabilityScoreOf(text)
+//            }
             Documentation(
                 language.await().name,
                 details.hash,
@@ -57,6 +60,6 @@ data class TextAnalyzingService(
     }
 
     private fun isAcronymOrAbbreviation(text: String) {
-        TODO("acc?")
+        TODO("acc? $text")
     }
 }

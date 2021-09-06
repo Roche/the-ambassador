@@ -54,5 +54,4 @@ class GitLabSourceRepository(
     }
 
     override fun mapper(): ProjectMapper<GitLabProject> = gitLabProjectMapper::mapGitLabProjectToOpenSourceProject
-
 }

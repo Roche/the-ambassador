@@ -7,19 +7,19 @@ interface ScorePolicy<T> {
     fun calculateScoreOf(project: Project): T
 
     companion object {
-        fun activity() : ScorePolicy<Double> {
+        fun activity(): ScorePolicy<Double> {
             return ActivityScorePolicy
         }
 
-        fun criticality() : ScorePolicy<Double> {
+        fun criticality(): ScorePolicy<Double> {
             return CriticalityScorePolicy
         }
 
-        fun securityHealth() : ScorePolicy<Double> {
+        fun securityHealth(): ScorePolicy<Double> {
             TODO("")
         }
 
-        fun quality() : ScorePolicy<Double> {
+        fun quality(): ScorePolicy<Double> {
             TODO("")
         }
     }

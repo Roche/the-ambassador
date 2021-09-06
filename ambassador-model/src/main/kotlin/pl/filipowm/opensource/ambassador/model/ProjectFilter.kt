@@ -1,12 +1,14 @@
 package pl.filipowm.opensource.ambassador.model
 
 class ProjectFilter private constructor(
-        val visibility: Visibility?,
-        val archived: Boolean?) {
+    val visibility: Visibility?,
+    val archived: Boolean?
+) {
 
     data class Builder(
-            var visibility: Visibility? = null,
-            var archived: Boolean? = null) {
+        var visibility: Visibility? = null,
+        var archived: Boolean? = null
+    ) {
 
         fun visibility(visibility: Visibility) = apply { this.visibility = visibility }
         fun private() = this.visibility(Visibility.PRIVATE)

@@ -27,5 +27,4 @@ object Exceptions {
     open class RequestTimeoutException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
     open class ServerErrorException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
     open class IndexingException(message: String?, cause: Throwable? = null) : AmbassadorException(message, cause)
-
 }

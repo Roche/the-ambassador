@@ -6,5 +6,4 @@ interface ConcurrencyProvider {
 
     fun getSourceProjectProducerDispatcher(): CoroutineDispatcher
     fun getIndexingConsumerDispatcher(): CoroutineDispatcher
-
 }

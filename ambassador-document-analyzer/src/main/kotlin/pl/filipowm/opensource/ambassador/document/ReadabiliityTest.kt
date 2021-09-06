@@ -5,7 +5,7 @@ interface ReadabilityTest {
     fun calculateReadabilityScoreOf(text: String): ReadabilityScore
 
     companion object : ReadabilityTest {
-        fun none() : ReadabilityTest {
+        fun none(): ReadabilityTest {
             return ReadabilityTest
         }
 

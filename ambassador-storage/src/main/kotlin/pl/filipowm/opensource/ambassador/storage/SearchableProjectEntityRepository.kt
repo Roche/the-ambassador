@@ -81,5 +81,4 @@ internal class SearchableProjectEntityRepository(private val dsl: DSLContext, pr
                 .or(similarity(PROJECT.EXCERPT, query).gt(0.15))
         )
     }
-
 }

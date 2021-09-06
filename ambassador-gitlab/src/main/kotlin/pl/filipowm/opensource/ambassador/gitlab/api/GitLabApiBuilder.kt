@@ -34,15 +34,14 @@ class GitLabApiBuilder(private val url: String, private val token: String) {
     }
 
     fun build(): GitLabApi {
-        return GitlabApiDecorator(url, token) {
+        return GitlabApiDecorator(url, token) { api ->
             val decoratorsIterator = decorators.toList()
                 .sortedBy { (_, value) -> value }
                 .map { it.first }
                 .iterator()
-            decorate(decoratorsIterator, it)
+            decorate(decoratorsIterator, api)
         }
     }
-
 }
 
 private typealias DecoratorEnabler = (GitLabApiClient) -> GitLabApiClient
