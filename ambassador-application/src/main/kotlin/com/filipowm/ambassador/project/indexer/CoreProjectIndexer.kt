@@ -108,9 +108,14 @@ internal class CoreProjectIndexer(
         }
     }
 
-    override fun forciblyStop() {
-        producerScope.cancel("Forcibly cancelled producer")
-        consumerScope.cancel("Forcibly cancelled consumer")
+    override fun forciblyStop(terminateImmediately: Boolean) {
+        val cause = IndexingForciblyStoppedException("Indexing forcibly stopped on demand")
+        producerScope.cancel("Forcibly cancelled reading from source", cause)
+        if (terminateImmediately) {
+            consumerScope.cancel("Forcibly terminated all indexing in progress", cause)
+        } else {
+            log.warn("Waiting for projects in progress to finish indexing")
+        }
     }
 
     override fun getSource(): ProjectSource<Any> = source

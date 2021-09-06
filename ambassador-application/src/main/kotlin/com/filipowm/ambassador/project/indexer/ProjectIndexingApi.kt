@@ -4,6 +4,7 @@ import com.filipowm.ambassador.commons.api.Message
 import com.filipowm.ambassador.model.Project
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import java.util.*
 import javax.validation.constraints.Min
 
 @RestController
@@ -24,7 +25,7 @@ internal open class ProjectIndexingApi(private val service: ProjectIndexingServi
 
     @DeleteMapping
     @GetMapping("/stop")
-    suspend fun forciblyStop() {
-        service.forciblyStop()
+    suspend fun forciblyStop(@RequestParam("terminate", required = false) terminate: Optional<Boolean>) {
+        service.forciblyStop(terminate.orElse(false))
     }
 }

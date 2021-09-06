@@ -27,10 +27,10 @@ internal class ProjectIndexingService(
         private val log by LoggerDelegate()
     }
 
-    suspend fun forciblyStop() {
+    suspend fun forciblyStop(terminateImmediately: Boolean) {
         log.info("Trying to forcibly stop indexing, if active")
         if (indexingLock.isLocked() && currentIndexerUsed != null) {
-            currentIndexerUsed!!.forciblyStop()
+            currentIndexerUsed!!.forciblyStop(terminateImmediately)
             log.warn("Indexing forcibly stopped!")
         } else {
             log.warn("No indexing in progress, nothing to stop")

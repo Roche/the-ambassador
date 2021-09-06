@@ -16,7 +16,7 @@ interface ProjectIndexer {
         onProjectIndexingFinished: ProjectIndexingFinishedCallback = {}
     )
 
-    fun forciblyStop()
+    fun forciblyStop(terminateImmediately: Boolean)
     fun getSource(): ProjectSource<Any>
 }
 
