@@ -11,6 +11,7 @@ data class TextAnalyzingService(
     val readabilityTest: ReadabilityTest,
     val configuration: TextAnalyzerConfiguration
 ) {
+    private val dispatcher = newFixedThreadPoolContext(5, "text-analyzer")
 
     companion object {
         private val log = LoggerFactory.getLogger(TextAnalyzingService::class.java)
@@ -38,8 +39,6 @@ data class TextAnalyzingService(
         if (text.isNullOrBlank()) {
             return Documentation.notExistent()
         }
-        val dispatcher = newFixedThreadPoolContext(5, "withc")
-
         return runBlocking {
             val language = withTimeoutOr(dispatcher, { Language.UNKNOWN }) {
                 languageDetector.detectLanguageOf(text)
