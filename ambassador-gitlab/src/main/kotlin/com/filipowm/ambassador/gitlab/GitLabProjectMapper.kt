@@ -31,7 +31,7 @@ class GitLabProjectMapper(
 
     @kotlinx.coroutines.ObsoleteCoroutinesApi
     suspend fun mapGitLabProjectToOpenSourceProject(gitlabProject: GitLabProject): Project {
-        log.info("Mapping project {} to OS project", gitlabProject.name)
+        log.debug("Mapping project {} to OS project", gitlabProject.name)
         val visibility = VisibilityMapper.fromGitLab(gitlabProject.visibility!!)
         try {
             return withContext(coroutineContext) {
@@ -120,10 +120,12 @@ class GitLabProjectMapper(
     }
 
     @kotlinx.coroutines.ObsoleteCoroutinesApi
-    private fun analyzeDocument(content: Optional<TextDetails>): Documentation {
-        return content
-            .map { textAnalyzingService.analyze(it) }
-            .orElseGet { Documentation.notExistent() }
+    private suspend fun analyzeDocument(content: Optional<TextDetails>): Documentation {
+        return if (content.isPresent) {
+            textAnalyzingService.analyze(content.get())
+        } else {
+            Documentation.notExistent()
+        }
     }
 
     private fun contentToFile(content: Optional<TextDetails>): File {
@@ -132,4 +134,3 @@ class GitLabProjectMapper(
             .orElseGet { File.notExistent() }
     }
 }
-

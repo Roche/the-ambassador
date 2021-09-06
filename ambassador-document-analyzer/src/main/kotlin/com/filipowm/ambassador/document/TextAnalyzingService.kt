@@ -4,6 +4,7 @@ import com.filipowm.ambassador.model.files.Documentation
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 
 data class TextAnalyzingService(
     val acronymDetector: AcronymDetector,
@@ -19,7 +20,6 @@ data class TextAnalyzingService(
 
     private fun <U> CoroutineScope.withTimeoutOr(ctx: CoroutineContext, default: () -> U, into: () -> U): Deferred<U> {
         return try {
-//            withTimeout(configuration.timeout) {
             async(ctx) {
                 withTimeout(1) {
                     into()
@@ -34,12 +34,12 @@ data class TextAnalyzingService(
     }
 
     @kotlinx.coroutines.ObsoleteCoroutinesApi
-    fun analyze(details: TextDetails): Documentation {
+    suspend fun analyze(details: TextDetails): Documentation {
         val text = details.content
         if (text.isNullOrBlank()) {
             return Documentation.notExistent()
         }
-        return runBlocking {
+        return withContext(coroutineContext) {
             val language = withTimeoutOr(dispatcher, { Language.UNKNOWN }) {
                 languageDetector.detectLanguageOf(text)
             }

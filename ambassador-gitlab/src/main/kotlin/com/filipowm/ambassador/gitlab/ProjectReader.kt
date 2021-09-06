@@ -88,7 +88,6 @@ class ProjectReader(
             log.info("Finished reading project {} releases timeline", project.id)
             timeline
         }
-
     }
 
     suspend fun readCommits(): Deferred<Timeline> {
@@ -128,7 +127,7 @@ class ProjectReader(
         return "${project.webUrl}/-/blob/${project.defaultBranch}/$path"
     }
 
-    suspend fun <T> withFile(path: String, transform: (Optional<TextDetails>) -> T): Deferred<T> {
+    suspend fun <T> withFile(path: String, transform: suspend (Optional<TextDetails>) -> T): Deferred<T> {
         return async {
             log.info("Reading file '{}' in project {}", path, project.id)
             var content = Optional.empty<TextDetails>()
