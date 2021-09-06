@@ -21,6 +21,7 @@ internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
             return CriteriaBuilder(projectDetailsResolver)
                 .createCriteriaFrom(criteriaProvider.getInvalidProjectCriteria())
                 .addCriteria("excludeAllForks", criteriaProvider.getForkedProjectCriteria().excludeAllWithForks())
+                .addCriteria("personalProjectWithAtLeast1Star", criteriaProvider.getPersonalProjectCriteria().hasAtLeastStars(1))
                 .build()
         }
     }

@@ -10,7 +10,7 @@ data class Namespace(
     @JsonProperty("id")
     var id: Int? = null,
     @JsonProperty("kind")
-    var kind: String? = null,
+    var kind: NamespaceKind? = null,
     @JsonProperty("name")
     var name: String? = null,
     @JsonProperty("path")

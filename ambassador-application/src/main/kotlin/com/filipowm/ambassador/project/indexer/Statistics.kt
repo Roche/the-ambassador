@@ -48,7 +48,9 @@ internal class Statistics {
         sb.appendLine("Excluded projects: ${getTotalExclusions()}")
         sb.appendLine("Total errors: ${getTotalErrors()}")
         sb.appendLine("Total indexing time: ${getDuration().humanReadableFormat()}")
-        sb.appendLine("Avg time per project: ${timer.getDurationAsMillis() / getProjectsIndexed()}ms")
+        if (getProjectsIndexed() > 0) {
+            sb.appendLine("Avg time per project: ${timer.getDurationAsMillis() / getProjectsIndexed()}ms")
+        }
         if (getTotalExclusions() > 0)
             sb.appendLine("Most occurring exclusions:")
             exclusions.forEach { (exclusion, count) -> sb.appendLine("  - ${exclusion}: ${count.get()}") }
