@@ -2,10 +2,10 @@ package com.filipowm.ambassador.gitlab
 
 import com.filipowm.ambassador.document.TextDetails
 import com.filipowm.ambassador.extensions.LoggerDelegate
-import com.filipowm.ambassador.model.Contributor
-import com.filipowm.ambassador.model.Contributors
-import com.filipowm.ambassador.model.Issues
-import com.filipowm.ambassador.model.ProtectedBranch
+import com.filipowm.ambassador.model.project.Contributor
+import com.filipowm.ambassador.model.project.Contributors
+import com.filipowm.ambassador.model.project.Issues
+import com.filipowm.ambassador.model.project.ProtectedBranch
 import com.filipowm.ambassador.model.stats.Timeline
 import com.filipowm.gitlab.api.GitLab
 import com.filipowm.gitlab.api.model.AccessLevel

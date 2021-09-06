@@ -4,7 +4,7 @@ import com.filipowm.ambassador.ConcurrencyProvider
 import com.filipowm.ambassador.configuration.source.ProjectSources
 import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import com.filipowm.ambassador.extensions.LoggerDelegate
-import com.filipowm.ambassador.model.Project
+import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.source.ProjectDetailsResolver
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.storage.ProjectEntityRepository

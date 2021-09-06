@@ -2,8 +2,8 @@ package com.filipowm.ambassador.gitlab
 
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
-import com.filipowm.ambassador.model.Project
-import com.filipowm.ambassador.model.ProjectFilter
+import com.filipowm.ambassador.model.project.Project
+import com.filipowm.ambassador.model.project.ProjectFilter
 import com.filipowm.ambassador.model.source.ForkedProjectCriteria
 import com.filipowm.ambassador.model.source.InvalidProjectCriteria
 import com.filipowm.ambassador.model.source.PersonalProjectCriteria
@@ -55,7 +55,7 @@ class GitLabSource(
         }
     }
 
-    override fun getName() = "GitLab"
+    override fun name() = "GitLab"
 
     override suspend fun map(input: GitLabProject) = gitLabProjectMapper.mapGitLabProjectToOpenSourceProject(input)
 

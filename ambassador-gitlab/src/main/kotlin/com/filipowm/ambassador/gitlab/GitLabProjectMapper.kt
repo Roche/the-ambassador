@@ -4,12 +4,12 @@ import com.filipowm.ambassador.document.Language
 import com.filipowm.ambassador.document.TextAnalyzingService
 import com.filipowm.ambassador.document.TextDetails
 import com.filipowm.ambassador.extensions.LoggerDelegate
-import com.filipowm.ambassador.model.Features
-import com.filipowm.ambassador.model.Files
-import com.filipowm.ambassador.model.Project
 import com.filipowm.ambassador.model.files.Documentation
 import com.filipowm.ambassador.model.files.File
 import com.filipowm.ambassador.model.files.License
+import com.filipowm.ambassador.model.project.Features
+import com.filipowm.ambassador.model.project.Files
+import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.stats.Statistics
 import com.filipowm.gitlab.api.GitLab
 import kotlinx.coroutines.async

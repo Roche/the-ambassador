@@ -1,6 +1,6 @@
 package com.filipowm.ambassador.storage
 
-import com.filipowm.ambassador.model.Project
+import com.filipowm.ambassador.model.project.Project
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef

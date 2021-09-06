@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.model
+package com.filipowm.ambassador.model.project
 
 enum class Visibility(val level: Int) {
     PUBLIC(0),

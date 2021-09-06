@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.model
+package com.filipowm.ambassador.model.project
 
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore

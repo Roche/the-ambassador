@@ -1,8 +1,8 @@
 package com.filipowm.ambassador.model.source
 
-import com.filipowm.ambassador.model.Project
-import com.filipowm.ambassador.model.ProjectFilter
 import com.filipowm.ambassador.model.Specification
+import com.filipowm.ambassador.model.project.Project
+import com.filipowm.ambassador.model.project.ProjectFilter
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 

@@ -1,6 +1,6 @@
 package com.filipowm.ambassador.project.indexer
 
-import com.filipowm.ambassador.model.Project
+import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.source.ProjectSource
 
 interface ProjectIndexer {

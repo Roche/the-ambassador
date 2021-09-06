@@ -3,9 +3,9 @@ package com.filipowm.ambassador.project.indexer
 import com.filipowm.ambassador.ConcurrencyProvider
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
-import com.filipowm.ambassador.model.Project
-import com.filipowm.ambassador.model.ProjectFilter
-import com.filipowm.ambassador.model.Visibility
+import com.filipowm.ambassador.model.project.Project
+import com.filipowm.ambassador.model.project.ProjectFilter
+import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.storage.ProjectEntity
 import com.filipowm.ambassador.storage.ProjectEntityRepository
@@ -57,7 +57,7 @@ internal class CoreProjectIndexer(
         val filter = ProjectFilter(Visibility.INTERNAL, false, lastActivityAfterHalfYear)
         producerScope.launch {
             supervisorScope {
-                log.info("Indexing started on {} with source filter {}", source.getName(), filter)
+                log.info("Indexing started on {} with source filter {}", source.name(), filter)
                 onStarted()
                 source.flow(filter)
                     .buffer(1000)

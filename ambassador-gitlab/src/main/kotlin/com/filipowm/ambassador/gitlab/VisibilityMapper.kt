@@ -1,6 +1,6 @@
 package com.filipowm.ambassador.gitlab
 
-import com.filipowm.ambassador.model.Visibility
+import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.gitlab.api.model.Visibility as GitLabVisibility
 
 object VisibilityMapper {

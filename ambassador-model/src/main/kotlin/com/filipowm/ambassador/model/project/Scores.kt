@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.model
+package com.filipowm.ambassador.model.project
 
 data class Scores(
     val activity: Double,

@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.model
+package com.filipowm.ambassador.model.project
 
 import com.filipowm.ambassador.model.files.Documentation
 import com.filipowm.ambassador.model.files.File

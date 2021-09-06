@@ -1,7 +1,7 @@
 package com.filipowm.ambassador.project
 
-import com.filipowm.ambassador.model.Project
-import com.filipowm.ambassador.model.Visibility
+import com.filipowm.ambassador.model.project.Project
+import com.filipowm.ambassador.model.project.Visibility
 import java.time.LocalDate
 import kotlin.math.min
 

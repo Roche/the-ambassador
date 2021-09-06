@@ -1,7 +1,7 @@
 package com.filipowm.ambassador.project
 
 import com.filipowm.ambassador.commons.api.Paged
-import com.filipowm.ambassador.model.Project
+import com.filipowm.ambassador.model.project.Project
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

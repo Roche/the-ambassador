@@ -1,6 +1,6 @@
 package com.filipowm.ambassador.project
 
-import com.filipowm.ambassador.model.Visibility
+import com.filipowm.ambassador.model.project.Visibility
 import org.springframework.web.bind.annotation.RequestParam
 import java.util.*
 

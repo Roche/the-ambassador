@@ -1,5 +1,6 @@
 package com.filipowm.ambassador.model.score
 
+import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.utils.Functions.withNotNull
 import java.time.LocalDate
 import java.time.Period
@@ -9,7 +10,7 @@ import kotlin.math.roundToInt
 
 object CriticalityScorePolicy : ScorePolicy<Double> {
 
-    enum class CriticalityCheck(val weight: Double, val threshold: Int, val check: (com.filipowm.ambassador.model.Project) -> Number) {
+    enum class CriticalityCheck(val weight: Double, val threshold: Int, val check: (Project) -> Number) {
         CREATED_SINCE(1.0, 60, { Period.between(it.createdDate, LocalDate.now()).months }),
         LAST_UPDATED(-1.0, 60, { Period.between(it.lastUpdatedDate, LocalDate.now()).months }),
         CONTRIBUTORS_COUNT(2.0, 5000, { it.contributors.count }),
@@ -22,7 +23,7 @@ object CriticalityScorePolicy : ScorePolicy<Double> {
         DEPENDENTS_COUNT(2.0, 500000, { 1 /* it.dependents.count */ }) // TODO
         ;
 
-        fun calc(project: com.filipowm.ambassador.model.Project): Double {
+        fun calc(project: Project): Double {
             val value = check(project).toDouble()
             return weight * log10(1 + value) / log10(1 + max(value, threshold.toDouble()))
         }
@@ -42,7 +43,7 @@ object CriticalityScorePolicy : ScorePolicy<Double> {
         return (this * multiplier).roundToInt() / multiplier
     }
 
-    override fun calculateScoreOf(project: com.filipowm.ambassador.model.Project): Double {
+    override fun calculateScoreOf(project: Project): Double {
         val criticalitySum = CriticalityCheck.values()
             .map { it.calc(project) }
             .reduce { acc, result -> acc + result }

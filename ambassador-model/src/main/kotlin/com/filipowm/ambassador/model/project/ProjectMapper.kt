@@ -1,3 +1,3 @@
-package com.filipowm.ambassador.model
+package com.filipowm.ambassador.model.project
 
 typealias ProjectMapper<T> = suspend (T) -> Project?

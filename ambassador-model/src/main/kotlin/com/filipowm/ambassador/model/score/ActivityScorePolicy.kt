@@ -1,6 +1,7 @@
 package com.filipowm.ambassador.model.score
 
-import com.filipowm.ambassador.model.Visibility
+import com.filipowm.ambassador.model.project.Project
+import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.model.utils.Functions.withNotNull
 import kotlin.math.log
 import kotlin.math.max
@@ -11,7 +12,7 @@ object ActivityScorePolicy : ScorePolicy<Double> {
 
     private const val INITIAL_SCORE = 50.0
 
-    override fun calculateScoreOf(project: com.filipowm.ambassador.model.Project): Double {
+    override fun calculateScoreOf(project: Project): Double {
         var score = INITIAL_SCORE
         // weighting: forks and stars count
         score += project.stats.forks * 5 + project.stats.stars * 5

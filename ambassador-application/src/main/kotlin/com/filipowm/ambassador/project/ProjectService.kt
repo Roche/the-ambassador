@@ -2,7 +2,8 @@ package com.filipowm.ambassador.project
 
 import com.filipowm.ambassador.commons.api.Paged
 import com.filipowm.ambassador.exceptions.Exceptions
-import com.filipowm.ambassador.model.Visibility
+import com.filipowm.ambassador.model.project.Project
+import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.storage.ProjectEntityRepository
 import com.filipowm.ambassador.storage.ProjectSearchRepository
 import com.filipowm.ambassador.storage.SearchQuery
@@ -24,7 +25,7 @@ open class ProjectService(
 
     @Transactional(readOnly = true)
     @Cacheable(key = "#id.toString()") // TODO use CacheMono to enable reactive caching
-    open suspend fun getProject(id: Long): com.filipowm.ambassador.model.Project? {
+    open suspend fun getProject(id: Long): Project? {
         log.info("Retrieving project $id")
         return projectEntityRepository.findById(id)
             .map { it.project }

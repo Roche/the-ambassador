@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.model
+package com.filipowm.ambassador.model.project
 
 import java.time.LocalDateTime
 

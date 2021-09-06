@@ -1,7 +1,8 @@
 package com.filipowm.ambassador.storage
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.filipowm.ambassador.model.Visibility
+import com.filipowm.ambassador.model.project.Project
+import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.storage.jooq.Json
 import com.filipowm.ambassador.storage.jooq.tables.Project.PROJECT
 import com.filipowm.ambassador.storage.jooq.tables.records.ProjectRecord
@@ -23,7 +24,7 @@ internal class SearchableProjectEntityRepository(private val dsl: DSLContext, pr
                 it.id.toLong(),
                 it.name,
                 it.excerpt,
-                objectMapper.readValue(it.project.data(), com.filipowm.ambassador.model.Project::class.java),
+                objectMapper.readValue(it.project.data(), Project::class.java),
                 it.stars,
                 it.criticalityScore.toDouble(),
                 it.activityScore.toDouble()
