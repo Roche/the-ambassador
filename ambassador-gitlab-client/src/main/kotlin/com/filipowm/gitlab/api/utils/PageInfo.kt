@@ -9,8 +9,10 @@ interface PageInfo {
 
     companion object {
         fun of(
-            number: Int, totalElements: Int,
-            totalPages: Int, perPage: Int
+            number: Int,
+            totalElements: Int,
+            totalPages: Int,
+            perPage: Int
         ): PageInfo = BasePageInfo(number, totalElements, totalPages, perPage)
 
         fun from(other: PageInfo): PageInfo = of(other.getNumber(), other.getTotalElements(), other.getTotalPages(), other.getPerPage())
@@ -29,6 +31,5 @@ interface PageInfo {
         override fun getTotalPages(): Int = totalPages
 
         override fun getPerPage(): Int = perPage
-
     }
 }

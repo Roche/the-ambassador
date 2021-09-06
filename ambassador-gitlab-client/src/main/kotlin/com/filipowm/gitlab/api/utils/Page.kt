@@ -10,5 +10,4 @@ data class Page<T>(val content: List<T>, val pageInfo: PageInfo) : Collection<T>
     fun isFirst(): Boolean = !hasPrevious()
 
     fun isLast(): Boolean = !hasNext()
-
 }

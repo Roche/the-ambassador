@@ -24,11 +24,11 @@ object Exceptions {
         )
     }
 
-    open class GitLabApiException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : RuntimeException(message, cause)
-    open class RateLimitReachedException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause)
-    open class UnauthorizedException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause)
-    open class ForbiddenException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause)
-    open class NotFoundException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause)
-    open class RequestTimeoutException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause)
-    open class ServerErrorException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause)
+    open class GitLabApiException(message: String?, cause: Throwable? = null, val status: Int? = null, val headers: Headers = Headers.Empty) : RuntimeException(message, cause)
+    open class RateLimitReachedException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause, status, headers)
+    open class UnauthorizedException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause, status, headers)
+    open class ForbiddenException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause, status, headers)
+    open class NotFoundException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause, status, headers)
+    open class RequestTimeoutException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause, status, headers)
+    open class ServerErrorException(message: String?, cause: Throwable? = null, status: Int? = null, headers: Headers = Headers.Empty) : GitLabApiException(message, cause, status, headers)
 }

@@ -1,4 +1,4 @@
-package com.filipowm.gitlab.api.project
+package com.filipowm.gitlab.api.project.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.filipowm.gitlab.api.model.AccessLevel

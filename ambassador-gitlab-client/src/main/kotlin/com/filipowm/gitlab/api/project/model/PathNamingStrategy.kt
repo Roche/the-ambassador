@@ -21,5 +21,4 @@ internal object DefaultPathNamingStrategy : PathNamingStrategy {
             .map { it.toLowerCase() }
             .joinToString(separator = SEPARATOR) { it.replace(WHITESPACE_REGEX, SEPARATOR) }
     }
-
 }

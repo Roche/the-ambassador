@@ -43,5 +43,4 @@ object EnumSerialization {
     ) : StdSerializer<E>(Unit::class.java, true) {
         override fun serialize(value: E, gen: JsonGenerator, provider: SerializerProvider) = propertyProvider.invoke(value).ifPresent { valueWriter.invoke(gen, it) }
     }
-
 }

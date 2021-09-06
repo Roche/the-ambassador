@@ -20,11 +20,11 @@ data class Release(
     @JsonProperty("description")
     val description: String? = null,
     @JsonProperty("evidences")
-    val evidences: List<Evidence> = listOf(),
+    val evidences: List<Evidence>? = listOf(),
     @JsonProperty("milestones")
-    val milestones: List<Milestone> = listOf(),
+    val milestones: List<Milestone>? = listOf(),
     @JsonProperty("name")
-    val name: String,
+    val name: String? = null,
     @JsonProperty("released_at")
     @JsonFormat(pattern = Dates.ISO_DATE_TIME_FORMAT)
     val releasedAt: LocalDateTime? = null,
