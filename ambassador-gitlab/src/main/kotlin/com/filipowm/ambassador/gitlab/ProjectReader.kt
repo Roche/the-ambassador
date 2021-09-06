@@ -81,10 +81,13 @@ class ProjectReader(
         return async {
             log.info("Reading project {} releases timeline", project.id)
             val timeline = Timeline()
-            projectApi.releases().stream(Sort.desc("released_at"))
-                .filter { it.releasedAt != null }
-                .forEach { timeline.add(it.releasedAt!!, 1) }
-
+            for (releasePage in projectApi.releases().paging()) {
+                for (release in releasePage) {
+                    if (release.releasedAt != null) {
+                        timeline.add(release.releasedAt!!, 1)
+                    }
+                }
+            }
             log.info("Finished reading project {} releases timeline", project.id)
             timeline
         }
@@ -101,10 +104,13 @@ class ProjectReader(
                     until = LocalDateTime.now(),
                     withStats = false
                 )
-                projectApi.repository()
+                for (commitsPage in projectApi.repository()
                     .commits()
-                    .stream(query, Pagination(itemsPerPage = 50))
-                    .forEach { timeline.add(it.createdAt, 1) }
+                    .paging(query, Pagination(itemsPerPage = 50))) {
+                    for (commit in commitsPage) {
+                        timeline.add(commit.createdAt, 1)
+                    }
+                }
                 log.info("Finished reading project {} commits timeline", project.id)
                 timeline
             }

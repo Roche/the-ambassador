@@ -7,7 +7,6 @@ import com.filipowm.gitlab.api.utils.PageProvider
 import com.filipowm.gitlab.api.utils.Pager
 import com.filipowm.gitlab.api.utils.Pagination
 import io.ktor.client.*
-import java.util.stream.Stream
 
 class ProjectsApi(basePath: String, httpClient: HttpClient) : Api(basePath, httpClient) {
 
@@ -23,13 +22,6 @@ class ProjectsApi(basePath: String, httpClient: HttpClient) : Api(basePath, http
             doGetPage(it, projectListQuery)
         }
         return Pager(pagination, pageProvider)
-    }
-
-    suspend fun stream(
-        projectListQuery: ProjectListQuery = ProjectListQuery(),
-        pagination: Pagination = Pagination()
-    ): Stream<Project> {
-        return paging(projectListQuery, pagination).stream()
     }
 
     suspend fun getPage(
