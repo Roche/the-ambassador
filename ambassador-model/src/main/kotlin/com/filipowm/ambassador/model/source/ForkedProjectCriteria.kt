@@ -1,12 +1,14 @@
 package com.filipowm.ambassador.model.source
 
+import java.time.LocalDate
+
 interface ForkedProjectCriteria<T> {
 
-    fun includeAll(): CriterionVerifier<T>
-    fun excludeAll(): CriterionVerifier<T>
+    fun includeAllWithForks(): CriterionVerifier<T>
+    fun excludeAllWithForks(): CriterionVerifier<T>
 
-    fun lastActivityAfterParent(): CriterionVerifier<T>
-    fun lastActivityNotEarlierThan(): CriterionVerifier<T>
-    fun hasStars(stars: Int): CriterionVerifier<T>
+    fun lastForkActivityBeforeParentMoreThan(days: Long): CriterionVerifier<T>
+    fun lastForkActivityNotEarlierThan(date: LocalDate): CriterionVerifier<T>
+    fun forkHasStars(stars: Int): CriterionVerifier<T>
 
 }

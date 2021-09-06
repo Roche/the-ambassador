@@ -1,11 +1,10 @@
 package com.filipowm.ambassador.project.indexer
 
-import com.filipowm.ambassador.model.criteria.Criteria
 import com.filipowm.ambassador.model.source.IndexingCriteriaProvider
 import com.filipowm.ambassador.model.source.ProjectDetailsResolver
 import org.slf4j.LoggerFactory
 
-internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) : Criteria<T> {
+internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
 
     private val criteria = criteria.toList()
 
@@ -14,29 +13,38 @@ internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) :
 
         fun <T> none(): IndexingCriteria<T> {
             return object : IndexingCriteria<T>() {
-                override fun evaluate(input: T): Boolean = true
+                override fun evaluate(input: T): CriteriaEvaluationResult<T> = CriteriaEvaluationResult(listOf())
             }
         }
 
         fun forProvider(projectDetailsResolver: ProjectDetailsResolver<Any>,criteriaProvider: IndexingCriteriaProvider<Any>): IndexingCriteria<Any> {
             return CriteriaBuilder(projectDetailsResolver)
                 .createCriteriaFrom(criteriaProvider.getInvalidProjectCriteria())
+                .addCriteria("excludeAllForks", criteriaProvider.getForkedProjectCriteria().excludeAllWithForks())
                 .build()
         }
     }
 
-    override fun evaluate(input: T): Boolean {
+    open fun evaluate(input: T): CriteriaEvaluationResult<T> {
+        val failedCriteria = mutableListOf<IndexingCriterion<T>>()
         for (criterion in criteria) {
-
             if (!criterion.test(input)) {
-                log.warn(criterion.getFailureMessage(input))
-                criterion.onCriterionFailure(input)
-                return false
+                failedCriteria.add(criterion)
             }
         }
-        return true
+        return CriteriaEvaluationResult(failedCriteria)
     }
 
     fun getAllCriteriaNames() = criteria.joinToString(",") { it.name }
 
+    data class CriteriaEvaluationResult<T> internal constructor (val failedCriteria: List<IndexingCriterion<T>> = listOf()) {
+        val success = failedCriteria.isEmpty()
+        val failure = failedCriteria.isNotEmpty()
+
+        fun whenFailed(block: (List<IndexingCriterion<T>>) -> Unit) {
+            if (!success) {
+                block.invoke(failedCriteria)
+            }
+        }
+    }
 }

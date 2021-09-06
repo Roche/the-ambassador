@@ -10,6 +10,12 @@ import kotlin.reflect.jvm.kotlinFunction
 
 internal class CriteriaBuilder<T>(private val projectDetailsResolver: ProjectDetailsResolver<T>) {
     private val criteria: MutableSet<IndexingCriterion<T>> = mutableSetOf()
+
+    fun addCriteria(name: String, verifier: CriterionVerifier<T>): CriteriaBuilder<T> {
+        criteria.add(IndexingCriterion(name, verifier, projectDetailsResolver))
+        return this
+    }
+
     fun createCriteriaFrom(criteriaHolder: Any): CriteriaBuilder<T> {
         val createdCriteria = criteriaHolder.javaClass.declaredMethods
             .filter {

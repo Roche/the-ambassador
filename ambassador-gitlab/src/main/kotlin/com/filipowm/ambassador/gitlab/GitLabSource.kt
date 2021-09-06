@@ -4,6 +4,7 @@ import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.Project
 import com.filipowm.ambassador.model.ProjectFilter
+import com.filipowm.ambassador.model.source.ForkedProjectCriteria
 import com.filipowm.ambassador.model.source.InvalidProjectCriteria
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.gitlab.api.GitLab
@@ -59,4 +60,5 @@ class GitLabSource(
     override fun getInvalidProjectCriteria(): InvalidProjectCriteria<GitLabProject> = GitLabInvalidProjectCriteria
     override fun resolveName(project: GitLabProject): String = project.nameWithNamespace!!
     override fun resolveId(project: GitLabProject): String = project.id!!.toString()
+    override fun getForkedProjectCriteria(): ForkedProjectCriteria<GitLabProject> = GitLabForkedProjectCriteria
 }
