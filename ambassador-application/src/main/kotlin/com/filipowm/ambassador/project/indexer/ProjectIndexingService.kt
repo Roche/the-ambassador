@@ -28,8 +28,12 @@ internal class ProjectIndexingService(
     }
 
     suspend fun forciblyStop() {
+        log.info("Trying to forcibly stop indexing, if active")
         if (indexingLock.isLocked() && currentIndexerUsed != null) {
             currentIndexerUsed!!.forciblyStop()
+            log.warn("Indexing forcibly stopped!")
+        } else {
+            log.warn("No indexing in progress, nothing to stop")
         }
     }
 
@@ -38,11 +42,18 @@ internal class ProjectIndexingService(
         if (indexingLock.tryLock()) {
             val indexer = createIndexer()
             currentIndexerUsed = indexer
+            val stats = Statistics()
             return indexer.indexAll(
+                onStarted = { stats.startTiming() },
+                onProjectIndexingStarted = { stats.recordStarted() },
+                onProjectIndexingFinished = { stats.recordFinished() },
+                onProjectIndexingError = { t, _ -> stats.recordError(t) },
                 onFinished = {
                     currentIndexerUsed = null
                     indexingLock.unlock()
+                    stats.stopTiming()
                     log.warn("Indexing has finished")
+                    log.warn("Report:\n{}", stats.getReport())
                 }
             )
         } else {

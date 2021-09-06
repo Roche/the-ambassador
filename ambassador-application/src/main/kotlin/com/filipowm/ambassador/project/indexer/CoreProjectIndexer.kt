@@ -28,7 +28,6 @@ internal class CoreProjectIndexer(
     private val producerScope = CoroutineScope(concurrencyProvider.getSourceProjectProducerDispatcher())
     private val consumerScope = CoroutineScope(concurrencyProvider.getIndexingConsumerDispatcher() + SupervisorJob())
     private val projectToIndexCount = AtomicInteger(0)
-    private val totalIndexedCount = AtomicInteger(0)
     private val finished = AtomicBoolean(false)
     private val sourceFinishedProducing = AtomicBoolean(false)
 
@@ -85,7 +84,6 @@ internal class CoreProjectIndexer(
                                 if (projectToSave.isPresent) {
                                     val entity = ProjectEntity.from(projectToSave.get())
                                     projectEntityRepository.save(entity)
-                                    totalIndexedCount.incrementAndGet()
                                     onProjectIndexingFinished(projectToSave.get())
                                     log.info("Indexed project '{}' (id={})", name, id)
                                 } else {
@@ -114,8 +112,7 @@ internal class CoreProjectIndexer(
             && sourceFinishedProducing.get()
             && finished.compareAndSet(false, true)) {
             onFinished()
-            log.info("Indexing of projects has finished. Indexed {} projects", totalIndexedCount.get())
-            totalIndexedCount.set(0)
+            log.info("Indexing of projects has finished")
         }
     }
 

@@ -10,7 +10,7 @@ interface ProjectIndexer {
         onFinished: IndexingFinishedCallback = {},
         onError: IndexingErrorCallback = {},
         onProjectIndexingStarted: ProjectIndexingStartedCallback = {},
-        onProjectIndexingError: ProjectIndexingErrorCallback = { _: Throwable, _: Any -> },
+        onProjectIndexingError: ProjectIndexingErrorCallback = { _, _ -> },
         onProjectIndexingFinished: ProjectIndexingFinishedCallback = {}
     )
 
