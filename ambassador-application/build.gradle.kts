@@ -16,6 +16,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.0")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
