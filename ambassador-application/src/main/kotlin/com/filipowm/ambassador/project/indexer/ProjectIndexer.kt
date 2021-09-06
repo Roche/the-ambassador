@@ -1,7 +1,7 @@
 package com.filipowm.ambassador.project.indexer
 
-//import com.filipowm.ambassador.model.Project
 import com.filipowm.ambassador.ConcurrencyProvider
+import com.filipowm.ambassador.configuration.source.ProjectSourceProperties
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.gitlab.GitLabSourceRepository
@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.*
 import com.filipowm.gitlab.api.project.model.Project as GitLabProject
 
@@ -22,7 +23,8 @@ import com.filipowm.gitlab.api.project.model.Project as GitLabProject
 internal open class ProjectIndexer(
     private val projectRepository: GitLabSourceRepository,
     private val projectEntityRepository: ProjectEntityRepository,
-    private val concurrencyProvider: ConcurrencyProvider
+    private val concurrencyProvider: ConcurrencyProvider,
+    private val projectSourceProperties: ProjectSourceProperties
 ) {
 
     companion object {
@@ -63,6 +65,7 @@ internal open class ProjectIndexer(
                     .buffer()
                     .onEach { indexingSemaphore.touch() }
                     .filter { it.hasRepositorySetUp() }
+                    .filter { isProjectWithinIndexingPeriod(it) }
                     .onCompletion { log.info("Finished producing projects to index from source") }
                     .catch { log.error("Failed processing project", it) }
                     .collect {
@@ -75,10 +78,20 @@ internal open class ProjectIndexer(
                                 log.error("Failed while indexing project '{}' (id={}): {}", it.nameWithNamespace, it.id, e.message)
                             }
                         }
-
                     }
             }
         }
+    }
+
+    private fun isProjectWithinIndexingPeriod(gitlabProject: GitLabProject): Boolean {
+        // TODO make this calculation directly in db to improve performance
+        val shouldBeIndexed = projectEntityRepository.findById(gitlabProject.id!!.toLong())
+            .filter { it.wasIndexedBefore(LocalDateTime.now().minus(projectSourceProperties.indexEvery)) }
+            .isEmpty
+        if (shouldBeIndexed) {
+            log.info("Project '{}' (id={}) was indexed recently and does not need to be reindex now. Skipping...", gitlabProject.nameWithNamespace, gitlabProject.id)
+        }
+        return shouldBeIndexed
     }
 
     private suspend fun index(gitlabProject: GitLabProject) {

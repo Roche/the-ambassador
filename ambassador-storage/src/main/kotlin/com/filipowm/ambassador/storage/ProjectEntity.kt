@@ -1,8 +1,10 @@
 package com.filipowm.ambassador.storage
 
+import com.filipowm.ambassador.model.Project
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -16,20 +18,24 @@ class ProjectEntity(
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
-    var project: com.filipowm.ambassador.model.Project? = null,
+    var project: Project? = null,
     var stars: Int = 0,
     @Column(name = "criticality_score")
     var criticalityScore: Double? = 0.0,
     @Column(name = "activity_score")
     var activityScore: Double? = 0.0,
     @Column(name = "score")
-    var score: Double? = 0.0
+    var score: Double? = 0.0,
+    @Column(name = "last_indexed_date")
+    var lastIndexedDate: LocalDateTime = LocalDateTime.now()
 ) {
-    companion object Factory {
 
+    fun wasIndexedBefore(otherDate: LocalDateTime): Boolean = lastIndexedDate.isBefore(otherDate)
+
+    companion object Factory {
         val EXCERPT_LENGTH = 1024
 
-        fun from(project: com.filipowm.ambassador.model.Project): ProjectEntity {
+        fun from(project: Project): ProjectEntity {
             val excerpt = Optional.ofNullable(project.description)
                 .map { it.substring(0, minOf(it.length, EXCERPT_LENGTH)) }
                 .orElse(null)
@@ -40,7 +46,8 @@ class ProjectEntity(
                 project.stats.stars,
                 project.getScores().criticality,
                 project.getScores().activity,
-                project.getScores().total
+                project.getScores().total,
+                LocalDateTime.now()
             )
         }
     }
