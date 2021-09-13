@@ -2,6 +2,7 @@ package com.filipowm.ambassador.model.feature
 
 import com.filipowm.ambassador.model.FeatureReader
 import com.filipowm.ambassador.model.Importance
+import com.filipowm.ambassador.model.IndexEntry
 import com.filipowm.ambassador.model.files.RawFile
 import com.filipowm.ambassador.model.project.Contributor
 import com.filipowm.ambassador.model.project.Contributors
@@ -11,12 +12,12 @@ import com.filipowm.ambassador.model.stats.Timeline
 
 class ContributorsFeature(private val contributors: List<Contributor>?) : AbstractFeature<List<Contributor>>(contributors, "Contributors", importance = Importance.high()) {
 
-    override fun makeIndexable(): Pair<String, Any>? {
+    override fun asIndexEntry(): IndexEntry {
         if (contributors == null) {
-            return null
+            return IndexEntry.no()
         }
         val contributorsAggregate = Contributors(contributors.size, contributors.sortedByDescending { it.commits }.take(3))
-        return Pair("contributors", contributorsAggregate)
+        return IndexEntry.of("contributors", contributorsAggregate)
     }
 
     companion object : FeatureReaderFactory<ContributorsFeature> {

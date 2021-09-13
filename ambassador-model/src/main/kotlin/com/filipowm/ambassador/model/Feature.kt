@@ -6,9 +6,9 @@ interface Feature<T> : Specification, Explainable, Weighted, Indexable {
 
     fun importance(): Importance
     fun value(): T?
-    override fun makeIndexable(): Pair<String, Any>? {
-        val value = value() ?: return null
-        return Pair(name().toCamelCase(), value as Any)
+    override fun asIndexEntry(): IndexEntry {
+        val value = value() ?: return IndexEntry.no()
+        return IndexEntry.of(name().toCamelCase(), value)
     }
 
     fun exists(): Boolean = value() != null
