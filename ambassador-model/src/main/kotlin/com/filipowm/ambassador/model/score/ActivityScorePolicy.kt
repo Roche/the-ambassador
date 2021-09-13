@@ -2,7 +2,6 @@ package com.filipowm.ambassador.model.score
 
 import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.project.Visibility
-import com.filipowm.ambassador.model.utils.Functions.withNotNull
 import kotlin.math.log
 import kotlin.math.max
 import kotlin.math.min
@@ -13,11 +12,13 @@ object ActivityScorePolicy : ScorePolicy<Double> {
     private const val INITIAL_SCORE = 50.0
 
     override fun calculateScoreOf(project: Project): Double {
+
+
         var score = INITIAL_SCORE
         // weighting: forks and stars count
         score += project.stats.forks * 5 + project.stats.stars * 5
         // add some little score for open issues, too
-        score += withNotNull(project.issues) { it.open.toDouble() / 5 }
+//        score += withNotNull(project.issues) { it.open.toDouble() / 5 }
         val daysSinceLastUpdate = project.getDaysSinceLastUpdate()
         val daysSinceCreation = project.getDaysSinceCreation()
         // updated in last 3 months: adds a bonus multiplier between 0..1 to overall score (1 = updated today, 0 = updated more than 100 days ago)
@@ -32,20 +33,20 @@ object ActivityScorePolicy : ScorePolicy<Double> {
         // give projects with a meaningful description a static boost of 50
         score += if (project.description != null && project.description.length > 30) 50 else 0
         // give projects with contribution guidelines (CONTRIBUTING.md) file a static boost of 100
-        score += if (project.files.contributingGuide.exists) 100 else 0
+//        score += if (project.files.contributingGuide.exists) 100 else 0
         // give projects with readme (README.md) file a static boost of 100
-        score += if (project.files.readme.exists && project.files.readme.contentLength!! > 100) 100 else 0
+//        score += if (project.files.readme.exists && project.files.readme.contentLength!! > 100) 100 else 0
         // give projects with license (LICENSE) file a static boost of 10
-        score += if (project.files.license.exists) 10 else 0
+//        score += if (project.files.license.exists) 10 else 0
         // give projects with changelog (CHANGELOG.md) file a static boost of 50
-        score += if (project.files.changelog.exists) 50 else 0
+//        score += if (project.files.changelog.exists) 50 else 0
         // evaluate participation stats for the previous 3 months
-        if (project.commits != null) {
-//            // average commits: adds a bonus multiplier between 0..1 to overall score (1 = >10 commits per week, 0 = less than 3 commits per week)
-            val avg = project.commits.by().weeks().average()
-            score *= ((1 + min(max(avg - 3, .0), 7.0)) / 7)
-            //            let iAverageCommitsPerWeek = repo._opensourceMetadata.participation.slice(repo._opensourceMetadata.participation - 13).reduce((a, b) => a + b) / 13;
-        }
+//        if (project.commits != null) {
+////            // average commits: adds a bonus multiplier between 0..1 to overall score (1 = >10 commits per week, 0 = less than 3 commits per week)
+//            val avg = project.commits.by().weeks().average()
+//            score *= ((1 + min(max(avg - 3, .0), 7.0)) / 7)
+//            //            let iAverageCommitsPerWeek = repo._opensourceMetadata.participation.slice(repo._opensourceMetadata.participation - 13).reduce((a, b) => a + b) / 13;
+//        }
 
         // give penalty for private projects
         score *= if (project.visibility == Visibility.PRIVATE) .3f else 1f

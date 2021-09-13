@@ -3,6 +3,7 @@ package com.filipowm.ambassador.project.indexer
 import com.filipowm.ambassador.ConcurrencyProvider
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
+import com.filipowm.ambassador.model.feature.FeatureReaders
 import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.project.ProjectFilter
 import com.filipowm.ambassador.model.project.Visibility
@@ -35,9 +36,22 @@ internal class CoreProjectIndexer(
         private val log by LoggerDelegate()
     }
 
+    private suspend fun readFeatures(project: Project) {
+        FeatureReaders.all()
+            .map {
+                consumerScope.launch {
+                    project.readFeature(it, source)
+                }
+            }.joinAll()
+    }
+
     override suspend fun indexOne(id: Long): Project {
         log.info("Reindexing project $id")
-        return source.getById(id.toString())
+        val project = source.getById(id.toString())
+        if (project.isPresent) {
+            readFeatures(project.get())
+        }
+        return project
             .map { ProjectEntity.from(it) }
             .map { projectEntityRepository.save(it) }
             .map { it.project }
@@ -89,10 +103,13 @@ internal class CoreProjectIndexer(
                             try {
                                 log.info("Indexing project '{}' (id={})", name, id)
                                 val projectToSave = Optional.ofNullable(source.map(it))
+
                                 if (projectToSave.isPresent) {
-                                    val entity = ProjectEntity.from(projectToSave.get())
+                                    val project = projectToSave.get()
+                                    readFeatures(project)
+                                    val entity = ProjectEntity.from(project)
                                     projectEntityRepository.save(entity)
-                                    onProjectIndexingFinished(projectToSave.get())
+                                    onProjectIndexingFinished(project)
                                     log.info("Indexed project '{}' (id={})", name, id)
                                 } else {
                                     log.warn("Project '{}' (id={}) not indexed, because it could not be analyzed", name, id)

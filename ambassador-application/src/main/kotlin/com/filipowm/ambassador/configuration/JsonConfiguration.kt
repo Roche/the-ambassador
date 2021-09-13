@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.filipowm.ambassador.configuration.json.AmbassadorModule
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,6 +25,7 @@ open class JsonConfiguration : ObjectMapperSupplier {
             .registerModule(KotlinModule())
             .registerModule(Jdk8Module())
             .registerModule(JavaTimeModule())
+            .registerModule(AmbassadorModule())
             .setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

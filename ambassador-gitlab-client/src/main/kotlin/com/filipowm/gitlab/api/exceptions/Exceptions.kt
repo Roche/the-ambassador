@@ -14,12 +14,12 @@ object Exceptions {
         }
         return Optional.ofNullable(
             when (status) {
-                401 -> UnauthorizedException("No credentials provided.", null, status, responseException.response.headers)
+                401 -> UnauthorizedException("Lack of valid credentials.", null, status, responseException.response.headers)
                 403 -> ForbiddenException("Insufficient privileges to access requested resource.", null, status, responseException.response.headers)
                 404 -> NotFoundException("Requested data was not found.", null, status, responseException.response.headers)
                 408 -> RequestTimeoutException("Request timed out.", null, status, responseException.response.headers)
                 429 -> RateLimitReachedException("Rate limit was reached. Please wait and retry later.", responseException, status, responseException.response.headers)
-                else -> GitLabApiException("Unknown error occured due to issuue on client side.", responseException, status, responseException.response.headers)
+                else -> GitLabApiException("Unknown error occurred due to issue on client side.", responseException, status, responseException.response.headers)
             }
         )
     }

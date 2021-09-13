@@ -2,19 +2,27 @@ package com.filipowm.ambassador.gitlab
 
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
-import com.filipowm.ambassador.model.project.Project
-import com.filipowm.ambassador.model.project.ProjectFilter
+import com.filipowm.ambassador.model.files.RawFile
+import com.filipowm.ambassador.model.project.*
 import com.filipowm.ambassador.model.source.ForkedProjectCriteria
 import com.filipowm.ambassador.model.source.InvalidProjectCriteria
 import com.filipowm.ambassador.model.source.PersonalProjectCriteria
 import com.filipowm.ambassador.model.source.ProjectSource
+import com.filipowm.ambassador.model.stats.Timeline
 import com.filipowm.gitlab.api.GitLab
+import com.filipowm.gitlab.api.model.AccessLevel
+import com.filipowm.gitlab.api.model.AccessLevelName
+import com.filipowm.gitlab.api.model.IssueStatisticsQuery
+import com.filipowm.gitlab.api.project.CommitsQuery
 import com.filipowm.gitlab.api.project.ProjectListQuery
 import com.filipowm.gitlab.api.project.ProjectQuery
 import com.filipowm.gitlab.api.utils.Pagination
+import com.filipowm.gitlab.api.utils.Sort
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import java.time.LocalDateTime
 import java.util.*
+import kotlin.streams.toList
 import com.filipowm.gitlab.api.project.model.Project as GitLabProject
 
 class GitLabSource(
@@ -64,4 +72,82 @@ class GitLabSource(
     override fun resolveId(project: GitLabProject): String = project.id!!.toString()
     override fun getForkedProjectCriteria(): ForkedProjectCriteria<GitLabProject> = GitLabForkedProjectCriteria
     override fun getPersonalProjectCriteria(): PersonalProjectCriteria<GitLabProject> = GitLabPersonalProjectCriteria
+
+    override suspend fun readIssues(projectId: String): Issues {
+        log.info("Reading project {} issues", projectId)
+        val projectApi = gitlab.projects().withId(projectId.toLong())
+        val actual = projectApi.issueStatistics().get().counts
+        val nowMinus90Days = LocalDateTime.now().minusDays(90)
+        val last90Days = projectApi.issueStatistics().get(IssueStatisticsQuery(updatedAfter = nowMinus90Days)).counts
+        log.info("Finished reading project {} issues", projectId)
+        return Issues(actual.all, actual.opened, actual.closed, last90Days.closed, last90Days.opened)
+    }
+
+    override suspend fun readContributors(projectId: String): List<Contributor> {
+        return gitlab.projects().withId(projectId.toLong()).repository().getContributors(Sort.desc("commits"))
+            .map { Contributor(it.name, it.email, it.commits, null) }
+    }
+
+    override suspend fun readLanguages(projectId: String): Map<String, Float> {
+        log.info("Reading project {} languages", projectId)
+        val languages = gitlab.projects().withId(projectId.toLong()).languages()
+        log.info("Read project {} languages", projectId)
+        return languages
+    }
+
+    override suspend fun readCommits(projectId: String, ref: String): Timeline {
+        val timeline = Timeline()
+        log.info("Reading project {} commits timeline", projectId)
+        val query = CommitsQuery(
+            refName = ref,
+            since = LocalDateTime.now().minusDays(90),
+            until = LocalDateTime.now(),
+            withStats = false
+        )
+        val paging = gitlab.projects().withId(projectId.toLong())
+            .repository().commits().paging(query, Pagination(itemsPerPage = 50))
+
+        for (commitsPage in paging) {
+            for (commit in commitsPage) {
+                timeline.increment(commit.createdAt)
+            }
+        }
+        log.info("Finished reading project {} commits timeline", projectId)
+        return timeline
+    }
+
+    override suspend fun readFile(projectId: String, path: String, ref: String): Optional<RawFile> {
+        return gitlab.projects().withId(projectId.toLong())
+            .repository()
+            .files()
+            .get(path, ref)
+            .map { RawFile(true, it.contentSha256, null, it.size, it.filePath, it.getRawContent().orElse(null)) }
+    }
+
+    override suspend fun readReleases(projectId: String): Timeline {
+        log.info("Reading project {} releases timeline", projectId)
+        val timeline = Timeline()
+        for (releasePage in gitlab.projects().withId(projectId.toLong()).releases().paging()) {
+            for (release in releasePage) {
+                if (release.releasedAt != null) {
+                    timeline.increment(release.releasedAt!!)
+                }
+            }
+        }
+        log.info("Finished reading project {} releases timeline", projectId)
+        return timeline
+    }
+
+    override suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch> {
+        log.info("Reading project {} protected branches setup", projectId)
+        val data = gitlab.projects().withId(projectId.toLong()).protectedBranches().stream()
+            .map { ProtectedBranch(it.name, checkHasNoAccess(it.mergeAccessLevels), checkHasNoAccess(it.pushAccessLevels)) }
+            .toList()
+        log.info("Finished reading project {} protected branches", projectId)
+        return data
+    }
+
+    private fun checkHasNoAccess(accessLevels: List<AccessLevel>): Boolean {
+        return accessLevels.none { it.accessLevel == AccessLevelName.NONE }
+    }
 }

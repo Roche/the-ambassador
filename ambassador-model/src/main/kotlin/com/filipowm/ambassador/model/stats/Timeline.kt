@@ -1,13 +1,18 @@
 package com.filipowm.ambassador.model.stats
 
+import com.fasterxml.jackson.annotation.JsonGetter
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.stream.Collectors
 
-class Timeline(internal val data: MutableMap<LocalDate, Int>) {
+class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>) {
 
     constructor() : this(hashMapOf())
+
+    @JsonGetter("data")
+    fun getRawData(): Map<LocalDate, Int> = data.toSortedMap()
 
     override fun toString(): String {
         return data.toString()
@@ -50,6 +55,14 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
         return add(date, 1)
     }
 
+    fun increment(date: LocalDate): Timeline {
+        return add(date, 1)
+    }
+
+    fun increment(date: LocalDateTime): Timeline {
+        return add(date, 1)
+    }
+
     fun by(): Aggregator {
         return Aggregator()
     }
@@ -63,14 +76,6 @@ class Timeline(internal val data: MutableMap<LocalDate, Int>) {
             .sortedBy { it.key }
             .windowed(size, step)
             .map { x -> Pair(x.first().key, x.sumOf { it.value }.toDouble() / x.size) }
-    }
-
-    inner class Moving(val size: Int, val step: Int) {
-
-        val sorted = TreeMap(data)
-
-        init {
-        }
     }
 
     inner class Aggregator {
