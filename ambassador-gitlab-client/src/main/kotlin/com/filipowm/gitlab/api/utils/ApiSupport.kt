@@ -17,13 +17,15 @@ const val PAGE_HEADER = "x-page"
 const val PER_PAGE_HEADER = "x-per-page"
 const val TOTAL_ELEMENTS_HEADER = "x-total"
 const val TOTAL_PAGES_HEADER = "x-total-pages"
+const val NEXT_PAGE = "x-next-page"
 
 fun HttpResponse.getPageInfo(): PageInfo {
-    val page = headers.getOptionalHeaderAsInt(PAGE_HEADER).orElse(0)
-    val perPage = headers.getOptionalHeaderAsInt(PER_PAGE_HEADER).orElse(0)
-    val total = headers.getOptionalHeaderAsInt(TOTAL_ELEMENTS_HEADER).orElse(0)
-    val totalPages = headers.getOptionalHeaderAsInt(TOTAL_PAGES_HEADER).orElse(0)
-    return PageInfo.of(page, total, totalPages, perPage)
+    val page = headers.getOptionalHeaderAsInt(PAGE_HEADER).orElse(-1)
+    val perPage = headers.getOptionalHeaderAsInt(PER_PAGE_HEADER).orElse(-1)
+    val total = headers.getOptionalHeaderAsInt(TOTAL_ELEMENTS_HEADER).orElse(-1)
+    val totalPages = headers.getOptionalHeaderAsInt(TOTAL_PAGES_HEADER).orElse(-1)
+    val nextPage = headers.getOptionalHeaderAsInt(NEXT_PAGE).orElse(-1)
+    return PageInfo.of(page, total, totalPages, perPage, nextPage)
 }
 
 fun HttpRequestBuilder.applyQueryParameters(vararg inputs: Any) {

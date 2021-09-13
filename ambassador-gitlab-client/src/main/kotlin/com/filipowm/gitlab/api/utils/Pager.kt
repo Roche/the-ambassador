@@ -10,7 +10,7 @@ class Pager<T>(
 ) : ChannelIterator<Page<T>>, PageInfo {
 
     private val nextPagination: AtomicReference<Pagination> = AtomicReference(pagination)
-    private val currentPage: AtomicReference<PageInfo> = AtomicReference(PageInfo.of(pagination.page, -1, -1, pagination.itemsPerPage))
+    private val currentPage: AtomicReference<PageInfo> = AtomicReference(PageInfo.of(pagination.page, -1, -1, pagination.itemsPerPage, pagination.page + 1))
 
     private val currentPageData = AtomicReference<Page<T>>()
 
@@ -18,6 +18,7 @@ class Pager<T>(
     override fun getTotalElements(): Int = currentPage.get().getTotalElements()
     override fun getTotalPages(): Int = currentPage.get().getTotalPages()
     override fun getPerPage(): Int = currentPage.get().getPerPage()
+    override fun getNextPage(): Int = currentPage.get().getNextPage()
 
     operator fun iterator(): ChannelIterator<Page<T>> {
         return this
