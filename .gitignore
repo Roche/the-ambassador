@@ -252,3 +252,5 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/gradle,kotlin,intellij,macos,windows,linux
 
 /.idea/aws.xml
+
+postgres_data/
