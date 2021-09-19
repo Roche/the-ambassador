@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":ambassador-gitlab"))
     implementation(project(":ambassador-document-analyzer"))
     implementation(project(":ambassador-commons"))
+    implementation(project(":ambassador-fake-source"))
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")

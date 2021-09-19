@@ -21,6 +21,7 @@ data class ProjectSourcesProperties(
 ) {
 
     enum class System {
-        GITLAB
+        GITLAB,
+        FAKE
     }
 }

@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 interface ForkedProjectCriteria<T> {
 
-    fun includeAllWithForks(): CriterionVerifier<T>
+    fun includeAllWithForks(): CriterionVerifier<T> = { true }
     fun excludeAllWithForks(): CriterionVerifier<T>
 
     fun lastForkActivityBeforeParentMoreThan(days: Long): CriterionVerifier<T>
