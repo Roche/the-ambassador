@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.filipowm.ambassador.model.feature.AbstractFeature
 import com.filipowm.ambassador.model.feature.Features
 
-internal object FeaturesDeserializer: StdDeserializer<Features>(Features::class.java) {
+internal object FeaturesDeserializer : StdDeserializer<Features>(Features::class.java) {
     override fun deserialize(p: JsonParser?, ctx: DeserializationContext): Features? {
         if (p == null) {
             return null
@@ -34,7 +34,6 @@ internal object FeaturesDeserializer: StdDeserializer<Features>(Features::class.
         }
         return features
     }
-
 }
 
 class Raw(val json: String)

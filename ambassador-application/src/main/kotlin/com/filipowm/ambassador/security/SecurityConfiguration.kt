@@ -98,6 +98,5 @@ internal class SecurityConfiguration {
             log.warn(message)
             return super.onAuthenticationFailure(webFilterExchange, exception)
         }
-
     }
 }

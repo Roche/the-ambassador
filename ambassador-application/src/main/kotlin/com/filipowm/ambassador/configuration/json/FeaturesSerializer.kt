@@ -25,5 +25,4 @@ internal object FeaturesSerializer : StdSerializer<Features>(Features::class.jav
         }
         gen.writeEndObject()
     }
-
 }

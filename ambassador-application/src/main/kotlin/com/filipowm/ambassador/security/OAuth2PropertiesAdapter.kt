@@ -6,7 +6,7 @@ import com.filipowm.ambassador.extensions.toCamelCase
 import org.springframework.security.oauth2.client.registration.ClientRegistration
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 
-internal object OAuth2PropertiesAdapter: Adapter<OAuth2ClientProperties, ClientRegistration> {
+internal object OAuth2PropertiesAdapter : Adapter<OAuth2ClientProperties, ClientRegistration> {
     override fun convert(props: OAuth2ClientProperties?): ClientRegistration {
         return ClientRegistration.withRegistrationId(props!!.name.toCamelCase())
             .authorizationUri(props.authorizationUri)

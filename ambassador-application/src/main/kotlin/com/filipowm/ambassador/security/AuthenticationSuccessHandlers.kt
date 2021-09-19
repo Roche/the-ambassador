@@ -31,7 +31,6 @@ internal class SessionConfiguringAuthenticationSuccessHandler(private val sessio
             session.maxIdleTime = sessionProperties.timeout
         }
     }
-
 }
 
 internal object LoggingAuthenticationSuccessHandler : AmbassadorAuthSuccessHandler() {

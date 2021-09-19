@@ -18,4 +18,3 @@ class InMemoryIndexinglock : IndexingLock() {
 
     override fun isLocked() = localLock.availablePermits == 0
 }
-

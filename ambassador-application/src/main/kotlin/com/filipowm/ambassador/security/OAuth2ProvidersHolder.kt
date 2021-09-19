@@ -12,5 +12,4 @@ internal class OAuth2ProvidersHolder(private val providers: MutableMap<ClientReg
     fun isEmpty() = providers.isEmpty()
 
     fun get(clientRegistration: ClientRegistration) = providers[clientRegistration]
-
 }

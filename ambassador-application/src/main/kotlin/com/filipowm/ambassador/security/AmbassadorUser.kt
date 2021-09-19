@@ -17,8 +17,11 @@ data class AmbassadorUser(
 ) : OAuth2User {
 
     constructor(
-        name: String, username: String, email: String,
-        attributes: Map<String, Any>, authorities: List<String>
+        name: String,
+        username: String,
+        email: String,
+        attributes: Map<String, Any>,
+        authorities: List<String>
     ) : this(name, username, email, null, null, attributes, authorities.map { SimpleGrantedAuthority(it) })
 
     val isAdmin = authorities.any { it.authority == ADMIN }

@@ -12,5 +12,4 @@ internal open class MeApi {
 
     @GetMapping
     suspend fun me(@AuthenticationPrincipal principal: OAuth2User) = principal
-
 }

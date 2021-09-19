@@ -5,7 +5,6 @@ import com.filipowm.ambassador.exceptions.Exceptions.NotFoundException
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.project.indexer.IndexingAlreadyStartedException
 import com.filipowm.ambassador.storage.InvalidSortFieldException
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -61,8 +60,8 @@ class ExceptionHandlingAdvice {
     fun forbidden(ex: AccessDeniedException, exchange: ServerWebExchange): Mono<Message> {
         return exchange.getPrincipal<Principal>()
             .map { it.name }
-            .doOnNext { log.warn("User '{}' attempted to access '{}' without needed permissions", it, exchange.request.path)  }
-            .map { Message("Access Denied")}
+            .doOnNext { log.warn("User '{}' attempted to access '{}' without needed permissions", it, exchange.request.path) }
+            .map { Message("Access Denied") }
     }
 
     @ExceptionHandler(IndexingAlreadyStartedException::class)

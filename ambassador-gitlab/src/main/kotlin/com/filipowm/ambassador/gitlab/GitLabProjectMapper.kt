@@ -38,30 +38,30 @@ class GitLabProjectMapper(
                     MDC.put("project-id", gitlabProject.id.toString())
                     val reader = ProjectReader(gitlabProject, gitlab, this)
 //                    val languages = reader.readLanguages()
-                    val readme = if (gitlabProject.readmeUrl != null) {
-                        reader.withFile(gitlabProject.readmeUrl!!) { analyzeDocument(it) }
-                    } else {
-                        async { Documentation.notExistent() }
-                    }
-                    val contributing = reader.withFile(Files.CONTRIBUTING_DEFAULT) { analyzeDocument(it) }
-                    val ci = reader.withFile(".gitlab-ci.yml") { contentToFile(it) }
-                    val changelog = reader.withFile(Files.CHANGELOG_DEFAULT) { contentToFile(it) }
-                    val gitignore = reader.withFile(Files.GITIGNORE_DEFAULT) { contentToFile(it) }
+//                    val readme = if (gitlabProject.readmeUrl != null) {
+//                        reader.withFile(gitlabProject.readmeUrl!!) { analyzeDocument(it) }
+//                    } else {
+//                        async { Documentation.notExistent() }
+//                    }
+//                    val contributing = reader.withFile(Files.CONTRIBUTING_DEFAULT) { analyzeDocument(it) }
+//                    val ci = reader.withFile(".gitlab-ci.yml") { contentToFile(it) }
+//                    val changelog = reader.withFile(Files.CHANGELOG_DEFAULT) { contentToFile(it) }
+//                    val gitignore = reader.withFile(Files.GITIGNORE_DEFAULT) { contentToFile(it) }
 //                    val issues = reader.readIssues()
 //                    val commits = reader.readCommits()
 //                    val releases = reader.readReleases()
 //                    val protectedBranches = reader.readProtectedBranches()
-                    val license = Optional.ofNullable(gitlabProject.license)
-                        .map { License(it.name, it.key, Language.ENGLISH.name, true, null, null, it.htmlUrl) }
-                        .orElse(License.notExistent())
-                    val files = Files(
-                        readme = readme.await(),
-                        contributingGuide = contributing.await(),
-                        ciDefinition = ci.await(),
-                        changelog = changelog.await(),
-                        license = license,
-                        gitignore = gitignore.await()
-                    )
+//                    val license = Optional.ofNullable(gitlabProject.license)
+//                        .map { License(it.name, it.key, Language.ENGLISH.name, true, null, null, it.htmlUrl) }
+//                        .orElse(License.notExistent())
+//                    val files = Files(
+//                        readme = readme.await(),
+//                        contributingGuide = contributing.await(),
+//                        ciDefinition = ci.await(),
+//                        changelog = changelog.await(),
+//                        license = license,
+//                        gitignore = gitignore.await()
+//                    )
                     val stats = if (gitlabProject.statistics != null) {
                         val glStats = gitlabProject.statistics!!
                         Statistics(

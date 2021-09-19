@@ -140,9 +140,9 @@ internal class CoreProjectIndexer(
     override fun getSource(): ProjectSource<Any> = source
 
     private fun tryFinish(onFinished: IndexingFinishedCallback) {
-        if (projectToIndexCount.get() == 0
-            && sourceFinishedProducing.get()
-            && finished.compareAndSet(false, true)
+        if (projectToIndexCount.get() == 0 &&
+            sourceFinishedProducing.get() &&
+            finished.compareAndSet(false, true)
         ) {
             onFinished()
             log.info("Indexing of projects has finished")

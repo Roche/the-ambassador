@@ -17,11 +17,11 @@ internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
             }
         }
 
-        fun forProvider(projectDetailsResolver: ProjectDetailsResolver<Any>,criteriaProvider: IndexingCriteriaProvider<Any>): IndexingCriteria<Any> {
+        fun forProvider(projectDetailsResolver: ProjectDetailsResolver<Any>, criteriaProvider: IndexingCriteriaProvider<Any>): IndexingCriteria<Any> {
             return CriteriaBuilder(projectDetailsResolver)
                 .createCriteriaFrom(criteriaProvider.getInvalidProjectCriteria())
                 .addCriteria("excludeAllForks", criteriaProvider.getForkedProjectCriteria().excludeAllWithForks())
-                .addCriteria("personalProjectWithAtLeast1Star", criteriaProvider.getPersonalProjectCriteria().hasAtLeastStars(1))
+//                .addCriteria("personalProjectWithAtLeast1Star", criteriaProvider.getPersonalProjectCriteria().hasAtLeastStars(1))
                 .build()
         }
     }

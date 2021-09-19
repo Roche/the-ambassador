@@ -5,7 +5,6 @@ import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import org.springframework.security.oauth2.client.registration.ClientRegistration
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 
 internal class ClientRegistrationRegistrar(private val projectSourcesProperties: ProjectSourcesProperties) {
@@ -102,5 +101,4 @@ internal class ClientRegistrationRegistrar(private val projectSourcesProperties:
 
         fun hasErrors() = errors.isNotEmpty()
     }
-
 }
