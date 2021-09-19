@@ -60,6 +60,7 @@ dependencies {
 tasks.withType<Detekt>().configureEach {
     // Target version of the generated JVM bytecode. It is used for type resolution.
     this.jvmTarget = jvmTargetVersion
+    this.onlyIf { project.hasProperty("runDetect") }
 }
 
 repositories {
