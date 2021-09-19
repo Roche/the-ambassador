@@ -1,10 +1,11 @@
 package com.filipowm.ambassador
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
+@SpringBootApplication(exclude = [ReactiveUserDetailsServiceAutoConfiguration::class])
 @EnableConfigurationProperties
 open class TheAmbassadorApplication
 
