@@ -1,5 +1,6 @@
 package com.filipowm.ambassador.project.indexer
 
+import com.filipowm.ambassador.extensions.toHumanReadable
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
@@ -47,7 +48,7 @@ internal class Statistics {
         sb.appendLine("Indexed projects: ${getProjectsIndexed()}")
         sb.appendLine("Excluded projects: ${getTotalExclusions()}")
         sb.appendLine("Total errors: ${getTotalErrors()}")
-        sb.appendLine("Total indexing time: ${getDuration().humanReadableFormat()}")
+        sb.appendLine("Total indexing time: ${getDuration().toHumanReadable()}")
         if (getProjectsIndexed() > 0) {
             sb.appendLine("Avg time per project: ${timer.getDurationAsMillis() / getProjectsIndexed()}ms")
         }
@@ -69,13 +70,6 @@ internal class Statistics {
 //        Most occurring errors:
 //        ${getErrorsReport()}
 //    """.trimIndent()
-
-    private fun Duration.humanReadableFormat(): String {
-        return toString()
-            .substring(2)
-            .replace("(\\d[HMS])(?!$)".toRegex(), "$1 ")
-            .toLowerCase()
-    }
 
     private class Timer(private val millisProvider: () -> Long = { System.currentTimeMillis() }) {
         private var start = 0L
