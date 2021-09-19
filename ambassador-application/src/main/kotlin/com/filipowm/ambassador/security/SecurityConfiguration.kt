@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.session.SessionProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
@@ -26,6 +27,7 @@ import reactor.core.publisher.Mono
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 @EnableConfigurationProperties(SessionProperties::class)
+@Profile("!local")
 internal class SecurityConfiguration {
 
     private val log by LoggerDelegate()
