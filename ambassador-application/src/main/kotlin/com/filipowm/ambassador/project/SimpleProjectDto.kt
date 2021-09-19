@@ -29,7 +29,7 @@ data class SimpleProjectDto(
                 url = project.url!!,
                 avatarUrl = project.avatarUrl,
                 name = project.name,
-                description = project.description?.substring(0, min(project.description!!.length, 300)),
+                description = project.description,
                 tags = project.tags,
                 visibility = project.visibility,
                 createdDate = project.createdDate,

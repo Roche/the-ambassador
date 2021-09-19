@@ -8,6 +8,7 @@ import com.filipowm.ambassador.storage.jooq.tables.Project.PROJECT
 import com.filipowm.ambassador.storage.jooq.tables.records.ProjectRecord
 import org.jooq.*
 import org.jooq.impl.DSL
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -16,24 +17,23 @@ import org.springframework.transaction.annotation.Transactional
 
 @Repository
 @Transactional(readOnly = true)
-internal class SearchableProjectEntityRepository(private val dsl: DSLContext, private val objectMapper: ObjectMapper) : ProjectSearchRepository {
-
+internal class SearchableProjectEntityRepository(
+    private val dsl: DSLContext,
+    private val objectMapper: ObjectMapper,
+    @Value("\${ambassador.language}")
+    private val language: String
+) : ProjectSearchRepository {
     fun mapper(): RecordMapper<ProjectRecord, ProjectEntity> {
         return RecordMapper {
             ProjectEntity(
                 it.id.toLong(),
                 it.name,
-                it.excerpt,
                 objectMapper.readValue(it.project.data(), Project::class.java),
                 it.stars,
                 it.criticalityScore.toDouble(),
                 it.activityScore.toDouble()
             )
         }
-    }
-
-    fun similarity(a: Field<String>, b: String): Field<Double> {
-        return DSL.field("similarity({0}, {1})", Double::class.java, a, b)
     }
 
     private fun count(query: SearchQuery): Int {
@@ -49,7 +49,6 @@ internal class SearchableProjectEntityRepository(private val dsl: DSLContext, pr
         q.orderBy(Sorting.within(PROJECT).by(pageable.sort))
         q.limit(pageable.pageSize)
         q.offset(pageable.offset)
-
         val record = q.fetch(mapper())
         val c = count(query).toLong()
         return PageImpl(record, pageable, c)
@@ -57,9 +56,17 @@ internal class SearchableProjectEntityRepository(private val dsl: DSLContext, pr
 
     private fun buildQuery(query: SearchQuery, q: SelectWhereStep<*>) {
         val whereBuilder = q.where()
-        query.query.ifPresent { applyFuzzySearch(whereBuilder, it) }
+        query.query.ifPresent { applyFullTextSearch(whereBuilder, it) }
 
         searchWithinJson(whereBuilder, query)
+    }
+
+    private fun applyFullTextSearch(q: SelectConditionStep<out Record>, query: String) {
+        q.and(textsearch(PROJECT.TEXTSEARCH, query))
+    }
+
+    private fun textsearch(field: TableField<ProjectRecord, Any>, query: String): Field<Boolean> {
+        return DSL.field("{0} @@ to_tsquery({1}, {2})", Boolean::class.java, field, DSL.inline(language), DSL.inline("${query}:*"))
     }
 
     private fun searchWithinJson(whereBuilder: SelectConditionStep<*>, searchQuery: SearchQuery) {
@@ -76,10 +83,4 @@ internal class SearchableProjectEntityRepository(private val dsl: DSLContext, pr
             .reduce(DSL.falseCondition(), Condition::or)
     }
 
-    private fun applyFuzzySearch(q: SelectConditionStep<*>, query: String) {
-        q.and(
-            similarity(PROJECT.NAME, query).gt(0.15)
-                .or(similarity(PROJECT.EXCERPT, query).gt(0.15))
-        )
-    }
 }

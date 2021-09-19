@@ -49,6 +49,7 @@ jooq {
                 isPojosEqualsAndHashCode = true
                 isFluentSetters = true
                 isJavaTimeTypes = true
+                isDeprecationOnUnknownTypes = false
             }
         }
     }

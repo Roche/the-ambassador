@@ -35,7 +35,7 @@ open class ProjectService(
     @Transactional(readOnly = true)
     open suspend fun list(query: ListProjectsQuery, pageable: Pageable): Paged<SimpleProjectDto> {
         log.debug("Searching for project with query: {}", query)
-        val q = SearchQuery(query.name, query.visibility.orElse(Visibility.INTERNAL))
+        val q = SearchQuery(query.query, query.visibility.orElse(Visibility.INTERNAL))
         val result = projectSearchRepository.search(q, pageable)
             .map { SimpleProjectDto.from(it.project!!) }
         return Paged.from(result)

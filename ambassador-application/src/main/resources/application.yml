@@ -4,10 +4,10 @@ spring:
   main:
     banner-mode: console
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    username: postgres
+#    password: postgres
 
   jpa:
     hibernate:
@@ -20,10 +20,14 @@ spring:
   profiles:
     include:
       - secrets
+  flyway:
+    placeholders:
+      language: ${ambassador.language}
 
 logging.level.com.filipowm.ambassador.gitlab.ProjectReader: WARN
 
 ambassador:
+  language: english
   indexer:
     concurrency:
-      concurrencyLevel: 3
+      concurrencyLevel: 30

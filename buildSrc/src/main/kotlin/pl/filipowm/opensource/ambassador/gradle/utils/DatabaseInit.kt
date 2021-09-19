@@ -19,6 +19,9 @@ class DatabaseInit {
             val result = Flyway.configure()
                 .dataSource(ds)
                 .locations(migrationsPath)
+                .placeholders(mapOf(
+                    "language" to "english"
+                ))
                 .load()
                 .migrate()
 
