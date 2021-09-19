@@ -4,7 +4,9 @@ import com.filipowm.gitlab.api.client.GitLabHttpClient
 import com.filipowm.gitlab.api.groups.GroupsApi
 import com.filipowm.gitlab.api.project.ProjectsApi
 
-internal class GitLabApi(basePath: String, httpClient: GitLabHttpClient) : Api(basePath, httpClient), GitLab {
+internal class GitLabApi(private val url: String, basePath: String, httpClient: GitLabHttpClient) : Api(basePath, httpClient), GitLab {
+    override fun url(): String = url
+
     override fun projects() = ProjectsApi("$basePath/projects", client)
 
     override fun groups() = GroupsApi("$basePath/groups", client)

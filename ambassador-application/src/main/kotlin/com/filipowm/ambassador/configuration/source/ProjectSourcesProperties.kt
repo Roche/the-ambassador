@@ -15,7 +15,9 @@ data class ProjectSourcesProperties(
     @NotBlank val url: String,
     @NotBlank val token: String,
     @NotNull val system: System,
-    @NotNull val indexEvery: Duration = Duration.ofDays(7)
+    @NotNull val indexEvery: Duration = Duration.ofDays(7),
+    val clientId: String?,
+    val clientSecret: String?
 ) {
 
     enum class System {

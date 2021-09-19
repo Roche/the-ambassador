@@ -1,5 +1,6 @@
 package com.filipowm.ambassador.gitlab
 
+import com.filipowm.ambassador.OAuth2ClientProperties
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.files.RawFile
@@ -29,6 +30,16 @@ class GitLabSource(
     private val gitlab: GitLab,
     private val gitLabProjectMapper: GitLabProjectMapper
 ) : ProjectSource<GitLabProject> {
+
+    private val oAuth2ClientProperties = OAuth2ClientProperties(
+        name = "GitLab",
+        authorizationUri = "${gitlab.url()}/oauth/authorize",
+        jwkSetUri = "${gitlab.url()}/oauth/discovery/keys",
+        tokenUri = "${gitlab.url()}/oauth/token",
+        userInfoUri = "${gitlab.url()}/api/v4/user",
+        usernameAttributeName = "username",
+        scopes = setOf("read_user")
+    )
 
     companion object {
         private val log by LoggerDelegate()
@@ -72,6 +83,7 @@ class GitLabSource(
     override fun resolveId(project: GitLabProject): String = project.id!!.toString()
     override fun getForkedProjectCriteria(): ForkedProjectCriteria<GitLabProject> = GitLabForkedProjectCriteria
     override fun getPersonalProjectCriteria(): PersonalProjectCriteria<GitLabProject> = GitLabPersonalProjectCriteria
+    override fun getOAuth2ClientProperties(): OAuth2ClientProperties = oAuth2ClientProperties
 
     override suspend fun readIssues(projectId: String): Issues {
         log.info("Reading project {} issues", projectId)

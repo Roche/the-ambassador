@@ -83,7 +83,7 @@ class GitLabApiBuilder internal constructor() {
     fun build(): GitLab {
         val retryRegistry = RetryRegistry.of(retryConfigBuilder.build())
         val gitLabHttpClient = GitLabHttpClient(httpClientBuilder.build(), retryRegistry.retry("gitlab"))
-        return GitLabApi("/api/v4", gitLabHttpClient)
+        return GitLabApi(url, "/api/v4", gitLabHttpClient)
     }
 
     class LoggingBuilder internal constructor(private val httpClientBuilder: HttpClientBuilder) {

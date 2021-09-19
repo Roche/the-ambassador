@@ -5,6 +5,7 @@ import com.filipowm.gitlab.api.project.ProjectsApi
 
 interface GitLab {
 
+    fun url(): String
     fun projects(): ProjectsApi
     fun groups(): GroupsApi
     fun issueStatistics(): IssueStatisticsApi

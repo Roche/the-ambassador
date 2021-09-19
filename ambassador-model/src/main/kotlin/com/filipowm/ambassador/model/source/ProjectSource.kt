@@ -1,5 +1,6 @@
 package com.filipowm.ambassador.model.source
 
+import com.filipowm.ambassador.OAuth2ClientProvider
 import com.filipowm.ambassador.model.Specification
 import com.filipowm.ambassador.model.files.RawFile
 import com.filipowm.ambassador.model.project.*
@@ -7,7 +8,7 @@ import com.filipowm.ambassador.model.stats.Timeline
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
-interface ProjectSource<T>: Specification, IndexingCriteriaProvider<T>, ProjectDetailsResolver<T> {
+interface ProjectSource<T>: Specification, IndexingCriteriaProvider<T>, ProjectDetailsResolver<T>, OAuth2ClientProvider {
 
     suspend fun getById(id: String): Optional<Project>
     suspend fun flow(filter: ProjectFilter): Flow<T>
