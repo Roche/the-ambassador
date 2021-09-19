@@ -16,9 +16,12 @@ import org.jooq.meta.jaxb.Configuration
 import org.jooq.meta.jaxb.Generator
 import org.jooq.meta.jaxb.Jdbc
 import org.jooq.meta.jaxb.Strategy
+import java.io.File
+import java.util.Optional
 import javax.inject.Inject
 
-abstract class JooqGenerate @Inject constructor(
+@CacheableTask
+open class JooqGenerate @Inject constructor(
     @Input val configProvider: Property<Configuration>,
     runtimeClasspath: FileCollection
 ) : DefaultTask() {
@@ -26,11 +29,26 @@ abstract class JooqGenerate @Inject constructor(
     @get:Classpath
     val runtimeClasspath = project.objects.fileCollection().from(runtimeClasspath)
     private val outputDir: Provider<Directory>
-    private val allInputsDeclared: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
 
-    @Internal
-    fun getAllInputsDeclared(): Property<Boolean> {
-        return allInputsDeclared
+    init {
+        val outputDirNormalized = project.layout.projectDirectory
+            .dir(project.providers.provider { configProvider.get().generator.target.directory })
+            .orElse(project.layout.buildDirectory.dir("generated-src/jooq"))
+        outputDir = project.objects.directoryProperty().value(outputDirNormalized)
+    }
+
+    @InputDirectory
+    @Classpath
+    fun getDatabaseMigrationFilesPath(): File {
+        val path = Optional.ofNullable(project.extensions
+                                           .getByType(JavaPluginExtension::class.java)
+                                           .sourceSets
+                                           .filter { "main" == it.name }
+                                           .map { it.resources.sourceDirectories.asPath }
+                                           .map { "$it/db/migration" }
+                                           .firstOrNull())
+            .orElseGet { "db/migration" }
+        return File(path)
     }
 
     @OutputDirectory
@@ -108,25 +126,9 @@ abstract class JooqGenerate @Inject constructor(
     }
 
     private fun setupDatabaseInitConfiguration() {
-        val resourcesPath = project.extensions
-            .getByType(JavaPluginExtension::class.java)
-            .sourceSets
-            .filter { "main" == it.name }
-            .map { it.resources.sourceDirectories.asPath }
-            .first()
-
-        val init = DatabaseInit.InitConfig(resourcesPath)
+        val path = getDatabaseMigrationFilesPath().path
+        val init = DatabaseInit.InitConfig("filesystem:${path}")
         DatabaseInit.ConfigHolder.set(init)
-    }
-
-    init {
-        val outputDirNormalized = project.layout.projectDirectory
-            .dir(project.providers.provider { configProvider.get().generator.target.directory })
-            .orElse(project.layout.buildDirectory.dir("generated-src/jooq"))
-        outputDir = project.objects.directoryProperty().value(outputDirNormalized)
-
-        // do not use lambda due to a bug in Gradle 6.5
-        outputs.upToDateWhen { allInputsDeclared.get() }
     }
 
 }

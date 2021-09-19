@@ -2,6 +2,7 @@ package com.filipowm.ambassador.gradle.utils
 
 import org.flywaydb.core.Flyway
 import org.jooq.tools.jdbc.SingleConnectionDataSource
+import java.lang.IllegalStateException
 import java.sql.Connection
 import java.util.*
 
@@ -13,8 +14,7 @@ class DatabaseInit {
             val ds = SingleConnectionDataSource(connection)
             val migrationsPath = ConfigHolder.get()
                 .map { it.resourcesPath }
-                .map { "filesystem:$it/db/migration" }
-                .orElseGet { "db/migration" }
+                .orElseThrow { IllegalStateException("Path to migrations should be defined") }
 
             val result = Flyway.configure()
                 .dataSource(ds)
