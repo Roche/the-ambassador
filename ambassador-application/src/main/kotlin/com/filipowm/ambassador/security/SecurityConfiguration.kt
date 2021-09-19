@@ -11,11 +11,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException
 import org.springframework.security.web.server.SecurityWebFilterChain
-import org.springframework.security.web.server.ServerAuthenticationEntryPoint
 import org.springframework.security.web.server.WebFilterExchange
-import org.springframework.security.web.server.authentication.*
+import org.springframework.security.web.server.authentication.DelegatingServerAuthenticationSuccessHandler
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler
+import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler
 import reactor.core.publisher.Mono
 
 @Configuration
@@ -27,26 +31,49 @@ internal class SecurityConfiguration {
     private val log by LoggerDelegate()
 
     @Bean
-    fun springWebFilterChain(http: ServerHttpSecurity,
-                             sessionProperties: SessionProperties,
-                             projectSourcesProperties: ProjectSourcesProperties,
-                             projectSources: ProjectSources
+    fun reactiveClientRegistrationRepository(
+        projectSourcesProperties: ProjectSourcesProperties,
+        projectSources: ProjectSources
+    ): InMemoryReactiveClientRegistrationRepository {
+        val registrar = ClientRegistrationRegistrar(projectSourcesProperties)
+        return registrar.createRegistrations(listOf(*projectSources.getAll().toTypedArray()))
+    }
+
+    @Bean
+    fun ambassadorUserDetailsService(repository: InMemoryReactiveClientRegistrationRepository, projectSources: ProjectSources): AmbassadorUserService {
+        // FIXME make it more friendly to create holder and create mapping of registration to source
+        val holder = OAuth2ProvidersHolder()
+        for (registration in repository) {
+            projectSources.getByName(registration.clientName)
+                .ifPresent { holder.add(registration, it) }
+        }
+        if (holder.isEmpty()) {
+            throw IllegalStateException("Unable to find any matching project source for registrations")
+        }
+        return AmbassadorUserService(holder)
+    }
+
+    @Bean
+    fun springWebFilterChain(
+        http: ServerHttpSecurity,
+        sessionProperties: SessionProperties,
+        reactiveClientRegistrationRepository: ReactiveClientRegistrationRepository
     ): SecurityWebFilterChain {
         log.info("Enabling web security...")
-        val registrar = ClientRegistrationRegistrar(projectSourcesProperties)
-
-        val registrationRepository = registrar.createRegistrations(listOf(*projectSources.getAll().toTypedArray()))
+        // @formatter:off
         return http
             .csrf().disable()
+            .httpBasic().disable()
+            .formLogin().disable()
             .authorizeExchange()
                 .anyExchange().authenticated().and()
-            .httpBasic().disable()
             .oauth2Login()
                 .authenticationSuccessHandler(buildSuccessHandler(sessionProperties))
                 .authenticationFailureHandler(AmbassadorAuthenticationFailureHandler())
-                .clientRegistrationRepository(registrationRepository)
-                .and()
+                .clientRegistrationRepository(reactiveClientRegistrationRepository)
+            .and()
             .build()
+        // @formatter:on
     }
 
     private fun buildSuccessHandler(sessionProperties: SessionProperties): ServerAuthenticationSuccessHandler {
@@ -62,7 +89,7 @@ internal class SecurityConfiguration {
         private val log by LoggerDelegate()
 
         override fun onAuthenticationFailure(webFilterExchange: WebFilterExchange, exception: AuthenticationException): Mono<Void> {
-            val message : String = when(exception) {
+            val message: String = when (exception) {
                 is OAuth2AuthenticationException -> "OAuth2 authentication failure caused by: ${exception.error?.description ?: exception.message}"
                 else -> "Authentication failed due to: ${exception.message ?: "unknown reason"}"
             }

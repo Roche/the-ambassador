@@ -1,6 +1,7 @@
 package com.filipowm.ambassador.gitlab
 
 import com.filipowm.ambassador.OAuth2ClientProperties
+import com.filipowm.ambassador.UserDetailsProvider
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.files.RawFile
@@ -32,7 +33,7 @@ class GitLabSource(
 ) : ProjectSource<GitLabProject> {
 
     private val oAuth2ClientProperties = OAuth2ClientProperties(
-        name = "GitLab",
+        name = name(),
         authorizationUri = "${gitlab.url()}/oauth/authorize",
         jwkSetUri = "${gitlab.url()}/oauth/discovery/keys",
         tokenUri = "${gitlab.url()}/oauth/token",
@@ -161,5 +162,20 @@ class GitLabSource(
 
     private fun checkHasNoAccess(accessLevels: List<AccessLevel>): Boolean {
         return accessLevels.none { it.accessLevel == AccessLevelName.NONE }
+    }
+
+    override fun userDetailsProvider(attributes: Map<String, Any>) = object: UserDetailsProvider {
+        override fun getName(): String = attributes["name"] as String
+
+        override fun getUsername(): String = attributes["username"] as String
+
+        override fun getEmail(): String = attributes["email"] as String
+
+        override fun getAvatarUrl(): String = attributes["avatar_url"] as String
+
+        override fun getWebUrl(): String = attributes["web_url"] as String
+
+        override fun isAdmin(): Boolean = attributes["is_admin"] as Boolean
+
     }
 }

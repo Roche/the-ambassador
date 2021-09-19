@@ -1,6 +1,6 @@
 package com.filipowm.ambassador.security
 
-import com.filipowm.ambassador.OAuth2ClientProvider
+import com.filipowm.ambassador.OAuth2AuthenticationProvider
 import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import org.springframework.security.oauth2.client.registration.ClientRegistration
@@ -16,13 +16,16 @@ internal class ClientRegistrationRegistrar(private val projectSourcesProperties:
 
     private val log by LoggerDelegate()
 
-    fun createRegistrations(oAuth2ClientProviders: List<OAuth2ClientProvider>): ReactiveClientRegistrationRepository {
+    fun createRegistrations(oAuth2AuthenticationProviders: List<OAuth2AuthenticationProvider>): InMemoryReactiveClientRegistrationRepository {
         log.debug("Registering OAuth2 clients")
-        val clientRegistrations = oAuth2ClientProviders
+        val clientRegistrations = oAuth2AuthenticationProviders
+            .asSequence()
+            .filter { it.isSupported() }
             .map { it.getOAuth2ClientProperties() }
             .map { OAuth2PropertiesAdapter.convert(it) }
             .filter(this::isValid)
             .map(this::completeRegistration)
+            .toList()
 
         if (clientRegistrations.isEmpty()) {
             throw IllegalStateException("No valid client registration")

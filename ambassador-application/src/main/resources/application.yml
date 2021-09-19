@@ -1,4 +1,6 @@
 spring:
+  session:
+    timeout: 8h
   main:
     banner-mode: console
 
