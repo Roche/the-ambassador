@@ -17,7 +17,7 @@ internal class ClientRegistrationRegistrar(private val projectSourcesProperties:
     private val log by LoggerDelegate()
 
     fun createRegistrations(oAuth2ClientProviders: List<OAuth2ClientProvider>): ReactiveClientRegistrationRepository {
-
+        log.debug("Registering OAuth2 clients")
         val clientRegistrations = oAuth2ClientProviders
             .map { it.getOAuth2ClientProperties() }
             .map { OAuth2PropertiesAdapter.convert(it) }
@@ -27,6 +27,7 @@ internal class ClientRegistrationRegistrar(private val projectSourcesProperties:
         if (clientRegistrations.isEmpty()) {
             throw IllegalStateException("No valid client registration")
         }
+        log.info("Registered OAuth2 clients: {}", clientRegistrations.joinToString { it.clientName })
         return InMemoryReactiveClientRegistrationRepository(clientRegistrations)
     }
 
@@ -34,7 +35,7 @@ internal class ClientRegistrationRegistrar(private val projectSourcesProperties:
         return ClientRegistration.withClientRegistration(partialRegistration)
             .clientSecret(projectSourcesProperties.clientSecret)
             .clientId(projectSourcesProperties.clientId)
-            .redirectUri("/login/oauth2/code/gitlab")
+            .redirectUri("http://localhost:8080/login/oauth2/code/gitlab")
             .authorizationGrantType(partialRegistration.authorizationGrantType ?: DEFAULT_AUTHORIZATION_GRANT_TYPE)
             .build()
     }
