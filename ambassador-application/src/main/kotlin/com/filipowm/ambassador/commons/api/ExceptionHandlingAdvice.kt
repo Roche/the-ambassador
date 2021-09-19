@@ -2,24 +2,29 @@ package com.filipowm.ambassador.commons.api
 
 import com.filipowm.ambassador.commons.validation.ValidationError
 import com.filipowm.ambassador.exceptions.Exceptions.NotFoundException
+import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.project.indexer.IndexingAlreadyStartedException
 import com.filipowm.ambassador.storage.InvalidSortFieldException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ResponseStatusException
+import org.springframework.web.server.ServerWebExchange
+import reactor.core.publisher.Mono
+import java.security.Principal
 import javax.validation.ConstraintViolationException
 
 @RestControllerAdvice
 class ExceptionHandlingAdvice {
 
-    val log = LoggerFactory.getLogger(ExceptionHandlingAdvice::class.java)
+    private val log by LoggerDelegate()
 
     @ExceptionHandler(NotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -33,8 +38,8 @@ class ExceptionHandlingAdvice {
     fun invalidSorting(ex: InvalidSortFieldException): ValidationError = ValidationError.just(ex.message!!, ex.field, "Field does not exist")
 
     @ExceptionHandler(ResponseStatusException::class)
-    fun x(ex: ResponseStatusException): ResponseEntity<Message?> {
-        log.error("Error occured", ex)
+    fun responseStatusException(ex: ResponseStatusException): ResponseEntity<Message?> {
+        log.error("Error occurred", ex)
         val msg = Message(
             "${ex.reason}"
         )
@@ -51,6 +56,15 @@ class ExceptionHandlingAdvice {
         return Message("Unexpected issue occurred")
     }
 
+    @ExceptionHandler(AccessDeniedException::class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    fun forbidden(ex: AccessDeniedException, exchange: ServerWebExchange): Mono<Message> {
+        return exchange.getPrincipal<Principal>()
+            .map { it.name }
+            .doOnNext { log.warn("User '{}' attempted to access '{}' without needed permissions", it, exchange.request.path)  }
+            .map { Message("Access Denied")}
+    }
+
     @ExceptionHandler(IndexingAlreadyStartedException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun indexingConflict(ex: IndexingAlreadyStartedException): Message {
@@ -65,9 +79,9 @@ class ExceptionHandlingAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WebExchangeBindException::class)
-    fun xe(ex: WebExchangeBindException): ValidationError = ValidationError.from(ex.bindingResult)
+    fun bindingException(ex: WebExchangeBindException): ValidationError = ValidationError.from(ex.bindingResult)
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException::class)
-    fun cve(ex: ConstraintViolationException): ValidationError = ValidationError.from(ex.constraintViolations)
+    fun constraintViolationException(ex: ConstraintViolationException): ValidationError = ValidationError.from(ex.constraintViolations)
 }
