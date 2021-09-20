@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -23,17 +24,17 @@ internal class SearchableProjectEntityRepository(
     @Value("\${ambassador.language}")
     private val language: String
 ) : ProjectSearchRepository {
-    fun mapper(): RecordMapper<ProjectRecord, ProjectEntity> {
-        return RecordMapper {
-            ProjectEntity(
-                it.id.toLong(),
-                it.name,
-                objectMapper.readValue(it.project.data(), Project::class.java),
-                it.stars,
-                it.criticalityScore.toDouble(),
-                it.activityScore.toDouble()
-            )
-        }
+
+    private val mapper = RecordMapper<Record4<Int, String, JSONB, *>, ProjectEntity> {
+        ProjectEntity(
+            it.get(PROJECT.ID).toLong(),
+            it.get(PROJECT.NAME),
+            objectMapper.readValue(it.get(PROJECT.PROJECT_).data(), Project::class.java),
+        )
+    }
+
+    companion object {
+        const val RANK_FIELD = "search_rank"
     }
 
     private fun count(query: SearchQuery): Int {
@@ -42,16 +43,31 @@ internal class SearchableProjectEntityRepository(
         return s.fetch { it.value1() }.first()
     }
 
+    private fun rank(field: TableField<ProjectRecord, Any>, query: String): Field<Double> {
+        return DSL.field("ts_rank_cd({0}, to_tsquery({1}, {2})) * {3}",
+                         Double::class.java, field, DSL.inline(language), DSL.inline("${query}:*"), PROJECT.SCORE).`as`(RANK_FIELD)
+    }
+
     override fun search(query: SearchQuery, pageable: Pageable): Page<ProjectEntity> {
-        val q = dsl.selectFrom(PROJECT)
+        val rankField = if (pageable.sort.isSorted || query.query.isEmpty) {
+            PROJECT.SCORE.`as`(RANK_FIELD)
+        } else {
+            rank(PROJECT.TEXTSEARCH, query.query.get())
+        }
+        val q = dsl.select(PROJECT.ID, PROJECT.NAME, PROJECT.PROJECT_, rankField).from(PROJECT)
         buildQuery(query, q)
 
-        q.orderBy(Sorting.within(PROJECT).by(pageable.sort))
+        if (pageable.sort.isSorted) {
+            q.orderBy(Sorting.within(PROJECT).by(pageable.sort))
+        } else {
+            q.orderBy(Sorting.within(PROJECT).by(RANK_FIELD, Sort.Direction.DESC))
+        }
         q.limit(pageable.pageSize)
         q.offset(pageable.offset)
-        val record = q.fetch(mapper())
+
+        val records = q.fetch(mapper)
         val c = count(query).toLong()
-        return PageImpl(record, pageable, c)
+        return PageImpl(records, pageable, c)
     }
 
     private fun buildQuery(query: SearchQuery, q: SelectWhereStep<*>) {

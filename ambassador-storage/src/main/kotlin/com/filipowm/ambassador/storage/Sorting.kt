@@ -1,8 +1,10 @@
 package com.filipowm.ambassador.storage
 
+import org.jooq.Field
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.TableField
+import org.jooq.impl.DSL
 import org.springframework.data.domain.Sort
 
 object Sorting {
@@ -17,6 +19,12 @@ object Sorting {
             return specification.map { createSortField(table, it) }.toList()
         }
 
+        fun by(fieldName: String, direction: Sort.Direction): List<SortField<*>> {
+            return listOf(
+                convertTableFieldToSortField(DSL.field(fieldName), direction)
+            )
+        }
+
         private fun createSortField(table: Table<*>, order: Sort.Order): SortField<*> {
             val sortFieldName = order.property
             val sortDirection = order.direction
@@ -26,7 +34,6 @@ object Sorting {
 
         private fun getTableField(table: Table<*>, sortFieldName: String): TableField<*, *> {
             return try {
-                val felds = table.javaClass.fields
                 table.javaClass
                     .getField(sortFieldName.toUpperCase())
                     .get(table) as TableField<*, *>
@@ -39,7 +46,7 @@ object Sorting {
             }
         }
 
-        private fun convertTableFieldToSortField(tableField: TableField<*, *>, sortDirection: Sort.Direction): SortField<*> {
+        private fun convertTableFieldToSortField(tableField: Field<*>, sortDirection: Sort.Direction): SortField<*> {
             return if (sortDirection == Sort.Direction.ASC) {
                 tableField.asc()
             } else {
