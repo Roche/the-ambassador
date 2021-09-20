@@ -8,13 +8,13 @@ sealed class IndexingLock {
     abstract fun unlock()
 }
 
-class InMemoryIndexinglock : IndexingLock() {
+class InMemoryIndexingLock : IndexingLock() {
 
     private val localLock = Semaphore(1)
 
-    override fun tryLock() = localLock.tryAcquire()
+    override fun tryLock(): Boolean = localLock.tryAcquire()
 
-    override fun unlock() = localLock.release()
+    override fun unlock(): Unit = localLock.release()
 
-    override fun isLocked() = localLock.availablePermits == 0
+    override fun isLocked(): Boolean = localLock.availablePermits == 0
 }

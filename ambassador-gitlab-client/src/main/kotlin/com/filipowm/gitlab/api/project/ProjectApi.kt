@@ -16,7 +16,7 @@ class ProjectApi internal constructor(basePath: String, client: GitLabHttpClient
 
     suspend fun get(query: ProjectQuery): Optional<Project> = doGetOptional(query)
 
-    suspend fun delete() = doDelete<Unit>()
+    suspend fun delete(): Unit = doDelete<Unit>()
 
     suspend fun languages(): Map<String, Float> = doGet(path = "languages")
 

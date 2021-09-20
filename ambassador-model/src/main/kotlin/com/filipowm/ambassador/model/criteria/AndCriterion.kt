@@ -1,7 +1,9 @@
 package com.filipowm.ambassador.model.criteria
 
-class AndCriterion<T>(private val first: Criterion<T>,
-                      private val second: Criterion<T>) : Criterion<T> {
+class AndCriterion<T>(
+    private val first: Criterion<T>,
+    private val second: Criterion<T>
+) : Criterion<T> {
 
     private var isFirstSuccessful = false
     private var isSecondSuccessful = false
@@ -16,7 +18,7 @@ class AndCriterion<T>(private val first: Criterion<T>,
             "First criteria failed: ${first.getFailureMessage(input)}"
         } else if (!isSecondSuccessful) {
             "Second criteria failed: ${second.getFailureMessage(input)}"
-        } else{
+        } else {
             throw IllegalStateException("Criteria were not evaluated, unable to determine failure message")
         }
     }

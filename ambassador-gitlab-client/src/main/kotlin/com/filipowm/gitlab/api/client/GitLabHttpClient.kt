@@ -9,7 +9,8 @@ import io.ktor.http.*
 
 class GitLabHttpClient(
     val client: HttpClient,
-    val retry: Retry) {
+    val retry: Retry
+) {
 
     suspend inline fun <reified T> withCircuitBreaker(noinline block: suspend () -> T): T {
         return retry.executeSuspendFunction(block)

@@ -25,8 +25,8 @@ class JooqPlugin : Plugin<Project> {
 
         val jooq: TaskProvider<JooqGenerate> = project.tasks.register("generateJooq", JooqGenerate::class.java, extension.configuration, runtimeConfiguration)
         jooq.configure {
-            this.setDescription(String.format("Generates the jOOQ sources from the jOOQ configuration."))
-            this.setGroup("jOOQ")
+            this.description = String.format("Generates the jOOQ sources from the jOOQ configuration.")
+            this.group = "jOOQ"
         }
         val sourceSets = project.extensions.getByType(JavaPluginExtension::class.java).sourceSets
 
@@ -52,9 +52,7 @@ class JooqPlugin : Plugin<Project> {
          */
         private fun createJooqGeneratorRuntimeConfiguration(project: Project): Configuration {
             val jooqGeneratorRuntime: Configuration = project.configurations.create("jooqGenerator")
-            jooqGeneratorRuntime.setDescription(
-                "The classpath used to invoke the jOOQ code generator. Add your JDBC driver, generator extensions, and additional dependencies here."
-            )
+            jooqGeneratorRuntime.description = "The classpath used to invoke the jOOQ code generator. Add your JDBC driver, generator extensions, and additional dependencies here."
             dependencies.forEach { project.dependencies.add(jooqGeneratorRuntime.name, it) }
             return jooqGeneratorRuntime
         }

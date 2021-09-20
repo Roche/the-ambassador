@@ -18,15 +18,15 @@ abstract class JooqExtension @Inject constructor(val project: Project) {
         return configuration
     }
 
-    fun Configuration.jdbc(configure: Action<Jdbc>) = configure.execute(this.jdbc)
+    fun Configuration.jdbc(configure: Action<Jdbc>): Unit = configure.execute(this.jdbc)
 
-    fun Configuration.generator(configure: Action<Generator>) = configure.execute(this.generator)
+    fun Configuration.generator(configure: Action<Generator>): Unit = configure.execute(this.generator)
 
-    fun Generator.database(configure: Action<Database>) = configure.execute(this.database)
+    fun Generator.database(configure: Action<Database>): Unit = configure.execute(this.database)
 
-    fun Generator.generate(configure: Action<Generate>) = configure.execute(this.generate)
+    fun Generator.generate(configure: Action<Generate>): Unit = configure.execute(this.generate)
 
-    fun Generator.target(configure: Action<Target>) = configure.execute(this.target)
+    fun Generator.target(configure: Action<Target>): Unit = configure.execute(this.target)
 
     private fun defaultConfiguration(): Configuration {
         return Configuration()

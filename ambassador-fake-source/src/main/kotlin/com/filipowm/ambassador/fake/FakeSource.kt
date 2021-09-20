@@ -22,11 +22,11 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
 
     override fun userDetailsProvider(attributes: Map<String, Any>): UserDetailsProvider? = null
 
-    override fun getForkedProjectCriteria() = FakeForkedProjectCriteria
+    override fun getForkedProjectCriteria(): FakeForkedProjectCriteria = FakeForkedProjectCriteria
 
-    override fun getInvalidProjectCriteria() = FakeInvalidProjectCriteria
+    override fun getInvalidProjectCriteria(): FakeInvalidProjectCriteria = FakeInvalidProjectCriteria
 
-    override fun getPersonalProjectCriteria() = FakePersonalProjectCriteria
+    override fun getPersonalProjectCriteria(): FakePersonalProjectCriteria = FakePersonalProjectCriteria
 
     override fun resolveName(project: FakeProject): String = project.name
 

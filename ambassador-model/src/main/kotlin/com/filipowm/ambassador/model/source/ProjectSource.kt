@@ -8,7 +8,7 @@ import com.filipowm.ambassador.model.stats.Timeline
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
-interface ProjectSource<T>: Specification, IndexingCriteriaProvider<T>, ProjectDetailsResolver<T>, OAuth2AuthenticationProvider {
+interface ProjectSource<T> : Specification, IndexingCriteriaProvider<T>, ProjectDetailsResolver<T>, OAuth2AuthenticationProvider {
 
     suspend fun getById(id: String): Optional<Project>
     suspend fun flow(filter: ProjectFilter): Flow<T>

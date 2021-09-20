@@ -23,7 +23,7 @@ class ContributorsFeature(private val contributors: List<Contributor>?) : Abstra
 
     companion object : FeatureReaderFactory<ContributorsFeature> {
         override fun create(): FeatureReader<ContributorsFeature> {
-            return FeatureReader.create() { project, source ->
+            return FeatureReader.create { project, source ->
                 val contributors = source.readContributors(project.id.toString())
                 ContributorsFeature(contributors)
             }
@@ -35,7 +35,7 @@ class LanguagesFeature(value: Map<String, Float>?) : AbstractFeature<Map<String,
 
     companion object : FeatureReaderFactory<LanguagesFeature> {
         override fun create(): FeatureReader<LanguagesFeature> {
-            return FeatureReader.create() { project, source ->
+            return FeatureReader.create { project, source ->
                 val languages = source.readLanguages(project.id.toString())
                 LanguagesFeature(languages)
             }
@@ -45,79 +45,85 @@ class LanguagesFeature(value: Map<String, Float>?) : AbstractFeature<Map<String,
 
 class StarsFeature(value: Int?) : NotIndexableFeature<Int>(value, "Stars") {
     companion object : FeatureReaderFactory<StarsFeature> {
-        override fun create() = FeatureReader.createForProject() { StarsFeature(it.stats.forks) }
+        override fun create(): FeatureReader<StarsFeature> = FeatureReader.createForProject { StarsFeature(it.stats.forks) }
     }
 }
 
 class ForksFeature(value: Int?) : NotIndexableFeature<Int>(value, "Forks") {
     companion object : FeatureReaderFactory<ForksFeature> {
-        override fun create() = FeatureReader.createForProject() { ForksFeature(it.stats.forks) }
+        override fun create(): FeatureReader<ForksFeature> = FeatureReader.createForProject { ForksFeature(it.stats.forks) }
     }
 }
 
 class ReadmeFeature(value: ExcerptFile?) : AbstractFeature<ExcerptFile>(value, "Readme") {
     companion object : FeatureReaderFactory<ReadmeFeature> {
-        override fun create() = FeatureReader.createForFile({ setOf(it.potentialReadmePath ?: "README.md") }) { ReadmeFeature(it.asExcerptFile()) }
+        override fun create(): FeatureReader<ReadmeFeature> = FeatureReader.createForFile({ setOf(it.potentialReadmePath ?: "README.md") }) { ReadmeFeature(it.asExcerptFile()) }
     }
 }
 
 class ContributingGuideFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "Contribution Guide") {
     companion object : FeatureReaderFactory<ContributingGuideFeature> {
-        override fun create() = FeatureReader.createForFile({ setOf("CONTRIBUTING.md", "CONTRIBUTING") }) { ContributingGuideFeature(it) }
+        override fun create(): FeatureReader<ContributingGuideFeature> = FeatureReader.createForFile({ setOf("CONTRIBUTING.md", "CONTRIBUTING") }) { ContributingGuideFeature(it) }
     }
 }
 
 class LicenseFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "License") {
     companion object : FeatureReaderFactory<LicenseFeature> {
-        override fun create() = FeatureReader.createForFile({ setOf(it.potentialLicensePath ?: "LICENSE") }) { LicenseFeature(it) }
+        override fun create(): FeatureReader<LicenseFeature> = FeatureReader.createForFile({ setOf(it.potentialLicensePath ?: "LICENSE") }) { LicenseFeature(it) }
     }
 }
 
 class CiDefinitionFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "CI definition") {
     companion object : FeatureReaderFactory<CiDefinitionFeature> {
-        override fun create() = FeatureReader.createForFile(".gitlab-ci.yml") { CiDefinitionFeature(it) }
+        override fun create(): FeatureReader<CiDefinitionFeature> = FeatureReader.createForFile(".gitlab-ci.yml") { CiDefinitionFeature(it) }
     }
 }
+
 class ChangelogFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "Changelog") {
     companion object : FeatureReaderFactory<ChangelogFeature> {
-        override fun create() = FeatureReader.createForFile("CHANGELOG.md") { ChangelogFeature(it) }
+        override fun create(): FeatureReader<ChangelogFeature> = FeatureReader.createForFile("CHANGELOG.md") { ChangelogFeature(it) }
     }
 }
+
 class GitignoreFeature(value: RawFile?) : AbstractFeature<RawFile>(value, ".gitignore") {
     companion object : FeatureReaderFactory<GitignoreFeature> {
-        override fun create() = FeatureReader.createForFile(".gitignore") { GitignoreFeature(it) }
+        override fun create(): FeatureReader<GitignoreFeature> = FeatureReader.createForFile(".gitignore") { GitignoreFeature(it) }
     }
 }
 
 class TagsFeature(value: List<String>?) : NotIndexableFeature<List<String>>(value, "Tags") {
     companion object : FeatureReaderFactory<TagsFeature> {
-        override fun create() = FeatureReader.createForProject() { TagsFeature(it.tags) }
+        override fun create(): FeatureReader<TagsFeature> = FeatureReader.createForProject { TagsFeature(it.tags) }
     }
 }
+
 class VisibilityFeature(value: Visibility?) : NotIndexableFeature<Visibility>(value, "Visibility") {
     companion object : FeatureReaderFactory<VisibilityFeature> {
-        override fun create() = FeatureReader.createForProject() { VisibilityFeature(it.visibility) }
+        override fun create(): FeatureReader<VisibilityFeature> = FeatureReader.createForProject { VisibilityFeature(it.visibility) }
     }
 }
+
 class ProtectedBranchesFeature(value: List<ProtectedBranch>?) : AbstractFeature<List<ProtectedBranch>>(value, "Protected branches") {
     companion object : FeatureReaderFactory<ProtectedBranchesFeature> {
-        override fun create() = FeatureReader.create() { project, source ->
+        override fun create(): FeatureReader<ProtectedBranchesFeature> = FeatureReader.create { project, source ->
             val protectedBranches = source.readProtectedBranches(project.id.toString())
             ProtectedBranchesFeature(protectedBranches)
         }
     }
 }
+
 class CommitsFeature(value: Timeline?) : TimelineFeature(value, "Commits") {
     companion object : FeatureReaderFactory<CommitsFeature> {
-        override fun create() = FeatureReader.create() { project, source ->
+        override fun create(): FeatureReader<CommitsFeature> = FeatureReader.create { project, source ->
             val commitsTimeline = source.readCommits(project.id.toString(), project.defaultBranch!!)
             CommitsFeature(commitsTimeline)
         }
     }
 }
+
 class ReleasesFeature(value: Timeline?) : TimelineFeature(value, "Releases") {
     companion object : FeatureReaderFactory<ReleasesFeature> {
-        override fun create() = FeatureReader.create() { project, source ->
+        override fun create(): FeatureReader<ReleasesFeature> = FeatureReader.create { project, source ->
             val releases = source.readReleases(project.id.toString())
             ReleasesFeature(releases)
         }

@@ -38,7 +38,7 @@ internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
 
     fun getAllCriteriaNames() = criteria.joinToString(",") { it.name }
 
-    data class CriteriaEvaluationResult<T> internal constructor (val failedCriteria: List<IndexingCriterion<T>> = listOf()) {
+    data class CriteriaEvaluationResult<T> internal constructor(val failedCriteria: List<IndexingCriterion<T>> = listOf()) {
         val success = failedCriteria.isEmpty()
         val failure = failedCriteria.isNotEmpty()
 

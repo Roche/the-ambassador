@@ -20,7 +20,7 @@ object ClassLoaderHelper {
 
     private fun URLClassLoader.addToClasspath(file: File) {
         val method = this::class.java.getDeclaredMethod("addURL", URL::class.java)
-        method.setAccessible(true)
+        method.isAccessible = true
         method.invoke(this, file.toURI().toURL())
     }
 

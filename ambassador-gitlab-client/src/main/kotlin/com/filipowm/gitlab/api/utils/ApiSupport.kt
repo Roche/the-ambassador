@@ -13,11 +13,11 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.jvm.javaType
 
-const val PAGE_HEADER = "x-page"
-const val PER_PAGE_HEADER = "x-per-page"
-const val TOTAL_ELEMENTS_HEADER = "x-total"
-const val TOTAL_PAGES_HEADER = "x-total-pages"
-const val NEXT_PAGE = "x-next-page"
+const val PAGE_HEADER: String = "x-page"
+const val PER_PAGE_HEADER: String = "x-per-page"
+const val TOTAL_ELEMENTS_HEADER: String = "x-total"
+const val TOTAL_PAGES_HEADER: String = "x-total-pages"
+const val NEXT_PAGE: String = "x-next-page"
 
 fun HttpResponse.getPageInfo(): PageInfo {
     val page = headers.getOptionalHeaderAsInt(PAGE_HEADER).orElse(-1)
@@ -33,7 +33,7 @@ fun HttpRequestBuilder.applyQueryParameters(vararg inputs: Any) {
         input::class.declaredMemberProperties
             .filter { it.hasAnnotation<QueryParam>() }
             .forEach {
-                val annotation = it.findAnnotation<QueryParam>()!!
+                val annotation = it.findAnnotation<QueryParam>() ?: return@forEach
                 val key = if (annotation.name.isNotBlank()) annotation.name else it.name
                 val value = it.getter.call(input)
                 if (value == null) {

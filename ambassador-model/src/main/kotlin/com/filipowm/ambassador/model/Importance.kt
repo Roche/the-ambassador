@@ -9,22 +9,23 @@ class Importance private constructor(private val value: Double) {
 
     companion object {
         private val RANGE = Range.bound(0.0, 1.0)
-        fun none() = Importance(0.0)
-        fun low() = Importance(.1)
-        fun medium() = Importance(.5)
-        fun high()  = Importance(.8)
+        fun none(): Importance = Importance(0.0)
+        fun low(): Importance = Importance(.1)
+        fun medium(): Importance = Importance(.5)
+        fun high(): Importance = Importance(.8)
         fun custom(value: Double): Importance {
             val adjusted = RANGE.adjust(value)
             return Importance(adjusted)
         }
     }
 
-    override fun toString() = "${name()}($value)"
+    override fun toString(): String = "${name()}($value)"
     enum class Name(val minimumValue: Double) {
         LOW(0.0),
         MEDIUM(0.4),
         HIGH(0.8)
         ;
+
         companion object {
             fun forValue(value: Double): Name {
                 var matched = LOW

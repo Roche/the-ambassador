@@ -133,8 +133,8 @@ data class Project(
     val requestAccessEnabled: Boolean? = null,
     @JsonProperty("resolve_outdated_diff_discussions")
     val resolveOutdatedDiffDiscussions: Boolean? = null,
-    @JsonProperty("restrict_user_defined_valiables")
-    val restrictUserDefinedvaliables: Boolean? = null,
+    @JsonProperty("restrict_user_defined_variables")
+    val restrictUserDefinedVariables: Boolean? = null,
     @JsonProperty("runners_token")
     val runnersToken: String? = null,
     @JsonProperty("service_desk_address")

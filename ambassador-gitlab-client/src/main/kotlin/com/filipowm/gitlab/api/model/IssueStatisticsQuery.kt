@@ -4,7 +4,6 @@ import com.filipowm.gitlab.api.utils.QueryParam
 import java.time.LocalDateTime
 
 data class IssueStatisticsQuery(
-//    @QueryParam val iids: Array<String>? = null,
     @QueryParam val labels: List<String>? = null,
     @QueryParam val milestone: String? = null,
     @QueryParam val scope: QueryScope? = null,

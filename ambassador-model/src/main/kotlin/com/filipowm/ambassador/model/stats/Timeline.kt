@@ -136,7 +136,7 @@ class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>) {
     ) : Iterator<LocalDate> {
         private var currentDate = startDate
 
-        override fun hasNext() = currentDate <= endDateInclusive
+        override fun hasNext(): Boolean = currentDate <= endDateInclusive
 
         override fun next(): LocalDate {
 
@@ -158,15 +158,15 @@ class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>) {
         override fun iterator(): Iterator<LocalDate> =
             DateIterator(start, endInclusive, step, stepUnit)
 
-        fun step(step: Long, chronoUnit: ChronoUnit) = DateProgression(start, endInclusive, step, chronoUnit)
+        fun step(step: Long, chronoUnit: ChronoUnit): DateProgression = DateProgression(start, endInclusive, step, chronoUnit)
 
-        infix fun stepDays(step: Long) = step(step, ChronoUnit.DAYS)
-        infix fun stepMonths(step: Long) = step(step, ChronoUnit.MONTHS)
-        infix fun stepWeeks(step: Long) = step(step, ChronoUnit.WEEKS)
-        infix fun stepYears(step: Long) = step(step, ChronoUnit.YEARS)
+        infix fun stepDays(step: Long): DateProgression = step(step, ChronoUnit.DAYS)
+        infix fun stepMonths(step: Long): DateProgression = step(step, ChronoUnit.MONTHS)
+        infix fun stepWeeks(step: Long): DateProgression = step(step, ChronoUnit.WEEKS)
+        infix fun stepYears(step: Long): DateProgression = step(step, ChronoUnit.YEARS)
     }
 
-    operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
+    operator fun LocalDate.rangeTo(other: LocalDate): DateProgression = DateProgression(this, other)
 
     inner class LastPeriodPicker(private val last: Long) {
         fun days(): Timeline {
@@ -188,6 +188,5 @@ class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>) {
         }
     }
 
-    companion object {
-    }
+    companion object
 }

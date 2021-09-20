@@ -9,7 +9,7 @@ class StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
         return StringToEnum(enumType)
     }
 
-    private inner class StringToEnum<T : Enum<*>?>(private val enumType: Class<T>) : Converter<String, T> {
+    private class StringToEnum<T : Enum<*>?>(private val enumType: Class<T>) : Converter<String, T> {
         override fun convert(source: String): T? {
             return if (source.isEmpty()) {
                 // It's an empty enum identifier: reset the enum value to null.

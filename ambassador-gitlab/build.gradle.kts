@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     implementation(project(":ambassador-model"))
-    implementation(project(":ambassador-document-analyzer"))
     implementation(project(":ambassador-commons"))
     api(project(":ambassador-gitlab-client"))
     implementation("org.slf4j:slf4j-api:1.7.31")

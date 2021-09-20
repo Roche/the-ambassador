@@ -9,7 +9,7 @@ internal object FeaturesSerializer : StdSerializer<Features>(Features::class.jav
     override fun serialize(value: Features, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeStartObject()
         value.forEach {
-            it.asIndexEntry().with() { key, value ->
+            it.asIndexEntry().with { key, value ->
                 gen.writeFieldName(key)
                 when (value) {
                     is String -> gen.writeString(value)

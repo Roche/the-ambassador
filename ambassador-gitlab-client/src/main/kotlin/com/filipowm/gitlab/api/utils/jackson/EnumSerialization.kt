@@ -41,6 +41,6 @@ object EnumSerialization {
         private val valueWriter: (JsonGenerator, T) -> Unit,
         private val propertyProvider: (E) -> Optional<T>
     ) : StdSerializer<E>(Unit::class.java, true) {
-        override fun serialize(value: E, gen: JsonGenerator, provider: SerializerProvider) = propertyProvider.invoke(value).ifPresent { valueWriter.invoke(gen, it) }
+        override fun serialize(value: E, gen: JsonGenerator, provider: SerializerProvider): Unit = propertyProvider.invoke(value).ifPresent { valueWriter.invoke(gen, it) }
     }
 }

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.filipowm.gitlab.api.auth.AnonyomusAuthProvider
+import com.filipowm.gitlab.api.auth.AnonymousAuthProvider
 import com.filipowm.gitlab.api.auth.PrivateTokenAuthProvider
 import com.filipowm.gitlab.api.client.GitLabHttpClient
 import com.filipowm.gitlab.api.client.RetryIntervalProvider
@@ -38,10 +38,10 @@ import java.util.concurrent.TimeoutException
 class GitLabApiBuilder internal constructor() {
 
     companion object {
-        private val log = LoggerFactory.getLogger(GitLab::class.java)
+        private val log = LoggerFactory.getLogger(GitLabApiBuilder::class.java)
     }
 
-    private var authProvider: AuthProvider = AnonyomusAuthProvider
+    private var authProvider: AuthProvider = AnonymousAuthProvider
     private var url: String = "https://gitlab.com"
     private var apiVersion: GitLab.ApiVersion = GitLab.ApiVersion.V4
     private var httpClientBuilder: HttpClientBuilder =
@@ -131,7 +131,7 @@ class GitLabApiBuilder internal constructor() {
         }
 
         fun exponentialBackoff(multiplier: Double, maxInterval: Duration): RetryBuilder {
-            this.intervalFunctionSupplier = { IntervalFunction.ofExponentialBackoff(it, multiplier, maxInterval)}
+            this.intervalFunctionSupplier = { IntervalFunction.ofExponentialBackoff(it, multiplier, maxInterval) }
             return this
         }
 

@@ -13,7 +13,6 @@ object ActivityScorePolicy : ScorePolicy<Double> {
 
     override fun calculateScoreOf(project: Project): Double {
 
-
         var score = INITIAL_SCORE
         // weighting: forks and stars count
         score += project.stats.forks * 5 + project.stats.stars * 5

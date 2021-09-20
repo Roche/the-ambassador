@@ -77,7 +77,7 @@ data class Project(
     fun getMainLanguage(): String? {
         return features.find(LanguagesFeature::class)
             .map { it.value() }
-            .map { data -> data!!.maxByOrNull { it.value }}
+            .map { data -> data!!.maxByOrNull { it.value } }
             .map { it!!.key }
             .orElse(null)
     }

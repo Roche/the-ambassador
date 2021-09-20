@@ -24,23 +24,22 @@ data class AmbassadorUser(
         authorities: List<String>
     ) : this(name, username, email, null, null, attributes, authorities.map { SimpleGrantedAuthority(it) })
 
-    val isAdmin = authorities.any { it.authority == ADMIN }
+    val isAdmin: Boolean = authorities.any { it.authority == ADMIN }
 
     @JsonIgnore
-    val isUser = authorities.any { it.authority == USER }
+    val isUser: Boolean = authorities.any { it.authority == USER }
 
     @JsonGetter("name")
-    fun getFullName() = name
+    fun getFullName(): String = name
 
     @JsonIgnore
-    override fun getName() = username
-    override fun getAttributes() = attributes
-    override fun getAuthorities() = authorities
+    override fun getName(): String = username
+    override fun getAttributes(): Map<String, Any> = attributes
+    override fun getAuthorities(): List<GrantedAuthority> = authorities
 
     companion object Roles {
-        const val ADMIN = "ROLE_ADMIN"
-        const val USER = "ROLE_USER"
-        const val ADMIN_AUTHORITY = "hasAuthority(\"$ADMIN\")"
-        const val USER_AUTHORITY = "hasAuthority(\"$USER\")"
+        const val ADMIN: String = "ROLE_ADMIN"
+        const val USER: String = "ROLE_USER"
+        const val ADMIN_AUTHORITY: String = "hasAuthority(\"$ADMIN\")"
     }
 }

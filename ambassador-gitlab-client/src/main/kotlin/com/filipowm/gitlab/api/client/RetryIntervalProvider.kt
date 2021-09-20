@@ -37,7 +37,6 @@ class RetryIntervalProvider(private val minimumInitialInterval: Duration, privat
         return waitTime
     }
 
-
     private fun Headers.extractHeaderAsLong(name: String): Optional<Long> {
         return Optional.ofNullable(this[name])
             .flatMap { Optional.ofNullable(it.toLongOrNull()) }

@@ -4,7 +4,7 @@ import io.ktor.client.features.auth.*
 import io.ktor.client.request.*
 import io.ktor.http.auth.*
 
-object AnonyomusAuthProvider : AuthProvider {
+object AnonymousAuthProvider : AuthProvider {
     override val sendWithoutRequest: Boolean
         get() = true
 

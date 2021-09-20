@@ -35,7 +35,7 @@ class JooqConfiguration {
             val translator: SQLExceptionTranslator = SQLErrorCodeSQLExceptionTranslator(dialect.getName())
             context.exception(
                 translator
-                    .translate("Access database using Jooq", context.sql(), context.sqlException()!!)
+                    .translate("Access database using Jooq", context.sql(), context.sqlException() ?: return)
             )
         }
     }

@@ -28,8 +28,7 @@ import kotlin.streams.toList
 import com.filipowm.gitlab.api.project.model.Project as GitLabProject
 
 class GitLabSource(
-    private val gitlab: GitLab,
-    private val gitLabProjectMapper: GitLabProjectMapper
+    private val gitlab: GitLab
 ) : ProjectSource<GitLabProject> {
 
     private val oAuth2ClientProperties = OAuth2ClientProperties(
@@ -52,7 +51,7 @@ class GitLabSource(
             .withId(id.toLong())
             .get(ProjectQuery(true, true, true))
             .orElseThrow { Exceptions.NotFoundException("Project with ID $id not found") }
-        return Optional.ofNullable(gitLabProjectMapper.mapGitLabProjectToOpenSourceProject(prj))
+        return Optional.ofNullable(GitLabProjectMapper.mapGitLabProjectToOpenSourceProject(prj))
     }
 
     override suspend fun flow(filter: ProjectFilter): Flow<GitLabProject> {
@@ -75,9 +74,9 @@ class GitLabSource(
         }
     }
 
-    override fun name() = "GitLab"
+    override fun name(): String = "GitLab"
 
-    override suspend fun map(input: GitLabProject) = gitLabProjectMapper.mapGitLabProjectToOpenSourceProject(input)
+    override suspend fun map(input: GitLabProject): Project = GitLabProjectMapper.mapGitLabProjectToOpenSourceProject(input)
 
     override fun getInvalidProjectCriteria(): InvalidProjectCriteria<GitLabProject> = GitLabInvalidProjectCriteria
     override fun resolveName(project: GitLabProject): String = project.nameWithNamespace!!
@@ -164,7 +163,7 @@ class GitLabSource(
         return accessLevels.none { it.accessLevel == AccessLevelName.NONE }
     }
 
-    override fun userDetailsProvider(attributes: Map<String, Any>) = object: UserDetailsProvider {
+    override fun userDetailsProvider(attributes: Map<String, Any>): UserDetailsProvider = object : UserDetailsProvider {
         override fun getName(): String = attributes["name"] as String
 
         override fun getUsername(): String = attributes["username"] as String

@@ -1,10 +1,10 @@
 package com.filipowm.ambassador.gradle.jooq
 
-//import com.filipowm.ambassador.gradle.jooq.util.Objects.cloneObject
 import com.filipowm.ambassador.gradle.utils.ClassLoaderHelper
 import com.filipowm.ambassador.gradle.utils.DatabaseInit
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPluginExtension
@@ -27,7 +27,7 @@ open class JooqGenerate @Inject constructor(
 ) : DefaultTask() {
 
     @get:Classpath
-    val runtimeClasspath = project.objects.fileCollection().from(runtimeClasspath)
+    val runtimeClasspath: ConfigurableFileCollection = project.objects.fileCollection().from(runtimeClasspath)
     private val outputDir: Provider<Directory>
 
     init {
@@ -102,13 +102,13 @@ open class JooqGenerate @Inject constructor(
         }
 
         // avoid JDBC element being written when it has an empty configuration
-        val jdbc: Jdbc = configuration.getJdbc()
-        if (jdbc.getDriver() == null && jdbc.getUrl() == null
-            && jdbc.getSchema() == null && jdbc.getUser() == null
-            && jdbc.getUsername() == null && jdbc.getPassword() == null
-            && jdbc.isAutoCommit() == null && jdbc.getProperties().isEmpty()
+        val jdbc: Jdbc = configuration.jdbc
+        if (jdbc.driver == null && jdbc.url == null
+            && jdbc.schema == null && jdbc.user == null
+            && jdbc.username == null && jdbc.password == null
+            && jdbc.isAutoCommit == null && jdbc.properties.isEmpty()
         ) {
-            configuration.setJdbc(null)
+            configuration.jdbc = null
         }
     }
 

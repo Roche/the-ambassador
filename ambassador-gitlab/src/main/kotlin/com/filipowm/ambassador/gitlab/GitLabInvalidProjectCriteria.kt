@@ -4,7 +4,7 @@ import com.filipowm.ambassador.model.source.CriterionVerifier
 import com.filipowm.ambassador.model.source.InvalidProjectCriteria
 import com.filipowm.gitlab.api.project.model.Project
 
-object GitLabInvalidProjectCriteria : InvalidProjectCriteria<Project> {
+internal object GitLabInvalidProjectCriteria : InvalidProjectCriteria<Project> {
     override fun hasDefaultBranch(): CriterionVerifier<Project> = {
         it.defaultBranch != null
     }

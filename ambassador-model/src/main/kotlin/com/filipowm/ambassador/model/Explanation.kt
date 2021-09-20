@@ -37,8 +37,6 @@ private class NoExplanation(name: String, description: String? = null) : Abstrac
     override fun isPresent() = false
 }
 
-
-
 //private class SingleExplanation(private val explanation: String?) : Explanation {
 //    override fun details(): String? = explanation
 //}

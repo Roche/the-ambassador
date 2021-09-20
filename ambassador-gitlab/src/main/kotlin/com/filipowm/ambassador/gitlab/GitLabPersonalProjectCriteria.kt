@@ -5,7 +5,7 @@ import com.filipowm.ambassador.model.source.PersonalProjectCriteria
 import com.filipowm.gitlab.api.project.model.NamespaceKind
 import com.filipowm.gitlab.api.project.model.Project
 
-object GitLabPersonalProjectCriteria : PersonalProjectCriteria<Project> {
+internal object GitLabPersonalProjectCriteria : PersonalProjectCriteria<Project> {
     override fun hasAtLeastStars(starsCount: Int): CriterionVerifier<Project> = {
         it.ifPersonalProject { it.starCount != null && it.starCount!! > starsCount }
     }

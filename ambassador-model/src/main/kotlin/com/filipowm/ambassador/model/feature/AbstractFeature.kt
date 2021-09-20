@@ -24,15 +24,15 @@ abstract class AbstractFeature<T>(
 //        return Explanation.single("Feature $name has value $value")
     }
 
-    override fun weight() = weight
+    override fun weight(): Double = weight
 
-    override fun importance() = importance
+    override fun importance(): Importance = importance
 
     override fun value(): T? = value
 
-    override fun name() = name
+    override fun name(): String = name
 
-    override fun hashCode() = name().hashCode()
+    override fun hashCode(): Int = name().hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (other == null) {

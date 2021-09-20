@@ -14,22 +14,22 @@ internal object FeaturesDeserializer : StdDeserializer<Features>(Features::class
         }
         val features = Features()
         val tree: JsonNode = p.codec.readTree(p)
-        for (field in tree.fields()) {
-            val value = if (field.value.isFloatingPointNumber) {
-                field.value.doubleValue()
-            } else if (field.value.isTextual) {
-                field.value.textValue()
-            } else if (field.value.isBoolean) {
-                field.value.booleanValue()
-            } else if (field.value.isIntegralNumber) {
-                field.value.intValue()
-            } else if (field.value.isNull || field.value.isEmpty) {
+        for ((key, value) in tree.fields()) {
+            val transformedValued = if (value.isFloatingPointNumber) {
+                value.doubleValue()
+            } else if (value.isTextual) {
+                value.textValue()
+            } else if (value.isBoolean) {
+                value.booleanValue()
+            } else if (value.isIntegralNumber) {
+                value.intValue()
+            } else if (value.isNull || value.isEmpty) {
                 null
             } else {
-                Raw(field.value.toString())
+                Raw(value.toString())
             }
-            if (value != null) {
-                features.add(FeatureHolder(value, field.key))
+            if (transformedValued != null) {
+                features.add(FeatureHolder(transformedValued, key))
             }
         }
         return features

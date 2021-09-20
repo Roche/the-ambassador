@@ -1,3 +1,5 @@
+@file:Suppress("Reformat", "Reformat", "Reformat")
+
 package com.filipowm.gitlab.api.model
 
 import java.util.*
@@ -9,6 +11,7 @@ enum class AccessLevelName(val value: Int) {
     GUEST(10),
     REPORTER(20),
     DEVELOPER(30),
+
     @Deprecated("deprecated")
     MASTER(40),
     MAINTAINER(40),

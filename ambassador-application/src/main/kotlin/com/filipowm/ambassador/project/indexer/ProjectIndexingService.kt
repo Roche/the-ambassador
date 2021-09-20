@@ -17,8 +17,8 @@ internal class ProjectIndexingService(
     private val concurrencyProvider: ConcurrencyProvider,
     private val projectSourceProperties: ProjectSourcesProperties,
 
-) {
-    private val indexingLock: IndexingLock = InMemoryIndexinglock()
+    ) {
+    private val indexingLock: IndexingLock = InMemoryIndexingLock()
 
     @Volatile
     private var currentIndexerUsed: ProjectIndexer? = null
@@ -30,7 +30,7 @@ internal class ProjectIndexingService(
     suspend fun forciblyStop(terminateImmediately: Boolean) {
         log.info("Trying to forcibly stop indexing, if active")
         if (indexingLock.isLocked() && currentIndexerUsed != null) {
-            currentIndexerUsed!!.forciblyStop(terminateImmediately)
+            (currentIndexerUsed ?: return).forciblyStop(terminateImmediately)
             log.warn("Indexing forcibly stopped!")
         } else {
             log.warn("No indexing in progress, nothing to stop")

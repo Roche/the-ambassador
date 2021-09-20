@@ -6,7 +6,7 @@ import com.filipowm.gitlab.api.project.model.Project
 import com.filipowm.gitlab.api.project.model.SimpleProject
 import java.time.LocalDate
 
-object GitLabForkedProjectCriteria : ForkedProjectCriteria<Project> {
+internal object GitLabForkedProjectCriteria : ForkedProjectCriteria<Project> {
     override fun includeAllWithForks(): CriterionVerifier<Project> = {
         true
     }

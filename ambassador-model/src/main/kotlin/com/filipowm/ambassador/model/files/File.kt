@@ -17,9 +17,11 @@ open class File(
     }
 }
 
-open class RawFile(exists: Boolean, hash: String?, language: String?, contentLength: Int?, url: String?,
-              @JsonIgnore
-              private val content: String?) : File(exists, hash, language, contentLength, url) {
+open class RawFile(
+    exists: Boolean, hash: String?, language: String?, contentLength: Int?, url: String?,
+    @JsonIgnore
+    private val content: String?
+) : File(exists, hash, language, contentLength, url) {
 
     fun asExcerptFile(): ExcerptFile {
         val excerpt = content?.substringWithFullWords(0, EXCERPT_MAX_SIZE, ' ', '\n')
@@ -27,12 +29,14 @@ open class RawFile(exists: Boolean, hash: String?, language: String?, contentLen
     }
 
     companion object {
-        const val EXCERPT_MAX_SIZE = 1000
+        const val EXCERPT_MAX_SIZE: Int = 1000
         fun notExistent(): RawFile {
             return RawFile(false, null, null, null, null, null)
         }
     }
 }
 
-open class ExcerptFile(exists: Boolean, hash: String?, language: String?,
-                          contentLength: Int?, url: String?, val excerpt: String?) : File(exists, hash, language, contentLength, url)
+open class ExcerptFile(
+    exists: Boolean, hash: String?, language: String?,
+    contentLength: Int?, url: String?, val excerpt: String?
+) : File(exists, hash, language, contentLength, url)

@@ -7,8 +7,8 @@ enum class FeatureAccessLevel {
     ENABLED
     ;
 
-    fun canEveryoneAccess() = this == ENABLED
-    fun canNooneAccess() = this == DISABLED
-    fun canOnlyProjectMembersAccess() = this == PRIVATE
+    fun canEveryoneAccess(): Boolean = this == ENABLED
+    fun canNooneAccess(): Boolean = this == DISABLED
+    fun canOnlyProjectMembersAccess(): Boolean = this == PRIVATE
 
 }

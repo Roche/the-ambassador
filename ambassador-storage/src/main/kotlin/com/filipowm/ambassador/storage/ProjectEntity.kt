@@ -5,7 +5,6 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDateTime
-import java.util.*
 import javax.persistence.*
 
 @Entity
