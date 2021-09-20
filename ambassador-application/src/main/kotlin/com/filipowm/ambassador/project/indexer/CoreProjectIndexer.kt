@@ -39,10 +39,10 @@ internal class CoreProjectIndexer(
     private suspend fun readFeatures(project: Project) {
         FeatureReaders.all()
             .map {
-                consumerScope.launch {
+                consumerScope.async {
                     project.readFeature(it, source)
                 }
-            }.joinAll()
+            }.awaitAll()
     }
 
     override suspend fun indexOne(id: Long): Project {
