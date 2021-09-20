@@ -2,6 +2,7 @@ plugins {
     id("kotlin-conventions")
     id("testing-conventions")
     id("spring-conventions")
+    kotlin("kapt")
 }
 
 dependencies {
@@ -23,7 +24,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
 }
 //
 //description = "ambassador-application"
