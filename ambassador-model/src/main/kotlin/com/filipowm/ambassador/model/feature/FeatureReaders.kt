@@ -16,7 +16,10 @@ object FeatureReaders {
         ChangelogFeature.create(),
         CommitsFeature.create(),
         ReleasesFeature.create(),
-        ProtectedBranchesFeature.create()
+        ProtectedBranchesFeature.create(),
+        ReadmeFeature.create(),
+        ContributingGuideFeature.create(),
+        LicenseFeature.create()
     )
 
     fun all(): List<FeatureReader<*>> {

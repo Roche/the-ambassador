@@ -3,6 +3,7 @@ package com.filipowm.ambassador.model.project
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.filipowm.ambassador.model.FeatureReader
+import com.filipowm.ambassador.model.feature.Features
 import com.filipowm.ambassador.model.feature.LanguagesFeature
 import com.filipowm.ambassador.model.score.ActivityScorePolicy
 import com.filipowm.ambassador.model.score.CriticalityScorePolicy
@@ -21,16 +22,12 @@ data class Project(
     val tags: List<String>,
     val visibility: Visibility,
     val defaultBranch: String?,
-//    val protectedBranches: List<ProtectedBranch>,
     val stats: Statistics,
     val createdDate: LocalDate,
     val lastUpdatedDate: LocalDate?,
-//    @JsonIgnore val issues: Issues?,
-//    @JsonIgnore val commits: Timeline?,
-//    @JsonIgnore val releases: Timeline?,
-//    val files: Files,
-//    val languages: Map<String, Float>?,
-    val features: com.filipowm.ambassador.model.feature.Features = com.filipowm.ambassador.model.feature.Features()
+    val features: Features = Features(),
+    @JsonIgnore val potentialReadmePath: String? = null,
+    @JsonIgnore val potentialLicensePath: String? = null
 ) {
 
     private var scores: Scores? = null

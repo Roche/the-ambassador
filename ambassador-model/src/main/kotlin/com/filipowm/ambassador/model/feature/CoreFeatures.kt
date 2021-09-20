@@ -3,6 +3,7 @@ package com.filipowm.ambassador.model.feature
 import com.filipowm.ambassador.model.FeatureReader
 import com.filipowm.ambassador.model.Importance
 import com.filipowm.ambassador.model.IndexEntry
+import com.filipowm.ambassador.model.files.ExcerptFile
 import com.filipowm.ambassador.model.files.RawFile
 import com.filipowm.ambassador.model.project.Contributor
 import com.filipowm.ambassador.model.project.Contributors
@@ -54,21 +55,24 @@ class ForksFeature(value: Int?) : NotIndexableFeature<Int>(value, "Forks") {
     }
 }
 
-//class ReadmeFeature(value: Documentation) : AbstractFeature<Documentation>(value, "Readme") {
-//    companion object : FeatureReaderFactory<ReadmeFeature> {
-//        override fun create() = FeatureReader.createForFile("README.md") { ReadmeFeature() }
-//    }
-//}
-//class ContributingGuideFeature(value: Documentation) : AbstractFeature<Documentation>(value, "Contributing Guide") {
-//    companion object : FeatureReaderFactory<GitignoreFeature> {
-//        override fun create() = FeatureReader.createForFile(".gitignore") { GitignoreFeature(it) }
-//    }
-//}
-//class LicenseFeature(value: License) : AbstractFeature<License>(value, "License") {
-//    companion object : FeatureReaderFactory<GitignoreFeature> {
-//        override fun create() = FeatureReader.createForFile(".gitignore") { GitignoreFeature(it) }
-//    }
-//}
+class ReadmeFeature(value: ExcerptFile?) : AbstractFeature<ExcerptFile>(value, "Readme") {
+    companion object : FeatureReaderFactory<ReadmeFeature> {
+        override fun create() = FeatureReader.createForFile({ setOf(it.potentialReadmePath ?: "README.md") }) { ReadmeFeature(it.asExcerptFile()) }
+    }
+}
+
+class ContributingGuideFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "Contribution Guide") {
+    companion object : FeatureReaderFactory<ContributingGuideFeature> {
+        override fun create() = FeatureReader.createForFile({ setOf("CONTRIBUTING.md", "CONTRIBUTING") }) { ContributingGuideFeature(it) }
+    }
+}
+
+class LicenseFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "License") {
+    companion object : FeatureReaderFactory<LicenseFeature> {
+        override fun create() = FeatureReader.createForFile({ setOf(it.potentialLicensePath ?: "LICENSE") }) { LicenseFeature(it) }
+    }
+}
+
 class CiDefinitionFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "CI definition") {
     companion object : FeatureReaderFactory<CiDefinitionFeature> {
         override fun create() = FeatureReader.createForFile(".gitlab-ci.yml") { CiDefinitionFeature(it) }
