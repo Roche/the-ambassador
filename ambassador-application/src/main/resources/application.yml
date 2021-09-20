@@ -23,6 +23,7 @@ spring:
   flyway:
     placeholders:
       language: ${ambassador.language}
+    mixed: true
 
 logging.level.com.filipowm.ambassador.gitlab.ProjectReader: WARN
 

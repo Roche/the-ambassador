@@ -1,0 +1,1 @@
+SET work_mem TO '20 MB';
