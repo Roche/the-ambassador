@@ -14,4 +14,6 @@ interface IndexingRepository : CrudRepository<Indexing, UUID> {
 
     @Query("SELECT i FROM Indexing i WHERE i.status = com.filipowm.ambassador.storage.indexing.IndexingStatus.IN_PROGRESS")
     fun findAllInProgress(): List<Indexing>
+
+    fun findFirstByTargetOrderByStartedDateDesc(target: String): Optional<Indexing>
 }

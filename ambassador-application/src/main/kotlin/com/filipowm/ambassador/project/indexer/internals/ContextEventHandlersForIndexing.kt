@@ -38,7 +38,7 @@ internal class ContextEventHandlersForIndexing(
 
     private fun stopIndexing(forcibly: Boolean = false) {
         runBlocking {
-            service.forciblyStop(forcibly)
+            service.forciblyStopAll(forcibly)
         }
     }
 

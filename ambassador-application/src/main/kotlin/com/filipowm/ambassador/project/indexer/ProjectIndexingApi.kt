@@ -24,8 +24,12 @@ internal open class ProjectIndexingApi(private val service: ProjectIndexingServi
     }
 
     @DeleteMapping
-    @GetMapping("/stop")
-    suspend fun forciblyStop(@RequestParam("terminate", required = false) terminate: Optional<Boolean>) {
-        service.forciblyStop(terminate.orElse(false))
+    suspend fun forciblyStopAll(@RequestParam("terminate", required = false) terminate: Optional<Boolean>) {
+        service.forciblyStopAll(terminate.orElse(false))
+    }
+
+    @DeleteMapping("{indexingId}")
+    suspend fun forciblyStop(@PathVariable indexingId: UUID, @RequestParam("terminate", required = false) terminate: Optional<Boolean>) {
+        service.forciblyStop(indexingId, terminate.orElse(false))
     }
 }

@@ -11,7 +11,7 @@ class Indexing internal constructor(
     @Id @GeneratedValue
     private var id: UUID? = null,
     @Column(name = "started_by")
-    var startedBy: String? = null,
+    var startedBy: String = "unknown",
     @Column(name = "started_date")
     var startedDate: LocalDateTime = LocalDateTime.now(),
     @Column(name = "finished_date")

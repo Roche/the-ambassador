@@ -9,6 +9,8 @@ import com.filipowm.ambassador.security.AuthenticationContext
 import com.filipowm.ambassador.storage.indexing.Indexing
 import com.filipowm.ambassador.storage.indexing.IndexingRepository
 import org.springframework.stereotype.Component
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @Component
 internal class ProjectIndexingService(
@@ -18,20 +20,36 @@ internal class ProjectIndexingService(
     private val indexingLock: IndexingLock
 ) {
 
-    @Volatile
-    private var currentIndexerUsed: ProjectIndexer? = null
+    private val indexersInUse: MutableMap<UUID, ProjectIndexer> = ConcurrentHashMap()
 
     companion object {
         private val log by LoggerDelegate()
     }
 
-    suspend fun forciblyStop(terminateImmediately: Boolean) {
-        log.info("Trying to forcibly stop indexing, if active")
-        if (indexingLock.isLocked() && currentIndexerUsed != null) {
-            (currentIndexerUsed ?: return).forciblyStop(terminateImmediately)
-            log.warn("Indexing forcibly stopped!")
-        } else {
-            log.warn("No indexing in progress, nothing to stop")
+    suspend fun forciblyStop(indexingId: UUID, terminateImmediately: Boolean) {
+        log.info("Trying to forcibly stop indexing '{}', if active", indexingId)
+        when {
+            indexersInUse.containsKey(indexingId) -> {
+                indexersInUse[indexingId]?.forciblyStop(terminateImmediately)
+                indexersInUse.remove(indexingId)
+                indexingLock.unlock(indexingId)
+                log.warn("Indexing '{}' forcibly stopped!", indexingId)
+            }
+            indexingLock.isLocked(indexingId) -> indexingLock.unlock(indexingId)
+            else -> log.warn("No indexing in progress, nothing to stop")
+        }
+    }
+
+    suspend fun forciblyStopAll(terminateImmediately: Boolean) {
+        log.info("Trying to forcibly stop all active indexers")
+        val entriesIterator = indexersInUse.entries.iterator()
+        while (entriesIterator.hasNext()) {
+            val entry = entriesIterator.next()
+            log.warn("About to stop indexing '{}'", entry.key)
+            entry.value.forciblyStop(terminateImmediately)
+            indexingLock.unlock(entry.key)
+            log.warn("Indexing '{}' stopped forcibly", entry.key)
+            entriesIterator.remove()
         }
     }
 
@@ -63,7 +81,7 @@ internal class ProjectIndexingService(
         if (indexingLock.tryLock(idx)) {
             val indexer = createIndexer()
             idx = indexingRepository.save(idx)
-            currentIndexerUsed = indexer
+            indexersInUse[idx.getId()!!] = indexer
             val stats = Statistics()
             indexer.indexAll(
                 onStarted = { stats.startTiming() },
@@ -75,15 +93,18 @@ internal class ProjectIndexingService(
                     stats.stopTiming()
                     idx.finish(stats.asIndexingStatistics())
                     indexingRepository.save(idx)
-                    currentIndexerUsed = null
-                    indexingLock.unlock(idx)
-                    log.warn("Indexing has finished")
-                    log.warn("Report:\n{}", stats.getReport())
+                    indexersInUse.remove(idx.getId())
+                    indexingLock.unlock(idx.getId()!!)
+                    log.info("Indexing has finished")
+                    log.info("Report:\n{}", stats.getReport())
                 }
             )
             return IndexingDto.from(idx)
         } else {
-            val indexing = indexingRepository.findByLockIsNotNullAndTarget(idx.target).orElse(idx)
+            val indexing = indexingRepository.findByLockIsNotNullAndTarget(idx.target)
+                .or { indexingRepository.findFirstByTargetOrderByStartedDateDesc(idx.target) }
+                .orElse(idx)
+
             log.warn("Unable to trigger new indexing, cause indexing '{}' is already in progress and locked.", indexing.getId())
             throw IndexingAlreadyStartedException("Unable to start new projects indexing, because it is already running", indexing)
         }

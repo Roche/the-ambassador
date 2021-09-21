@@ -5,11 +5,13 @@ import com.filipowm.ambassador.storage.indexing.IndexingRepository
 import kotlinx.coroutines.sync.Semaphore
 import org.hibernate.exception.ConstraintViolationException
 import org.springframework.dao.DataIntegrityViolationException
+import java.util.*
 
 internal sealed class IndexingLock {
     abstract fun tryLock(indexing: Indexing): Boolean
     abstract fun isLocked(indexing: Indexing = Indexing.startAll()): Boolean
-    abstract fun unlock(indexing: Indexing)
+    abstract fun isLocked(indexingId: UUID): Boolean
+    abstract fun unlock(indexingId: UUID)
 
     companion object Factory {
         fun createInMemoryLock(): IndexingLock = InMemoryIndexingLock()
@@ -23,9 +25,17 @@ private class InMemoryIndexingLock : IndexingLock() {
 
     override fun tryLock(indexing: Indexing): Boolean = localLock.tryAcquire()
 
-    override fun unlock(indexing: Indexing): Unit = localLock.release()
+    override fun unlock(indexingId: UUID) {
+        if (!hasPermits()) {
+            localLock.release()
+        }
+    }
 
-    override fun isLocked(indexing: Indexing): Boolean = isLocked()
+    override fun isLocked(indexing: Indexing): Boolean = !hasPermits()
+
+    override fun isLocked(indexingId: UUID): Boolean = !hasPermits()
+
+    private fun hasPermits(): Boolean = localLock.availablePermits > 0
 
 }
 
@@ -50,12 +60,18 @@ private class DatabaseIndexingLock(private val indexingRepository: IndexingRepos
         }
     }
 
-    override fun unlock(indexing: Indexing) {
-        indexingRepository.findByLockIsNotNullAndTarget(indexing.target)
+    override fun unlock(indexingId: UUID) {
+        indexingRepository.findById(indexingId)
             .ifPresent { indexingRepository.save(it.unlock()) }
     }
 
     override fun isLocked(indexing: Indexing): Boolean {
         return indexingRepository.findByLockIsNotNullAndTarget(indexing.target).isPresent
+    }
+
+    override fun isLocked(indexingId: UUID): Boolean {
+        return indexingRepository.findById(indexingId)
+            .filter { it.isLocked() }
+            .isEmpty
     }
 }
