@@ -4,6 +4,7 @@ import com.filipowm.ambassador.commons.validation.ValidationError
 import com.filipowm.ambassador.exceptions.Exceptions.NotFoundException
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.project.indexer.IndexingAlreadyStartedException
+import com.filipowm.ambassador.project.indexer.IndexingDto
 import com.filipowm.ambassador.storage.InvalidSortFieldException
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -68,8 +69,10 @@ class ExceptionHandlingAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     fun indexingConflict(ex: IndexingAlreadyStartedException): Message {
         log.warn(ex.message)
-        return Message(ex.message!!)
+        return IndexingError(IndexingDto.from(ex.indexing), ex.message!!)
     }
+
+    private data class IndexingError(val indexing: IndexingDto, override val message: String) : Message(message)
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException::class)

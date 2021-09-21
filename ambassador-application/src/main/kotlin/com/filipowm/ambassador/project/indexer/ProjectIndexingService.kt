@@ -7,6 +7,9 @@ import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.source.ProjectDetailsResolver
 import com.filipowm.ambassador.model.source.ProjectSource
+import com.filipowm.ambassador.security.AuthenticationContext
+import com.filipowm.ambassador.storage.indexing.Indexing
+import com.filipowm.ambassador.storage.indexing.IndexingRepository
 import com.filipowm.ambassador.storage.project.ProjectEntityRepository
 import org.springframework.stereotype.Component
 
@@ -14,10 +17,11 @@ import org.springframework.stereotype.Component
 internal class ProjectIndexingService(
     private val sources: ProjectSources,
     private val projectEntityRepository: ProjectEntityRepository,
+    private val indexingRepository: IndexingRepository,
     private val concurrencyProvider: ConcurrencyProvider,
     private val projectSourceProperties: ProjectSourcesProperties
 ) {
-    private val indexingLock: IndexingLock = InMemoryIndexingLock()
+    private val indexingLock: IndexingLock = DatabaseIndexingLock(indexingRepository)
 
     @Volatile
     private var currentIndexerUsed: ProjectIndexer? = null
@@ -52,29 +56,36 @@ internal class ProjectIndexingService(
         stats.recordExclusion(failedCriteria)
     }
 
-    suspend fun reindex() {
-        log.info("Starting indexing all projects within source repository")
-        if (indexingLock.tryLock()) {
+    suspend fun reindex(): IndexingDto {
+        val user = AuthenticationContext.currentUserNameOrElse("unknown")
+        log.info("Indexing of all projects within source repository started by {}", user)
+        var idx = Indexing.startAll(startedBy = user)
+        if (indexingLock.tryLock(idx)) {
             val indexer = createIndexer()
+            idx = indexingRepository.save(idx)
             currentIndexerUsed = indexer
             val stats = Statistics()
-            return indexer.indexAll(
+            indexer.indexAll(
                 onStarted = { stats.startTiming() },
                 onProjectIndexingStarted = { stats.recordStarted() },
                 onProjectIndexingFinished = { stats.recordFinished() },
                 onProjectIndexingError = { t, _ -> stats.recordError(t) },
                 onProjectExcludedByCriteria = { criteria, project -> handleExcludedProject(indexer.getSource(), stats, criteria, project) },
                 onFinished = {
-                    currentIndexerUsed = null
-                    indexingLock.unlock()
                     stats.stopTiming()
+                    idx.finish(stats.asIndexingStatistics())
+                    indexingRepository.save(idx)
+                    currentIndexerUsed = null
+                    indexingLock.unlock(idx)
                     log.warn("Indexing has finished")
                     log.warn("Report:\n{}", stats.getReport())
                 }
             )
+            return IndexingDto.from(idx)
         } else {
-            log.warn("Unable to trigger new indexing, cause indexing is already in progress and locked.")
-            throw IndexingAlreadyStartedException("Unable to start new projects indexing, because it is already running")
+            val indexing = indexingRepository.findByLockIsNotNullAndTarget(idx.target).orElse(idx)
+            log.warn("Unable to trigger new indexing, cause indexing '{}' is already in progress and locked.", indexing.getId())
+            throw IndexingAlreadyStartedException("Unable to start new projects indexing, because it is already running", indexing)
         }
     }
 

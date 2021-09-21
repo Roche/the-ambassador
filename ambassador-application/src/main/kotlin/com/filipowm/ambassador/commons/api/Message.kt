@@ -1,3 +1,3 @@
 package com.filipowm.ambassador.commons.api
 
-data class Message(val message: String)
+open class Message(open val message: String)

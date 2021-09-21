@@ -15,9 +15,8 @@ internal open class ProjectIndexingApi(private val service: ProjectIndexingServi
 
     @GetMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    suspend fun reindex(): Message {
-        service.reindex()
-        return Message("Indexing has started. It may take a long time until finished.")
+    suspend fun reindex(): IndexingDto {
+        return service.reindex()
     }
 
     @GetMapping("{id}")

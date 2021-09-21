@@ -1,18 +1,27 @@
 package com.filipowm.ambassador.project.indexer
 
 import com.filipowm.ambassador.extensions.LoggerDelegate
+import com.filipowm.ambassador.storage.indexing.IndexingRepository
 import kotlinx.coroutines.runBlocking
-import org.springframework.context.event.ContextClosedEvent
-import org.springframework.context.event.ContextStoppedEvent
-import org.springframework.context.event.EventListener
+import org.springframework.context.event.*
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
+@Transactional
 internal class ContextEventHandlersForIndexing(
-    val service: ProjectIndexingService
+    val service: ProjectIndexingService,
+    val indexingRepository: IndexingRepository
 ) {
-
     private val log by LoggerDelegate()
+
+    @EventListener
+    fun handleContextStartedEvent(event: ContextRefreshedEvent) {
+        log.info("Cleaning up hanging indexing...")
+        indexingRepository.findAllLocked().forEach { indexingRepository.save(it.unlock()) }
+        indexingRepository.findAllInProgress().forEach { indexingRepository.save(it.fail()) }
+
+    }
 
     @EventListener
     fun handleContextClosedEvent(event: ContextClosedEvent) {

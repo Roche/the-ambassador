@@ -1,6 +1,7 @@
 package com.filipowm.ambassador.project.indexer
 
 import com.filipowm.ambassador.extensions.toHumanReadable
+import com.filipowm.ambassador.storage.indexing.IndexingStatistics
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
@@ -29,6 +30,17 @@ internal class Statistics {
     fun getDuration() = timer.getDuration()
     fun getTotalErrors(): Long = getTotalFromAggregate(errors)
     fun getTotalExclusions(): Long = exclusionsCount.get()
+
+    fun asIndexingStatistics(): IndexingStatistics = IndexingStatistics(
+        getProjectsStarted(),
+        getProjectsIndexed(),
+        getTotalExclusions(),
+        getTotalErrors(),
+        exclusions.unwrap(),
+        errors.unwrap(),
+    )
+
+    private fun Map<String, AtomicLong>.unwrap(): Map<String, Long> = this.mapValues { it.value.get() }
 
     private fun getTotalFromAggregate(aggregate: Map<*, AtomicLong>): Long {
         if (aggregate.isEmpty()) {
