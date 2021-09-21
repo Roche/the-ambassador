@@ -32,3 +32,6 @@ ambassador:
   indexer:
     concurrency:
       concurrencyLevel: 30
+  events:
+    async:
+      thread-name-prefix: events-

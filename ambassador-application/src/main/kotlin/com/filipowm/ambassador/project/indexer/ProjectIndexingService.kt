@@ -15,9 +15,8 @@ internal class ProjectIndexingService(
     private val sources: ProjectSources,
     private val projectEntityRepository: ProjectEntityRepository,
     private val concurrencyProvider: ConcurrencyProvider,
-    private val projectSourceProperties: ProjectSourcesProperties,
-
-    ) {
+    private val projectSourceProperties: ProjectSourcesProperties
+) {
     private val indexingLock: IndexingLock = InMemoryIndexingLock()
 
     @Volatile
