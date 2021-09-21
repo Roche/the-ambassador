@@ -1,6 +1,7 @@
 package com.filipowm.ambassador.configuration.concurrent
 
 import com.filipowm.ambassador.ConcurrencyProvider
+import com.filipowm.ambassador.configuration.properties.IndexerProperties
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.slf4j.MDC
@@ -12,12 +13,13 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Component
-class ConcurrencyProviderImpl(properties: ConcurrencyProperties) : ConcurrencyProvider {
+class ConcurrencyProviderImpl(indexerProperties: IndexerProperties) : ConcurrencyProvider {
 
     private val producerExecutor: ExecutorService
     private val consumerExecutor: ExecutorService
 
     init {
+        val properties = indexerProperties.concurrency
         val consumerThreadFactory = CustomizableThreadFactory(properties.consumerThreadPrefix)
         val producerThreadFactory = CustomizableThreadFactory(properties.producerThreadPrefix)
         val producerExecutorThreads = max(1, ceil(properties.concurrencyLevel * 0.1).roundToInt())

@@ -1,7 +1,8 @@
-package com.filipowm.ambassador.project.indexer
+package com.filipowm.ambassador.project.indexer.internals
 
 import com.filipowm.ambassador.model.source.CriterionVerifier
 import com.filipowm.ambassador.model.source.ProjectDetailsResolver
+import com.filipowm.ambassador.project.indexer.IndexingCriterion
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSubtypeOf

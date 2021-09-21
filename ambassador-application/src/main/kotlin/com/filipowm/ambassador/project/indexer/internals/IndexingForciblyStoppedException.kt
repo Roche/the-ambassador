@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.project.indexer
+package com.filipowm.ambassador.project.indexer.internals
 
 import java.util.concurrent.CancellationException
 

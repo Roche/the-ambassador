@@ -32,6 +32,7 @@ ambassador:
   indexer:
     concurrency:
       concurrencyLevel: 30
+    lock-type: in_memory
   events:
     async:
       thread-name-prefix: events-

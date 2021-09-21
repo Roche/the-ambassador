@@ -6,13 +6,18 @@ import kotlinx.coroutines.sync.Semaphore
 import org.hibernate.exception.ConstraintViolationException
 import org.springframework.dao.DataIntegrityViolationException
 
-sealed class IndexingLock {
+internal sealed class IndexingLock {
     abstract fun tryLock(indexing: Indexing): Boolean
     abstract fun isLocked(indexing: Indexing = Indexing.startAll()): Boolean
     abstract fun unlock(indexing: Indexing)
+
+    companion object Factory {
+        fun createInMemoryLock(): IndexingLock = InMemoryIndexingLock()
+        fun createDatabaseLock(indexingRepository: IndexingRepository): IndexingLock = DatabaseIndexingLock(indexingRepository)
+    }
 }
 
-class InMemoryIndexingLock : IndexingLock() {
+private class InMemoryIndexingLock : IndexingLock() {
 
     private val localLock = Semaphore(1)
 
@@ -24,7 +29,7 @@ class InMemoryIndexingLock : IndexingLock() {
 
 }
 
-class DatabaseIndexingLock(private val indexingRepository: IndexingRepository) : IndexingLock() {
+private class DatabaseIndexingLock(private val indexingRepository: IndexingRepository) : IndexingLock() {
 
     override fun tryLock(indexing: Indexing): Boolean {
         return if (isLocked(indexing)) {

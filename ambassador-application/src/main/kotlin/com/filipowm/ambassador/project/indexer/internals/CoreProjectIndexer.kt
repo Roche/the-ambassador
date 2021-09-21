@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.project.indexer
+package com.filipowm.ambassador.project.indexer.internals
 
 import com.filipowm.ambassador.ConcurrencyProvider
 import com.filipowm.ambassador.exceptions.Exceptions
@@ -8,6 +8,7 @@ import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.project.ProjectFilter
 import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.model.source.ProjectSource
+import com.filipowm.ambassador.project.indexer.*
 import com.filipowm.ambassador.storage.project.ProjectEntity
 import com.filipowm.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.*

@@ -1,6 +1,5 @@
 package com.filipowm.ambassador
 
-import com.filipowm.ambassador.configuration.concurrent.ConcurrencyProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties

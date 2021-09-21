@@ -64,9 +64,10 @@ internal class Statistics {
         if (getProjectsIndexed() > 0) {
             sb.appendLine("Avg time per project: ${timer.getDurationAsMillis() / getProjectsIndexed()}ms")
         }
-        if (getTotalExclusions() > 0)
+        if (getTotalExclusions() > 0) {
             sb.appendLine("Most occurring exclusions:")
             exclusions.forEach { (exclusion, count) -> sb.appendLine("  - ${exclusion}: ${count.get()}") }
+        }
         if (getTotalErrors() > 0) {
             sb.appendLine("Most occurring errors:")
             errors.forEach { (error, count) -> sb.appendLine("  - ${error}: ${count.get()}") }
@@ -74,14 +75,6 @@ internal class Statistics {
 
         return sb.toString()
     }
-//    """
-//        Total projects: ${getProjectsStarted()}
-//        Total indexed projects: ${getProjectsIndexed()}
-//        Total errors: ${getTotalErrors()}
-//        Total indexing time: ${getDuration().humanReadableFormat()}
-//        Most occurring errors:
-//        ${getErrorsReport()}
-//    """.trimIndent()
 
     private class Timer(private val millisProvider: () -> Long = { System.currentTimeMillis() }) {
         private var start = 0L

@@ -3,6 +3,40 @@ package com.filipowm.ambassador.extensions
 import kotlin.math.max
 import kotlin.math.min
 
+fun String.capitalize(): String {
+    return capitalize(' ')
+}
+
+fun String.capitalize(vararg delimiters: Char): String {
+    if (this.isBlank() || delimiters.isEmpty()) {
+        return this
+    }
+    val buffer = this.toCharArray()
+    var capitalizeNext = true
+    val delimSet = toDelimiterSet(delimiters)
+    for (i in buffer.indices) {
+        val ch = buffer[i]
+        if (delimSet.contains(ch.toInt())) {
+            capitalizeNext = true
+        } else if (capitalizeNext) {
+            buffer[i] = Character.toTitleCase(ch)
+            capitalizeNext = false
+        }
+    }
+    return String(buffer)
+}
+
+fun String.capitalizeFully(): String {
+    return capitalizeFully(' ')
+}
+
+fun String.capitalizeFully(vararg delimiters: Char): String {
+    if (this.isBlank() || delimiters.isEmpty()) {
+        return this
+    }
+    return this.toLowerCase().capitalize(*delimiters)
+}
+
 fun String.toCamelCase(capitalizeFirstLetter: Boolean = false, vararg delimiters: Char = " _-".toCharArray()): String {
     var str = this
     if (str.isEmpty()) {

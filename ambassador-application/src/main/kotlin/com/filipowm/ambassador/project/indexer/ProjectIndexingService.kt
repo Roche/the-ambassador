@@ -1,8 +1,6 @@
 package com.filipowm.ambassador.project.indexer
 
-import com.filipowm.ambassador.ConcurrencyProvider
 import com.filipowm.ambassador.configuration.source.ProjectSources
-import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.source.ProjectDetailsResolver
@@ -10,18 +8,15 @@ import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.security.AuthenticationContext
 import com.filipowm.ambassador.storage.indexing.Indexing
 import com.filipowm.ambassador.storage.indexing.IndexingRepository
-import com.filipowm.ambassador.storage.project.ProjectEntityRepository
 import org.springframework.stereotype.Component
 
 @Component
 internal class ProjectIndexingService(
     private val sources: ProjectSources,
-    private val projectEntityRepository: ProjectEntityRepository,
+    private val indexerFactory: IndexerFactory,
     private val indexingRepository: IndexingRepository,
-    private val concurrencyProvider: ConcurrencyProvider,
-    private val projectSourceProperties: ProjectSourcesProperties
+    private val indexingLock: IndexingLock
 ) {
-    private val indexingLock: IndexingLock = DatabaseIndexingLock(indexingRepository)
 
     @Volatile
     private var currentIndexerUsed: ProjectIndexer? = null
@@ -54,6 +49,11 @@ internal class ProjectIndexingService(
             failedCriteriaString
         )
         stats.recordExclusion(failedCriteria)
+    }
+
+    private fun createIndexer(): ProjectIndexer {
+        val source = sources.get("gitlab").get() as ProjectSource<Any>
+        return indexerFactory.create(source)
     }
 
     suspend fun reindex(): IndexingDto {
@@ -92,19 +92,5 @@ internal class ProjectIndexingService(
     suspend fun reindex(id: Long): Project? {
         val indexer = createIndexer()
         return indexer.indexOne(id)
-    }
-
-    private fun createIndexer(): ProjectIndexer {
-        val source = sources.get("gitlab").get() as ProjectSource<Any>
-        val criteria = IndexingCriteria.forProvider(source, source)
-        val indexer = CoreProjectIndexer(
-            source,
-            projectEntityRepository,
-            concurrencyProvider,
-            projectSourceProperties.indexEvery,
-            criteria
-        )
-        log.info("Using '{}' with criteria: '{}' for indexing projects", indexer.javaClass.canonicalName, criteria.getAllCriteriaNames())
-        return indexer
     }
 }

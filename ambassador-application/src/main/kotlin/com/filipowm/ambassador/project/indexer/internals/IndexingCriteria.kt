@@ -1,15 +1,14 @@
-package com.filipowm.ambassador.project.indexer
+package com.filipowm.ambassador.project.indexer.internals
 
 import com.filipowm.ambassador.model.source.IndexingCriteriaProvider
 import com.filipowm.ambassador.model.source.ProjectDetailsResolver
-import org.slf4j.LoggerFactory
+import com.filipowm.ambassador.project.indexer.IndexingCriterion
 
 internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
 
     private val criteria = criteria.toList()
 
     companion object {
-        private val log = LoggerFactory.getLogger(IndexingCriteria::class.java)
 
         fun <T> none(): IndexingCriteria<T> {
             return object : IndexingCriteria<T>() {

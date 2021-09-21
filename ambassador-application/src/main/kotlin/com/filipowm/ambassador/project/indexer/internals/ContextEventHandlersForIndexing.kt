@@ -1,6 +1,7 @@
-package com.filipowm.ambassador.project.indexer
+package com.filipowm.ambassador.project.indexer.internals
 
 import com.filipowm.ambassador.extensions.LoggerDelegate
+import com.filipowm.ambassador.project.indexer.ProjectIndexingService
 import com.filipowm.ambassador.storage.indexing.IndexingRepository
 import kotlinx.coroutines.runBlocking
 import org.springframework.context.event.*
