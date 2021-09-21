@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.storage
+package com.filipowm.ambassador.storage.project
 
 import com.filipowm.ambassador.model.project.Project
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType

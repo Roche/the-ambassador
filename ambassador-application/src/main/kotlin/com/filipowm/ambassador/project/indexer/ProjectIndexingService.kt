@@ -7,7 +7,7 @@ import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.source.ProjectDetailsResolver
 import com.filipowm.ambassador.model.source.ProjectSource
-import com.filipowm.ambassador.storage.ProjectEntityRepository
+import com.filipowm.ambassador.storage.project.ProjectEntityRepository
 import org.springframework.stereotype.Component
 
 @Component

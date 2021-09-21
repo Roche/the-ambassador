@@ -8,8 +8,8 @@ import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.project.ProjectFilter
 import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.model.source.ProjectSource
-import com.filipowm.ambassador.storage.ProjectEntity
-import com.filipowm.ambassador.storage.ProjectEntityRepository
+import com.filipowm.ambassador.storage.project.ProjectEntity
+import com.filipowm.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.time.Duration

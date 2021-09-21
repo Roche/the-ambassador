@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.storage
+package com.filipowm.ambassador.storage.project
 
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
