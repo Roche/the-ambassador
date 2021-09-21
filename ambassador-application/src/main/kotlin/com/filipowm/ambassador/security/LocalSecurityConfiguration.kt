@@ -3,10 +3,12 @@ package com.filipowm.ambassador.security
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.SecurityWebFilterChain
 
 @Configuration
+@EnableReactiveMethodSecurity
 internal class LocalSecurityConfiguration {
 
     private val log by LoggerDelegate()
@@ -23,7 +25,10 @@ internal class LocalSecurityConfiguration {
             .cors().disable()
             .authorizeExchange()
                 .anyExchange().permitAll().and()
-            .anonymous().principal(anonymousUser).and()
+            .anonymous()
+                .principal(anonymousUser)
+                .authorities(anonymousUser.authorities)
+                .and()
             .build()
         // @formatter:on
     }
