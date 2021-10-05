@@ -11,7 +11,9 @@ import javax.validation.constraints.NotBlank
 @ConstructorBinding
 @Validated
 data class IndexerProperties(
-    @NotBlank val lockType: IndexingLockType = IndexingLockType.IN_MEMORY,
+    @NotBlank
+    val lockType: IndexingLockType = IndexingLockType.IN_MEMORY,
+
     @NestedConfigurationProperty
     @Valid
     val concurrency: ConcurrencyProperties

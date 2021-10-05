@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.security
+package com.filipowm.ambassador.security.configuration
 
 import com.filipowm.ambassador.Adapter
 import com.filipowm.ambassador.OAuth2ClientProperties

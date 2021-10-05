@@ -8,7 +8,7 @@ import org.springframework.web.reactive.config.WebFluxConfigurer
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer
 
 @Configuration
-open class WebConfiguration : WebFluxConfigurer {
+internal open class WebConfiguration : WebFluxConfigurer {
 
     override fun configureArgumentResolvers(configurer: ArgumentResolverConfigurer) {
         configurer.addCustomResolver(ReactivePageableHandlerMethodArgumentResolver())

@@ -1,6 +1,7 @@
-package com.filipowm.ambassador.security
+package com.filipowm.ambassador.security.configuration
 
 import com.filipowm.ambassador.UserDetailsProvider
+import com.filipowm.ambassador.security.AmbassadorUser
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.client.userinfo.DefaultReactiveOAuth2UserService

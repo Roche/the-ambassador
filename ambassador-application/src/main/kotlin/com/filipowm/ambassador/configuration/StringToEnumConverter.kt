@@ -2,6 +2,7 @@ package com.filipowm.ambassador.configuration
 
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.converter.ConverterFactory
+import java.lang.Enum.*
 
 class StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
     override fun <T : Enum<*>?> getConverter(targetType: Class<T>): Converter<String, T> {
@@ -14,7 +15,7 @@ class StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
             return if (source.isEmpty()) {
                 // It's an empty enum identifier: reset the enum value to null.
                 null
-            } else java.lang.Enum.valueOf(enumType, source.trim { it <= ' ' }.toUpperCase()) as T
+            } else valueOf(enumType, source.trim { it <= ' ' }.toUpperCase()) as T
         }
     }
 

@@ -11,7 +11,7 @@ import java.time.Duration
 
 @Configuration
 @EnableCaching
-open class CacheConfiguration {
+internal open class CacheConfiguration {
 
     @Bean
     open fun cacheManager(): CacheManager {

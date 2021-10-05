@@ -36,6 +36,6 @@ internal object FeaturesDeserializer : StdDeserializer<Features>(Features::class
     }
 }
 
-class Raw(val json: String)
+internal class Raw(val json: String)
 
-class FeatureHolder<T>(value: T, name: String) : AbstractFeature<T>(value, name)
+internal class FeatureHolder<T>(value: T, name: String) : AbstractFeature<T>(value, name)

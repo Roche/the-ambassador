@@ -12,4 +12,4 @@ import org.springframework.context.annotation.Configuration
     EventsProperties::class,
     IndexerProperties::class
 )
-open class ConfigurationPropertiesDiscovery
+internal open class ConfigurationPropertiesDiscovery

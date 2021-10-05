@@ -13,7 +13,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Component
-class ConcurrencyProviderImpl(indexerProperties: IndexerProperties) : ConcurrencyProvider {
+internal class ConcurrencyProviderImpl(indexerProperties: IndexerProperties) : ConcurrencyProvider {
 
     private val producerExecutor: ExecutorService
     private val consumerExecutor: ExecutorService

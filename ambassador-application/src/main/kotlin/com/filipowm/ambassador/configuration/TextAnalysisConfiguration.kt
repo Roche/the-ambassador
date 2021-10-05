@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class TextAnalysisConfiguration {
+internal open class TextAnalysisConfiguration {
 
     @Bean
     open fun textAnalyzer(): TextAnalyzingService {

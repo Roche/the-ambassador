@@ -22,7 +22,7 @@ import java.security.Principal
 import javax.validation.ConstraintViolationException
 
 @RestControllerAdvice
-class ExceptionHandlingAdvice {
+internal class ExceptionHandlingAdvice {
 
     private val log by LoggerDelegate()
 

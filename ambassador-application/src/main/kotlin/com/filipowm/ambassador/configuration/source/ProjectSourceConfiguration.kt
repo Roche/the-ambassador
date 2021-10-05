@@ -14,8 +14,6 @@ import java.time.Duration
 @Configuration
 open class ProjectSourceConfiguration {
 
-    private val log by LoggerDelegate()
-
     @Bean
     open fun sources(
         projectSourcesProperties: ProjectSourcesProperties,

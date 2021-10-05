@@ -1,6 +1,7 @@
-package com.filipowm.ambassador.security
+package com.filipowm.ambassador.security.configuration
 
 import com.filipowm.ambassador.extensions.LoggerDelegate
+import com.filipowm.ambassador.security.AmbassadorUser
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity

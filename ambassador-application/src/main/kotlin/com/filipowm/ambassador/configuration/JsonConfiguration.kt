@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 
 @Configuration
-open class JsonConfiguration : ObjectMapperSupplier {
+internal open class JsonConfiguration : ObjectMapperSupplier {
 
     companion object {
         internal val OBJECT_MAPPER = ObjectMapper()

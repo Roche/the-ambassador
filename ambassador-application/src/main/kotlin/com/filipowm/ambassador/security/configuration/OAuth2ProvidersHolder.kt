@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.security
+package com.filipowm.ambassador.security.configuration
 
 import com.filipowm.ambassador.OAuth2AuthenticationProvider
 import org.springframework.security.oauth2.client.registration.ClientRegistration
