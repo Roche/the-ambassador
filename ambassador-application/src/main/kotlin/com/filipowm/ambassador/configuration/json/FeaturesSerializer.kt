@@ -3,6 +3,7 @@ package com.filipowm.ambassador.configuration.json
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
+import com.filipowm.ambassador.model.Value
 import com.filipowm.ambassador.model.feature.Features
 
 internal object FeaturesSerializer : StdSerializer<Features>(Features::class.java) {
@@ -10,19 +11,28 @@ internal object FeaturesSerializer : StdSerializer<Features>(Features::class.jav
         gen.writeStartObject()
         value.forEach {
             it.asIndexEntry().with { key, value ->
+                val unwrappedValue = unwrap(value)
                 gen.writeFieldName(key)
-                when (value) {
-                    is String -> gen.writeString(value)
-                    is Boolean -> gen.writeBoolean(value)
-                    is Double -> gen.writeNumber(value)
-                    is Int -> gen.writeNumber(value)
-                    is Float -> gen.writeNumber(value)
-                    is Long -> gen.writeNumber(value)
-                    is Raw -> gen.writeRawValue(value.json)
-                    else -> gen.writeObject(value)
+                when (unwrappedValue) {
+                    is String -> gen.writeString(unwrappedValue)
+                    is Boolean -> gen.writeBoolean(unwrappedValue)
+                    is Double -> gen.writeNumber(unwrappedValue)
+                    is Int -> gen.writeNumber(unwrappedValue)
+                    is Float -> gen.writeNumber(unwrappedValue)
+                    is Long -> gen.writeNumber(unwrappedValue)
+                    is Raw -> gen.writeRawValue(unwrappedValue.json)
+                    else -> gen.writeObject(unwrappedValue)
                 }
             }
         }
         gen.writeEndObject()
     }
+
+    private fun unwrap(value: Any) : Any {
+        return when(value) {
+            is Value<*> -> value.get()!!
+            else -> value
+        }
+    }
+
 }

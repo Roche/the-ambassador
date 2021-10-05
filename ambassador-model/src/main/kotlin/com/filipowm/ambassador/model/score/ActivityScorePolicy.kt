@@ -11,7 +11,7 @@ object ActivityScorePolicy : ScorePolicy {
     override fun calculateScoreOf(features: Features): Score {
         val contributionScore = getContributionScore(features)
         val documentationScore = getDocumentationScore(features)
-        return Score.zip("activity", contributionScore, documentationScore) { s1, s2 ->
+        return Score.zip("Activity Score", contributionScore, documentationScore) { s1, s2 ->
             val result = s1 + s2
             val logScaled = logScaleNormalizer().invoke(result)
             roundingNormalizer().invoke(logScaled)
@@ -26,7 +26,7 @@ object ActivityScorePolicy : ScorePolicy {
 
     private fun getDocumentationScore(features: Features): Score {
         // @formatter:off
-        return Score.builder("documentation", features)
+        return Score.builder("Documentation", features)
             .withFeature(ContributingGuideFeature::class).forFile(100, 100)
             .withFeature(ReadmeFeature::class).forFile(100, 100)
             .withFeature(LicenseFeature::class).forFile(50, 10)
@@ -34,13 +34,13 @@ object ActivityScorePolicy : ScorePolicy {
             .withFeature(DescriptionFeature::class)
                 .filter { it.value().exists() && it.value().get().length >= 30}
                 .calculate { descriptionFeature, score -> score + 100 }
-            .build("documentation")
+            .build()
         // @formatter:on
     }
 
     private fun getContributionScore(features: Features): Score {
         // @formatter:off
-        return Score.builder("contribution", features, INITIAL_SCORE)
+        return Score.builder("Contribution", features, INITIAL_SCORE)
             .withFeature(StarsFeature::class).calculate { starsFeature, score -> score + starsFeature.value().get() * 5 }
             .withFeature(ForksFeature::class).calculate { forksFeature, score -> score + forksFeature.value().get() * 5 }
             // updated in last 3 months: adds a bonus multiplier between 0..1 to overall score (1 = updated today, 0 = updated more than 100 days ago)
@@ -52,7 +52,7 @@ object ActivityScorePolicy : ScorePolicy {
                     score * (1 + min(max(avg - 3, .0), 7.0) / 7)
                 }
             // average commits: adds a bonus multiplier between 0..1 to overall score (1 = >10 commits per week, 0 = less than 3 commits per week)
-            .withSubScore("Promising project boost")
+            .withSubScore("Young project boost")
                 // all repositories updated in the previous year will receive a boost of maximum 1000 declining by days since last update
                 .withFeature(LastActivityDateFeature::class).calculate { feature, score -> (1000 - min(feature.daysUntilNow()!!, 365).toDouble() * 2.74) }
                 // gradually scale down boost according to repository creation date to mix with "real" engagement stats
@@ -62,7 +62,7 @@ object ActivityScorePolicy : ScorePolicy {
             .withFeature(VisibilityFeature::class)
                 .filter { it.value().get() == Visibility.PRIVATE }
                 .calculate { _, score -> score * .3 }
-            .build("contribution")
+            .build()
         // @formatter:on
     }
 

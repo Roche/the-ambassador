@@ -41,7 +41,7 @@ internal object GitLabProjectMapper {
             lastUpdatedDate = gitlabProject.lastActivityAt!!.toLocalDate(),
             defaultBranch = gitlabProject.defaultBranch,
             potentialReadmePath = toRelativePath(gitlabProject.readmeUrl, gitlabProject.defaultBranch),
-            potentialLicensePath = toRelativePath(gitlabProject.licenseUrl, gitlabProject.defaultBranch)
+            potentialLicensePath = toRelativePath(gitlabProject.licenseUrl, gitlabProject.defaultBranch),
         )
     }
 

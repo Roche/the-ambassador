@@ -3,6 +3,7 @@ package com.filipowm.ambassador.model.project
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.filipowm.ambassador.model.FeatureReader
+import com.filipowm.ambassador.model.Scorecard
 import com.filipowm.ambassador.model.feature.Features
 import com.filipowm.ambassador.model.feature.LanguagesFeature
 import com.filipowm.ambassador.model.score.ActivityScorePolicy
@@ -26,10 +27,10 @@ data class Project(
     val createdDate: LocalDate,
     val lastUpdatedDate: LocalDate?,
     val features: Features = Features(),
+    var scorecard: Scorecard? = null,
     @JsonIgnore val potentialReadmePath: String? = null,
     @JsonIgnore val potentialLicensePath: String? = null
 ) {
-
     private var scores: Scores? = null
 
     suspend fun readFeature(featureReader: FeatureReader<*>, source: ProjectSource<Any>) {
@@ -38,7 +39,6 @@ data class Project(
             .ifPresent { features.add(it) }
     }
 
-    //
     @JsonGetter("scores")
     fun getScores(): Scores {
         if (scores == null) {

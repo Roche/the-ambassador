@@ -19,7 +19,10 @@ object FeatureReaders {
         ProtectedBranchesFeature.create(),
         ReadmeFeature.create(),
         ContributingGuideFeature.create(),
-        LicenseFeature.create()
+        LicenseFeature.create(),
+        LastActivityDateFeature.create(),
+        CreatedDateFeature.create(),
+        DescriptionFeature.create()
     )
 
     fun all(): List<FeatureReader<*>> {

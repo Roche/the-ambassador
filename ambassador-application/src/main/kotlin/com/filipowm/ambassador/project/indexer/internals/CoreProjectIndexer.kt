@@ -3,10 +3,12 @@ package com.filipowm.ambassador.project.indexer.internals
 import com.filipowm.ambassador.ConcurrencyProvider
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
+import com.filipowm.ambassador.model.ScorecardCalculator
 import com.filipowm.ambassador.model.feature.FeatureReaders
 import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.project.ProjectFilter
 import com.filipowm.ambassador.model.project.Visibility
+import com.filipowm.ambassador.model.score.ActivityScorePolicy
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.project.indexer.*
 import com.filipowm.ambassador.storage.project.ProjectEntity
@@ -51,6 +53,12 @@ internal class CoreProjectIndexer(
         val project = source.getById(id.toString())
         if (project.isPresent) {
             readFeatures(project.get())
+            val scorecard = ScorecardCalculator(
+                setOf(
+                    ActivityScorePolicy
+                )
+            ).calculateFor(project.get())
+            project.get().scorecard = scorecard
         }
         return project
             .map { ProjectEntity.from(it) }
@@ -108,6 +116,12 @@ internal class CoreProjectIndexer(
                                 if (projectToSave.isPresent) {
                                     val project = projectToSave.get()
                                     readFeatures(project)
+                                    val scorecard = ScorecardCalculator(
+                                        setOf(
+                                            ActivityScorePolicy
+                                        )
+                                    ).calculateFor(project)
+                                    project.scorecard = scorecard
                                     val entity = ProjectEntity.from(project)
                                     projectEntityRepository.save(entity)
                                     onProjectIndexingFinished(project)

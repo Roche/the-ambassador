@@ -1,5 +1,7 @@
 package com.filipowm.ambassador.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.filipowm.ambassador.model.feature.Features
 import com.filipowm.ambassador.model.score.ScoreBuilder
 import java.util.stream.Collectors
@@ -8,16 +10,17 @@ import java.util.stream.Stream
 interface Score : Specification, Explainable {
 
     fun value(): Double
-    fun description(): String
     fun features(): Set<Feature<*>>
-
     fun subScores(): Set<Score>
+
+    @JsonIgnore
     fun isComposite(): Boolean = subScores().isNotEmpty()
 
     /**
      * Navigate through all subscores tree to extract all features
      * participating in final score
      */
+    @JsonIgnore
     fun allFeatures(): Set<Feature<*>> {
         return Stream.concat(
             features().stream(),
@@ -31,6 +34,7 @@ interface Score : Specification, Explainable {
      * Navigate through all subscores tree to extract all scores
      * participating in final score
      */
+    @JsonIgnore
     fun allSubScores(): Set<Score> {
         return Stream.concat(
             subScores().stream(),
@@ -44,65 +48,73 @@ interface Score : Specification, Explainable {
 
         fun zip(name: String, first: Score, second: Score, zipper: (Double, Double) -> Double): Score {
             val value = zipper.invoke(first.value(), second.value())
-            return composite(name, "", value, mutableSetOf(first, second))
+            return composite(name, value, mutableSetOf(first, second))
         }
 
         fun builder(name: String, features: Features, initialScore: Double = 0.0): ScoreBuilder.ParentScoreBuilder = ScoreBuilder.ParentScoreBuilder(name, features, initialScore)
 
         internal fun composite(
             name: String,
-            description: String,
             value: Double,
             subScores: MutableSet<Score>
         ): Score {
-            return CompositeScore(name, description, value, subScores)
+            return CompositeScore(name, value, subScores)
         }
 
         fun final(
             name: String,
-            description: String,
-            score: Double,
+            value: Double,
             features: Set<Feature<*>>,
             subScores: Set<Score>
+        ): Score = finalWithNames(name, value, features, features.map { it.name() }.toSet(), subScores)
+
+        fun finalWithNames(
+            name: String,
+            value: Double,
+            features: Set<Feature<*>>,
+            featureNames: Set<String>,
+            subScores: Set<Score>
         ): Score {
-            return FinalScore(name, description, score, features.toSet(), subScores.toSet())
+            return FinalScore(name, value, features.toSet(), featureNames, subScores)
         }
     }
 }
 
-internal class CompositeScore(
-    name: String, description: String,
-    private val value: Double, private val subScores: MutableSet<Score>
-) : AbstractScore(name, description, setOf(), subScores) {
+internal data class CompositeScore(
+    val name: String,
+    val value: Double, val subScores: MutableSet<Score>
+) : AbstractScore(name, setOf(), subScores) {
     override fun value(): Double = value
 }
 
-internal class FinalScore(
-    name: String,
-    description: String,
-    val score: Double,
-    features: Set<Feature<*>>,
-    subScores: Set<Score>
-) : AbstractScore(name, description, features, subScores) {
+internal data class FinalScore(
+    val name: String,
+    val value: Double,
+    @JsonIgnore
+    val features: Set<Feature<*>>,
+    @JsonProperty("features")
+    val featureNames: Set<String>,
+    val subScores: Set<Score>,
+) : AbstractScore(name, features, subScores) {
 
-    override fun value(): Double = score
+    override fun value(): Double = value
 }
 
 abstract class AbstractScore(
     private val name: String,
-    private val description: String,
+    @JsonIgnore
     private val features: Set<Feature<*>> = mutableSetOf(),
     private val subScores: Set<Score> = mutableSetOf()
 ) : Score {
 
-    override fun description() = description
-
+    @JsonIgnore
     override fun features() = features
 
     override fun subScores() = subScores
 
     override fun name() = name
 
+    @JsonIgnore
     override fun explain(): Explanation {
         TODO("Not yet implemented")
     }

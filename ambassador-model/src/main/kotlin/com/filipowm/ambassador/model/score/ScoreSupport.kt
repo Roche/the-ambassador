@@ -9,7 +9,10 @@ import kotlin.reflect.KClass
 
 typealias ScoreNormalizer = (Double) -> Double
 
-open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(protected val name: String, private val features: Features, initialScore: Double) {
+open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
+    protected val name: String,
+    private val features: Features, initialScore: Double
+) {
     protected val usedFeatures: MutableSet<Feature<*>> = mutableSetOf()
     protected val expectedFeatures: MutableSet<KClass<*>> = mutableSetOf()
     protected val subScores: MutableSet<Score> = mutableSetOf()
@@ -28,11 +31,11 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(protecte
         return this as SELF
     }
 
-    fun build(description: String): Score {
+    fun build(): Score {
         normalizers.forEach {
             score = it.invoke(score)
         }
-        return Score.final(name, description, score, usedFeatures, subScores)
+        return Score.final(name, score, usedFeatures, subScores)
     }
 
     fun withSubScore(name: String): SubScoreBuilder {
@@ -45,17 +48,17 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(protecte
     ) {
         private val filters = mutableListOf<Predicate<T>>()
 
-        open fun filter(predicate: Predicate<T>): FeatureScoreBuilder<T, U> {
+        fun filter(predicate: Predicate<T>): FeatureScoreBuilder<T, U> {
             filters.add(predicate)
             return this
         }
 
-        open fun filter(predicate: (T) -> Boolean): FeatureScoreBuilder<T, U> {
+        fun filter(predicate: (T) -> Boolean): FeatureScoreBuilder<T, U> {
             filters.add(predicate)
             return this
         }
 
-        open fun calculate(calculator: (T, Double) -> Double): U {
+        fun calculate(calculator: (T, Double) -> Double): U {
             var partialScore: Double? = null
             if (feature != null && feature.exists() && filters.stream().allMatch { it.test(feature) }) {
                 scoreBuilder.usedFeatures.add(feature)
@@ -78,10 +81,9 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(protecte
     ) : ScoreBuilder<SubScoreBuilder>(name, features, initialScore) {
 
         fun reduce(reducer: (Double, Double) -> Double): ScoreBuilder<*> {
-            val finalScore = Score.final(name, "", this.score, usedFeatures, setOf())
+            val finalScore = Score.final(name, this.score, usedFeatures, setOf())
             scoreBuilder.score = reducer.invoke(scoreBuilder.score, this.score)
             scoreBuilder.subScores.add(finalScore)
-//            scoreBuilder.usedFeatures.addAll(usedFeatures)
             return scoreBuilder
         }
     }
