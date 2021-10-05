@@ -8,6 +8,10 @@ tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar
     enabled = false
 }
 
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
+    enabled = false
+}
+
 dependencies {
     implementation("com.github.javafaker:javafaker:1.0.2")
 

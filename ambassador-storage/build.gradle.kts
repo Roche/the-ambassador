@@ -7,7 +7,15 @@ plugins {
     id("jooq-conventions")
 }
 
+tasks.getByName("sourcesJar") {
+    dependsOn("generateJooq")
+}
+
 tasks.getByName<BootJar>("bootJar") {
+    enabled = false
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
     enabled = false
 }
 
@@ -20,7 +28,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
     api("com.vladmihalcea:hibernate-types-52:2.10.4")
-    implementation("org.jooq:jooq-meta-extensions-hibernate:3.14.8")
+    implementation("org.jooq:jooq-meta-extensions-hibernate:3.14.8") {
+        exclude("com.h2database", "h2")
+    }
     runtimeOnly("org.postgresql:postgresql:42.2.22")
 
     jooqGenerator("org.testcontainers:postgresql:1.15.2")

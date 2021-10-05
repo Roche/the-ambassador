@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 plugins {
     id("kotlin-conventions")
     id("testing-conventions")
@@ -32,6 +34,16 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 }
-//
+
+tasks.getByName<BootBuildImage>("bootBuildImage") {
+    builder = "paketobuildpacks/builder"
+
+    environment = mapOf(
+        "BP_OCI_TITLE" to "The Ambassador",
+        "BP_OCI_AUTHORS" to "Mateusz Filipowicz",
+        "BP_OCI_URL" to "https://github.com/filipowm/the-ambassador",
+        "BP_OCI_LICENSES" to "Apache-2.0"
+    )
+}
+
 description = "The Ambassador"
-//description = "ambassador-application"
