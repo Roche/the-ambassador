@@ -64,11 +64,6 @@ data class Project(
     }
 
     @JsonIgnore
-    fun calculateCriticalityScore(): Float {
-        return 0.0f
-    }
-
-    @JsonIgnore
     fun getScorecard(): Float {
         return 0.0f
     }
@@ -77,7 +72,9 @@ data class Project(
     fun getMainLanguage(): String? {
         return features.find(LanguagesFeature::class)
             .map { it.value() }
-            .map { data -> data!!.maxByOrNull { it.value } }
+            .filter { it.exists() }
+            .map { it.get() }
+            .map { data -> data.maxByOrNull { it.value } }
             .map { it!!.key }
             .orElse(null)
     }

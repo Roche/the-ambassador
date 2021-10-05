@@ -3,21 +3,23 @@ package com.filipowm.ambassador.model.feature
 import com.filipowm.ambassador.model.Explanation
 import com.filipowm.ambassador.model.Feature
 import com.filipowm.ambassador.model.Importance
+import com.filipowm.ambassador.model.Value
 import com.filipowm.ambassador.model.utils.Range
 
 abstract class AbstractFeature<T>(
-    private val value: T?, private val name: String,
-    weight: Double = 1.0, private val importance: Importance = Importance.low()
+    value: T?, protected val name: String,
+    weight: Double = 1.0, protected val importance: Importance = Importance.low()
 ) : Feature<T> {
 
-    private val weight = WEIGHT_RANGE.adjust(weight)
+    protected val value: Value<T> = Value.of(value)
+    protected val weight: Double = WEIGHT_RANGE.adjust(weight)
 
     companion object {
         private val WEIGHT_RANGE = Range.bound(0.0, 1.0)
     }
 
     override fun explain(): Explanation {
-        if (value != null) {
+        if (!value.exists()) {
             return Explanation.no(name)
         }
         return Explanation.no(name)
@@ -28,7 +30,7 @@ abstract class AbstractFeature<T>(
 
     override fun importance(): Importance = importance
 
-    override fun value(): T? = value
+    override fun value(): Value<T> = value
 
     override fun name(): String = name
 
