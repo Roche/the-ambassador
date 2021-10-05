@@ -1,9 +1,8 @@
-package com.filipowm.ambassador.configuration
+package com.filipowm.ambassador.configuration.web
 
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.convert.converter.ConverterRegistry
 import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver
+import org.springframework.format.FormatterRegistry
 import org.springframework.web.reactive.config.WebFluxConfigurer
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer
 
@@ -14,9 +13,7 @@ internal open class WebConfiguration : WebFluxConfigurer {
         configurer.addCustomResolver(ReactivePageableHandlerMethodArgumentResolver())
     }
 
-    @Bean
-    open fun initConverter(registry: ConverterRegistry): ConverterRegistry {
-        registry.addConverterFactory(StringToEnumConverter())
-        return registry
+    override fun addFormatters(registry: FormatterRegistry) {
+        registry.addConverterFactory(StringToEnumConverter)
     }
 }

@@ -1,10 +1,10 @@
-package com.filipowm.ambassador.configuration
+package com.filipowm.ambassador.configuration.web
 
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.converter.ConverterFactory
-import java.lang.Enum.*
+import java.lang.Enum.valueOf
 
-class StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
+internal object StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
     override fun <T : Enum<*>?> getConverter(targetType: Class<T>): Converter<String, T> {
         val enumType: Class<T> = getEnumType(targetType)
         return StringToEnum(enumType)
@@ -19,14 +19,13 @@ class StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
         }
     }
 
-    companion object {
-        private fun <T : Enum<*>?> getEnumType(targetType: Class<T>): Class<T> {
-            var enumType: Class<T>? = targetType
-            while (enumType != null && !enumType.isEnum) {
-                enumType = enumType.superclass as Class<T>?
-            }
-            requireNotNull(enumType) { "The target type " + targetType.name + " does not refer to an enum" }
-            return enumType
+    private fun <T : Enum<*>?> getEnumType(targetType: Class<T>): Class<T> {
+        var enumType: Class<T>? = targetType
+        while (enumType != null && !enumType.isEnum) {
+            enumType = enumType.superclass as Class<T>?
         }
+        requireNotNull(enumType) { "The target type " + targetType.name + " does not refer to an enum" }
+        return enumType
     }
+
 }

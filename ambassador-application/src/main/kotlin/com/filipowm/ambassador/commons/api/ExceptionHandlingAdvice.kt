@@ -6,6 +6,7 @@ import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.project.indexer.IndexingAlreadyStartedException
 import com.filipowm.ambassador.project.indexer.IndexingDto
 import com.filipowm.ambassador.storage.InvalidSortFieldException
+import io.swagger.v3.oas.annotations.Hidden
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -22,6 +23,7 @@ import java.security.Principal
 import javax.validation.ConstraintViolationException
 
 @RestControllerAdvice
+@Hidden
 internal class ExceptionHandlingAdvice {
 
     private val log by LoggerDelegate()
@@ -48,7 +50,6 @@ internal class ExceptionHandlingAdvice {
             .contentType(MediaType.APPLICATION_JSON)
             .body(msg)
     }
-
     @ExceptionHandler(Throwable::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun unexpectedError(ex: Throwable): Message {

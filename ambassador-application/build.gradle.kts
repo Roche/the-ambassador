@@ -21,6 +21,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.10")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.5.10")
+    implementation("org.springdoc:springdoc-openapi-security:1.5.10")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
@@ -28,4 +33,5 @@ dependencies {
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 }
 //
+description = "The Ambassador"
 //description = "ambassador-application"
