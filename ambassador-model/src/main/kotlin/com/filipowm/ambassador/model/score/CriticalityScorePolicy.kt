@@ -1,5 +1,7 @@
 package com.filipowm.ambassador.model.score
 
+import com.filipowm.ambassador.model.Score
+import com.filipowm.ambassador.model.feature.Features
 import com.filipowm.ambassador.model.project.Project
 import java.time.LocalDate
 import java.time.Period
@@ -7,7 +9,7 @@ import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-object CriticalityScorePolicy : ScorePolicy<Double> {
+object CriticalityScorePolicy : ScorePolicy {
 
     enum class CriticalityCheck(val weight: Double, val threshold: Int, val check: (Project) -> Number) {
         CREATED_SINCE(1.0, 60, { Period.between(it.createdDate, LocalDate.now()).months }),
@@ -46,11 +48,16 @@ object CriticalityScorePolicy : ScorePolicy<Double> {
         return (this * multiplier).roundToInt() / multiplier
     }
 
-    override fun calculateScoreOf(project: Project): Double {
+    @Deprecated(message = "To be removed when calculateScoreOf is migrated to create Score")
+    fun calculateScoreOf(project: Project): Double {
         val criticalitySum = CriticalityCheck.values()
             .map { it.calc(project) }
             .reduce { acc, result -> acc + result }
 
         return (criticalitySum / CriticalityCheck.sumWeights()).round(4)
+    }
+
+    override fun calculateScoreOf(features: Features): Score {
+        TODO("Not yet implemented")
     }
 }

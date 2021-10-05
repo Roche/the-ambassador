@@ -10,6 +10,7 @@ import com.filipowm.ambassador.model.project.Contributors
 import com.filipowm.ambassador.model.project.ProtectedBranch
 import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.model.stats.Timeline
+import java.time.LocalDate
 
 class ContributorsFeature(private val contributors: List<Contributor>?) : AbstractFeature<List<Contributor>>(contributors, "Contributors", importance = Importance.high()) {
 
@@ -55,37 +56,37 @@ class ForksFeature(value: Int?) : NotIndexableFeature<Int>(value, "Forks") {
     }
 }
 
-class ReadmeFeature(value: ExcerptFile?) : AbstractFeature<ExcerptFile>(value, "Readme") {
+class ReadmeFeature(value: ExcerptFile?) : FileFeature<ExcerptFile>(value, "Readme") {
     companion object : FeatureReaderFactory<ReadmeFeature> {
         override fun create(): FeatureReader<ReadmeFeature> = FeatureReader.createForFile({ setOf(it.potentialReadmePath ?: "README.md") }) { ReadmeFeature(it.asExcerptFile()) }
     }
 }
 
-class ContributingGuideFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "Contribution Guide") {
+class ContributingGuideFeature(value: RawFile?) : FileFeature<RawFile>(value, "Contribution Guide") {
     companion object : FeatureReaderFactory<ContributingGuideFeature> {
         override fun create(): FeatureReader<ContributingGuideFeature> = FeatureReader.createForFile({ setOf("CONTRIBUTING.md", "CONTRIBUTING") }) { ContributingGuideFeature(it) }
     }
 }
 
-class LicenseFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "License") {
+class LicenseFeature(value: RawFile?) : FileFeature<RawFile>(value, "License") {
     companion object : FeatureReaderFactory<LicenseFeature> {
         override fun create(): FeatureReader<LicenseFeature> = FeatureReader.createForFile({ setOf(it.potentialLicensePath ?: "LICENSE") }) { LicenseFeature(it) }
     }
 }
 
-class CiDefinitionFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "CI definition") {
+class CiDefinitionFeature(value: RawFile?) : FileFeature<RawFile>(value, "CI definition") {
     companion object : FeatureReaderFactory<CiDefinitionFeature> {
         override fun create(): FeatureReader<CiDefinitionFeature> = FeatureReader.createForFile(".gitlab-ci.yml") { CiDefinitionFeature(it) }
     }
 }
 
-class ChangelogFeature(value: RawFile?) : AbstractFeature<RawFile>(value, "Changelog") {
+class ChangelogFeature(value: RawFile?) : FileFeature<RawFile>(value, "Changelog") {
     companion object : FeatureReaderFactory<ChangelogFeature> {
         override fun create(): FeatureReader<ChangelogFeature> = FeatureReader.createForFile("CHANGELOG.md") { ChangelogFeature(it) }
     }
 }
 
-class GitignoreFeature(value: RawFile?) : AbstractFeature<RawFile>(value, ".gitignore") {
+class GitignoreFeature(value: RawFile?) : FileFeature<RawFile>(value, ".gitignore") {
     companion object : FeatureReaderFactory<GitignoreFeature> {
         override fun create(): FeatureReader<GitignoreFeature> = FeatureReader.createForFile(".gitignore") { GitignoreFeature(it) }
     }
@@ -100,6 +101,28 @@ class TagsFeature(value: List<String>?) : NotIndexableFeature<List<String>>(valu
 class VisibilityFeature(value: Visibility?) : NotIndexableFeature<Visibility>(value, "Visibility") {
     companion object : FeatureReaderFactory<VisibilityFeature> {
         override fun create(): FeatureReader<VisibilityFeature> = FeatureReader.createForProject { VisibilityFeature(it.visibility) }
+    }
+}
+
+class CreatedDateFeature(value: LocalDate?) : DateFeature(value, "Created date") {
+    companion object : FeatureReaderFactory<CreatedDateFeature> {
+        override fun create(): FeatureReader<CreatedDateFeature> = FeatureReader.createForProject { CreatedDateFeature(it.createdDate) }
+    }
+
+    override fun asIndexEntry(): IndexEntry = IndexEntry.no()
+}
+
+class LastActivityDateFeature(value: LocalDate?) : DateFeature(value, "Last activity date") {
+    companion object : FeatureReaderFactory<LastActivityDateFeature> {
+        override fun create(): FeatureReader<LastActivityDateFeature> = FeatureReader.createForProject { LastActivityDateFeature(it.lastUpdatedDate) }
+    }
+
+    override fun asIndexEntry(): IndexEntry = IndexEntry.no()
+}
+
+class DescriptionFeature(value: String?) : NotIndexableFeature<String>(value, "Description") {
+    companion object : FeatureReaderFactory<DescriptionFeature> {
+        override fun create(): FeatureReader<DescriptionFeature> = FeatureReader.createForProject { DescriptionFeature(it.description) }
     }
 }
 

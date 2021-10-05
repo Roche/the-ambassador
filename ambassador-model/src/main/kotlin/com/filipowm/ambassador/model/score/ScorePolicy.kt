@@ -1,26 +1,15 @@
 package com.filipowm.ambassador.model.score
 
-import com.filipowm.ambassador.model.project.Project
+import com.filipowm.ambassador.model.Score
+import com.filipowm.ambassador.model.feature.Features
 
-interface ScorePolicy<T> {
+interface ScorePolicy {
 
-    fun calculateScoreOf(project: Project): T
+    fun calculateScoreOf(features: Features): Score
 
     companion object {
-        fun activity(): ScorePolicy<Double> {
+        fun activity(): ScorePolicy {
             return ActivityScorePolicy
-        }
-
-        fun criticality(): ScorePolicy<Double> {
-            return CriticalityScorePolicy
-        }
-
-        fun securityHealth(): ScorePolicy<Double> {
-            TODO("")
-        }
-
-        fun quality(): ScorePolicy<Double> {
-            TODO("")
         }
     }
 }

@@ -4,17 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.filipowm.ambassador.extensions.substringWithFullWords
 
 open class File(
-    var exists: Boolean,
-    var hash: String?,
-    var language: String?,
-    var contentLength: Int?,
-    var url: String?
+    val exists: Boolean,
+    val hash: String?,
+    val language: String?,
+    val contentLength: Int?,
+    val url: String?
 ) {
     companion object {
         fun notExistent(): File {
             return File(false, null, null, null, null)
         }
     }
+
+    fun hasSizeAtLeast(minimumSize: Int): Boolean = contentLength != null && contentLength >= minimumSize
+
 }
 
 open class RawFile(
@@ -29,7 +32,7 @@ open class RawFile(
     }
 
     companion object {
-        const val EXCERPT_MAX_SIZE: Int = 1000
+        private const val EXCERPT_MAX_SIZE: Int = 1000
         fun notExistent(): RawFile {
             return RawFile(false, null, null, null, null, null)
         }

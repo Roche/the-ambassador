@@ -19,5 +19,9 @@ open class Documentation(
                 null
             )
         }
+
+        fun create(exists: Boolean, contentLength: Int?): Documentation {
+            return Documentation(null, null, null, exists, contentLength, null)
+        }
     }
 }
