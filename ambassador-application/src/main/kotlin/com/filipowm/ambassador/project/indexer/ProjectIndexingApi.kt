@@ -18,7 +18,6 @@ import javax.validation.constraints.Min
 @RestController
 @RequestMapping("/projects/indexer")
 @HasAdminPermission
-@SecurityRequirement(name = "Admin access", scopes = [AmbassadorUser.ADMIN])
 internal open class ProjectIndexingApi(private val service: ProjectIndexingService) {
 
     @Operation(summary = "Trigger indexing of all projects within source")

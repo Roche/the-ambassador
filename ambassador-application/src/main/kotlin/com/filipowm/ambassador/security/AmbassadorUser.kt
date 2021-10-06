@@ -2,6 +2,7 @@ package com.filipowm.ambassador.security
 
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.core.user.OAuth2User
@@ -24,6 +25,7 @@ data class AmbassadorUser(
         authorities: List<String>
     ) : this(name, username, email, null, null, attributes, authorities.map { SimpleGrantedAuthority(it) })
 
+    @JsonProperty("admin")
     val isAdmin: Boolean = authorities.any { it.authority == ADMIN }
 
     @JsonIgnore
