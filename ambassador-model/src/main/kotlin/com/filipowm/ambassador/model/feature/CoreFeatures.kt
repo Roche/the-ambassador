@@ -5,10 +5,7 @@ import com.filipowm.ambassador.model.Importance
 import com.filipowm.ambassador.model.IndexEntry
 import com.filipowm.ambassador.model.files.ExcerptFile
 import com.filipowm.ambassador.model.files.RawFile
-import com.filipowm.ambassador.model.project.Contributor
-import com.filipowm.ambassador.model.project.Contributors
-import com.filipowm.ambassador.model.project.ProtectedBranch
-import com.filipowm.ambassador.model.project.Visibility
+import com.filipowm.ambassador.model.project.*
 import com.filipowm.ambassador.model.stats.Timeline
 import java.time.LocalDate
 
@@ -149,6 +146,15 @@ class ReleasesFeature(value: Timeline?) : TimelineFeature(value, "Releases") {
         override fun create(): FeatureReader<ReleasesFeature> = FeatureReader.create { project, source ->
             val releases = source.readReleases(project.id.toString())
             ReleasesFeature(releases)
+        }
+    }
+}
+
+class IssuesFeature(value: Issues) : AbstractFeature<Issues>(value, "Issues") {
+    companion object : FeatureReaderFactory<IssuesFeature> {
+        override fun create(): FeatureReader<IssuesFeature> = FeatureReader.create { project, source ->
+            val issues = source.readIssues(project.id.toString())
+            IssuesFeature(issues)
         }
     }
 }

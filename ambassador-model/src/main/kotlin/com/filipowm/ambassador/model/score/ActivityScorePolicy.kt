@@ -29,11 +29,11 @@ object ActivityScorePolicy : ScorePolicy {
         return Score.builder("Documentation", features)
             .withFeature(ContributingGuideFeature::class).forFile(100, 100)
             .withFeature(ReadmeFeature::class).forFile(100, 100)
-            .withFeature(LicenseFeature::class).forFile(50, 10)
-            .withFeature(ChangelogFeature::class).forFile(50, 20)
+            .withFeature(LicenseFeature::class).forFile(50, 5)
+            .withFeature(ChangelogFeature::class).forFile(50, 10)
             .withFeature(DescriptionFeature::class)
                 .filter { it.value().exists() && it.value().get().length >= 30}
-                .calculate { descriptionFeature, score -> score + 100 }
+                .calculate { descriptionFeature, score -> score + 50 }
             .build()
         // @formatter:on
     }
@@ -41,8 +41,9 @@ object ActivityScorePolicy : ScorePolicy {
     private fun getContributionScore(features: Features): Score {
         // @formatter:off
         return Score.builder("Contribution", features, INITIAL_SCORE)
-            .withFeature(StarsFeature::class).calculate { starsFeature, score -> score + starsFeature.value().get() * 5 }
+            .withFeature(StarsFeature::class).calculate { starsFeature, score -> score + starsFeature.value().get() * 2 }
             .withFeature(ForksFeature::class).calculate { forksFeature, score -> score + forksFeature.value().get() * 5 }
+            .withFeature(IssuesFeature::class).calculate { feature, score -> score + feature.value().get().open / 5 }
             // updated in last 3 months: adds a bonus multiplier between 0..1 to overall score (1 = updated today, 0 = updated more than 100 days ago)
             .withFeature(LastActivityDateFeature::class).calculate { feature, score -> score * (1 + (100 - min(feature.daysUntilNow()!!, 100).toDouble()) / 100) }
             .withFeature(CommitsFeature::class)

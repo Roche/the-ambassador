@@ -5,6 +5,7 @@ import com.filipowm.ambassador.model.extensions.toExcerptFile
 import com.filipowm.ambassador.model.extensions.toRawFile
 import com.filipowm.ambassador.model.feature.*
 import com.filipowm.ambassador.model.files.Documentation
+import com.filipowm.ambassador.model.project.Issues
 import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.model.stats.Timeline
 import java.time.LocalDate
@@ -23,7 +24,8 @@ object SimpleActivityScoreCalculator : TestCalculator<ActivityData> {
     override fun calculate(data: ActivityData): Double {
         var score = INITIAL_SCORE
         score += data.forks * 5
-        score += data.stars * 5
+        score += data.stars * 2 // multiply by 2 instead of dividing by 3
+        score += data.openIssues / 5
         val daysSinceLastUpdate = data.lastActivityDate.daysUntilNow().toDouble()
         score *= ((1 + (100 - min(daysSinceLastUpdate, 100.0)) / 100))
 
@@ -42,10 +44,10 @@ object SimpleActivityScoreCalculator : TestCalculator<ActivityData> {
 
         score += boostForDocumentation(data.readme, 100, 100)
         score += boostForDocumentation(data.contributionGuide, 100, 100)
-        score += boostForDocumentation(data.license, 50, 10)
-        score += boostForDocumentation(data.changelog, 50, 20)
+        score += boostForDocumentation(data.license, 50, 5)
+        score += boostForDocumentation(data.changelog, 50, 10)
         if (data.description != null && data.description.length >= 30) {
-            score += 100
+            score += 50
         }
 
         if (score > 3000) {
@@ -82,7 +84,7 @@ data class ActivityData(
     fun toFeatures(): Features = Features(
         forksFeature(), starsFeature(), lastActivityFeature(),
         createdDateFeature(), visibilityFeature(), readmeFeature(), contributionGuideFeature(),
-        changelogFeature(), licenseFeature(), descriptionFeature(), commitsFeature()
+        changelogFeature(), licenseFeature(), descriptionFeature(), commitsFeature(), issuesFeature()
     )
 
     fun visibility(): Visibility = if (private) {
@@ -102,5 +104,6 @@ data class ActivityData(
     fun licenseFeature(): LicenseFeature = LicenseFeature(license.toRawFile())
     fun descriptionFeature(): DescriptionFeature = DescriptionFeature(description)
     fun commitsFeature(): CommitsFeature = CommitsFeature(commitsTimeline)
+    fun issuesFeature(): IssuesFeature = IssuesFeature(Issues(openIssues, openIssues, 0, 0, 0))
 
 }

@@ -49,7 +49,7 @@ class ActivityScorePolicyTest {
         val result = SimpleActivityScoreCalculator.calculate(data)
 
         // then result is based on manual calculation based on algorithm defined above
-        assertThat(result).isEqualTo(1702.0)
+        assertThat(result).isEqualTo(1526.0)
 
         // when calculate activity score using policy
         val activity = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
@@ -66,7 +66,8 @@ class ActivityScorePolicyTest {
                 ReadmeFeature::class,
                 LicenseFeature::class,
                 ChangelogFeature::class,
-                DescriptionFeature::class
+                DescriptionFeature::class,
+                IssuesFeature::class
             )
         assertThat(activity).hasScoresSize(3)
             .hasValue(result)
@@ -147,7 +148,7 @@ class ActivityScorePolicyTest {
         // given
         val stars = 100000
         val data = ActivityData(stars = stars)
-        val starsValue = stars * 5
+        val starsValue = stars * 2
         val expectedValue = round(3000 + ln(starsValue.toDouble()) * 100 - 50)
 
         // when
@@ -163,7 +164,7 @@ class ActivityScorePolicyTest {
         // given
         val stars = 1000
         val data = ActivityData(stars = stars, private = true)
-        val expectedValue = (50 + stars * 5) * .3 - 50
+        val expectedValue = (50 + stars * 2) * .3 - 50
 
         // when
         val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
@@ -185,7 +186,7 @@ class ActivityScorePolicyTest {
         // then
         assertThat(actual)
             .hasCorrectValue(data)
-            .hasValue(100.0)
+            .hasValue(50.0)
             .hasFeature(DescriptionFeature::class)
     }
 
@@ -215,8 +216,8 @@ class ActivityScorePolicyTest {
 
     @ParameterizedTest(name = "should boost by {0} when license has length {1}")
     @CsvSource(
-        "10,51",
-        "10,50",
+        "5,51",
+        "5,50",
         "0,49",
         "0,0",
         "0,-1",
@@ -227,8 +228,8 @@ class ActivityScorePolicyTest {
 
     @ParameterizedTest(name = "should boost by {0} when changelog has length {1}")
     @CsvSource(
-        "20,51",
-        "20,50",
+        "10,51",
+        "10,50",
         "0,49",
         "0,0",
         "0,-1",
