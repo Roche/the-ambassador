@@ -3,6 +3,7 @@ package com.filipowm.gitlab.api.project.model
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.filipowm.gitlab.api.utils.Dates
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class Milestone(
@@ -12,8 +13,7 @@ data class Milestone(
     @JsonProperty("description")
     val description: String? = null,
     @JsonProperty("due_date")
-    @JsonFormat(pattern = Dates.ISO_DATE_TIME_FORMAT)
-    val dueDate: LocalDateTime? = null,
+    val dueDate: LocalDate? = null,
     @JsonProperty("id")
     val id: Int? = null,
     @JsonProperty("iid")
@@ -23,8 +23,7 @@ data class Milestone(
     @JsonProperty("project_id")
     val projectId: Int? = null,
     @JsonProperty("start_date")
-    @JsonFormat(pattern = Dates.ISO_DATE_TIME_FORMAT)
-    val startDate: LocalDateTime? = null,
+    val startDate: LocalDate? = null,
     @JsonProperty("state")
     val state: MilestoneState? = null,
     @JsonProperty("title")
