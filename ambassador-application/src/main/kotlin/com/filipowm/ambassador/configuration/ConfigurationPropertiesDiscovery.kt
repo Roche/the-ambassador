@@ -5,9 +5,9 @@ import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import com.filipowm.ambassador.configuration.web.OpenApiProperties
 import com.filipowm.ambassador.events.EventsProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
 
-@Configuration
+@Component
 @EnableConfigurationProperties(
     ProjectSourcesProperties::class,
     EventsProperties::class,

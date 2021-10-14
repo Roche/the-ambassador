@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Pageable
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -26,6 +27,10 @@ internal open class ProjectApi(private val projectService: ProjectService) {
     @GetMapping("{id}")
     open suspend fun get(@PathVariable @Min(1) id: Long): Project? {
         return projectService.getProject(id)
+    }
+
+    fun xd(): ResponseEntity<String> {
+        return ResponseEntity.ok("xd")
     }
 
     @Operation(summary = "Search for indexed projects", description = "", tags = ["project"])

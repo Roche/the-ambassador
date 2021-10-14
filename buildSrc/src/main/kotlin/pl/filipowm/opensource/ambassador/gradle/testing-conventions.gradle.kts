@@ -1,4 +1,3 @@
-import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 
@@ -21,5 +20,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.assertj:assertj-core:3.21.0")
     testImplementation("com.devskiller:jfairy:0.6.4")
+    testImplementation("com.tngtech.archunit:archunit-junit5:0.21.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
