@@ -22,20 +22,18 @@ internal open class JsonConfiguration : ObjectMapperSupplier {
 
     companion object {
         internal val OBJECT_MAPPER = ObjectMapper()
-            .registerModule(KotlinModule())
-            .registerModule(Jdk8Module())
-            .registerModule(JavaTimeModule())
-            .registerModule(AmbassadorModule())
+            .registerModules(KotlinModule(), Jdk8Module(), JavaTimeModule(), AmbassadorModule())
             .setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .configure(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS, true)
-            .configure(MapperFeature.AUTO_DETECT_FIELDS, true)
-            .configure(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS, false)
-            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+            .enable(MapperFeature.AUTO_DETECT_FIELDS)
+            .enable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
+            .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
     }
 
     @Bean

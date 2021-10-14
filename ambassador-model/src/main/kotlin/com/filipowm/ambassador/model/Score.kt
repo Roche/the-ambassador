@@ -2,6 +2,7 @@ package com.filipowm.ambassador.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.filipowm.ambassador.model.feature.Features
 import com.filipowm.ambassador.model.score.ScoreBuilder
 import java.util.stream.Collectors
@@ -80,6 +81,7 @@ interface Score : Specification, Explainable {
     }
 }
 
+@JsonPropertyOrder("name", "value")
 internal data class CompositeScore(
     val name: String,
     val value: Double, val subScores: MutableSet<Score>
@@ -87,6 +89,7 @@ internal data class CompositeScore(
     override fun value(): Double = value
 }
 
+@JsonPropertyOrder("name", "value")
 internal data class FinalScore(
     val name: String,
     val value: Double,

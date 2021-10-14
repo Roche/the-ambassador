@@ -1,5 +1,7 @@
 package com.filipowm.ambassador.model
 
+import com.filipowm.ambassador.extensions.toCamelCase
+
 data class IndexEntry internal constructor(val key: String, val value: Any?) {
 
     fun isValid(): Boolean = value != null
@@ -12,7 +14,7 @@ data class IndexEntry internal constructor(val key: String, val value: Any?) {
 
     companion object {
         fun no(): IndexEntry = IndexEntry("__noindex__", null)
-        fun of(key: String, value: Any): IndexEntry = IndexEntry(key, value)
+        fun of(key: String, value: Any): IndexEntry = IndexEntry(key.toCamelCase(), value)
     }
 
 }

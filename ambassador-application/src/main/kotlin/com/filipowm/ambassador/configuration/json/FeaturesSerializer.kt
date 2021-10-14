@@ -9,7 +9,7 @@ import com.filipowm.ambassador.model.feature.Features
 internal object FeaturesSerializer : StdSerializer<Features>(Features::class.java) {
     override fun serialize(value: Features, gen: JsonGenerator, provider: SerializerProvider) {
         gen.writeStartObject()
-        value.forEach {
+        value.sortedBy { it.name() }.forEach {
             it.asIndexEntry().with { key, value ->
                 val unwrappedValue = unwrap(value)
                 gen.writeFieldName(key)

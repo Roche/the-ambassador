@@ -2,8 +2,10 @@ package com.filipowm.ambassador.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.filipowm.ambassador.model.project.Project
 
+@JsonPropertyOrder("value")
 data class Scorecard(
     val value: Double = 0.0,
     val subScores: Set<Score> = setOf()
