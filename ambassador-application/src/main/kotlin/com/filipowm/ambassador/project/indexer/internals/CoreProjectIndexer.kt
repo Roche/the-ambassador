@@ -9,6 +9,7 @@ import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.project.ProjectFilter
 import com.filipowm.ambassador.model.project.Visibility
 import com.filipowm.ambassador.model.score.ActivityScorePolicy
+import com.filipowm.ambassador.model.score.CriticalityScorePolicy
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.project.indexer.*
 import com.filipowm.ambassador.storage.project.ProjectEntity
@@ -49,22 +50,27 @@ internal class CoreProjectIndexer(
     }
 
     override suspend fun indexOne(id: Long): Project {
-        log.info("Reindexing project $id")
+        log.info("Indexing project $id regardless of criteria")
         val project = source.getById(id.toString())
         if (project.isPresent) {
-            readFeatures(project.get())
-            val scorecard = ScorecardCalculator(
-                setOf(
-                    ActivityScorePolicy
-                )
-            ).calculateFor(project.get())
-            project.get().scorecard = scorecard
+            return index(project.get()).project!!
         }
-        return project
-            .map { ProjectEntity.from(it) }
-            .map { projectEntityRepository.save(it) }
-            .map { it.project }
-            .orElseThrow { Exceptions.NotFoundException("Project $id not found") }!!
+        throw Exceptions.NotFoundException("Project $id not found")
+    }
+
+    private suspend fun index(project: Project): ProjectEntity {
+        readFeatures(project)
+        val scorecard = ScorecardCalculator(
+            setOf(
+                ActivityScorePolicy,
+                CriticalityScorePolicy
+            )
+        ).calculateFor(project)
+        project.scorecard = scorecard
+        val entity = ProjectEntity.from(project)
+        projectEntityRepository.save(entity)
+        log.info("Indexed project '{}' (id={})", project.name, project.id)
+        return entity
     }
 
     override suspend fun indexAll(
@@ -115,17 +121,8 @@ internal class CoreProjectIndexer(
 
                                 if (projectToSave.isPresent) {
                                     val project = projectToSave.get()
-                                    readFeatures(project)
-                                    val scorecard = ScorecardCalculator(
-                                        setOf(
-                                            ActivityScorePolicy
-                                        )
-                                    ).calculateFor(project)
-                                    project.scorecard = scorecard
-                                    val entity = ProjectEntity.from(project)
-                                    projectEntityRepository.save(entity)
+                                    index(project)
                                     onProjectIndexingFinished(project)
-                                    log.info("Indexed project '{}' (id={})", name, id)
                                 } else {
                                     log.warn("Project '{}' (id={}) not indexed, because it could not be analyzed", name, id)
                                 }

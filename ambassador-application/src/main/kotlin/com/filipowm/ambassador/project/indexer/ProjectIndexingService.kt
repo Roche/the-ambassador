@@ -8,11 +8,11 @@ import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.security.AuthenticationContext
 import com.filipowm.ambassador.storage.indexing.Indexing
 import com.filipowm.ambassador.storage.indexing.IndexingRepository
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-@Component
+@Service
 internal class ProjectIndexingService(
     private val sources: ProjectSources,
     private val indexerFactory: IndexerFactory,
