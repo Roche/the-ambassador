@@ -2,18 +2,19 @@ package com.filipowm.ambassador.model.project
 
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.filipowm.ambassador.extensions.round
 import com.filipowm.ambassador.model.FeatureReader
 import com.filipowm.ambassador.model.Scorecard
 import com.filipowm.ambassador.model.feature.Features
 import com.filipowm.ambassador.model.feature.LanguagesFeature
 import com.filipowm.ambassador.model.score.ActivityScorePolicy
 import com.filipowm.ambassador.model.score.CriticalityScorePolicy
-import com.filipowm.ambassador.model.score.CriticalityScorePolicy.round
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.model.stats.Statistics
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
+@JsonPropertyOrder("id", "name", "description", "url", "createdDate", "lastActivityDate")
 data class Project(
     val id: Long,
     val url: String?,
@@ -25,7 +26,7 @@ data class Project(
     val defaultBranch: String?,
     val stats: Statistics,
     val createdDate: LocalDate,
-    val lastUpdatedDate: LocalDate?,
+    val lastActivityDate: LocalDate?,
     val features: Features = Features(),
     var scorecard: Scorecard? = null,
     @JsonIgnore val potentialReadmePath: String? = null,
@@ -43,7 +44,7 @@ data class Project(
     fun getScores(): Scores {
         if (scores == null) {
             val activityScore = ActivityScorePolicy.calculateScoreOf(this.features).value()
-            val criticalityScore = CriticalityScorePolicy.calculateScoreOf(this)
+            val criticalityScore = CriticalityScorePolicy.calculateScoreOf(this.features).value()
             this.scores = Scores(
                 activity = activityScore,
                 criticality = criticalityScore,

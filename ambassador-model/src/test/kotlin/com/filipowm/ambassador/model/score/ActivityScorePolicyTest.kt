@@ -1,6 +1,7 @@
 package com.filipowm.ambassador.model.score
 
 import com.filipowm.ambassador.model.Score
+import com.filipowm.ambassador.model.dataproviders.TimelineGenerator
 import com.filipowm.ambassador.model.extensions.*
 import com.filipowm.ambassador.model.feature.*
 import com.filipowm.ambassador.model.files.Documentation
@@ -55,8 +56,9 @@ class ActivityScorePolicyTest {
         val activity = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
 
         // then all expected features and subscores are used
-        assertThat(activity.allFeatures().map { it::class })
-            .containsExactlyInAnyOrder(
+        assertThat(activity).hasScoresSize(3)
+            .hasValue(result)
+            .hasFeatures(
                 StarsFeature::class,
                 ForksFeature::class,
                 LastActivityDateFeature::class,
@@ -69,8 +71,6 @@ class ActivityScorePolicyTest {
                 DescriptionFeature::class,
                 IssuesFeature::class
             )
-        assertThat(activity).hasScoresSize(3)
-            .hasValue(result)
     }
 
     @Test
@@ -294,10 +294,6 @@ class ActivityScorePolicyTest {
             )
         }
     }
-}
 
-fun ObjectAssert<Score>.hasCorrectValue(data: ActivityData): ObjectAssert<Score> {
-    val expected = SimpleActivityScoreCalculator.calculate(data)
-    extracting { it.value() }.isEqualTo(expected)
-    return this
+    private fun ObjectAssert<Score>.hasCorrectValue(data: ActivityData): ObjectAssert<Score> = hasCorrectValueBasedOnCalculator(data, SimpleActivityScoreCalculator)
 }

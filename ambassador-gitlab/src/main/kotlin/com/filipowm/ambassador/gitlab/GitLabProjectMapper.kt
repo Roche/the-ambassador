@@ -38,7 +38,7 @@ internal object GitLabProjectMapper {
             stats = stats,
             tags = Optional.ofNullable(gitlabProject.tagList).orElseGet { listOf() },
             createdDate = gitlabProject.createdAt!!.toLocalDate(),
-            lastUpdatedDate = gitlabProject.lastActivityAt!!.toLocalDate(),
+            lastActivityDate = gitlabProject.lastActivityAt!!.toLocalDate(),
             defaultBranch = gitlabProject.defaultBranch,
             potentialReadmePath = toRelativePath(gitlabProject.readmeUrl, gitlabProject.defaultBranch),
             potentialLicensePath = toRelativePath(gitlabProject.licenseUrl, gitlabProject.defaultBranch),

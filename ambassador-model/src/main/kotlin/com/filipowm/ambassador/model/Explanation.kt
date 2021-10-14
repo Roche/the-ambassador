@@ -2,7 +2,6 @@ package com.filipowm.ambassador.model
 
 interface Explanation {
 
-    fun name(): String
     fun description(): String?
     fun value(): Double?
     fun maxValue(): Double?
@@ -11,17 +10,19 @@ interface Explanation {
     fun isPresent(): Boolean = value() != null || description() != null || details().isNotEmpty()
 
     companion object {
-        fun no(name: String): Explanation = NoExplanation(name)
-//        fun single(explanation: String): Explanation = SingleExplanation(explanation)
-//        fun multiple(vararg explanation: String): Explanation = MultipleExplanation(*explanation)
+        fun no(description: String): Explanation = NoExplanation(description)
+        fun noValue(description: String): Explanation = NoExplanation(description)
+        fun calculated(description: String, value: Double, maxValue: Double? = null, vararg pieces: Any): Explanation =
+            CalculatedExplanation(description, value, maxValue, *pieces)
     }
 }
 
 private abstract class AbstractExplanation(
-    private val name: String, private val description: String? = null,
-    private val value: Double?, private val maxValue: Double?, private val details: List<Explanation> = listOf()
+    private val description: String? = null,
+    private val value: Double?,
+    private val maxValue: Double?,
+    private val details: List<Explanation> = listOf()
 ) : Explanation {
-    override fun name() = name
 
     override fun description() = description
 
@@ -33,20 +34,9 @@ private abstract class AbstractExplanation(
 
 }
 
-private class NoExplanation(name: String, description: String? = null) : AbstractExplanation(name, description, null, null) {
+private class NoExplanation(description: String) : AbstractExplanation(description, null, null) {
     override fun isPresent() = false
 }
 
-//private class SingleExplanation(private val explanation: String?) : Explanation {
-//    override fun details(): String? = explanation
-//}
-//
-//private class MultipleExplanation(vararg explanations: String) : Explanation {
-//
-//    private val explanations = explanations.asList()
-//
-//    override fun details(): String = explanations.joinToString(", ")
-//
-//    override fun isPresent() = explanations.isNotEmpty()
-//
-//}
+private class CalculatedExplanation(description: String, value: Double, maxValue: Double? = null, vararg pieces: Any) :
+    AbstractExplanation(description.replace("{}", "%s").format(pieces), value, maxValue)

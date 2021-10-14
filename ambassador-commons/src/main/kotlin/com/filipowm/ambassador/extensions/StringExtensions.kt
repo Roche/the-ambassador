@@ -48,20 +48,29 @@ fun String.toCamelCase(capitalizeFirstLetter: Boolean = false, vararg delimiters
     var outOffset = 0
     val delimiterSet: Set<Int> = toDelimiterSet(delimiters)
     var capitalizeNext = capitalizeFirstLetter
+    var isPreviousCapitalized = false
     var index = 0
     while (index < strLen) {
+        val codePointOldStr = this.codePointAt(index)
         val codePoint = str.codePointAt(index)
         if (delimiterSet.contains(codePoint)) {
             capitalizeNext = outOffset != 0
             index += Character.charCount(codePoint)
+            isPreviousCapitalized = Character.isUpperCase(codePointOldStr)
         } else if (capitalizeNext || outOffset == 0 && capitalizeFirstLetter) {
             val titleCaseCodePoint = Character.toTitleCase(codePoint)
             newCodePoints[outOffset++] = titleCaseCodePoint
             index += Character.charCount(titleCaseCodePoint)
+            isPreviousCapitalized = true
             capitalizeNext = false
+        } else if (outOffset > 0 && Character.isUpperCase(codePointOldStr) && !isPreviousCapitalized) {
+            newCodePoints[outOffset++] = codePointOldStr
+            index += Character.charCount(codePointOldStr)
+            isPreviousCapitalized = Character.isUpperCase(codePointOldStr)
         } else {
             newCodePoints[outOffset++] = codePoint
             index += Character.charCount(codePoint)
+            isPreviousCapitalized = Character.isUpperCase(codePointOldStr)
         }
     }
     return String(newCodePoints, 0, outOffset)

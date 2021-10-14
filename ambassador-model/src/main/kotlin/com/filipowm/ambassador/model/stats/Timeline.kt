@@ -2,17 +2,22 @@ package com.filipowm.ambassador.model.stats
 
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.stream.Collectors
 
-class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>) {
+class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>, val aggregation: TimelineAggregation = TimelineAggregation.NONE) {
 
     constructor() : this(hashMapOf())
 
-    @JsonGetter("data")
-    fun getRawData(): Map<LocalDate, Int> = data.toSortedMap()
+    fun empty(): Boolean = data.isEmpty()
+
+    @JsonProperty("series")
+    fun series(): List<Point> = data.toSortedMap()
+        .toList()
+        .map { Point(it.first, it.second) }
 
     override fun toString(): String {
         return data.toString()
@@ -124,7 +129,7 @@ class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>) {
                     )
                 )
             expand(new, chronoUnit)
-            return Timeline(new)
+            return Timeline(new, TimelineAggregation.ofChronoUnit(chronoUnit))
         }
     }
 
@@ -188,5 +193,5 @@ class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>) {
         }
     }
 
-    companion object
+    data class Point(val date: LocalDate, val count: Int)
 }

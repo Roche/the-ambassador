@@ -1,7 +1,5 @@
 package com.filipowm.ambassador.model
 
-import com.filipowm.ambassador.extensions.toCamelCase
-
 interface Feature<T> : Specification, Explainable, Weighted, Indexable {
 
     fun importance(): Importance
@@ -9,7 +7,7 @@ interface Feature<T> : Specification, Explainable, Weighted, Indexable {
     override fun asIndexEntry(): IndexEntry {
         val value = value()
         if (value.exists()) {
-            return IndexEntry.of(name().toCamelCase(), value)
+            return IndexEntry.of(name(), value)
         }
         return IndexEntry.no()
     }

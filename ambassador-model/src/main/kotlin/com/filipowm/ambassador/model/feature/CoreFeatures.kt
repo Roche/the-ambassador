@@ -111,7 +111,7 @@ class CreatedDateFeature(value: LocalDate?) : DateFeature(value, "Created date")
 
 class LastActivityDateFeature(value: LocalDate?) : DateFeature(value, "Last activity date") {
     companion object : FeatureReaderFactory<LastActivityDateFeature> {
-        override fun create(): FeatureReader<LastActivityDateFeature> = FeatureReader.createForProject { LastActivityDateFeature(it.lastUpdatedDate) }
+        override fun create(): FeatureReader<LastActivityDateFeature> = FeatureReader.createForProject { LastActivityDateFeature(it.lastActivityDate) }
     }
 
     override fun asIndexEntry(): IndexEntry = IndexEntry.no()

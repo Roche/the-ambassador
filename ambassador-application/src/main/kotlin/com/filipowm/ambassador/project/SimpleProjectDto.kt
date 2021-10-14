@@ -32,7 +32,7 @@ data class SimpleProjectDto(
                 tags = project.tags,
                 visibility = project.visibility,
                 createdDate = project.createdDate,
-                lastUpdatedDate = project.lastUpdatedDate,
+                lastUpdatedDate = project.lastActivityDate,
                 mainLanguage = project.getMainLanguage(),
                 criticalityScore = project.getScores().criticality,
                 activityScore = project.getScores().activity.toInt(),
