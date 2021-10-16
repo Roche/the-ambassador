@@ -1,4 +1,6 @@
-# The Ambassador
+<p align="center">
+    <h2 align="center">The Ambassador</h3>
+</p>
 
 The Ambassador will help users of coding platforms to
 create findable, well documented and offering good quality projects.
@@ -47,3 +49,8 @@ To be added soon...
 ## ⌨️️ Contributing
 
 To be added soon...
+
+## Contributors
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
