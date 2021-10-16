@@ -25,7 +25,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.10")
-    implementation("org.springdoc:springdoc-openapi-kotlin:1.5.10")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.5.11")
     implementation("org.springdoc:springdoc-openapi-security:1.5.10")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
