@@ -31,5 +31,5 @@ dependencies {
 
 //    implementation("org.testcontainers:postgresql:1.15.2") // TODO remove
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.4.30")
-    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.16.0")
+    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1")
 }
