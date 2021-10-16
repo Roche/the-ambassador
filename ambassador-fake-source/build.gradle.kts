@@ -17,7 +17,7 @@ dependencies {
 
     implementation(project(":ambassador-model"))
     api(project(":ambassador-commons"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.2")
 
 }
 
