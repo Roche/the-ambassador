@@ -1,9 +1,11 @@
 package com.filipowm.ambassador.project
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.project.Visibility
 import java.time.LocalDate
 
+@JsonPropertyOrder("id", "name", "description", "url", "tags", "score")
 data class SimpleProjectDto(
     val id: Long,
     val url: String,

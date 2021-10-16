@@ -2,6 +2,7 @@ package com.filipowm.ambassador.storage.project
 
 import com.filipowm.ambassador.model.project.Project
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
+import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDateTime
@@ -25,10 +26,44 @@ class ProjectEntity(
     @Column(name = "score")
     var score: Double? = 0.0,
     @Column(name = "last_indexed_date")
-    var lastIndexedDate: LocalDateTime = LocalDateTime.now()
+    var lastIndexedDate: LocalDateTime = LocalDateTime.now(),
+    @OneToMany(
+        mappedBy = "parent",
+        cascade = [CascadeType.ALL],
+        fetch = FetchType.LAZY,
+        orphanRemoval = true
+    )
+    @BatchSize(size = 25)
+    @OrderBy("indexedDate")
+    var history: MutableList<ProjectHistoryEntity> = mutableListOf()
 ) {
 
     fun wasIndexedBefore(otherDate: LocalDateTime): Boolean = lastIndexedDate.isBefore(otherDate)
+
+    fun snapshot(): ProjectHistoryEntity {
+        val historyEntry = ProjectHistoryEntity.from(this)
+        history.add(historyEntry)
+        return historyEntry
+    }
+
+    fun removeHistoryToMatchLimit(limit: Int) {
+        val newHistory = history
+//            .sortBy { it.indexedDate }
+            .take(limit)
+            .toMutableList()
+        history.clear()
+        history.addAll(newHistory)
+    }
+
+    fun updateIndex(project: Project) {
+        this.name = project.name
+        this.project = project
+        this.stars = project.stats.stars
+        this.criticalityScore = project.getScores().criticality
+        this.activityScore = project.getScores().activity
+        this.score = project.getScores().total
+        this.lastIndexedDate = LocalDateTime.now()
+    }
 
     companion object Factory {
         fun from(project: Project): ProjectEntity {

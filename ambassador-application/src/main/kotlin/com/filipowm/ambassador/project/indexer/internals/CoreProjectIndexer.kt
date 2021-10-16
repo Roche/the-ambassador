@@ -1,6 +1,7 @@
 package com.filipowm.ambassador.project.indexer.internals
 
 import com.filipowm.ambassador.ConcurrencyProvider
+import com.filipowm.ambassador.configuration.properties.IndexerProperties
 import com.filipowm.ambassador.exceptions.Exceptions
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.model.ScorecardCalculator
@@ -16,7 +17,7 @@ import com.filipowm.ambassador.storage.project.ProjectEntity
 import com.filipowm.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.time.Duration
+import org.springframework.transaction.support.TransactionTemplate
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -26,8 +27,9 @@ internal class CoreProjectIndexer(
     private val source: ProjectSource<Any>,
     private val projectEntityRepository: ProjectEntityRepository,
     concurrencyProvider: ConcurrencyProvider,
-    private val indexEvery: Duration,
-    private val indexingCriteria: IndexingCriteria<Any>
+    private val indexerProperties: IndexerProperties,
+    private val indexingCriteria: IndexingCriteria<Any>,
+    private val transactionTemplate: TransactionTemplate
 ) : ProjectIndexer {
 
     private val producerScope = CoroutineScope(concurrencyProvider.getSourceProjectProducerDispatcher())
@@ -67,10 +69,21 @@ internal class CoreProjectIndexer(
             )
         ).calculateFor(project)
         project.scorecard = scorecard
-        val entity = ProjectEntity.from(project)
-        projectEntityRepository.save(entity)
-        log.info("Indexed project '{}' (id={})", project.name, project.id)
-        return entity
+        return transactionTemplate.execute {
+            val currentEntityOptional = projectEntityRepository.findById(project.id)
+            val toSave: ProjectEntity = if (currentEntityOptional.isPresent) {
+                val currentEntity = currentEntityOptional.get()
+                currentEntity.removeHistoryToMatchLimit(indexerProperties.historySize - 1)
+                currentEntity.snapshot()
+                currentEntity.updateIndex(project)
+                currentEntity
+            } else {
+                ProjectEntity.from(project)
+            }
+            val result = projectEntityRepository.save(toSave)
+            log.info("Indexed project '{}' (id={})", project.name, project.id)
+            result
+        }!!
     }
 
     override suspend fun indexAll(
@@ -165,7 +178,7 @@ internal class CoreProjectIndexer(
         // TODO make this calculation directly in db to improve performance
         val id = source.resolveId(this)
         val shouldBeIndexed = projectEntityRepository.findById(id.toLong())
-            .filter { !it.wasIndexedBefore(LocalDateTime.now().minus(indexEvery)) }
+            .filter { !it.wasIndexedBefore(LocalDateTime.now().minus(indexerProperties.indexEvery)) }
             .isEmpty
         if (!shouldBeIndexed) {
             log.info("Project '{}' (id={}) was indexed recently and does not need to be reindex now. Skipping...", source.resolveName(this), source.resolveId(this))
