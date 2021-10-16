@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":ambassador-model"))
     implementation(project(":ambassador-commons"))
     api(project(":ambassador-gitlab-client"))
-    implementation("org.slf4j:slf4j-api:1.7.31")
+    implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
