@@ -53,4 +53,14 @@ To be added soon...
 ## Contributors
 
 <!-- readme: contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/filipowm">
+            <img src="https://avatars.githubusercontent.com/u/20795389?v=4" width="100;" alt="filipowm"/>
+            <br />
+            <sub><b>Mateusz Filipowicz</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: contributors -end -->
