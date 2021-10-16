@@ -26,7 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
     implementation("org.jetbrains.kotlin:kotlin-allopen")
     implementation("org.springframework.boot:spring-boot-gradle-plugin:2.5.4")
-    implementation("org.jooq:jooq-codegen:3.15.0")
+    implementation("org.jooq:jooq-codegen:3.15.3")
     implementation("org.flywaydb:flyway-core:7.13.0")
 
 //    implementation("org.testcontainers:postgresql:1.15.2") // TODO remove
