@@ -31,7 +31,7 @@ dependencies {
     implementation("org.jooq:jooq-meta-extensions-hibernate:3.14.8") {
         exclude("com.h2database", "h2")
     }
-    runtimeOnly("org.postgresql:postgresql:42.2.22")
+    runtimeOnly("org.postgresql:postgresql:42.2.24")
 
     jooqGenerator("org.testcontainers:postgresql:1.15.2")
     jooqGenerator("org.postgresql:postgresql:42.2.22")
