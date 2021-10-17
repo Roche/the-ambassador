@@ -1,0 +1,14 @@
+ambassador:
+  openapi:
+    title: The Ambassador API
+    contact:
+      name: Mateusz Filipowicz
+      url: https://github.com/filipowm
+    license:
+      name: Apache-2.0
+      url: https://www.apache.org/licenses/LICENSE-2.0.txt
+
+springdoc:
+  api-docs:
+    groups:
+      enabled: true

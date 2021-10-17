@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:13://localhost:5454/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    hibernate:
+      ddl-auto: none
+  flyway:
+    placeholders:
+      language: ${ambassador.language}
+    mixed: true
+  profiles:
+    include:
+      - fake-source
+      - open-api
+
+ambassador:
+  language: english
+  security:
+    enabled: false
+  indexer:
+    concurrency:
+      concurrencyLevel: 1
+    lock-type: database
+  events:
+    async:
+      thread-name-prefix: events-
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

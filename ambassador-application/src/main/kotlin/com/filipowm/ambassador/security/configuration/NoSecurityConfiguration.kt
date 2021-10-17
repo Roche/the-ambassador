@@ -2,6 +2,7 @@ package com.filipowm.ambassador.security.configuration
 
 import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.security.AmbassadorUser
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -11,14 +12,14 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 
 @Configuration
 @EnableReactiveMethodSecurity
-@Profile("local")
-internal class LocalSecurityConfiguration {
+@ConditionalOnProperty(prefix = "ambassador.security", name = ["enabled"], havingValue = "false", matchIfMissing = false)
+internal class NoSecurityConfiguration {
 
     private val log by LoggerDelegate()
 
     @Bean
     fun springWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
-        log.warn("Disabling web security for local development!")
+        log.warn("Disabling web security!")
         // @formatter:off
         return http
             .csrf().disable()

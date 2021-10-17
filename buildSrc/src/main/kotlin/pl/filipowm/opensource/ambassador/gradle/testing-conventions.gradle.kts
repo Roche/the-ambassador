@@ -7,9 +7,17 @@ val junitVersion: String by extra
 
 plugins {
     id("java-conventions")
+    id("idea")
 }
 
-tasks.test {
+idea {
+    module {
+        sourceDirs.remove(file("src/integrationTest/kotlin")) //-= file("src/integrationTest/kotlin")
+        testSourceDirs.add(file("src/integrationTest/kotlin")) //-= file("src/integrationTest/kotlin")
+    }
+}
+
+fun Test.configure() {
     useJUnitPlatform()
     maxParallelForks = 2
     testLogging {
@@ -23,6 +31,35 @@ tasks.test {
     addTestListener(TestResultLogger(serviceOf()))
 }
 
+tasks.test {
+    configure()
+}
+
+sourceSets {
+    create("integrationTest") {
+        compileClasspath += main.get().output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+
+val integrationTest = task<Test>("integrationTest") {
+    description = "Runs the integration tests"
+    group = "verification"
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath = sourceSets["integrationTest"].runtimeClasspath
+    configure()
+}
+
+tasks.check {
+    dependsOn(integrationTest)
+}
+
+val integrationTestImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+    extendsFrom(configurations.testImplementation.get())
+}
+
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
@@ -30,4 +67,5 @@ dependencies {
     testImplementation("com.devskiller:jfairy:0.6.4")
     testImplementation("com.tngtech.archunit:archunit-junit5:0.21.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    integrationTestImplementation("org.testcontainers:postgresql:1.16.0")
 }

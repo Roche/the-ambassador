@@ -14,23 +14,16 @@ spring:
   profiles:
     include:
       - secrets
+      - open-api
   flyway:
     placeholders:
       language: ${ambassador.language}
     mixed: true
 
-logging.level.com.filipowm.ambassador.gitlab.ProjectReader: WARN
-
 ambassador:
-  openapi:
-    title: The Ambassador API
-    contact:
-      name: Mateusz Filipowicz
-      url: https://github.com/filipowm
-    license:
-      name: Apache-2.0
-      url: https://www.apache.org/licenses/LICENSE-2.0.txt
   language: english
+  security:
+    enabled: false
   indexer:
     concurrency:
       concurrencyLevel: 30
@@ -38,8 +31,3 @@ ambassador:
   events:
     async:
       thread-name-prefix: events-
-
-springdoc:
-  api-docs:
-    groups:
-      enabled: true

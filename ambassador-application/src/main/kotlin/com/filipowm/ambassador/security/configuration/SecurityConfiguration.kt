@@ -3,6 +3,7 @@ package com.filipowm.ambassador.security.configuration
 import com.filipowm.ambassador.configuration.source.ProjectSources
 import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties
 import com.filipowm.ambassador.extensions.LoggerDelegate
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.session.SessionProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -27,7 +28,7 @@ import reactor.core.publisher.Mono
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 @EnableConfigurationProperties(SessionProperties::class)
-@Profile("!local")
+@ConditionalOnProperty(prefix = "ambassador.security", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 internal class SecurityConfiguration {
 
     private val log by LoggerDelegate()

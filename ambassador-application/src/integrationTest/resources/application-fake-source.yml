@@ -1,0 +1,9 @@
+ambassador:
+  source:
+    name: gitlab
+    url: https://test.com
+    token: __nothing__
+    system: fake
+    indexEvery: 24h
+    clientId: whatever
+    clientSecret: whatever
