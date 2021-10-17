@@ -28,7 +28,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
     api("com.vladmihalcea:hibernate-types-52:2.13.0")
-    implementation("org.jooq:jooq-meta-extensions-hibernate:3.14.8") {
+    implementation("org.jooq:jooq-meta-extensions-hibernate:3.15.3") {
         exclude("com.h2database", "h2")
     }
     runtimeOnly("org.postgresql:postgresql:42.2.24")
