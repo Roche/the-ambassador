@@ -27,6 +27,9 @@ class SpringBeansTest {
         .areAnnotatedWith(RestController::class.java).or()
         .areAnnotatedWith(Controller::class.java).or()
         .areAnnotatedWith(Configuration::class.java)
-        .should().beFinal().andShould().bePrivate().orShould().beProtected().orShould().beStatic()
+        .should().beFinal()
+        .andShould().bePrivate()
+        .orShould().beProtected()
+        .orShould().beStatic()
 
 }
