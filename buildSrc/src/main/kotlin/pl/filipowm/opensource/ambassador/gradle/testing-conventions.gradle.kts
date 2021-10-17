@@ -12,8 +12,8 @@ plugins {
 
 idea {
     module {
-        sourceDirs.remove(file("src/integrationTest/kotlin")) //-= file("src/integrationTest/kotlin")
-        testSourceDirs.add(file("src/integrationTest/kotlin")) //-= file("src/integrationTest/kotlin")
+        sourceDirs.remove(file("src/integrationTest/kotlin"))
+        testSourceDirs.add(file("src/integrationTest/kotlin"))
     }
 }
 
@@ -42,7 +42,6 @@ sourceSets {
     }
 }
 
-
 val integrationTest = task<Test>("integrationTest") {
     description = "Runs the integration tests"
     group = "verification"
@@ -58,6 +57,16 @@ tasks.check {
 val integrationTestImplementation by configurations.getting {
     extendsFrom(configurations.implementation.get())
     extendsFrom(configurations.testImplementation.get())
+}
+
+val ci by tasks.registering {
+    description = "Runs the tests on CI based on flag"
+    group = "verification"
+    when(System.getenv("TEST_TYPE").toUpperCase()) {
+        "INTEGRATION" -> dependsOn(integrationTest)
+        "UNIT" -> dependsOn(tasks.test.get())
+        else -> dependsOn(tasks.check.get())
+    }
 }
 
 dependencies {
