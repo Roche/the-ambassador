@@ -23,11 +23,6 @@ jobs:
         
   build:
     runs-on: ubuntu-latest
-    
-    strategy: 
-      fail-fast: true
-      matrix:
-        tests: [Unit,Integration]
         
     steps:
     - uses: actions/checkout@v2
@@ -42,15 +37,4 @@ jobs:
     - name: Build 
       run: ./gradlew build
     - name: Test
-      run: ./gradlew build
-    - name: Integration tests
-      env:
-        TEST_TYPE: ${{matrix.tests}}
-      run: |
-        if [ "$TEST_TYPE" == "Unit" ] ; then
-          echo "Executing Unit Tests"
-          ./gradlew test
-        else
-          echo "Executing Integration Tests
-          ./gradlew integrationTest
-        fi
+      run: ./gradlew check
