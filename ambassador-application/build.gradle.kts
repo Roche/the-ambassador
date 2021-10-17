@@ -7,6 +7,9 @@ plugins {
     kotlin("kapt")
 }
 
+val springdocVersion: String by extra
+val kotlinCoroutinesVersion: String by extra
+
 dependencies {
     implementation(project(":ambassador-model"))
     implementation(project(":ambassador-storage"))
@@ -19,14 +22,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinCoroutinesVersion")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.11")
-    implementation("org.springdoc:springdoc-openapi-kotlin:1.5.11")
-    implementation("org.springdoc:springdoc-openapi-security:1.5.11")
+    implementation("org.springdoc:springdoc-openapi-webflux-ui:$springdocVersion")
+    implementation("org.springdoc:springdoc-openapi-kotlin:$springdocVersion")
+    implementation("org.springdoc:springdoc-openapi-security:$springdocVersion")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

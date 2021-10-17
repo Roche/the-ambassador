@@ -5,6 +5,9 @@ plugins {
 
 val ktorVersion : String by extra
 val resilience4jVersion : String by extra
+val slf4jVersion : String by extra
+val jacksonVersion : String by extra
+val kotlinCoroutinesVersion : String by extra
 
 dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -17,10 +20,10 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-kotlin:$resilience4jVersion")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.slf4j:slf4j-api:1.7.32")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.0")
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
 
 }
 

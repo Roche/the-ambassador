@@ -12,12 +12,14 @@ tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("
     enabled = false
 }
 
+val kotlinCoroutinesVersion: String by extra
+
 dependencies {
     implementation("com.github.javafaker:javafaker:1.0.2")
 
     implementation(project(":ambassador-model"))
     api(project(":ambassador-commons"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinCoroutinesVersion")
 
 }
 

@@ -19,22 +19,26 @@ tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("
     enabled = false
 }
 
+val jacksonVersion: String by extra
+val postgresqlDriverVersion: String by extra
+val testcontainersVersion: String by extra
+
 dependencies {
 
     implementation(project(":ambassador-model"))
     api(project(":ambassador-commons"))
     api("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.flywaydb:flyway-core:8.0.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
     api("com.vladmihalcea:hibernate-types-52:2.13.0")
     implementation("org.jooq:jooq-meta-extensions-hibernate:3.15.3") {
         exclude("com.h2database", "h2")
     }
-    runtimeOnly("org.postgresql:postgresql:42.2.24")
+    runtimeOnly("org.postgresql:postgresql:$postgresqlDriverVersion")
 
-    jooqGenerator("org.testcontainers:postgresql:1.16.0")
-    jooqGenerator("org.postgresql:postgresql:42.2.24")
+    jooqGenerator("org.testcontainers:postgresql:$testcontainersVersion")
+    jooqGenerator("org.postgresql:postgresql:$postgresqlDriverVersion")
 }
 
 jooq {
