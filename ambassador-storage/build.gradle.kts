@@ -34,7 +34,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql:42.2.24")
 
     jooqGenerator("org.testcontainers:postgresql:1.16.0")
-    jooqGenerator("org.postgresql:postgresql:42.2.22")
+    jooqGenerator("org.postgresql:postgresql:42.2.24")
 }
 
 jooq {
