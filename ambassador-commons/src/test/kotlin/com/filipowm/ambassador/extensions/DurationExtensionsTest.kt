@@ -3,7 +3,6 @@ package com.filipowm.ambassador.extensions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
-import java.time.LocalDate
 
 class DurationExtensionsTest {
 

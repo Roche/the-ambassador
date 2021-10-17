@@ -11,7 +11,7 @@ fun Date.toLocalDateTime(zone: ZoneId = ZoneId.systemDefault()): LocalDateTime =
 
 fun LocalDate.toDate(zone: ZoneId = ZoneId.systemDefault()): Date = Date.from(this.atStartOfDay(zone).toInstant())
 fun LocalDateTime.toDate(zone: ZoneId = ZoneId.systemDefault()): Date = Date.from(this.atZone(zone).toInstant())
-fun ZonedDateTime.toDate(zone: ZoneId = ZoneId.systemDefault()): Date = Date.from(this.toInstant())
+fun ZonedDateTime.toDate(): Date = Date.from(this.toInstant())
 
 fun Temporal.daysUntilNow(): Long = unitsUntilNow(ChronoUnit.DAYS)
 fun Temporal.monthsUntilNow(): Long = unitsUntilNow(ChronoUnit.MONTHS)

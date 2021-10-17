@@ -34,6 +34,7 @@ interface LanguageDetector {
 
 internal class FixedLanguageDetector(val language: Language) : LanguageDetector {
     override fun warmUp() {
+        // nothing to warm uup when using fixed lang detector
     }
 
     override fun detectLanguageOf(text: String): Language = if (text.isBlank()) {

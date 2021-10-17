@@ -3,7 +3,6 @@ package com.filipowm.ambassador.configuration.source
 import com.filipowm.ambassador.GenerationSpec
 import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties.System.FAKE
 import com.filipowm.ambassador.configuration.source.ProjectSourcesProperties.System.GITLAB
-import com.filipowm.ambassador.extensions.LoggerDelegate
 import com.filipowm.ambassador.fake.FakeSource
 import com.filipowm.ambassador.gitlab.GitLabSource
 import com.filipowm.gitlab.api.GitLab

@@ -3,8 +3,6 @@ package com.filipowm.ambassador.architecture
 import com.tngtech.archunit.base.DescribedPredicate
 import com.tngtech.archunit.lang.syntax.elements.ClassesThat
 import com.tngtech.archunit.lang.syntax.elements.GivenClassesConjunction
-import com.tngtech.archunit.lang.syntax.elements.GivenMethodsConjunction
-import com.tngtech.archunit.lang.syntax.elements.MethodsThat
 import kotlin.reflect.KClass
 
 fun ClassesThat<GivenClassesConjunction>.areAnnotatedWithAny(vararg annotationTypes: KClass<out Annotation>): GivenClassesConjunction {

@@ -58,7 +58,4 @@ data class TextAnalyzingService(
         }
     }
 
-    private fun isAcronymOrAbbreviation(text: String) {
-        TODO("acc? $text")
-    }
 }

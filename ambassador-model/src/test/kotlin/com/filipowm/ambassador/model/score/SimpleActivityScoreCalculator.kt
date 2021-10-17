@@ -27,7 +27,7 @@ object SimpleActivityScoreCalculator : TestCalculator<ActivityData> {
         score += data.stars * 2 // multiply by 2 instead of dividing by 3
         score += data.openIssues / 5
         val daysSinceLastUpdate = data.lastActivityDate.daysUntilNow().toDouble()
-        score *= ((1 + (100 - min(daysSinceLastUpdate, 100.0)) / 100))
+        score *= (1 + (100 - min(daysSinceLastUpdate, 100.0)) / 100)
 
         if (data.commitsTimeline != null) {
             val avg = data.commitsTimeline.last(3).months().average()

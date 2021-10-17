@@ -37,8 +37,8 @@ object ReactiveLocaleContextHolder {
         return Function { context: Context -> context.delete(LOCALE_CONTEXT_KEY) }
     }
 
-    fun withLocaleContext(LocaleContext: Mono<LocaleContext>): Context {
-        return Context.of(LOCALE_CONTEXT_KEY, LocaleContext)
+    fun withLocaleContext(localeContext: Mono<LocaleContext>): Context {
+        return Context.of(LOCALE_CONTEXT_KEY, localeContext)
     }
 
     fun withLocale(locale: Locale?): Context {

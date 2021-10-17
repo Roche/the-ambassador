@@ -2,9 +2,7 @@ package com.filipowm.ambassador.architecture
 
 import com.filipowm.ambassador.TheAmbassadorApplication
 import com.tngtech.archunit.junit.AnalyzeClasses
-import com.tngtech.archunit.junit.ArchIgnore
 import com.tngtech.archunit.junit.ArchTest
-import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields
 import com.tngtech.archunit.library.GeneralCodingRules
 import org.springframework.context.annotation.Configuration

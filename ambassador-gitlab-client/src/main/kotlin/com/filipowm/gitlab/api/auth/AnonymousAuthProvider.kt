@@ -9,6 +9,7 @@ object AnonymousAuthProvider : AuthProvider {
         get() = true
 
     override suspend fun addRequestHeaders(request: HttpRequestBuilder) {
+        // not headers to add for anonymous auth
     }
 
     override fun isApplicable(auth: HttpAuthHeader): Boolean = true

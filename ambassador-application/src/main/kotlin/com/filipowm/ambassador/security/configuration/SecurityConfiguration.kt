@@ -43,7 +43,7 @@ internal class SecurityConfiguration {
 
     @Bean
     fun ambassadorUserDetailsService(repository: InMemoryReactiveClientRegistrationRepository, projectSources: ProjectSources): AmbassadorUserService {
-        // FIXME make it more friendly to create holder and create mapping of registration to source
+        // TODO make it more friendly to create holder and create mapping of registration to source
         val holder = OAuth2ProvidersHolder()
         for (registration in repository) {
             projectSources.getByName(registration.clientName)

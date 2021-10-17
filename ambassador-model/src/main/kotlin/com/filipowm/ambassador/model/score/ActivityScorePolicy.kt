@@ -33,7 +33,7 @@ object ActivityScorePolicy : ScorePolicy {
             .withFeature(ChangelogFeature::class).forFile(50, 10)
             .withFeature(DescriptionFeature::class)
                 .filter { it.value().exists() && it.value().get().length >= 30}
-                .calculate { descriptionFeature, score -> score + 50 }
+                .calculate { _, score -> score + 50 }
             .build()
         // @formatter:on
     }
@@ -55,7 +55,7 @@ object ActivityScorePolicy : ScorePolicy {
             // average commits: adds a bonus multiplier between 0..1 to overall score (1 = >10 commits per week, 0 = less than 3 commits per week)
             .withSubScore("Young project boost")
                 // all repositories updated in the previous year will receive a boost of maximum 1000 declining by days since last update
-                .withFeature(LastActivityDateFeature::class).calculate { feature, score -> (1000 - min(feature.daysUntilNow()!!, 365).toDouble() * 2.74) }
+                .withFeature(LastActivityDateFeature::class).calculate { feature, _ -> (1000 - min(feature.daysUntilNow()!!, 365).toDouble() * 2.74) }
                 // gradually scale down boost according to repository creation date to mix with "real" engagement stats
                 .withFeature(CreatedDateFeature::class).calculate { feature, score -> score * (365 - min(feature.daysUntilNow()!!, 365).toDouble()) / 365 }
                 .reduce { aggScore, subScore -> aggScore + max(subScore, 0.0) }

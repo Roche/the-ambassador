@@ -1,13 +1,11 @@
 package com.filipowm.ambassador.project.indexer
 
 import com.filipowm.ambassador.model.project.Project
-import com.filipowm.ambassador.security.AmbassadorUser
 import com.filipowm.ambassador.security.HasAdminPermission
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -48,9 +46,11 @@ internal open class ProjectIndexingApi(private val service: ProjectIndexingServi
         ApiResponse(responseCode = "403", description = "Insufficient privileges, admin needed"),
     )
     @DeleteMapping
-    suspend fun forciblyStopAll(@RequestParam("terminate", required = false)
-                                    @Parameter(description = "Flag if currently indexed projects should stop immediately, allow finish if false, but don't pick new projects from source")
-                                    terminate: Optional<Boolean>) {
+    suspend fun forciblyStopAll(
+        @RequestParam("terminate", required = false)
+        @Parameter(description = "Flag if currently indexed projects should stop immediately, allow finish if false, but don't pick new projects from source")
+        terminate: Optional<Boolean>
+    ) {
         service.forciblyStopAll(terminate.orElse(false))
     }
 
@@ -61,9 +61,11 @@ internal open class ProjectIndexingApi(private val service: ProjectIndexingServi
         ApiResponse(responseCode = "404", description = "Indexing not found or is not in progress")
     )
     @DeleteMapping("{indexingId}")
-    suspend fun forciblyStop(@PathVariable indexingId: UUID,
-                             @Parameter(description = "Flag if currently indexed projects should stop immediately, allow finish if false, but don't pick new projects from source")
-                             @RequestParam("terminate", required = false) terminate: Optional<Boolean>) {
+    suspend fun forciblyStop(
+        @PathVariable indexingId: UUID,
+        @Parameter(description = "Flag if currently indexed projects should stop immediately, allow finish if false, but don't pick new projects from source")
+        @RequestParam("terminate", required = false) terminate: Optional<Boolean>
+    ) {
         service.forciblyStop(indexingId, terminate.orElse(false))
     }
 }

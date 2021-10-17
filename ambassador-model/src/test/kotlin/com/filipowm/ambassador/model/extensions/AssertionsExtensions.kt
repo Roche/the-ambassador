@@ -3,8 +3,6 @@ package com.filipowm.ambassador.model.extensions
 import com.filipowm.ambassador.extensions.round
 import com.filipowm.ambassador.model.Feature
 import com.filipowm.ambassador.model.Score
-import com.filipowm.ambassador.model.score.ActivityData
-import com.filipowm.ambassador.model.score.SimpleActivityScoreCalculator
 import com.filipowm.ambassador.model.score.TestCalculator
 import org.assertj.core.api.AbstractDoubleAssert
 import org.assertj.core.api.InstanceOfAssertFactories

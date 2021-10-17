@@ -34,7 +34,6 @@ class Pager<T>(
     }
 
     override suspend fun hasNext(): Boolean {
-        // FIXME: do not block, rather delegate coroutine scope here!
         val currentPagination = nextPagination.getAndSet(null)
         if (currentPagination != null) {
             val page = pageProvider.invoke(currentPagination)
