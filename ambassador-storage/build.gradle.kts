@@ -24,7 +24,7 @@ dependencies {
     implementation(project(":ambassador-model"))
     api(project(":ambassador-commons"))
     api("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.flywaydb:flyway-core:7.7.3")
+    implementation("org.flywaydb:flyway-core:8.0.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
     api("com.vladmihalcea:hibernate-types-52:2.13.0")
