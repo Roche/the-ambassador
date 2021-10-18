@@ -10,6 +10,7 @@ val testcontainersVersion: String by extra
 plugins {
     id("java-conventions")
     id("idea")
+    id("jacoco")
 }
 
 idea {
@@ -31,6 +32,7 @@ fun Test.configure() {
         showStackTraces = true
     }
     addTestListener(TestResultLogger(serviceOf()))
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.test {
