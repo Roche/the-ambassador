@@ -38,7 +38,11 @@ internal class ContextEventHandlersForIndexing(
 
     private fun stopIndexing(forcibly: Boolean = false) {
         runBlocking {
-            service.forciblyStopAll(forcibly)
+            try {
+                service.forciblyStopAll(forcibly)
+            } catch(e: RuntimeException) {
+                log.warn("Failed to stop indexing gently when received context event due to '{}'", e.message)
+            }
         }
     }
 
