@@ -9,7 +9,7 @@ data class Release(
     @JsonProperty("assets")
     val assets: Assets? = null,
     @JsonProperty("author")
-    val author: Author? = null,
+    val author: SimpleUser? = null,
     @JsonProperty("commit")
     val commit: Commit? = null,
     @JsonProperty("commit_path")

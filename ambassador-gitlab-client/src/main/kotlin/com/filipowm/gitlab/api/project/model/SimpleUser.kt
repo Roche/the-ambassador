@@ -2,7 +2,7 @@ package com.filipowm.gitlab.api.project.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class Author(
+data class SimpleUser(
     @JsonProperty("avatar_url")
     val avatarUrl: String? = null,
     @JsonProperty("id")

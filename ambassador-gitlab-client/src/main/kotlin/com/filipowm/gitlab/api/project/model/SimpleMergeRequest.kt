@@ -3,29 +3,22 @@ package com.filipowm.gitlab.api.project.model
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.filipowm.gitlab.api.utils.Dates
-import java.time.LocalDate
 import java.time.LocalDateTime
 
-data class Milestone(
+data class SimpleMergeRequest(
     @JsonProperty("created_at")
     @JsonFormat(pattern = Dates.ISO_DATE_TIME_FORMAT)
     val createdAt: LocalDateTime? = null,
     @JsonProperty("description")
     val description: String? = null,
-    @JsonProperty("due_date")
-    val dueDate: LocalDate? = null,
     @JsonProperty("id")
-    val id: Int? = null,
+    val id: Long? = null,
     @JsonProperty("iid")
-    val iid: Int? = null,
-    @JsonProperty("issue_stats")
-    val issueStats: IssueStats? = null,
+    val iid: Long? = null,
     @JsonProperty("project_id")
-    val projectId: Int? = null,
-    @JsonProperty("start_date")
-    val startDate: LocalDate? = null,
+    val projectId: Long? = null,
     @JsonProperty("state")
-    val state: State? = null,
+    val state: MergeRequest.State? = null,
     @JsonProperty("title")
     val title: String? = null,
     @JsonProperty("updated_at")
@@ -33,10 +26,4 @@ data class Milestone(
     val updatedAt: LocalDateTime? = null,
     @JsonProperty("web_url")
     val webUrl: String? = null
-) {
-
-    enum class State {
-        CLOSED,
-        ACTIVE
-    }
-}
+)
