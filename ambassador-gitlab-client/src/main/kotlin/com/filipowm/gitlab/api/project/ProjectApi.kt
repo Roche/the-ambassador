@@ -27,4 +27,6 @@ class ProjectApi internal constructor(basePath: String, client: GitLabHttpClient
     fun releases(): ReleasesApi = ReleasesApi("$basePath/releases", client)
 
     fun issueStatistics(): IssueStatisticsApi = IssueStatisticsApi("$basePath/issues_statistics", client)
+
+    fun members(): MembersApi = MembersApi("$basePath/members/all", client)
 }
