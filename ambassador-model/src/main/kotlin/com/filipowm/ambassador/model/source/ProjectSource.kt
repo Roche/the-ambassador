@@ -21,4 +21,6 @@ interface ProjectSource<T> : Specification, IndexingCriteriaProvider<T>, Project
     suspend fun readFile(projectId: String, path: String, ref: String): Optional<RawFile>
     suspend fun readReleases(projectId: String): Timeline
     suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch>
+    suspend fun readMembers(projectId: String): List<Member>
+
 }

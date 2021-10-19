@@ -52,6 +52,14 @@ class Pager<T>(
         return currentPageData.get() != null
     }
 
+    suspend fun forEach(handler: suspend (T) -> Unit) {
+        for (page in this) {
+            for (entry in page) {
+                handler(entry)
+            }
+        }
+    }
+
     override fun next(): Page<T> {
         return currentPageData.get()
     }

@@ -106,4 +106,8 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     override suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch> {
         return listOf()
     }
+
+    override suspend fun readMembers(projectId: String): List<Member> {
+        return listOf()
+    }
 }

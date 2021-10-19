@@ -8,6 +8,7 @@ import com.filipowm.ambassador.model.files.RawFile
 import com.filipowm.ambassador.model.project.*
 import com.filipowm.ambassador.model.stats.Timeline
 import java.time.LocalDate
+import java.util.stream.Collectors
 
 class ContributorsFeature(private val contributors: List<Contributor>?) : AbstractFeature<List<Contributor>>(contributors, "Contributors", importance = Importance.high()) {
 
@@ -157,4 +158,20 @@ class IssuesFeature(value: Issues) : AbstractFeature<Issues>(value, "Issues") {
             IssuesFeature(issues)
         }
     }
+}
+
+class MembersFeature(value: Map<AccessLevel, Int>) : AbstractFeature<Map<AccessLevel, Int>>(value, "Members") {
+    companion object : FeatureReaderFactory<MembersFeature> {
+        override fun create(): FeatureReader<MembersFeature> = FeatureReader.create { project, source ->
+            val members = source.readMembers(project.id.toString())
+            val memberByLevel = members
+                .stream()
+                .map { it.accessLevel }
+                .collect(
+                    Collectors.groupingBy({ it }, Collectors.summingInt { 1 }),
+                )
+            MembersFeature(memberByLevel)
+        }
+    }
+
 }

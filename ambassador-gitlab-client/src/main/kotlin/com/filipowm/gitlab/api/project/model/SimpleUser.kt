@@ -10,7 +10,7 @@ data class SimpleUser(
     @JsonProperty("name")
     val name: String? = null,
     @JsonProperty("state")
-    val state: String? = null,
+    val state: UserState? = null,
     @JsonProperty("username")
     val username: String? = null,
     @JsonProperty("web_url")

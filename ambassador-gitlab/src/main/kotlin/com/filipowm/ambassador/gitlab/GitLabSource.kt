@@ -12,12 +12,13 @@ import com.filipowm.ambassador.model.source.PersonalProjectCriteria
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.model.stats.Timeline
 import com.filipowm.gitlab.api.GitLab
-import com.filipowm.gitlab.api.model.AccessLevel
 import com.filipowm.gitlab.api.model.AccessLevelName
+import com.filipowm.gitlab.api.model.AccessLevelName.*
 import com.filipowm.gitlab.api.model.IssueStatisticsQuery
 import com.filipowm.gitlab.api.project.CommitsQuery
 import com.filipowm.gitlab.api.project.ProjectListQuery
 import com.filipowm.gitlab.api.project.ProjectQuery
+import com.filipowm.gitlab.api.project.model.UserState
 import com.filipowm.gitlab.api.utils.Pagination
 import com.filipowm.gitlab.api.utils.Sort
 import kotlinx.coroutines.flow.Flow
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.channelFlow
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.streams.toList
+import com.filipowm.gitlab.api.model.AccessLevel as BranchingAccessLevel
 import com.filipowm.gitlab.api.project.model.Project as GitLabProject
 
 class GitLabSource(
@@ -116,14 +118,13 @@ class GitLabSource(
             until = LocalDateTime.now(),
             withStats = false
         )
-        val paging = gitlab.projects().withId(projectId.toLong())
-            .repository().commits().paging(query, Pagination(itemsPerPage = 50))
+        gitlab.projects()
+            .withId(projectId.toLong())
+            .repository()
+            .commits()
+            .paging(query, Pagination(itemsPerPage = 50))
+            .forEach { timeline.increment(it.createdAt) }
 
-        for (commitsPage in paging) {
-            for (commit in commitsPage) {
-                timeline.increment(commit.createdAt)
-            }
-        }
         log.info("Finished reading project {} commits timeline", projectId)
         return timeline
     }
@@ -139,13 +140,15 @@ class GitLabSource(
     override suspend fun readReleases(projectId: String): Timeline {
         log.info("Reading project {} releases timeline", projectId)
         val timeline = Timeline()
-        for (releasePage in gitlab.projects().withId(projectId.toLong()).releases().paging()) {
-            for (release in releasePage) {
-                if (release.releasedAt != null) {
-                    timeline.increment(release.releasedAt!!)
+        gitlab.projects()
+            .withId(projectId.toLong())
+            .releases()
+            .paging(fromPagination = Pagination(itemsPerPage = 50))
+            .forEach {
+                if (it.releasedAt != null) {
+                    timeline.increment(it.releasedAt!!)
                 }
             }
-        }
         log.info("Finished reading project {} releases timeline", projectId)
         return timeline
     }
@@ -159,8 +162,32 @@ class GitLabSource(
         return data
     }
 
-    private fun checkHasNoAccess(accessLevels: List<AccessLevel>): Boolean {
-        return accessLevels.none { it.accessLevel == AccessLevelName.NONE }
+    private fun checkHasNoAccess(accessLevels: List<BranchingAccessLevel>): Boolean {
+        return accessLevels.none { it.accessLevel == NONE }
+    }
+
+    override suspend fun readMembers(projectId: String): List<Member> {
+        log.info("Reading project {} members", projectId)
+        val members = mutableListOf<Member>()
+        gitlab.projects()
+            .withId(projectId.toLong())
+            .members()
+            .paging()
+            .forEach {
+                if (it.state == UserState.ACTIVE) {
+                    members.add(Member(it.id, it.name, it.email, it.username, mapAccessLevel(it.accessLevel)))
+                }
+            }
+        return members.toList()
+    }
+
+    private fun mapAccessLevel(gitlabAccessLevelName: AccessLevelName?): AccessLevel {
+        return when (gitlabAccessLevelName) {
+            ADMIN, MAINTAINER, OWNER -> AccessLevel.ADMIN
+            DEVELOPER, MASTER -> AccessLevel.WRITE
+            REPORTER, GUEST -> AccessLevel.READ
+            else -> AccessLevel.NONE
+        }
     }
 
     override fun userDetailsProvider(attributes: Map<String, Any>): UserDetailsProvider = object : UserDetailsProvider {
