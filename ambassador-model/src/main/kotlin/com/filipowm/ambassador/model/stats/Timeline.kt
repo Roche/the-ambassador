@@ -55,16 +55,25 @@ class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>, val agg
         return this
     }
 
-    fun increment(date: Date): Timeline {
-        return add(date, 1)
+    fun increment(date: Date?): Timeline {
+        if (date != null) {
+            return add(date, 1)
+        }
+        return this
     }
 
-    fun increment(date: LocalDate): Timeline {
-        return add(date, 1)
+    fun increment(date: LocalDate?): Timeline {
+        if (date != null) {
+            return add(date, 1)
+        }
+        return this
     }
 
-    fun increment(date: LocalDateTime): Timeline {
-        return add(date, 1)
+    fun increment(date: LocalDateTime?): Timeline {
+        if (date != null) {
+            return add(date, 1)
+        }
+        return this
     }
 
     fun by(): Aggregator {

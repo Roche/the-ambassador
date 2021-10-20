@@ -24,7 +24,8 @@ object FeatureReaders {
         CreatedDateFeature.create(),
         DescriptionFeature.create(),
         IssuesFeature.create(),
-        MembersFeature.create()
+        MembersFeature.create(),
+        PullRequestsFeature.create()
     )
 
     fun all(): List<FeatureReader<*>> {

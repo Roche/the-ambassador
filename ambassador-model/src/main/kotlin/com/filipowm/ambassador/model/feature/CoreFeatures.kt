@@ -175,3 +175,12 @@ class MembersFeature(value: Map<AccessLevel, Int>) : AbstractFeature<Map<AccessL
     }
 
 }
+
+class PullRequestsFeature(value: Timeline) : TimelineFeature(value, "Pull Requests") {
+    companion object : FeatureReaderFactory<PullRequestsFeature> {
+        override fun create(): FeatureReader<PullRequestsFeature> = FeatureReader.create { project, source ->
+            val pullRequests = source.readPullRequests(project.id.toString())
+            PullRequestsFeature(pullRequests)
+        }
+    }
+}

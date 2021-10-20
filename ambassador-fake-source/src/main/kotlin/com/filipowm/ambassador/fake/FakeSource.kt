@@ -110,4 +110,8 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     override suspend fun readMembers(projectId: String): List<Member> {
         return listOf()
     }
+
+    override suspend fun readPullRequests(projectId: String): Timeline {
+        return Timeline()
+    }
 }

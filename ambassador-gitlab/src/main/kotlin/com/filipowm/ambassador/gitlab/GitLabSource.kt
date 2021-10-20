@@ -16,8 +16,10 @@ import com.filipowm.gitlab.api.model.AccessLevelName
 import com.filipowm.gitlab.api.model.AccessLevelName.*
 import com.filipowm.gitlab.api.model.IssueStatisticsQuery
 import com.filipowm.gitlab.api.project.CommitsQuery
+import com.filipowm.gitlab.api.project.MergeRequestsQuery
 import com.filipowm.gitlab.api.project.ProjectListQuery
 import com.filipowm.gitlab.api.project.ProjectQuery
+import com.filipowm.gitlab.api.project.model.MergeRequest
 import com.filipowm.gitlab.api.project.model.UserState
 import com.filipowm.gitlab.api.utils.Pagination
 import com.filipowm.gitlab.api.utils.Sort
@@ -122,7 +124,7 @@ class GitLabSource(
             .withId(projectId.toLong())
             .repository()
             .commits()
-            .paging(query, Pagination(itemsPerPage = 50))
+            .paging(query, Pagination(itemsPerPage = 100))
             .forEach { timeline.increment(it.createdAt) }
 
         log.info("Finished reading project {} commits timeline", projectId)
@@ -179,6 +181,22 @@ class GitLabSource(
                 }
             }
         return members.toList()
+    }
+
+    override suspend fun readPullRequests(projectId: String): Timeline {
+        log.info("Reading project {} pull requests timeline")
+        val timeline = Timeline()
+        val query = MergeRequestsQuery(
+            state = MergeRequest.State.MERGED.name.toLowerCase(),
+            updatedAfter = LocalDateTime.now().minusDays(90)
+        )
+        gitlab.projects()
+            .withId(projectId.toLong())
+            .mergeRequests()
+            .simplePaging(query, fromPagination = Pagination(itemsPerPage = 100))
+            .forEach { timeline.increment(it.updatedAt) }
+        log.info("Finished reading project {} pull requests timeline", projectId)
+        return timeline
     }
 
     private fun mapAccessLevel(gitlabAccessLevelName: AccessLevelName?): AccessLevel {
