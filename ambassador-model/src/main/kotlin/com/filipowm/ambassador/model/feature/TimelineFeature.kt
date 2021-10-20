@@ -1,6 +1,5 @@
 package com.filipowm.ambassador.model.feature
 
-import com.filipowm.ambassador.extensions.monthsUntilNow
 import com.filipowm.ambassador.extensions.round
 import com.filipowm.ambassador.model.IndexEntry
 import com.filipowm.ambassador.model.stats.Timeline
@@ -28,9 +27,5 @@ open class TimelineFeature(value: Timeline? = Timeline(), name: String) : Abstra
                 "endDate" to series.last().date
             )
         )
-    }
-
-    private fun getAggregated() {
-
     }
 }
