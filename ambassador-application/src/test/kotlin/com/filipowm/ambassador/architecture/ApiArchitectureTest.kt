@@ -1,15 +1,17 @@
 package com.filipowm.ambassador.architecture
 
 import com.filipowm.ambassador.TheAmbassadorApplication
-import com.tngtech.archunit.core.domain.JavaClass
+import com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo
+import com.tngtech.archunit.core.domain.properties.CanBeAnnotated.Predicates.annotatedWith
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
-import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
-import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*
+import com.tngtech.archunit.lang.syntax.elements.ClassesThat
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.repository.Repository
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
@@ -34,7 +36,7 @@ class ApiArchitectureTest {
 
     @ArchTest
     private val `controller methods should not declare any exceptions` = endpoints()
-        .should().notDeclareThrowableOfType(JavaClass.Predicates.assignableTo(Throwable::class.java))
+        .should().notDeclareThrowableOfType(assignableTo(Throwable::class.java))
 
     @ArchTest
     private val `transactions should no start in controllers` = controllers()
@@ -46,10 +48,18 @@ class ApiArchitectureTest {
         .should()
         .notBeAnnotatedWith(Transactional::class.java)
 
-    private fun controllers() = classes().that().areAnnotatedWith(RestController::class.java)
+    @ArchTest
+    private val `controllers should not access repositories directly` = fields()
+        .that().areDeclaredInClassesThat().areControllers()
+        .should().notHaveRawType(assignableTo(Repository::class.java))
+        .andShould().notHaveRawType(annotatedWith(org.springframework.stereotype.Repository::class.java))
+
+    private fun <T> ClassesThat<T>.areControllers() = areAnnotatedWith(RestController::class.java)
+
+    private fun controllers() = classes().that().areControllers()
 
     private fun endpoints() = methods().that()
-        .areDeclaredInClassesThat().areAnnotatedWith(RestController::class.java)
+        .areDeclaredInClassesThat().areControllers()
         .and().areAnnotatedWith(RequestMapping::class.java)
         .or().areAnnotatedWith(GetMapping::class.java)
         .or().areAnnotatedWith(PatchMapping::class.java)

@@ -35,7 +35,7 @@ class NamingConventionsTest {
     private val `DTOs should be suffixed with 'Dto'`: ArchRule = classes()
         .that().haveSimpleNameEndingWith("DTO")
         .should().haveSimpleNameEndingWith("Dto")
-        .because("keep same naming of DTOs")
+        .because("keep consistent naming of DTOs")
 
     @ArchTest
     private val `exceptions should be suffixed with 'Exception'`: ArchRule = classes()
