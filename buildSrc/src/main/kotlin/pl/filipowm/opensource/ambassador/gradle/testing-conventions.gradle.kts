@@ -54,6 +54,13 @@ val integrationTest = task<Test>("integrationTest") {
     configure()
 }
 
+ tasks.jacocoTestReport {
+    this.reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
 tasks.check {
     dependsOn(integrationTest)
 }
