@@ -36,7 +36,11 @@ internal open class ProjectApi(private val projectService: ProjectService) {
         ApiResponse(responseCode = "404", description = "Project not found")
     )
     @GetMapping("{id}/history")
-    open suspend fun history(@PathVariable @Min(1) id: Long, pageable: Pageable): Paged<ProjectHistoryDto> {
+    open suspend fun history(
+        @PathVariable @Min(1) id: Long,
+        @PageableDefault(size = 25, sort = ["indexedDate"], direction = Sort.Direction.DESC)
+        pageable: Pageable
+    ): Paged<ProjectHistoryDto> {
         return projectService.getProjectHistory(id, pageable)
     }
 
@@ -47,7 +51,7 @@ internal open class ProjectApi(private val projectService: ProjectService) {
     @GetMapping
     open suspend fun search(
         query: ListProjectsQuery,
-        @PageableDefault(size = 25, sort = ["indexedDate"], direction = Sort.Direction.DESC)
+        @PageableDefault(size = 25)
         pageable: Pageable
     ): Paged<SimpleProjectDto> {
         return projectService.search(query, pageable)
