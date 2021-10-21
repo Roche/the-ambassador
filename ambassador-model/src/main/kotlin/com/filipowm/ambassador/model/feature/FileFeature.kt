@@ -10,6 +10,6 @@ open class FileFeature<T : File>(
 
     override fun exists(): Boolean = value.exists() && value.get().exists
 
-    fun hasSizeAtLeast(size: Int): Boolean = exists() && value.get().hasSizeAtLeast(size)
+    fun hasSizeAtLeast(size: Long): Boolean = exists() && value.get().hasSizeAtLeast(size)
 
 }

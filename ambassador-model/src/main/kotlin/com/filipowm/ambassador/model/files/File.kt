@@ -7,7 +7,7 @@ open class File(
     val exists: Boolean,
     val hash: String?,
     val language: String?,
-    val contentLength: Int?,
+    val contentLength: Long?,
     val url: String?
 ) {
     companion object {
@@ -16,12 +16,12 @@ open class File(
         }
     }
 
-    fun hasSizeAtLeast(minimumSize: Int): Boolean = contentLength != null && contentLength >= minimumSize
+    fun hasSizeAtLeast(minimumSize: Long): Boolean = contentLength != null && contentLength >= minimumSize
 
 }
 
 open class RawFile(
-    exists: Boolean, hash: String?, language: String?, contentLength: Int?, url: String?,
+    exists: Boolean, hash: String?, language: String?, contentLength: Long?, url: String?,
     @JsonIgnore
     private val content: String?
 ) : File(exists, hash, language, contentLength, url) {
@@ -41,5 +41,5 @@ open class RawFile(
 
 open class ExcerptFile(
     exists: Boolean, hash: String?, language: String?,
-    contentLength: Int?, url: String?, val excerpt: String?
+    contentLength: Long?, url: String?, val excerpt: String?
 ) : File(exists, hash, language, contentLength, url)

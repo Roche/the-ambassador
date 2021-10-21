@@ -1,6 +1,7 @@
 package com.filipowm.gitlab.api.project.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.filipowm.gitlab.api.model.UserState
 
 data class SimpleUser(
     @JsonProperty("avatar_url")

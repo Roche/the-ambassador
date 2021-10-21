@@ -5,7 +5,7 @@ open class Documentation(
     hash: String?,
     open var complexity: DocumentationComplexity?,
     exists: Boolean,
-    contentLength: Int?,
+    contentLength: Long?,
     url: String?
 ) : File(exists, hash, language, contentLength, url) {
     companion object {
@@ -20,7 +20,7 @@ open class Documentation(
             )
         }
 
-        fun create(exists: Boolean, contentLength: Int?): Documentation {
+        fun create(exists: Boolean, contentLength: Long?): Documentation {
             return Documentation(null, null, null, exists, contentLength, null)
         }
     }

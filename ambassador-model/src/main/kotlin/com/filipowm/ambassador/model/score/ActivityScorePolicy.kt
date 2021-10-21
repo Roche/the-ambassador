@@ -18,7 +18,7 @@ object ActivityScorePolicy : ScorePolicy {
         }
     }
 
-    fun <T : FileFeature<*>> ScoreBuilder.FeatureScoreBuilder<T, ScoreBuilder.ParentScoreBuilder>.forFile(minimumSize: Int, boost: Int): ScoreBuilder.ParentScoreBuilder {
+    fun <T : FileFeature<*>> ScoreBuilder.FeatureScoreBuilder<T, ScoreBuilder.ParentScoreBuilder>.forFile(minimumSize: Long, boost: Int): ScoreBuilder.ParentScoreBuilder {
         return this
             .filter { it.hasSizeAtLeast(minimumSize) }
             .calculate { _, score -> score + boost }

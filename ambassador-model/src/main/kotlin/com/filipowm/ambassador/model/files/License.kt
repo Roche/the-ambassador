@@ -6,7 +6,7 @@ class License(
     language: String?,
     exists: Boolean,
     hash: String?,
-    contentLength: Int?,
+    contentLength: Long?,
     url: String?
 ) : File(exists, hash, language, contentLength, url) {
 

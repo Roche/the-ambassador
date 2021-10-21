@@ -15,12 +15,12 @@ import com.filipowm.gitlab.api.GitLab
 import com.filipowm.gitlab.api.model.AccessLevelName
 import com.filipowm.gitlab.api.model.AccessLevelName.*
 import com.filipowm.gitlab.api.model.IssueStatisticsQuery
-import com.filipowm.gitlab.api.project.CommitsQuery
-import com.filipowm.gitlab.api.project.MergeRequestsQuery
+import com.filipowm.gitlab.api.project.commits.CommitsQuery
+import com.filipowm.gitlab.api.project.mergerequests.MergeRequestsQuery
 import com.filipowm.gitlab.api.project.ProjectListQuery
 import com.filipowm.gitlab.api.project.ProjectQuery
-import com.filipowm.gitlab.api.project.model.MergeRequest
-import com.filipowm.gitlab.api.project.model.UserState
+import com.filipowm.gitlab.api.project.mergerequests.MergeRequest
+import com.filipowm.gitlab.api.model.UserState
 import com.filipowm.gitlab.api.utils.Pagination
 import com.filipowm.gitlab.api.utils.Sort
 import kotlinx.coroutines.flow.Flow
