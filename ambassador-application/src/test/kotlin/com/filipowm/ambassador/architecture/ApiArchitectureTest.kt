@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @AnalyzeClasses(packagesOf = [TheAmbassadorApplication::class])
@@ -34,6 +35,16 @@ class ApiArchitectureTest {
     @ArchTest
     private val `controller methods should not declare any exceptions` = endpoints()
         .should().notDeclareThrowableOfType(JavaClass.Predicates.assignableTo(Throwable::class.java))
+
+    @ArchTest
+    private val `transactions should no start in controllers` = controllers()
+        .should()
+        .notBeAnnotatedWith(Transactional::class.java)
+
+    @ArchTest
+    private val `transactions should no start in controller methods` = endpoints()
+        .should()
+        .notBeAnnotatedWith(Transactional::class.java)
 
     private fun controllers() = classes().that().areAnnotatedWith(RestController::class.java)
 
