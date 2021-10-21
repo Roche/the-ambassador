@@ -31,4 +31,6 @@ class ProjectApi internal constructor(basePath: String, client: GitLabHttpClient
     fun members(): MembersApi = MembersApi("$basePath/members/all", client)
 
     fun mergeRequests(): MergeRequestsApi = MergeRequestsApi("$basePath/merge_requests", client)
+
+    fun packages(): PackagesApi = PackagesApi("$basePath/packages", client)
 }
