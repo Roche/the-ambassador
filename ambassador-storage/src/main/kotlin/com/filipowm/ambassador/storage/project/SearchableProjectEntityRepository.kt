@@ -3,7 +3,7 @@ package com.filipowm.ambassador.storage.project
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.filipowm.ambassador.model.project.Project
 import com.filipowm.ambassador.model.project.Visibility
-import com.filipowm.ambassador.storage.Sorting
+import com.filipowm.ambassador.storage.jooq.Sorting
 import com.filipowm.ambassador.storage.jooq.Json
 import com.filipowm.ambassador.storage.jooq.tables.Project.PROJECT
 import com.filipowm.ambassador.storage.jooq.tables.records.ProjectRecord

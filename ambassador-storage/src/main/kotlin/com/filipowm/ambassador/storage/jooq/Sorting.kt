@@ -1,10 +1,10 @@
-package com.filipowm.ambassador.storage
+package com.filipowm.ambassador.storage.jooq
 
+import com.filipowm.ambassador.storage.InvalidSortFieldException
 import org.jooq.Field
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.TableField
-import org.jooq.impl.DSL
 import org.springframework.data.domain.Sort
 
 object Sorting {
@@ -19,11 +19,7 @@ object Sorting {
             return specification.map { createSortField(table, it) }.toList()
         }
 
-        fun by(fieldName: String, direction: Sort.Direction): List<SortField<*>> {
-            return listOf(
-                convertTableFieldToSortField(DSL.field(fieldName), direction)
-            )
-        }
+        fun by(fieldName: String, direction: Sort.Direction): List<SortField<*>> = by(Sort.by(direction, fieldName))
 
         private fun createSortField(table: Table<*>, order: Sort.Order): SortField<*> {
             val sortFieldName = order.property
