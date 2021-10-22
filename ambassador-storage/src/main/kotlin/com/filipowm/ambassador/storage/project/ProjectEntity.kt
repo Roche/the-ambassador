@@ -48,7 +48,7 @@ class ProjectEntity(
 
     fun removeHistoryToMatchLimit(limit: Int) {
         val newHistory = history
-//            .sortBy { it.indexedDate }
+            .sortedByDescending { it.indexedDate }
             .take(limit)
             .toMutableList()
         history.clear()
