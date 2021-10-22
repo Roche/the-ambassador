@@ -198,7 +198,7 @@ class ActivityScorePolicyTest {
         "0,0",
         "0,-1",
     )
-    fun `should use readme only`(expectedBoost: Double, length: Int) {
+    fun `should use readme only`(expectedBoost: Double, length: Long) {
         verifyDocumentationBoost(expectedBoost, length, ReadmeFeature::class) { ActivityData(readme = it) }
     }
 
@@ -210,7 +210,7 @@ class ActivityScorePolicyTest {
         "0,0",
         "0,-1",
     )
-    fun `should use contribution guide only`(expectedBoost: Double, length: Int) {
+    fun `should use contribution guide only`(expectedBoost: Double, length: Long) {
         verifyDocumentationBoost(expectedBoost, length, ContributingGuideFeature::class) { ActivityData(contributionGuide = it) }
     }
 
@@ -222,7 +222,7 @@ class ActivityScorePolicyTest {
         "0,0",
         "0,-1",
     )
-    fun `should use license only`(expectedBoost: Double, length: Int) {
+    fun `should use license only`(expectedBoost: Double, length: Long) {
         verifyDocumentationBoost(expectedBoost, length, LicenseFeature::class) { ActivityData(license = it) }
     }
 
@@ -234,11 +234,11 @@ class ActivityScorePolicyTest {
         "0,0",
         "0,-1",
     )
-    fun `should use changelog only`(expectedBoost: Double, length: Int) {
+    fun `should use changelog only`(expectedBoost: Double, length: Long) {
         verifyDocumentationBoost(expectedBoost, length, ChangelogFeature::class) { ActivityData(changelog = it) }
     }
 
-    private fun verifyDocumentationBoost(expectedBoost: Double, length: Int, expectedFeature: KClass<out FileFeature<*>>, dataProvider: (Documentation) -> ActivityData) {
+    private fun verifyDocumentationBoost(expectedBoost: Double, length: Long, expectedFeature: KClass<out FileFeature<*>>, dataProvider: (Documentation) -> ActivityData) {
         // given
         val exists = length >= 0
         val data = dataProvider.invoke(Documentation.create(exists, length))

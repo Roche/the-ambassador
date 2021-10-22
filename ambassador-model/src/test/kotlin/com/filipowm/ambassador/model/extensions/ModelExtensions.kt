@@ -14,9 +14,9 @@ fun Documentation.toRawFile(): RawFile {
     return RawFile(exists, hash, language, contentLength, url, generateContent(contentLength))
 }
 
-private fun generateContent(size: Int?): String? {
+private fun generateContent(size: Long?): String? {
     if (size == null || size <= 0) {
         return null
     }
-    return fairy.textProducer().word(size / 2).substring(0, size - 1)
+    return fairy.textProducer().word((size / 2).toInt()).substring(0, (size - 1).toInt())
 }
