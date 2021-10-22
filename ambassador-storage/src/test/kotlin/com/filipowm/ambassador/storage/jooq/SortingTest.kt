@@ -14,7 +14,7 @@ class SortingTest {
     @Test
     fun `should create sort fields based on sort specification`() {
         // given sort specification with two fields
-        val spec = Sort.by(Sort.Direction.DESC,"score")
+        val spec = Sort.by(Sort.Direction.DESC, "score")
             .and(Sort.by(Sort.Direction.ASC, "name"))
 
         // when create sorting from spec
