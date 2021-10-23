@@ -62,14 +62,14 @@ class Indexing internal constructor(
     fun isIndexingAll(): Boolean = target == ALL_TARGET
 
     companion object {
-        private const val ALL_TARGET = "__ALL__"
+        const val ALL_TARGET = "__ALL__"
 
-        fun start(startedBy: String = "unknown", target: String): Indexing = Indexing(
+        fun start(startedBy: String = "unknown", target: String = ALL_TARGET): Indexing = Indexing(
             startedBy = startedBy,
             target = target
         )
 
-        fun startAll(startedBy: String = "unknown"): Indexing = start(startedBy, ALL_TARGET)
+        fun startAll(startedBy: String = "unknown"): Indexing = start(startedBy)
     }
 
 }

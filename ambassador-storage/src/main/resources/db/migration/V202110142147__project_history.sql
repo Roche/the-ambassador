@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS project_history
 (
     id           UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-    project_id   INTEGER          NOT NULL REFERENCES project(id),
+    project_id   BIGINT           NOT NULL REFERENCES project(id),
     project      JSONB            NOT NULL,
     indexed_date TIMESTAMP        NOT NULL
 );

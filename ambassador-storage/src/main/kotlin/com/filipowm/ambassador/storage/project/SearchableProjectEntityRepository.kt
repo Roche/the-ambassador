@@ -26,9 +26,9 @@ internal class SearchableProjectEntityRepository(
     private val language: String
 ) : ProjectSearchRepository {
 
-    private val mapper = RecordMapper<Record4<Int, String, JSONB, *>, ProjectEntity> {
+    private val mapper = RecordMapper<Record4<Long, String, JSONB, *>, ProjectEntity> {
         ProjectEntity(
-            it.get(PROJECT.ID).toLong(),
+            it.get(PROJECT.ID),
             it.get(PROJECT.NAME),
             objectMapper.readValue(it.get(PROJECT.PROJECT_).data(), Project::class.java),
         )

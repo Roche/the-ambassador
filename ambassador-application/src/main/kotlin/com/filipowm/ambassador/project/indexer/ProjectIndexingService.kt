@@ -8,6 +8,7 @@ import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.security.AuthenticationContext
 import com.filipowm.ambassador.storage.indexing.Indexing
 import com.filipowm.ambassador.storage.indexing.IndexingRepository
+import com.filipowm.ambassador.storage.indexing.IndexingStatus
 import org.springframework.stereotype.Service
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -102,7 +103,7 @@ internal class ProjectIndexingService(
             return IndexingDto.from(idx)
         } else {
             val indexing = indexingRepository.findByLockIsNotNullAndTarget(idx.target)
-                .or { indexingRepository.findFirstByTargetOrderByStartedDateDesc(idx.target) }
+                .or { indexingRepository.findFirstByTargetAndStatusOrderByStartedDateDesc(idx.target, IndexingStatus.IN_PROGRESS) }
                 .orElse(idx)
 
             log.warn("Unable to trigger new indexing, cause indexing '{}' is already in progress and locked.", indexing.getId())

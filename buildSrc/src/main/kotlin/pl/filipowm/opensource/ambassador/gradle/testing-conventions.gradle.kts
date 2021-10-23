@@ -84,11 +84,9 @@ val ci by tasks.registering {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.assertj:assertj-core:3.21.0")
     testImplementation("com.devskiller:jfairy:0.6.4")
     testImplementation("com.tngtech.archunit:archunit-junit5:0.21.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     integrationTestImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 }

@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:13://localhost:5555/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    placeholders:
+      language: 'english'
+    mixed: true
+
+logging.level.root: WARN
+logging.level.com.filipowm.ambassador.storage: INFO
+

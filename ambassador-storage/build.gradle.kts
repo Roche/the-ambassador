@@ -39,6 +39,8 @@ dependencies {
 
     jooqGenerator("org.testcontainers:postgresql:$testcontainersVersion")
     jooqGenerator("org.postgresql:postgresql:$postgresqlDriverVersion")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("net.ttddyy:datasource-proxy:1.7")
 }
 
 jooq {
