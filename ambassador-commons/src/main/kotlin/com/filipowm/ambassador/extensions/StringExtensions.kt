@@ -1,5 +1,11 @@
 package com.filipowm.ambassador.extensions
 
+import java.security.DigestException
+import java.security.GeneralSecurityException
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+import java.util.*
+import kotlin.collections.HashSet
 import kotlin.math.max
 import kotlin.math.min
 
@@ -89,6 +95,24 @@ fun String.substringWithFullWords(startIndex: Int = 0, maxEndIndex: Int, vararg 
 fun String.substringWithFullWords(startIndex: Int = 0, maxEndIndex: Int): String = this.substringWithFullWords(startIndex, maxEndIndex, ' ')
 
 fun String.substringWithFullWords(startIndex: Int = 0): String = this.substringWithFullWords(startIndex, this.length - 1, ' ')
+
+fun String.sha256(): Optional<String> {
+    if (this.isBlank()) {
+        return Optional.empty()
+    }
+    val bytes = this.toByteArray()
+    return try {
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        val result = digest.fold("", { str, it -> str + "%02x".format(it) })
+        Optional.of(result)
+    } catch (e: GeneralSecurityException) {
+        when (e) {
+            is DigestException, is NoSuchAlgorithmException -> Optional.empty()
+            else -> throw e
+        }
+    }
+}
 
 private fun toDelimiterSet(delimiters: CharArray): Set<Int> {
     val delimiterHashSet: MutableSet<Int> = HashSet()

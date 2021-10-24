@@ -80,15 +80,15 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     override suspend fun map(input: FakeProject): Project = input.asProject()
 
     override suspend fun readIssues(projectId: String): Issues {
-        return Issues(0, 0, 0, 0, 0)
+        val open = fakeDataProvider.nextInt()
+        val closed = fakeDataProvider.nextInt()
+        return Issues(open + closed, open, closed, fakeDataProvider.nextInt(max = closed), fakeDataProvider.nextInt(max = open))
     }
 
-    override suspend fun readContributors(projectId: String): List<Contributor> {
-        return listOf()
-    }
+    override suspend fun readContributors(projectId: String): List<Contributor> = fakeDataProvider.generate(max = 50, generator = fakeDataProvider::contributor)
 
     override suspend fun readLanguages(projectId: String): Map<String, Float> {
-        return mapOf()
+        return fakeDataProvider.languages()
     }
 
     override suspend fun readCommits(projectId: String, ref: String): Timeline {
@@ -96,7 +96,10 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     }
 
     override suspend fun readFile(projectId: String, path: String, ref: String): Optional<RawFile> {
-        return Optional.empty()
+        val value = fakeDataProvider.withBinaryChance(15,
+                                                      { fakeDataProvider.createFile() },
+                                                      { RawFile.notExistent() })
+        return Optional.of(value!!)
     }
 
     override suspend fun readReleases(projectId: String): Timeline {
@@ -104,11 +107,15 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     }
 
     override suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch> {
-        return listOf()
+        return (0..fakeDataProvider.nextInt(max = 3))
+            .map { fakeDataProvider.branch() }
+            .toSet()
+            .map { ProtectedBranch(it, fakeDataProvider.bool(), fakeDataProvider.bool()) }
+            .toList()
     }
 
     override suspend fun readMembers(projectId: String): List<Member> {
-        return listOf()
+        return fakeDataProvider.generate(max = 20, generator = fakeDataProvider::member)
     }
 
     override suspend fun readPullRequests(projectId: String): Timeline {
