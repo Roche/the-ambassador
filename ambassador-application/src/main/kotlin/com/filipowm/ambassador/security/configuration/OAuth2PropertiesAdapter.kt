@@ -7,15 +7,15 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 
 internal object OAuth2PropertiesAdapter : Adapter<OAuth2ClientProperties, ClientRegistration> {
-    override fun convert(props: OAuth2ClientProperties?): ClientRegistration {
-        return ClientRegistration.withRegistrationId(props!!.name.toCamelCase())
-            .authorizationUri(props.authorizationUri)
-            .jwkSetUri(props.jwkSetUri)
-            .tokenUri(props.tokenUri)
-            .userInfoUri(props.userInfoUri)
-            .userNameAttributeName(props.usernameAttributeName)
-            .scope(props.scopes)
-            .clientName(props.name)
+    override fun convert(value: OAuth2ClientProperties?): ClientRegistration {
+        return ClientRegistration.withRegistrationId(value!!.name.toCamelCase())
+            .authorizationUri(value.authorizationUri)
+            .jwkSetUri(value.jwkSetUri)
+            .tokenUri(value.tokenUri)
+            .userInfoUri(value.userInfoUri)
+            .userNameAttributeName(value.usernameAttributeName)
+            .scope(value.scopes)
+            .clientName(value.name)
             .clientId("__dummy__")
             .clientSecret("__dummy__")
             .redirectUri("__dummy__")

@@ -38,7 +38,7 @@ fun Test.configure() {
 fun createTestTask(name: String, desc: String): Test {
     sourceSets {
         create(name) {
-            compileClasspath += main.get().output + configurations.testRuntimeClasspath
+            compileClasspath += main.get().output + configurations.testRuntimeClasspath.get()
             runtimeClasspath += output + compileClasspath
         }
     }

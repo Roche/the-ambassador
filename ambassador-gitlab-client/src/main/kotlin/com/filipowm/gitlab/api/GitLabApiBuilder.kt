@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.filipowm.gitlab.api.auth.AnonymousAuthProvider
@@ -154,20 +155,20 @@ class GitLabApiBuilder internal constructor() {
         private var connectTimeout = 10000L
         private var socketTimeout = 10000L
         private var clientThreadsCount = 4
-        private var objectMapper = ObjectMapper()
-            .registerModule(Jdk8Module())
-            .registerModule(JavaTimeModule())
-            .registerModule(GitLabModule())
-            .setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY)
-            .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY)
-            .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-            .configure(MapperFeature.AUTO_DETECT_FIELDS, true)
-            .configure(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS, true)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS, false)
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
+        private var objectMapper = JsonMapper.builder()
+            .addModules(Jdk8Module(), JavaTimeModule(), GitLabModule())
+            .visibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY)
+            .visibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY)
+            .defaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+            .enable(MapperFeature.AUTO_DETECT_FIELDS)
+            .enable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
+            .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+            .build()
         internal var logLevel = LogLevel.NONE
         private val exceptionHandlers: MutableMap<Int, ExceptionHandler> = mutableMapOf()
 
@@ -257,14 +258,6 @@ class GitLabApiBuilder internal constructor() {
 
         fun withProjectAccessToken(projectAccessToken: String): GitLabApiBuilder {
             return withPersonalAccessToken(projectAccessToken)
-        }
-
-        fun withOAuth2(accessToken: String): GitLabApiBuilder {
-            return gitLabApiBuilder
-        }
-
-        fun withOAuth2(username: String, password: CharSequence): GitLabApiBuilder {
-            return gitLabApiBuilder
         }
     }
 }

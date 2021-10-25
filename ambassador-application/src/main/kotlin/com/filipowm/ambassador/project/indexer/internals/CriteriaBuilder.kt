@@ -17,6 +17,7 @@ internal class CriteriaBuilder<T>(private val projectDetailsResolver: ProjectDet
         return this
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun createCriteriaFrom(criteriaHolder: Any): CriteriaBuilder<T> {
         val createdCriteria = criteriaHolder.javaClass.declaredMethods
             .filter {

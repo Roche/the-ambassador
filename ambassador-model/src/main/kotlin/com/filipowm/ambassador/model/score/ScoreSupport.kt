@@ -20,6 +20,7 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     protected var score: Double = initialScore
     protected val normalizers = mutableListOf<ScoreNormalizer>()
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Feature<*>> withFeature(featureType: KClass<T>): FeatureScoreBuilder<T, SELF> {
         expectedFeatures.add(featureType)
         val feature = features.find(featureType)
@@ -59,10 +60,9 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
         }
 
         fun calculate(calculator: (T, Double) -> Double): U {
-            var partialScore: Double? = null
             if (feature != null && feature.exists() && filters.stream().allMatch { it.test(feature) }) {
                 scoreBuilder.usedFeatures.add(feature)
-                partialScore = calculator(feature, scoreBuilder.score)
+                val partialScore = calculator(feature, scoreBuilder.score)
                 scoreBuilder.score = partialScore
             }
             return scoreBuilder

@@ -23,6 +23,7 @@ import com.filipowm.gitlab.api.project.mergerequests.MergeRequest
 import com.filipowm.gitlab.api.model.UserState
 import com.filipowm.gitlab.api.utils.Pagination
 import com.filipowm.gitlab.api.utils.Sort
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.time.LocalDateTime
@@ -31,6 +32,7 @@ import kotlin.streams.toList
 import com.filipowm.gitlab.api.model.AccessLevel as BranchingAccessLevel
 import com.filipowm.gitlab.api.project.model.Project as GitLabProject
 
+@ExperimentalCoroutinesApi
 class GitLabSource(
     private val gitlab: GitLab
 ) : ProjectSource<GitLabProject> {
@@ -199,6 +201,7 @@ class GitLabSource(
         return timeline
     }
 
+    @Suppress("DEPRECATION")
     private fun mapAccessLevel(gitlabAccessLevelName: AccessLevelName?): AccessLevel {
         return when (gitlabAccessLevelName) {
             ADMIN, MAINTAINER, OWNER -> AccessLevel.ADMIN

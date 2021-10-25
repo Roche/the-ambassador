@@ -103,8 +103,7 @@ open class JooqGenerate @Inject constructor(
 
         // avoid JDBC element being written when it has an empty configuration
         val jdbc: Jdbc = configuration.jdbc
-        if (jdbc.driver == null && jdbc.url == null
-            && jdbc.schema == null && jdbc.user == null
+        if (jdbc.driver == null && jdbc.url == null && jdbc.user == null
             && jdbc.username == null && jdbc.password == null
             && jdbc.isAutoCommit == null && jdbc.properties.isEmpty()
         ) {

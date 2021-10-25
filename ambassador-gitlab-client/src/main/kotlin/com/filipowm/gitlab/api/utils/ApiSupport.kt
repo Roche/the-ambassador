@@ -2,12 +2,14 @@ package com.filipowm.gitlab.api.utils
 
 import com.filipowm.gitlab.api.client.GitLabHttpClient
 import com.filipowm.gitlab.api.exceptions.Exceptions
-import io.ktor.client.call.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.util.reflect.*
 import java.util.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
@@ -56,9 +58,15 @@ fun parseValue(value: Any): Any {
 suspend inline fun <reified T> HttpResponse.receiveWithExpandedErasure(): T {
     val type = typeInfo<T>()
     val reifiedType = Optional.ofNullable(type.kotlinType?.javaType).orElse(type.reifiedType)
-    val reworkedType = TypeInfo(type.type, reifiedType, type.kotlinType)
+    val reworkedType = TypeInfoImpl(type.type, reifiedType, type.kotlinType)
     return call.receive(reworkedType) as T
 }
+
+data class TypeInfoImpl(
+    override val type: KClass<*>,
+    override val reifiedType: Type,
+    override val kotlinType: KType? = null
+) : TypeInfo
 
 suspend inline fun <reified T> GitLabHttpClient.getPage(
     path: String,
@@ -84,7 +92,7 @@ suspend inline fun <reified T> GitLabHttpClient.getList(
     return response.receiveWithExpandedErasure()
 }
 
-suspend inline fun <reified T> GitLabHttpClient.optionally(action: suspend GitLabHttpClient.() -> T): Optional<T> {
+suspend inline fun <reified T> GitLabHttpClient.optionally(action: GitLabHttpClient.() -> T): Optional<T> {
     return try {
         Optional.ofNullable(action.invoke(this))
     } catch (ex: ClientRequestException) {

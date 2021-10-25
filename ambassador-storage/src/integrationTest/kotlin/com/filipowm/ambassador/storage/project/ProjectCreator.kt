@@ -14,6 +14,7 @@ object ProjectCreator {
 
     private val source: FakeSource = FakeSource(GenerationSpec(1, false))
 
+    @Suppress("UNCHECKED_CAST")
     fun create(id: String = source.createFakeId().toString()): Project {
         return runBlocking {
             val project = source.getById(id).get()

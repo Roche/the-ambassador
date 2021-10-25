@@ -19,6 +19,7 @@ internal object StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T : Enum<*>?> getEnumType(targetType: Class<T>): Class<T> {
         var enumType: Class<T>? = targetType
         while (enumType != null && !enumType.isEnum) {

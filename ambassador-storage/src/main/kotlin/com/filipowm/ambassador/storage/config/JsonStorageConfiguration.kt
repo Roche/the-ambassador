@@ -21,7 +21,7 @@ class JsonStorageConfiguration : ObjectMapperSupplier {
 
     companion object {
         val OBJECT_MAPPER = ObjectMapper()
-            .registerModules(KotlinModule(), Jdk8Module(), JavaTimeModule(), AmbassadorModule())
+            .registerModules(KotlinModule.Builder().build(), Jdk8Module(), JavaTimeModule(), AmbassadorModule())
             .setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY)
             .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)

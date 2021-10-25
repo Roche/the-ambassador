@@ -8,6 +8,7 @@ import com.filipowm.ambassador.model.feature.AbstractFeature
 import com.filipowm.ambassador.model.feature.Features
 
 internal object FeaturesDeserializer : StdDeserializer<Features>(Features::class.java) {
+    @Suppress("IMPLICIT_CAST_TO_ANY")
     override fun deserialize(p: JsonParser?, ctx: DeserializationContext): Features? {
         if (p == null) {
             return null

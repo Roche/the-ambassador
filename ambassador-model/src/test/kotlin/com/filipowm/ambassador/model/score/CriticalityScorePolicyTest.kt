@@ -133,10 +133,7 @@ class CriticalityScorePolicyTest {
         // given
         val data = CriticalityData(releases = releases)
 
-        // when
-        val actual = CriticalityScorePolicy.calculateScoreOf(data.toFeatures())
-
-        // then
+        // expect
         assertWithData(data, expected)
     }
 

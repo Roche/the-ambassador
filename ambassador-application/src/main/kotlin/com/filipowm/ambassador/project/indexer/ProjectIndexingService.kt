@@ -70,6 +70,7 @@ internal class ProjectIndexingService(
         stats.recordExclusion(failedCriteria)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun createIndexer(): ProjectIndexer {
         val source = sources.get("gitlab").get() as ProjectSource<Any>
         return indexerFactory.create(source)

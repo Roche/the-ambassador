@@ -18,9 +18,9 @@ internal class LocaleWebFilter(val localeContextResolver: LocaleContextResolver)
             .switchIfEmpty(Mono.defer {
                 val ctx = localeContextResolver.resolveLocaleContext(exchange)
                 chain.filter(exchange)
-                    .subscriberContext(ReactiveLocaleContextHolder.withLocaleContext(Mono.just(ctx)))
+                    .contextWrite(ReactiveLocaleContextHolder.withLocaleContext(Mono.just(ctx)))
                     .then(Mono.empty())
-            }).flatMap { chain.filter(exchange).subscriberContext(ReactiveLocaleContextHolder.withLocaleContext(Mono.just(it))) }
+            }).flatMap { chain.filter(exchange).contextWrite(ReactiveLocaleContextHolder.withLocaleContext(Mono.just(it))) }
     }
 
     private fun tryGetFromRequest(exchange: ServerWebExchange): Mono<LocaleContext> {

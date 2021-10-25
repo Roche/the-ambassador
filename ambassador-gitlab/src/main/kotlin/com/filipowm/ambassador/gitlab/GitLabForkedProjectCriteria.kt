@@ -27,10 +27,10 @@ internal object GitLabForkedProjectCriteria : ForkedProjectCriteria<Project> {
         }
     }
 
-    override fun forkHasStars(expectedStars: Int): CriterionVerifier<Project> = {
+    override fun forkHasStars(stars: Int): CriterionVerifier<Project> = {
         it.whenForked { _ ->
-            val stars = it.starCount ?: 0
-            stars >= expectedStars
+            val actualStars = it.starCount ?: 0
+            actualStars >= stars
         }
     }
 

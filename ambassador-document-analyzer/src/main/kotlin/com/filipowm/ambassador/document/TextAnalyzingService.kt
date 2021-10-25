@@ -12,6 +12,7 @@ data class TextAnalyzingService(
     val readabilityTest: ReadabilityTest,
     val configuration: TextAnalyzerConfiguration
 ) {
+    @ObsoleteCoroutinesApi
     private val dispatcher = newFixedThreadPoolContext(5, "text-analyzer")
 
     companion object {
