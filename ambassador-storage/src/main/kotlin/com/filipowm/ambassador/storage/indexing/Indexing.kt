@@ -7,7 +7,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "indexing")
-class Indexing internal constructor(
+data class Indexing internal constructor(
     @Id @GeneratedValue
     private var id: UUID? = null,
     @Column(name = "started_by")
