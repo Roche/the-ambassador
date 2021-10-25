@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.architecture
+package com.filipowm.ambassador
 
 import com.tngtech.archunit.base.DescribedPredicate
 import com.tngtech.archunit.lang.syntax.elements.ClassesThat

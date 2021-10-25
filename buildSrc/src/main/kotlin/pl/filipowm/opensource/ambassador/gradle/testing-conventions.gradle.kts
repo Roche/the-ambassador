@@ -35,40 +35,50 @@ fun Test.configure() {
     finalizedBy(tasks.jacocoTestReport)
 }
 
+fun createTestTask(name: String, desc: String): Test {
+    sourceSets {
+        create(name) {
+            compileClasspath += main.get().output + configurations.testRuntimeClasspath
+            runtimeClasspath += output + compileClasspath
+        }
+    }
+
+    val testTask = task<Test>(name) {
+        description = desc
+        group = "verification"
+        testClassesDirs = sourceSets[name].output.classesDirs
+        classpath = sourceSets[name].runtimeClasspath
+        configure()
+    }
+
+    tasks.check {
+        dependsOn(testTask)
+    }
+
+    return testTask
+}
+
 tasks.test {
     configure()
 }
 
-sourceSets {
-    create("integrationTest") {
-        compileClasspath += main.get().output + configurations.testRuntimeClasspath
-        runtimeClasspath += output + compileClasspath
-    }
-}
+val integrationTest = createTestTask("integrationTest", "Runs the integration tests")
+val architectureTest = createTestTask("architectureTest", "Runs the integration tests")
 
-val integrationTest = task<Test>("integrationTest") {
-    description = "Runs the integration tests"
-    group = "verification"
-    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
-    classpath = sourceSets["integrationTest"].runtimeClasspath
-    configure()
-}
-
- tasks.jacocoTestReport {
+tasks.jacocoTestReport {
     this.reports {
         xml.required.set(true)
         html.required.set(true)
     }
 }
 
-tasks.check {
-    dependsOn(integrationTest)
+fun ConfigurationContainer.gettingWithSources() = getting {
+    extendsFrom(implementation.get())
+    extendsFrom(testImplementation.get())
 }
 
-val integrationTestImplementation by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-    extendsFrom(configurations.testImplementation.get())
-}
+val integrationTestImplementation by configurations.gettingWithSources()
+val architectureTestImplementation by configurations.gettingWithSources()
 
 val ci by tasks.registering {
     description = "Runs the tests on CI based on flag"
@@ -76,9 +86,10 @@ val ci by tasks.registering {
     val testType = ofNullable(System.getenv("TEST_TYPE"))
         .map(String::toUpperCase)
         .orElse("ALL")
-    when(testType) {
+    when (testType) {
         "INTEGRATION" -> dependsOn(integrationTest)
         "UNIT" -> dependsOn(tasks.test.get())
+        "ARCHITECTURE" -> dependsOn(architectureTest)
         else -> dependsOn(tasks.check.get())
     }
 }
@@ -87,6 +98,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.assertj:assertj-core:3.21.0")
     testImplementation("com.devskiller:jfairy:0.6.4")
-    testImplementation("com.tngtech.archunit:archunit-junit5:0.21.0")
     integrationTestImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    architectureTestImplementation("com.tngtech.archunit:archunit-junit5:0.21.0")
 }

@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.architecture
+package com.filipowm.ambassador
 
 import com.filipowm.ambassador.TheAmbassadorApplication
 import com.tngtech.archunit.junit.AnalyzeClasses
