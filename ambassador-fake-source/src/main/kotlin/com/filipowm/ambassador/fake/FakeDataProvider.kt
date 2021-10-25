@@ -57,6 +57,10 @@ class FakeDataProvider {
         return faker.number().numberBetween(min, max)
     }
 
+    fun nextDouble(min: Int = 0, max: Int = 1000, maxNumberOfDecimals: Int = 2): Double {
+        return faker.number().randomDouble(maxNumberOfDecimals, min, max)
+    }
+
     fun bool(): Boolean = faker.bool().bool()
 
     fun date(from: LocalDate = LocalDate.now().minusYears(5), to: LocalDate = LocalDate.now()): LocalDate = faker.date().between(from.toDate(), to.toDate()).toLocalDate()

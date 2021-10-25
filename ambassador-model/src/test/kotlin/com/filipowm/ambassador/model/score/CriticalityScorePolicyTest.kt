@@ -1,7 +1,7 @@
 package com.filipowm.ambassador.model.score
 
 import com.filipowm.ambassador.model.Score
-import com.filipowm.ambassador.model.dataproviders.TimelineGenerator
+import com.filipowm.ambassador.model.stats.TimelineGenerator
 import com.filipowm.ambassador.model.extensions.*
 import com.filipowm.ambassador.model.feature.*
 import com.filipowm.ambassador.model.stats.Timeline

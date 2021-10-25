@@ -8,6 +8,7 @@ import com.filipowm.ambassador.model.project.*
 import com.filipowm.ambassador.model.source.ProjectSource
 import com.filipowm.ambassador.model.stats.Statistics
 import com.filipowm.ambassador.model.stats.Timeline
+import com.filipowm.ambassador.model.stats.TimelineGenerator
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.util.*
@@ -92,7 +93,10 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     }
 
     override suspend fun readCommits(projectId: String, ref: String): Timeline {
-        return Timeline()
+        val mean = fakeDataProvider.withBinaryChance(95,
+                                                     { fakeDataProvider.nextDouble(1, 100) },
+                                                     { 0.0 })!! // not active project
+        return TimelineGenerator.withWeekAverage(mean, Calendar.getInstance().getActualMaximum(Calendar.WEEK_OF_YEAR))
     }
 
     override suspend fun readFile(projectId: String, path: String, ref: String): Optional<RawFile> {
@@ -103,7 +107,10 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     }
 
     override suspend fun readReleases(projectId: String): Timeline {
-        return Timeline()
+        val events = fakeDataProvider.withBinaryChance(30,
+                                                       { fakeDataProvider.nextInt(1, 24) },
+                                                       { 0 })!! // not active project
+        return TimelineGenerator.withTotalEvents(events, startDate = LocalDate.now().minusYears(1))
     }
 
     override suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch> {
@@ -119,7 +126,10 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     }
 
     override suspend fun readPullRequests(projectId: String): Timeline {
-        return Timeline()
+        val mean = fakeDataProvider.withBinaryChance(95,
+                                                     { fakeDataProvider.nextDouble(1, 15) },
+                                                     { 0.0 })!! // not active project
+        return TimelineGenerator.withWeekAverage(mean, Calendar.getInstance().getActualMaximum(Calendar.WEEK_OF_YEAR))
     }
 
     fun createFakeId(): Long = fakeDataProvider.nextLong(1, 30000)

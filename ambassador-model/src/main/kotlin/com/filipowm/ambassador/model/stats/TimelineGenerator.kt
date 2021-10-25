@@ -1,6 +1,5 @@
-package com.filipowm.ambassador.model.dataproviders
+package com.filipowm.ambassador.model.stats
 
-import com.filipowm.ambassador.model.stats.Timeline
 import org.apache.commons.math3.distribution.PoissonDistribution
 import java.time.Duration
 import java.time.LocalDate

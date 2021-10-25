@@ -13,7 +13,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-    testImplementation("org.apache.commons:commons-math3:3.6.1")
+    implementation("org.apache.commons:commons-math3:3.6.1")
 }
 
 description = "ambassador-model"
