@@ -21,6 +21,10 @@ object Sorting {
 
         fun by(fieldName: String, direction: Sort.Direction): List<SortField<*>> = by(Sort.by(direction, fieldName))
 
+        fun by(field: Field<*>, direction: Sort.Direction): List<SortField<*>> {
+            return listOf(convertTableFieldToSortField(field,direction))
+        }
+
         private fun createSortField(table: Table<*>, order: Sort.Order): SortField<*> {
             val sortFieldName = order.property
             val sortDirection = order.direction

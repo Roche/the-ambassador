@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Repository
 @Transactional(readOnly = true)
-internal class SearchableProjectEntityRepository(
+class SearchableProjectEntityRepository(
     private val dsl: DSLContext,
     private val objectMapper: ObjectMapper,
     @Value("\${ambassador.language}")
@@ -61,7 +61,7 @@ internal class SearchableProjectEntityRepository(
         if (pageable.sort.isSorted) {
             q.orderBy(Sorting.within(PROJECT).by(pageable.sort))
         } else {
-            q.orderBy(Sorting.within(PROJECT).by(RANK_FIELD, Sort.Direction.DESC))
+            q.orderBy(Sorting.within(PROJECT).by(rankField, Sort.Direction.DESC))
         }
         q.limit(pageable.pageSize)
         q.offset(pageable.offset)

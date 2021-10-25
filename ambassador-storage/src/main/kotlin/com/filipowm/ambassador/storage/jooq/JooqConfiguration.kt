@@ -14,7 +14,7 @@ import org.springframework.jdbc.support.SQLExceptionTranslator
 import javax.sql.DataSource
 
 @Configuration
-internal class JooqConfiguration {
+class JooqConfiguration {
 
     private val log = LoggerFactory.getLogger(JooqConfiguration::class.java)
 

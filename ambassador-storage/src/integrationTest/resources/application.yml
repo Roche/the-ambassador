@@ -12,6 +12,9 @@ spring:
       language: 'english'
     mixed: true
 
+ambassador:
+  language: 'english'
+
 logging.level.root: WARN
 logging.level.com.filipowm.ambassador.storage: INFO
 

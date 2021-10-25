@@ -12,6 +12,8 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
@@ -33,7 +35,9 @@ class JsonStorageConfiguration : ObjectMapperSupplier {
             .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
     }
 
-    override fun get(): ObjectMapper {
-        return OBJECT_MAPPER
-    }
+    @Bean
+    @ConditionalOnMissingBean
+    fun objectMapper(): ObjectMapper = OBJECT_MAPPER
+
+    override fun get(): ObjectMapper = OBJECT_MAPPER
 }
