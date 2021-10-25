@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.configuration.json
+package com.filipowm.ambassador.storage.config
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider

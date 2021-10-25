@@ -123,8 +123,8 @@ class FakeDataProvider {
         val mainDescription = faker.lorem()
             .paragraphs(nextInt(1, 3))
             .flatMap { it.split(" ") }
-        val randomParts = descriptionDice.rollForData(nextInt(1, descriptionDice.sides * 2))
-        val content = (mainDescription + randomParts).shuffled().joinToString { "" }
+        val randomParts = descriptionDice.rollForData(nextInt(1, descriptionDice.sides * 3))
+        val content = (mainDescription + randomParts).shuffled().joinToString()
         return RawFile(true, content.sha256().orElse(null), "english", content.length.toLong(), faker.internet().url(), content)
     }
 
@@ -139,7 +139,7 @@ class FakeDataProvider {
     fun <T> withBinaryChance(chancePercentage: Int, onSuccess: () -> T?, onFailure: () -> T?): T? {
         require(chancePercentage > 0.0)
         require(chancePercentage <= 100.0)
-        return if (faker.number().numberBetween(0, 100) >= chancePercentage) {
+        return if (faker.number().numberBetween(0, 100) <= chancePercentage) {
             onSuccess()
         } else {
             onFailure()

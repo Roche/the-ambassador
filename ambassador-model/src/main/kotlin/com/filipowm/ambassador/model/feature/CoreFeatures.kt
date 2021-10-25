@@ -136,7 +136,11 @@ class ProtectedBranchesFeature(value: List<ProtectedBranch>?) : AbstractFeature<
 class CommitsFeature(value: Timeline?) : TimelineFeature(value, "Commits") {
     companion object : FeatureReaderFactory<CommitsFeature> {
         override fun create(): FeatureReader<CommitsFeature> = FeatureReader.create { project, source ->
-            val commitsTimeline = source.readCommits(project.id.toString(), project.defaultBranch!!)
+            val commitsTimeline = if (project.defaultBranch == null) {
+                Timeline()
+            } else {
+                source.readCommits(project.id.toString(), project.defaultBranch)
+            }
             CommitsFeature(commitsTimeline)
         }
     }

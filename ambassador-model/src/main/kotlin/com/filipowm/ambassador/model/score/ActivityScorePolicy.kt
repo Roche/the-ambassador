@@ -58,6 +58,7 @@ object ActivityScorePolicy : ScorePolicy {
                 .withFeature(LastActivityDateFeature::class).calculate { feature, _ -> (1000 - min(feature.daysUntilNow()!!, 365).toDouble() * 2.74) }
                 // gradually scale down boost according to repository creation date to mix with "real" engagement stats
                 .withFeature(CreatedDateFeature::class).calculate { feature, score -> score * (365 - min(feature.daysUntilNow()!!, 365).toDouble()) / 365 }
+                .addNormalizer { abs(it) } // sometimes calculations return negative zero, making comparison (0.0d).equals(-0.0d) fail
                 .reduce { aggScore, subScore -> aggScore + max(subScore, 0.0) }
             // penalize private projects
             .withFeature(VisibilityFeature::class)

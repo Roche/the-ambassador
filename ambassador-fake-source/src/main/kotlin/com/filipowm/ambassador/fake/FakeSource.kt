@@ -66,7 +66,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
             id.toLong(),
             name,
             filter.visibility ?: fakeDataProvider.visibility(),
-            fakeDataProvider.date(),
+            createdDate,
             fakeDataProvider.tags(),
             fakeDataProvider.projectUrl(name),
             fakeDataProvider.avatarUrl(),
@@ -96,7 +96,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     }
 
     override suspend fun readFile(projectId: String, path: String, ref: String): Optional<RawFile> {
-        val value = fakeDataProvider.withBinaryChance(15,
+        val value = fakeDataProvider.withBinaryChance(1,
                                                       { fakeDataProvider.createFile() },
                                                       { RawFile.notExistent() })
         return Optional.of(value!!)
@@ -121,4 +121,6 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
     override suspend fun readPullRequests(projectId: String): Timeline {
         return Timeline()
     }
+
+    fun createFakeId(): Long = fakeDataProvider.nextLong(1, 30000)
 }

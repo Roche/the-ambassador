@@ -65,6 +65,36 @@ class ProjectEntity(
         this.lastIndexedDate = LocalDateTime.now()
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ProjectEntity
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (project != other.project) return false
+        if (stars != other.stars) return false
+        if (criticalityScore != other.criticalityScore) return false
+        if (activityScore != other.activityScore) return false
+        if (score != other.score) return false
+        if (lastIndexedDate != other.lastIndexedDate) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + (name?.hashCode() ?: 0)
+        result = 31 * result + (project?.hashCode() ?: 0)
+        result = 31 * result + stars
+        result = 31 * result + (criticalityScore?.hashCode() ?: 0)
+        result = 31 * result + (activityScore?.hashCode() ?: 0)
+        result = 31 * result + (score?.hashCode() ?: 0)
+        result = 31 * result + lastIndexedDate.hashCode()
+        return result
+    }
+
     companion object Factory {
         fun from(project: Project): ProjectEntity {
             return ProjectEntity(

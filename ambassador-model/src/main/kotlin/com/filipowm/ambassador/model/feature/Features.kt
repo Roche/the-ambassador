@@ -4,7 +4,7 @@ import com.filipowm.ambassador.model.Feature
 import java.util.*
 import kotlin.reflect.KClass
 
-class Features(private val holder: MutableSet<Feature<*>> = mutableSetOf()) : MutableSet<Feature<*>> by holder {
+data class Features(private val holder: MutableSet<Feature<*>> = mutableSetOf()) : MutableSet<Feature<*>> by holder {
 
     constructor(vararg features: Feature<*>) : this() {
         addAll(features)

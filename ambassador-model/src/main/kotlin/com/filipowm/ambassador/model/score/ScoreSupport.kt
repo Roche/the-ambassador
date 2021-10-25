@@ -81,7 +81,7 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     ) : ScoreBuilder<SubScoreBuilder>(name, features, initialScore) {
 
         fun reduce(reducer: (Double, Double) -> Double): ScoreBuilder<*> {
-            val finalScore = Score.final(name, this.score, usedFeatures, setOf())
+            val finalScore = build()
             scoreBuilder.score = reducer.invoke(scoreBuilder.score, this.score)
             scoreBuilder.subScores.add(finalScore)
             return scoreBuilder

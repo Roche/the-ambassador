@@ -1,4 +1,4 @@
-package com.filipowm.ambassador.configuration.json
+package com.filipowm.ambassador.storage.config
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.type.TypeReference

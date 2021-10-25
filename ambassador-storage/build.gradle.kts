@@ -30,6 +30,8 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.flywaydb:flyway-core:8.0.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
     api("com.vladmihalcea:hibernate-types-52:2.13.0")
     implementation("org.jooq:jooq-meta-extensions-hibernate:3.15.3") {
@@ -41,6 +43,7 @@ dependencies {
     jooqGenerator("org.postgresql:postgresql:$postgresqlDriverVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("net.ttddyy:datasource-proxy:1.7")
+    testImplementation(project(":ambassador-fake-source"))
 }
 
 jooq {
