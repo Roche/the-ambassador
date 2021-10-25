@@ -33,7 +33,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
-    api("com.vladmihalcea:hibernate-types-52:2.13.0")
+    api("com.vladmihalcea:hibernate-types-52:2.14.0")
     implementation("org.jooq:jooq-meta-extensions-hibernate:3.15.3") {
         exclude("com.h2database", "h2")
     }
