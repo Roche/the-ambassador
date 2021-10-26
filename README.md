@@ -2,6 +2,21 @@
     <h2 align="center">The Ambassador</h3>
 </p>
 
+<p align="center">
+    <a href="https://github.com/filipowm/the-ambassador/actions/workflows/ci.yml" alt="Build">
+        <img alt="GitHub Workflow for CI" src="https://img.shields.io/github/workflow/status/filipowm/the-ambassador/CI/master"></a>
+    <a href="https://sonarcloud.io/project/overview?id=filipowm_the-ambassador" alt="Quality gate">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=filipowm_the-ambassador&metric=alert_status" /> </a>
+    <a href="https://github.com/filipowm/the-ambassador/commits/master" alt="Last Commit">
+        <img alt="Last Commit" src="https://img.shields.io/github/last-commit/filipowm/the-ambassador/master"></a>
+    <a href="https://github.com/filipowm/the-ambassador/graphs/contributors" alt="Contributors">
+        <img src="https://img.shields.io/github/contributors/filipowm/the-ambassador" /></a>
+    <a href="https://github.com/filipowm/the-ambassador/pulse" alt="Activity">
+        <img src="https://img.shields.io/github/commit-activity/m/filipowm/the-ambassador" /></a>
+    <a href="https://sonarcloud.io/project/overview?id=filipowm_the-ambassador" alt="Language">
+        <img src="https://img.shields.io/github/languages/top/filipowm/the-ambassador" /> </a>
+</p>
+
 The Ambassador will help users of coding platforms to
 create findable, well documented and offering good quality projects.
 It measures project scores (criticality, activity, scorecard),
