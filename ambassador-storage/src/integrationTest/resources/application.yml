@@ -16,5 +16,5 @@ ambassador:
   language: 'english'
 
 logging.level.root: WARN
-logging.level.com.filipowm.ambassador.storage: INFO
+logging.level.com.roche.ambassador.storage: INFO
 

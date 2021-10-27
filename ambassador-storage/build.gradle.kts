@@ -53,11 +53,11 @@ jooq {
             password = "postgres"
             driver = "org.testcontainers.jdbc.ContainerDatabaseDriver"
             url =
-                "jdbc:tc:postgresql:13:///ambassador?TC_TMPFS=/testtmpfs:rw&amp;TC_INITFUNCTION=com.filipowm.ambassador.gradle.utils.DatabaseInit::flyway"
+                "jdbc:tc:postgresql:13:///ambassador?TC_TMPFS=/testtmpfs:rw&amp;TC_INITFUNCTION=com.roche.ambassador.gradle.utils.DatabaseInit::flyway"
         }
         generator {
             target {
-                packageName = "com.filipowm.ambassador.storage.jooq"
+                packageName = "com.roche.ambassador.storage.jooq"
                 directory = "build/generated-src/jooq/main"
             }
             database {
