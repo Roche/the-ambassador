@@ -99,5 +99,5 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.21.0")
     testImplementation("com.devskiller:jfairy:0.6.4")
     integrationTestImplementation("org.testcontainers:postgresql:$testcontainersVersion")
-    architectureTestImplementation("com.tngtech.archunit:archunit-junit5:0.21.0")
+    architectureTestImplementation("com.tngtech.archunit:archunit-junit5:0.22.0")
 }
