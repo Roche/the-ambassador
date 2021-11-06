@@ -86,6 +86,7 @@ internal class CoreProjectIndexer(
         }!!
     }
 
+    @SuppressWarnings("TooGenericExceptionCaught")
     override suspend fun indexAll(
         onStarted: IndexingStartedCallback,
         onFinished: IndexingFinishedCallback,

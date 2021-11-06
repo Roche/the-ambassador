@@ -207,5 +207,4 @@ class CriticalityScorePolicyTest {
     }
 
     private fun ObjectAssert<Score>.hasCorrectValue(data: CriticalityData): ObjectAssert<Score> = hasCorrectValueBasedOnCalculator(data, SimpleCriticalityScoreCalculator)
-
 }

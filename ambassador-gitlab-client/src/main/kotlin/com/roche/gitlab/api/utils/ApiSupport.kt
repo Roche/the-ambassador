@@ -92,6 +92,7 @@ suspend inline fun <reified T> GitLabHttpClient.getList(
     return response.receiveWithExpandedErasure()
 }
 
+@SuppressWarnings("SwallowedException")
 suspend inline fun <reified T> GitLabHttpClient.optionally(action: GitLabHttpClient.() -> T): Optional<T> {
     return try {
         Optional.ofNullable(action.invoke(this))

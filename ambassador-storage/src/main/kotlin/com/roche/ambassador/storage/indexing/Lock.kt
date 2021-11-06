@@ -13,5 +13,4 @@ class Lock(private var id: UUID? = null) : Identifiable {
     fun setId(id: UUID?) {
         this.id = id
     }
-
 }

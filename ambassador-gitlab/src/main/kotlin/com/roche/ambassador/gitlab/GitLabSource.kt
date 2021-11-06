@@ -223,6 +223,5 @@ class GitLabSource(
         override fun getWebUrl(): String = attributes["web_url"] as String
 
         override fun isAdmin(): Boolean = attributes["is_admin"] as Boolean
-
     }
 }

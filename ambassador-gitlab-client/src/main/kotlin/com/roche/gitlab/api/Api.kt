@@ -9,7 +9,11 @@ import java.util.stream.Stream
 
 abstract class Api(val basePath: String, val client: GitLabHttpClient) {
 
-    protected suspend inline fun <reified T> doGet(path: String = "", params: Map<String, Any?> = mapOf(), headers: Map<String, Any?> = mapOf()): T {
+    protected suspend inline fun <reified T> doGet(
+        path: String = "",
+        params: Map<String, Any?> = mapOf(),
+        headers: Map<String, Any?> = mapOf()
+    ): T {
         return client.get(path = "$basePath/$path") {
             params.forEach { parameter(it.key, it.value) }
             headers.forEach { header(it.key, it.value) }
@@ -30,7 +34,11 @@ abstract class Api(val basePath: String, val client: GitLabHttpClient) {
         }
     }
 
-    protected suspend inline fun <reified T> doGetOptional(path: String = "", params: Map<String, Any?> = mapOf(), headers: Map<String, Any?> = mapOf()): Optional<T> {
+    protected suspend inline fun <reified T> doGetOptional(
+        path: String = "",
+        params: Map<String, Any?> = mapOf(),
+        headers: Map<String, Any?> = mapOf()
+    ): Optional<T> {
         return client.optionally {
             get(path = "$basePath/$path") {
                 params.forEach { parameter(it.key, it.value) }
@@ -77,7 +85,11 @@ abstract class Api(val basePath: String, val client: GitLabHttpClient) {
         }
     }
 
-    protected suspend inline fun <reified T> doDelete(path: String = "", params: Map<String, Any?> = mapOf(), headers: Map<String, Any?> = mapOf()) {
+    protected suspend inline fun <reified T> doDelete(
+        path: String = "",
+        params: Map<String, Any?> = mapOf(),
+        headers: Map<String, Any?> = mapOf()
+    ) {
         return client.delete(path = "$basePath/$path") {
             params.forEach { parameter(it.key, it.value) }
             headers.forEach { header(it.key, it.value) }

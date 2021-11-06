@@ -10,5 +10,5 @@ object ContributorGenerator {
         return Contributor(person.fullName, person.email, fairy.baseProducer().randomBetween(0, 300), person.company.url)
     }
 
-    fun generate(count: Int): List<Contributor> = (0..count-1).map { generate() }
+    fun generate(count: Int): List<Contributor> = (0..count - 1).map { generate() }
 }

@@ -68,5 +68,3 @@ fun ObjectAssert<Score>.isBetween(min: Double, max: Double): ObjectAssert<Score>
 private fun ObjectAssert<Score>.withValue(): AbstractDoubleAssert<*> {
     return extracting { it.value() }.asInstanceOf(InstanceOfAssertFactories.DOUBLE)
 }
-
-

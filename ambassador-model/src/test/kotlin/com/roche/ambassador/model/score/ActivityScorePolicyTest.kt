@@ -114,7 +114,10 @@ class ActivityScorePolicyTest {
 
     @ParameterizedTest
     @MethodSource("commitTimelines")
-    fun `should add bonus multiplier based on commits count`(timeline: Timeline, averageCommits: Double, expectedScoreMoreless: Double) {
+    fun `should add bonus multiplier based on commits count`(
+        timeline: Timeline,
+        expectedScoreMoreless: Double
+    ) {
         val data = ActivityData(commitsTimeline = timeline)
 
         // when
@@ -238,7 +241,12 @@ class ActivityScorePolicyTest {
         verifyDocumentationBoost(expectedBoost, length, ChangelogFeature::class) { ActivityData(changelog = it) }
     }
 
-    private fun verifyDocumentationBoost(expectedBoost: Double, length: Long, expectedFeature: KClass<out FileFeature<*>>, dataProvider: (Documentation) -> ActivityData) {
+    private fun verifyDocumentationBoost(
+        expectedBoost: Double,
+        length: Long,
+        expectedFeature: KClass<out FileFeature<*>>,
+        dataProvider: (Documentation) -> ActivityData
+    ) {
         // given
         val exists = length >= 0
         val data = dataProvider.invoke(Documentation.create(exists, length))
@@ -269,11 +277,11 @@ class ActivityScorePolicyTest {
         @JvmStatic
         fun commitTimelines(): Stream<Arguments> {
             return Stream.of(
-                Arguments.of(TimelineGenerator.withWeekAverage(0.0, 12), 0.0, 0.0),
-                Arguments.of(TimelineGenerator.withWeekAverage(1.0, 12), 1.0, 0.0),
-                Arguments.of(TimelineGenerator.withWeekAverage(2.0, 12), 2.0, 0.0),
-                Arguments.of(TimelineGenerator.withWeekAverage(8.5, 12), 8.5, 39.28),
-                Arguments.of(TimelineGenerator.withWeekAverage(10.5, 12), 10.5, 50.0),
+                Arguments.of(TimelineGenerator.withWeekAverage(0.0, 12), 0.0),
+                Arguments.of(TimelineGenerator.withWeekAverage(1.0, 12), 0.0),
+                Arguments.of(TimelineGenerator.withWeekAverage(2.0, 12), 0.0),
+                Arguments.of(TimelineGenerator.withWeekAverage(8.5, 12), 39.28),
+                Arguments.of(TimelineGenerator.withWeekAverage(10.5, 12), 50.0),
             )
         }
 

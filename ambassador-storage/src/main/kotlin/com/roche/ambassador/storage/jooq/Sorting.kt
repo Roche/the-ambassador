@@ -22,7 +22,7 @@ object Sorting {
         fun by(fieldName: String, direction: Sort.Direction): List<SortField<*>> = by(Sort.by(direction, fieldName))
 
         fun by(field: Field<*>, direction: Sort.Direction): List<SortField<*>> {
-            return listOf(convertTableFieldToSortField(field,direction))
+            return listOf(convertTableFieldToSortField(field, direction))
         }
 
         private fun createSortField(table: Table<*>, order: Sort.Order): SortField<*> {
@@ -38,11 +38,9 @@ object Sorting {
                     .getField(sortFieldName.toUpperCase())
                     .get(table) as TableField<*, *>
             } catch (ex: NoSuchFieldException) {
-                val errorMessage = String.format("Unable to sort by non existent field")
-                throw InvalidSortFieldException(sortFieldName, errorMessage, ex)
+                throw InvalidSortFieldException(sortFieldName, "Unable to sort by non existent field", ex)
             } catch (ex: IllegalAccessException) {
-                val errorMessage = String.format("Unable to sort by non existent field")
-                throw InvalidSortFieldException(sortFieldName, errorMessage, ex)
+                throw InvalidSortFieldException(sortFieldName, "Unable to sort by non existent field", ex)
             }
         }
 

@@ -18,5 +18,4 @@ data class Features(private val holder: MutableSet<Feature<*>> = mutableSetOf())
     }
 
     fun <T : Feature<*>> find(featureType: KClass<T>): Optional<T> = find(featureType.java)
-
 }

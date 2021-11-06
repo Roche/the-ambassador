@@ -36,7 +36,7 @@ class FakeDataProvider {
 
     fun name(): String = nameDice.rollForData()
 
-    fun description(name: String = "", tags: List<String> = listOf()): String {
+    fun description(): String {
         return faker.lorem().sentence(200).substring(0, 1020)
     }
 
@@ -69,7 +69,7 @@ class FakeDataProvider {
         return Visibility.values()[faker.random().nextInt(0, Visibility.values().size - 1)]
     }
 
-    fun projectUrl(name: String): String {
+    fun projectUrl(): String {
         return faker.internet().url()
     }
 
@@ -150,4 +150,3 @@ class FakeDataProvider {
         }
     }
 }
-

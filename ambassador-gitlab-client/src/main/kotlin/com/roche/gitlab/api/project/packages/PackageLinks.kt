@@ -1,6 +1,5 @@
 package com.roche.gitlab.api.project.packages
 
-
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class PackageLinks(

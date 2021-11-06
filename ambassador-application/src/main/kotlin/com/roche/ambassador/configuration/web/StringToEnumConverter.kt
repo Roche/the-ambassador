@@ -28,5 +28,4 @@ internal object StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
         requireNotNull(enumType) { "The target type " + targetType.name + " does not refer to an enum" }
         return enumType
     }
-
 }

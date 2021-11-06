@@ -6,6 +6,7 @@ import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
+@SuppressWarnings("TooManyFunctions")
 internal class Statistics {
 
     private val started = AtomicLong()
@@ -25,11 +26,15 @@ internal class Statistics {
             .forEach { exclusions.computeIfAbsent(it) { AtomicLong() }.incrementAndGet() }
     }
 
-    fun getProjectsStarted() = started.get()
-    fun getProjectsIndexed() = finished.get()
-    fun getDuration() = timer.getDuration()
-    fun getTotalErrors(): Long = getTotalFromAggregate(errors)
-    fun getTotalExclusions(): Long = exclusionsCount.get()
+    private fun getProjectsStarted() = started.get()
+
+    private fun getProjectsIndexed() = finished.get()
+
+    private fun getDuration() = timer.getDuration()
+
+    private fun getTotalErrors(): Long = getTotalFromAggregate(errors)
+
+    private fun getTotalExclusions(): Long = exclusionsCount.get()
 
     fun asIndexingStatistics(): IndexingStatistics = IndexingStatistics(
         getProjectsStarted(),
@@ -66,11 +71,11 @@ internal class Statistics {
         }
         if (getTotalExclusions() > 0) {
             sb.appendLine("Most occurring exclusions:")
-            exclusions.forEach { (exclusion, count) -> sb.appendLine("  - ${exclusion}: ${count.get()}") }
+            exclusions.forEach { (exclusion, count) -> sb.appendLine("  - $exclusion: ${count.get()}") }
         }
         if (getTotalErrors() > 0) {
             sb.appendLine("Most occurring errors:")
-            errors.forEach { (error, count) -> sb.appendLine("  - ${error}: ${count.get()}") }
+            errors.forEach { (error, count) -> sb.appendLine("  - $error: ${count.get()}") }
         }
 
         return sb.toString()

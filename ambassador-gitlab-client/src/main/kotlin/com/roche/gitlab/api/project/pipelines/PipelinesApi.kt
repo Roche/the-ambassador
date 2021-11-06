@@ -21,5 +21,4 @@ class PipelinesApi internal constructor(basePath: String, httpClient: GitLabHttp
         fromPagination: Pagination = Pagination(),
         sort: Sort = Sort.none()
     ): Pager<SimplePipeline> = Pager(fromPagination) { doGetPage(it, pipelinesQuery, sort) }
-
 }

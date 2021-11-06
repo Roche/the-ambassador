@@ -1,5 +1,6 @@
 package com.roche.ambassador.project.indexer
 
+import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.storage.indexing.Indexing
 import com.roche.ambassador.storage.indexing.IndexingRepository
 import kotlinx.coroutines.sync.Semaphore
@@ -36,10 +37,13 @@ private class InMemoryIndexingLock : IndexingLock() {
     override fun isLocked(indexingId: UUID): Boolean = !hasPermits()
 
     private fun hasPermits(): Boolean = localLock.availablePermits > 0
-
 }
 
 private class DatabaseIndexingLock(private val indexingRepository: IndexingRepository) : IndexingLock() {
+
+    companion object {
+        private val logger by LoggerDelegate()
+    }
 
     override fun tryLock(indexing: Indexing): Boolean {
         return if (isLocked(indexing)) {
@@ -54,8 +58,10 @@ private class DatabaseIndexingLock(private val indexingRepository: IndexingRepos
             indexingRepository.save(indexing.lock())
             true
         } catch (e: DataIntegrityViolationException) {
+            logger.debug("Unable to lock due to data integrity violation", e)
             false
         } catch (e: ConstraintViolationException) {
+            logger.debug("Unable to lock due to constraint violation", e)
             false
         }
     }

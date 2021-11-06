@@ -15,5 +15,4 @@ internal object GitLabPersonalProjectCriteria : PersonalProjectCriteria<Project>
     } else {
         true
     }
-
 }

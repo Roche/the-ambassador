@@ -12,5 +12,4 @@ class MembersApi internal constructor(basePath: String, httpClient: GitLabHttpCl
     }
 
     suspend fun paging(fromPagination: Pagination = Pagination()): Pager<Member> = Pager(fromPagination) { doGetPage(it) }
-
 }

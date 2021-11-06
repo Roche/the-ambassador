@@ -30,16 +30,11 @@ import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.network.sockets.ConnectTimeoutException
-import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
 class GitLabApiBuilder internal constructor() {
-
-    companion object {
-        private val log = LoggerFactory.getLogger(GitLabApiBuilder::class.java)
-    }
 
     private var authProvider: AuthProvider = AnonymousAuthProvider
     private var url: String = "https://gitlab.com"

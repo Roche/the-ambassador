@@ -60,6 +60,7 @@ internal class ExceptionHandlingAdvice {
     @ExceptionHandler(AccessDeniedException::class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     fun forbidden(ex: AccessDeniedException, exchange: ServerWebExchange): Mono<Message> {
+        log.debug("Access denied", ex)
         return exchange.getPrincipal<Principal>()
             .map { it.name }
             .doOnNext { log.warn("User '{}' attempted to access '{}' without needed permissions", it, exchange.request.path) }

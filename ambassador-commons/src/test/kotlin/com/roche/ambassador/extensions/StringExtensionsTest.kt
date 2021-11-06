@@ -60,5 +60,4 @@ class StringExtensionsTest {
     fun `should transform to camel case`(input: String, expected: String) {
         Assertions.assertThat(input.toCamelCase()).isEqualTo(expected)
     }
-
 }

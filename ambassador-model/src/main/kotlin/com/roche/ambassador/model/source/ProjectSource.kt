@@ -24,5 +24,4 @@ interface ProjectSource<T> : Specification, IndexingCriteriaProvider<T>, Project
     suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch>
     suspend fun readMembers(projectId: String): List<Member>
     suspend fun readPullRequests(projectId: String): Timeline
-
 }

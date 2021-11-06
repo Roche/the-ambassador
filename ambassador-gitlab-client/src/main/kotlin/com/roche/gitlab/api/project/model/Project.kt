@@ -170,7 +170,7 @@ data class Project(
     @JsonProperty("forked_from_project")
     val forkedFrom: SimpleProject? = null,
 
-    ) : SimpleProject(
+) : SimpleProject(
     avatarUrl, createdAt, defaultBranch, description, forksCount, httpUrlToRepo, id, lastActivityAt, name, nameWithNamespace, namespace, path, pathWithNamespace, readmeUrl,
     sshUrlToRepo, starCount, tagList, topics, webUrl
 ) {
@@ -184,7 +184,12 @@ data class Project(
             return Project(name = name, path = path, description = description, namespace = namespace)
         }
 
-        fun forCreate(name: String, pathNamingStrategy: PathNamingStrategy = PathNamingStrategy.default(), namespaceId: Int? = null, description: String? = null): Project {
+        fun forCreate(
+            name: String,
+            pathNamingStrategy: PathNamingStrategy = PathNamingStrategy.default(),
+            namespaceId: Int? = null,
+            description: String? = null
+        ): Project {
             return forCreate(name = name, path = pathNamingStrategy.getPathFor(name), description = description, namespaceId = namespaceId)
         }
     }

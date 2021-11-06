@@ -31,7 +31,6 @@ private abstract class AbstractExplanation(
     override fun maxValue() = maxValue
 
     override fun details() = details
-
 }
 
 private class NoExplanation(description: String) : AbstractExplanation(description, null, null) {

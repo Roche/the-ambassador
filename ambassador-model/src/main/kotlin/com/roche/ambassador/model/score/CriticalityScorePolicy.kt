@@ -37,7 +37,6 @@ object CriticalityScorePolicy : ScorePolicy {
             val weightsTotal: Double = values()
                 .map { it.weight }
                 .reduce { acc, weight -> acc + weight }
-
         }
     }
 
@@ -57,5 +56,4 @@ object CriticalityScorePolicy : ScorePolicy {
             .addNormalizer { it.round(4) }
             .build()
     }
-
 }

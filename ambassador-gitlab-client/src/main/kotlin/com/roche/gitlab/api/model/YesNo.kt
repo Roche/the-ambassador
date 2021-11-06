@@ -4,5 +4,4 @@ enum class YesNo {
 
     YES,
     NO
-
 }

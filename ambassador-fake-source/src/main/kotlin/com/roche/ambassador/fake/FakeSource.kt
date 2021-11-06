@@ -69,9 +69,9 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
             filter.visibility ?: fakeDataProvider.visibility(),
             createdDate,
             fakeDataProvider.tags(),
-            fakeDataProvider.projectUrl(name),
+            fakeDataProvider.projectUrl(),
             fakeDataProvider.avatarUrl(),
-            fakeDataProvider.description(name, tags),
+            fakeDataProvider.description(),
             fakeDataProvider.defaultBranch(),
             stats,
             fakeDataProvider.date(from = createdDate)

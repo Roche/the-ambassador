@@ -10,7 +10,6 @@ sealed class Range<T : Number>(protected val min: T, protected val max: T) {
         fun unbound(min: Int, max: Int): UnboundRange<Int> = UnboundRange(min, max)
         fun unbound(min: Double, max: Double): UnboundRange<Double> = UnboundRange(min, max)
     }
-
 }
 
 open class BoundRange<T : Number>(min: T, max: T) : Range<T>(min, max) {

@@ -19,7 +19,7 @@ data class IndexerProperties(
 
     @Min(0)
     val historySize: Int = 10,
-    
+
     @NotNull
     val indexEvery: Duration = Duration.ofDays(7),
 

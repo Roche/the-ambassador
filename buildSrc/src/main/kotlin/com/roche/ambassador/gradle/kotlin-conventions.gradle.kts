@@ -44,16 +44,15 @@ detekt {
 
     autoCorrect = true
     reports {
-        xml.enabled = false
+        xml.enabled = true
         html.enabled = false
         txt.enabled = false
+        sarif.enabled = true
     }
     parallel = true
 }
 
 dependencies {
-
-//    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
 }
 
