@@ -21,5 +21,4 @@ class PackagesApi internal constructor(basePath: String, httpClient: GitLabHttpC
         fromPagination: Pagination = Pagination(),
         sort: Sort = Sort.none()
     ): Pager<SimplePackage> = Pager(fromPagination) { doGetPage(it, packagesQuery, sort) }
-
 }

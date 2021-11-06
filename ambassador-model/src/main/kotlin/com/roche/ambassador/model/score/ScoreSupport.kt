@@ -11,7 +11,8 @@ typealias ScoreNormalizer = (Double) -> Double
 
 open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     protected val name: String,
-    private val features: Features, initialScore: Double
+    private val features: Features,
+    initialScore: Double
 ) {
     protected val usedFeatures: MutableSet<Feature<*>> = mutableSetOf()
     protected val expectedFeatures: MutableSet<KClass<*>> = mutableSetOf()
@@ -71,13 +72,15 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
 
     class ParentScoreBuilder internal constructor(
         name: String,
-        features: Features, initialScore: Double = 0.0
+        features: Features,
+        initialScore: Double = 0.0
     ) : ScoreBuilder<ParentScoreBuilder>(name, features, initialScore)
 
     class SubScoreBuilder internal constructor(
         name: String,
         private val scoreBuilder: ScoreBuilder<*>,
-        features: Features, initialScore: Double = 0.0
+        features: Features,
+        initialScore: Double = 0.0
     ) : ScoreBuilder<SubScoreBuilder>(name, features, initialScore) {
 
         fun reduce(reducer: (Double, Double) -> Double): ScoreBuilder<*> {

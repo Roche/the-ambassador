@@ -41,5 +41,4 @@ internal object GitLabForkedProjectCriteria : ForkedProjectCriteria<Project> {
             true
         }
     }
-
 }

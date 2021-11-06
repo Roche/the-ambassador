@@ -49,7 +49,7 @@ internal object GitLabProjectMapper {
         if (url == null || ref == null) {
             return null
         }
-        val refPart = "/${ref}/"
+        val refPart = "/$ref/"
         val toCut = url.indexOf(refPart)
         return url.substring(toCut + refPart.length)
     }

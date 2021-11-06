@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Link(
     @JsonProperty("external")
-    val `external`: Boolean? = null,
+    val external: Boolean? = null,
     @JsonProperty("id")
     val id: Int? = null,
     @JsonProperty("link_type")

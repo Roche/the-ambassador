@@ -10,5 +10,4 @@ interface ProjectHistoryRepository : PagingAndSortingRepository<ProjectHistoryEn
 
     @Query("SELECT ph FROM ProjectHistoryEntity ph WHERE ph.parent.id = :id")
     fun findByProjectId(@Param("id") id: Long, pageable: Pageable): Page<ProjectHistoryEntity>
-
 }

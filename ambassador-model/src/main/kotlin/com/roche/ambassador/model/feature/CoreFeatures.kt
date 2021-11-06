@@ -177,7 +177,6 @@ class MembersFeature(value: Map<AccessLevel, Int>) : AbstractFeature<Map<AccessL
             MembersFeature(memberByLevel)
         }
     }
-
 }
 
 class PullRequestsFeature(value: Timeline) : TimelineFeature(value, "Pull Requests") {

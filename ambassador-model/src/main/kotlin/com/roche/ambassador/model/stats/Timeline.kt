@@ -6,8 +6,12 @@ import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.stream.Collectors
+import kotlin.NoSuchElementException
 
-class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>, val aggregation: TimelineAggregation = TimelineAggregation.NONE) {
+class Timeline(
+    @JsonIgnore private val data: MutableMap<LocalDate, Int>,
+    val aggregation: TimelineAggregation = TimelineAggregation.NONE
+) {
 
     constructor() : this(hashMapOf())
 
@@ -152,7 +156,9 @@ class Timeline(@JsonIgnore private val data: MutableMap<LocalDate, Int>, val agg
         override fun hasNext(): Boolean = currentDate <= endDateInclusive
 
         override fun next(): LocalDate {
-
+            if (!hasNext()) {
+                throw NoSuchElementException("Next date would exceed max end date")
+            }
             val next = currentDate
             currentDate = currentDate.plus(step, stepUnit)
 

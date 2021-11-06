@@ -18,7 +18,10 @@ object ActivityScorePolicy : ScorePolicy {
         }
     }
 
-    fun <T : FileFeature<*>> ScoreBuilder.FeatureScoreBuilder<T, ScoreBuilder.ParentScoreBuilder>.forFile(minimumSize: Long, boost: Int): ScoreBuilder.ParentScoreBuilder {
+    fun <T : FileFeature<*>> ScoreBuilder.FeatureScoreBuilder<T, ScoreBuilder.ParentScoreBuilder>.forFile(
+        minimumSize: Long,
+        boost: Int
+    ): ScoreBuilder.ParentScoreBuilder {
         return this
             .filter { it.hasSizeAtLeast(minimumSize) }
             .calculate { _, score -> score + boost }
@@ -32,7 +35,7 @@ object ActivityScorePolicy : ScorePolicy {
             .withFeature(LicenseFeature::class).forFile(50, 5)
             .withFeature(ChangelogFeature::class).forFile(50, 10)
             .withFeature(DescriptionFeature::class)
-                .filter { it.value().exists() && it.value().get().length >= 30}
+                .filter { it.value().exists() && it.value().get().length >= 30 }
                 .calculate { _, score -> score + 50 }
             .build()
         // @formatter:on

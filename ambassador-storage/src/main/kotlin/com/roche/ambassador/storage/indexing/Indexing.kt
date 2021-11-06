@@ -71,5 +71,4 @@ data class Indexing internal constructor(
 
         fun startAll(startedBy: String = "unknown"): Indexing = start(startedBy)
     }
-
 }

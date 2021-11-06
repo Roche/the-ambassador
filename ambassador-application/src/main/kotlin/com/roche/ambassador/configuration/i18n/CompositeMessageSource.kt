@@ -1,5 +1,6 @@
 package com.roche.ambassador.configuration.i18n
 
+import com.roche.ambassador.extensions.LoggerDelegate
 import org.springframework.context.MessageSource
 import org.springframework.context.MessageSourceResolvable
 import org.springframework.context.NoSuchMessageException
@@ -11,6 +12,7 @@ internal class CompositeMessageSource(
 
     companion object {
         private val DEFAULT_LOCALE = Locale.ENGLISH
+        private val logger by LoggerDelegate()
     }
 
     override suspend fun getMessage(code: String): String? {
@@ -38,6 +40,7 @@ internal class CompositeMessageSource(
             try {
                 it.getMessage(code, args, locale)
             } catch (e: NoSuchMessageException) {
+                logger.debug("Message with code {} was not found", code, e)
                 null
             }
         }.firstOrNull() ?: throw NoSuchMessageException(code, locale)
@@ -48,6 +51,7 @@ internal class CompositeMessageSource(
             try {
                 it.getMessage(resolvable, locale)
             } catch (e: NoSuchMessageException) {
+                logger.debug("Message {} was not found", resolvable, e)
                 null
             }
         }.firstOrNull() ?: throw NoSuchMessageException(resolvable.codes?.joinToString { it } ?: "<unknown>", locale)

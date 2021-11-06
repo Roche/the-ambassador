@@ -97,7 +97,5 @@ class IndexingTest {
         val unlockedIndexing = Indexing(lock = Lock())
 
         assertThat(unlockedIndexing.isLocked()).isFalse()
-
     }
-
 }

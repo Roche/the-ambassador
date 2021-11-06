@@ -7,8 +7,10 @@ import com.roche.ambassador.model.Value
 import com.roche.ambassador.model.utils.Range
 
 abstract class AbstractFeature<T>(
-    value: T?, protected val name: String,
-    weight: Double = 1.0, protected val importance: Importance = Importance.low()
+    value: T?,
+    protected val name: String,
+    weight: Double = 1.0,
+    protected val importance: Importance = Importance.low()
 ) : Feature<T> {
 
     protected val value: Value<T> = Value.of(value)

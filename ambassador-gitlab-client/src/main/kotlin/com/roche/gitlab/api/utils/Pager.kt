@@ -63,7 +63,6 @@ class Pager<T>(
     override fun next(): Page<T> {
         return currentPageData.get()
     }
-
 }
 
 typealias PageProvider<T> = suspend (Pagination) -> Page<T>

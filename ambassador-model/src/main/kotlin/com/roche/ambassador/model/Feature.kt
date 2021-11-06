@@ -19,5 +19,4 @@ interface Feature<T> : Specification, Explainable, Weighted, Indexable {
             handler(this)
         }
     }
-
 }

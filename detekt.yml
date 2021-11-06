@@ -3,11 +3,28 @@ console-reports:
   exclude:
     - '' # Exclude nothing -> Enable all workaround
 
+complexity:
+  LongParameterList:
+    active: false
+  TooManyFunctions:
+    thresholdInFiles: 20
+    thresholdInClasses: 20
+    thresholdInInterfaces: 20
+    thresholdInObjects: 20
+    thresholdInEnums: 20
+    ignoreDeprecated: true
+    ignorePrivate: true
+    ignoreOverridden: true
+
 formatting:
   active: true
   NoWildcardImports:
     active: false
   MaximumLineLength:
+    active: false
+
+performance:
+  SpreadOperator:
     active: false
 
 style:
@@ -19,7 +36,6 @@ style:
   MagicNumber:
     active: false
   MaxLineLength:
-    maxLineLength: 150
-  ForbiddenComment:
-    values: [ 'TODO', 'FIXME', 'STOPSHIP' ]
-    allowedPatterns: https://github.com/mrclrchtr/gradle-kotlin-spring/issues/\d+
+    maxLineLength: 180
+  ReturnCount:
+    max: 5

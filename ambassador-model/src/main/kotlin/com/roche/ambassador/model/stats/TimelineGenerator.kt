@@ -56,5 +56,4 @@ object TimelineGenerator {
 
         return timeline
     }
-
 }

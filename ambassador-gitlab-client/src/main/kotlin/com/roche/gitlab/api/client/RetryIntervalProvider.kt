@@ -10,7 +10,10 @@ import java.time.Duration
 import java.util.*
 
 // see: https://docs.gitlab.com/ee/user/admin_area/settings/user_and_ip_rate_limits.html#response-headers
-class RetryIntervalProvider(private val minimumInitialInterval: Duration, private val intervalFunctionSupplier: (Duration) -> IntervalFunction) : IntervalBiFunction<Any> {
+class RetryIntervalProvider(
+    private val minimumInitialInterval: Duration,
+    private val intervalFunctionSupplier: (Duration) -> IntervalFunction
+) : IntervalBiFunction<Any> {
 
     companion object {
         private val log = LoggerFactory.getLogger(RetryIntervalProvider::class.java)

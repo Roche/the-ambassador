@@ -1,9 +1,9 @@
 package com.roche.ambassador.document
 //
-//import com.github.pemistahl.lingua.api.Language as LinguaLanguage
-//import com.github.pemistahl.lingua.api.LanguageDetector as DelegateLinguaLanguageDetector
+// import com.github.pemistahl.lingua.api.Language as LinguaLanguage
+// import com.github.pemistahl.lingua.api.LanguageDetector as DelegateLinguaLanguageDetector
 //
-//class LinguaLanguageDetector(private val delegate: DelegateLinguaLanguageDetector) : LanguageDetector {
+// class LinguaLanguageDetector(private val delegate: DelegateLinguaLanguageDetector) : LanguageDetector {
 //
 //    override fun warmUp() {
 //        detectLanguageOf("this is a warm up")
@@ -21,4 +21,4 @@ package com.roche.ambassador.document
 //            Language.UNKNOWN
 //        }
 //    }
-//}
+// }

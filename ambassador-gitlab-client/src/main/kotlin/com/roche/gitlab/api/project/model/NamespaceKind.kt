@@ -4,5 +4,4 @@ enum class NamespaceKind {
 
     GROUP,
     USER
-
 }

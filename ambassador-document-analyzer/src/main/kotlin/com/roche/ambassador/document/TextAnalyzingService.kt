@@ -2,7 +2,6 @@ package com.roche.ambassador.document
 
 import com.roche.ambassador.model.files.Documentation
 import kotlinx.coroutines.*
-import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 
@@ -12,13 +11,11 @@ data class TextAnalyzingService(
     val readabilityTest: ReadabilityTest,
     val configuration: TextAnalyzerConfiguration
 ) {
+
     @ObsoleteCoroutinesApi
     private val dispatcher = newFixedThreadPoolContext(5, "text-analyzer")
 
-    companion object {
-        private val log = LoggerFactory.getLogger(TextAnalyzingService::class.java)
-    }
-
+    @SuppressWarnings("SwallowedException")
     private fun <U> CoroutineScope.withTimeoutOr(ctx: CoroutineContext, default: () -> U, into: () -> U): Deferred<U> {
         return try {
             async(ctx) {
@@ -58,5 +55,4 @@ data class TextAnalyzingService(
             )
         }
     }
-
 }

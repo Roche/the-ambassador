@@ -1,6 +1,5 @@
 package com.roche.gitlab.api.project.mergerequests
 
-
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.roche.gitlab.api.project.model.SimpleUser
@@ -107,6 +106,5 @@ data class MergeRequest(
         CLOSED,
         LOCKED,
         MERGED
-
     }
 }

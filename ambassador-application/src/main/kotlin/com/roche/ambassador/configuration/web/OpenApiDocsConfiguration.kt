@@ -52,5 +52,4 @@ internal class OpenApiDocsConfiguration {
             .map { (name, description) -> Tag().name(name).description(description) }
         it.info.addExtension("build time", buildProperties.time)
     }
-
 }

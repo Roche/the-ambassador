@@ -16,5 +16,4 @@ class ScorecardCalculator(private val policies: Set<ScorePolicy>) {
         val score = scores.map { it.value() }.reduce { one, two -> one * two }
         return Scorecard.of(project, score, scores)
     }
-
 }

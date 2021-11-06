@@ -33,5 +33,4 @@ class MergeRequestsApi internal constructor(basePath: String, client: GitLabHttp
         mergeRequestsQuery.view = MergeRequestsQuery.View.SIMPLE
         doGetPage(it, mergeRequestsQuery)
     }
-
 }

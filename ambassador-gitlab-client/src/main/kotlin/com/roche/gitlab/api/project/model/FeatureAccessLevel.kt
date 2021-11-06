@@ -10,5 +10,4 @@ enum class FeatureAccessLevel {
     fun canEveryoneAccess(): Boolean = this == ENABLED
     fun canNooneAccess(): Boolean = this == DISABLED
     fun canOnlyProjectMembersAccess(): Boolean = this == PRIVATE
-
 }

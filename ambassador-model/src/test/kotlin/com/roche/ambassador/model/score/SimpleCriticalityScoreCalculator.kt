@@ -44,5 +44,4 @@ data class CriticalityData(
     fun createdDateFeature(): CreatedDateFeature = CreatedDateFeature(createdDate)
     fun commitsFeature(): CommitsFeature = CommitsFeature(commits)
     fun issuesFeature(): IssuesFeature = IssuesFeature(Issues(0, 0, 0, closedIssuesIn90Days, openedIssuesIn90Days))
-
 }

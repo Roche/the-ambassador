@@ -46,7 +46,7 @@ class SearchableProjectEntityRepository(
 
     private fun rank(field: TableField<ProjectRecord, Any>, query: String): Field<Double> {
         return DSL.field("ts_rank_cd({0}, to_tsquery({1}, {2})) * {3}",
-                         Double::class.java, field, DSL.inline(language), DSL.inline("${query}:*"), PROJECT.SCORE).`as`(RANK_FIELD)
+                         Double::class.java, field, DSL.inline(language), DSL.inline("$query:*"), PROJECT.SCORE).`as`(RANK_FIELD)
     }
 
     override fun search(query: SearchQuery, pageable: Pageable): Page<ProjectEntity> {
@@ -83,7 +83,7 @@ class SearchableProjectEntityRepository(
     }
 
     private fun textsearch(field: TableField<ProjectRecord, Any>, query: String): Field<Boolean> {
-        return DSL.field("{0} @@ to_tsquery({1}, {2})", Boolean::class.java, field, DSL.inline(language), DSL.inline("${query}:*"))
+        return DSL.field("{0} @@ to_tsquery({1}, {2})", Boolean::class.java, field, DSL.inline(language), DSL.inline("$query:*"))
     }
 
     private fun searchWithinJson(whereBuilder: SelectConditionStep<*>, searchQuery: SearchQuery) {
@@ -99,5 +99,4 @@ class SearchableProjectEntityRepository(
             .map { json.field("visibility", String::class.java).eq(it) }
             .reduce(DSL.falseCondition(), Condition::or)
     }
-
 }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Transactional
+@SuppressWarnings("UnusedPrivateMember")
 internal class ContextEventHandlersForIndexing(
     val service: ProjectIndexingService,
     val indexingRepository: IndexingRepository
@@ -24,7 +25,6 @@ internal class ContextEventHandlersForIndexing(
         log.info("Cleaning up hanging indexing...")
         indexingRepository.findAllLocked().forEach { indexingRepository.save(it.unlock()) }
         indexingRepository.findAllInProgress().forEach { indexingRepository.save(it.fail()) }
-
     }
 
     @EventListener
@@ -39,14 +39,14 @@ internal class ContextEventHandlersForIndexing(
         stopIndexing()
     }
 
+    @SuppressWarnings("TooGenericExceptionCaught")
     private fun stopIndexing(forcibly: Boolean = false) {
         runBlocking {
             try {
                 service.forciblyStopAll(forcibly)
-            } catch(e: RuntimeException) {
+            } catch (e: RuntimeException) {
                 log.warn("Failed to stop indexing gently when received context event due to '{}'", e.message)
             }
         }
     }
-
 }

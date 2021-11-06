@@ -63,7 +63,6 @@ object SimpleActivityScoreCalculator : TestCalculator<ActivityData> {
         } else {
             0
         }
-
 }
 
 data class ActivityData(
@@ -105,5 +104,4 @@ data class ActivityData(
     fun descriptionFeature(): DescriptionFeature = DescriptionFeature(description)
     fun commitsFeature(): CommitsFeature = CommitsFeature(commitsTimeline)
     fun issuesFeature(): IssuesFeature = IssuesFeature(Issues(openIssues, openIssues, 0, 0, 0))
-
 }

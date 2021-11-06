@@ -68,7 +68,10 @@ internal class ClientRegistrationRegistrar(private val projectSourcesProperties:
         }
     }
 
-    private fun isValid(userInfoEndpoint: ClientRegistration.ProviderDetails.UserInfoEndpoint, errorCollector: ErrorCollector) {
+    private fun isValid(
+        userInfoEndpoint: ClientRegistration.ProviderDetails.UserInfoEndpoint,
+        errorCollector: ErrorCollector
+    ) {
         errorCollector.verify(userInfoEndpoint.userNameAttributeName, "missing providerDetails.userInfoEndpoint.userNameAttributeName")
         errorCollector.verify(userInfoEndpoint.uri, "missing providerDetails.userInfoEndpoint.uri")
         errorCollector.verify(userInfoEndpoint.authenticationMethod, "missing providerDetails.userInfoEndpoint.authenticationMethod")

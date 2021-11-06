@@ -5,5 +5,4 @@ import java.util.*
 interface Identifiable {
 
     fun getId(): UUID?
-
 }

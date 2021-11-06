@@ -28,11 +28,10 @@ internal object FeaturesSerializer : StdSerializer<Features>(Features::class.jav
         gen.writeEndObject()
     }
 
-    private fun unwrap(value: Any) : Any {
-        return when(value) {
+    private fun unwrap(value: Any): Any {
+        return when (value) {
             is Value<*> -> value.get()!!
             else -> value
         }
     }
-
 }

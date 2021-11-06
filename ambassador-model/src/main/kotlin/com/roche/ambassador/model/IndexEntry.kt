@@ -16,5 +16,4 @@ data class IndexEntry internal constructor(val key: String, val value: Any?) {
         fun no(): IndexEntry = IndexEntry("__noindex__", null)
         fun of(key: String, value: Any): IndexEntry = IndexEntry(key.toCamelCase(), value)
     }
-
 }

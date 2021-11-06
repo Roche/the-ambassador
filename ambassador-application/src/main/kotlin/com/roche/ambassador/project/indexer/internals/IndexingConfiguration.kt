@@ -19,10 +19,9 @@ internal class IndexingConfiguration(
     @Bean
     fun indexingLock(indexingRepository: IndexingRepository): IndexingLock {
         log.info("Indexer will use {} locking mechanism", indexerProperties.lockType.toPrettyString())
-        return when(indexerProperties.lockType) {
+        return when (indexerProperties.lockType) {
             IndexingLockType.IN_MEMORY -> IndexingLock.createInMemoryLock()
             IndexingLockType.DATABASE -> IndexingLock.createDatabaseLock(indexingRepository)
         }
     }
-
 }

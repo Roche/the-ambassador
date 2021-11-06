@@ -6,5 +6,4 @@ import com.roche.ambassador.model.FeatureReader
 interface FeatureReaderFactory<T : Feature<*>> {
 
     fun create(): FeatureReader<T>
-
 }

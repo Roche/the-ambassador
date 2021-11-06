@@ -17,11 +17,14 @@ open class File(
     }
 
     fun hasSizeAtLeast(minimumSize: Long): Boolean = contentLength != null && contentLength >= minimumSize
-
 }
 
 open class RawFile(
-    exists: Boolean, hash: String?, language: String?, contentLength: Long?, url: String?,
+    exists: Boolean,
+    hash: String?,
+    language: String?,
+    contentLength: Long?,
+    url: String?,
     @JsonIgnore
     private val content: String?
 ) : File(exists, hash, language, contentLength, url) {
@@ -40,6 +43,10 @@ open class RawFile(
 }
 
 open class ExcerptFile(
-    exists: Boolean, hash: String?, language: String?,
-    contentLength: Long?, url: String?, val excerpt: String?
+    exists: Boolean,
+    hash: String?,
+    language: String?,
+    contentLength: Long?,
+    url: String?,
+    val excerpt: String?
 ) : File(exists, hash, language, contentLength, url)

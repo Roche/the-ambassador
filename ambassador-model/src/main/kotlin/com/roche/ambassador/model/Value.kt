@@ -18,5 +18,4 @@ class Value<T> private constructor(private val value: T?) {
             return Value(value)
         }
     }
-
 }

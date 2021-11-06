@@ -8,5 +8,4 @@ interface UserDetailsProvider {
     fun getAvatarUrl(): String
     fun getWebUrl(): String
     fun isAdmin(): Boolean
-
 }

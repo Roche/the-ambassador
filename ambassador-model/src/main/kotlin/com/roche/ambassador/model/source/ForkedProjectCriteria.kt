@@ -10,5 +10,4 @@ interface ForkedProjectCriteria<T> {
     fun lastForkActivityBeforeParentMoreThan(days: Long): CriterionVerifier<T>
     fun lastForkActivityNotEarlierThan(date: LocalDate): CriterionVerifier<T>
     fun forkHasStars(stars: Int): CriterionVerifier<T>
-
 }

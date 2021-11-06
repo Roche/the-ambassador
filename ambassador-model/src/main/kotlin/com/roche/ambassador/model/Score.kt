@@ -84,7 +84,8 @@ interface Score : Specification, Explainable {
 @JsonPropertyOrder("name", "value")
 internal data class CompositeScore(
     val name: String,
-    val value: Double, val subScores: MutableSet<Score>
+    val value: Double,
+    val subScores: MutableSet<Score>
 ) : AbstractScore(name, setOf(), subScores) {
     override fun value(): Double = value
 }
@@ -121,6 +122,4 @@ abstract class AbstractScore(
     override fun explain(): Explanation {
         TODO("Not yet implemented")
     }
-
 }
-
