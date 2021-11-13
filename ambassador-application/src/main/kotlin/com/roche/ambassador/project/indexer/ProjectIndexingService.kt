@@ -18,7 +18,7 @@ internal class ProjectIndexingService(
     private val sources: ProjectSources,
     private val indexerFactory: IndexerFactory,
     private val indexingRepository: IndexingRepository,
-    private val indexingLock: IndexingLock
+    private val indexingLock: IndexingLock,
 ) {
 
     private val indexersInUse: MutableMap<UUID, ProjectIndexer> = ConcurrentHashMap()
@@ -72,6 +72,7 @@ internal class ProjectIndexingService(
 
     @Suppress("UNCHECKED_CAST")
     private fun createIndexer(): ProjectIndexer {
+        // FIXME don't get fixed source
         val source = sources.get("gitlab").get() as ProjectSource<Any>
         return indexerFactory.create(source)
     }

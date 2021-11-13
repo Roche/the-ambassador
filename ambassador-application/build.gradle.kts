@@ -40,7 +40,7 @@ dependencies {
 
 tasks.getByName<BootBuildImage>("bootBuildImage") {
     builder = "paketobuildpacks/builder"
-
+    imageName = "ghcr.io/roche/ambassador-indexer"
     environment = mapOf(
         "BP_OCI_TITLE" to "The Ambassador",
         "BP_OCI_AUTHORS" to "Mateusz Filipowicz",

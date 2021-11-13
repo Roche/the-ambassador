@@ -50,7 +50,6 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
 
     private fun generate(id: String, filter: ProjectFilter): FakeProject {
         val name = fakeDataProvider.name()
-        val tags = fakeDataProvider.tags()
         val stats = Statistics(
             fakeDataProvider.nextInt(min = 0, max = 100),
             fakeDataProvider.nextInt(min = 0, max = 500),

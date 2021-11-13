@@ -25,7 +25,12 @@ data class IndexerProperties(
 
     @NestedConfigurationProperty
     @Valid
-    val concurrency: ConcurrencyProperties
+    val concurrency: ConcurrencyProperties = ConcurrencyProperties(),
+
+    @NestedConfigurationProperty
+    @Valid
+    val criteria: IndexingCriteriaProperties = IndexingCriteriaProperties()
+
 )
 
 enum class IndexingLockType {

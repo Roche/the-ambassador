@@ -162,7 +162,7 @@ data class Project(
     @JsonProperty("topics")
     override val topics: List<String>? = null,
     @JsonProperty("visibility")
-    val visibility: Visibility? = null,
+    val visibility: Visibility,
     @JsonProperty("web_url")
     override val webUrl: String? = null,
     @JsonProperty("wiki_enabled")
@@ -181,7 +181,7 @@ data class Project(
     companion object {
         fun forCreate(name: String, path: String, namespaceId: Int? = null, description: String? = null): Project {
             val namespace = Namespace(id = namespaceId)
-            return Project(name = name, path = path, description = description, namespace = namespace)
+            return Project(name = name, path = path, description = description, namespace = namespace, visibility = Visibility.PUBLIC)
         }
 
         fun forCreate(
