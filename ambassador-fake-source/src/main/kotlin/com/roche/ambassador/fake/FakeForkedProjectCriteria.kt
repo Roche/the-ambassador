@@ -23,9 +23,9 @@ object FakeForkedProjectCriteria : ForkedProjectCriteria<FakeProject> {
         }
     }
 
-    override fun forkHasStars(expectedStars: Int): CriterionVerifier<FakeProject> = {
+    override fun forkHasStars(stars: Int): CriterionVerifier<FakeProject> = {
         it.whenForked {
-            it.stats.stars >= expectedStars
+            it.stats.stars >= stars
         }
     }
 

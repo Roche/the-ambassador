@@ -1,8 +1,12 @@
 package com.roche.ambassador.project.indexer.internals
 
+import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
+import com.roche.ambassador.extensions.toHumanReadable
+import com.roche.ambassador.model.project.Visibility
 import com.roche.ambassador.model.source.IndexingCriteriaProvider
 import com.roche.ambassador.model.source.ProjectDetailsResolver
 import com.roche.ambassador.project.indexer.IndexingCriterion
+import java.time.LocalDate
 
 internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
 
@@ -10,21 +14,28 @@ internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
 
     companion object {
 
-        fun <T> none(): IndexingCriteria<T> {
-            return object : IndexingCriteria<T>() {
-                override fun evaluate(input: T): CriteriaEvaluationResult<T> = CriteriaEvaluationResult(listOf())
-            }
-        }
-
         fun forProvider(
             projectDetailsResolver: ProjectDetailsResolver<Any>,
-            criteriaProvider: IndexingCriteriaProvider<Any>
+            criteriaProvider: IndexingCriteriaProvider<Any>,
+            props: IndexingCriteriaProperties
         ): IndexingCriteria<Any> {
-            return CriteriaBuilder(projectDetailsResolver)
-                .createCriteriaFrom(criteriaProvider.getInvalidProjectCriteria())
-                .addCriteria("excludeAllForks", criteriaProvider.getForkedProjectCriteria().excludeAllWithForks())
-//                .addCriteria("personalProjectWithAtLeast1Star", criteriaProvider.getPersonalProjectCriteria().hasAtLeastStars(1))
-                .build()
+            val builder =  CriteriaBuilder(projectDetailsResolver)
+                .addIf("excludeAllForks", criteriaProvider.getForkedProjectCriteria().excludeAllWithForks(), props.forks.excludeAll)
+                .addIf(
+                    "personalProjectHasAtLeast${props.personalProjects.mustHaveAtLeastStars}Stars",
+                    criteriaProvider.getPersonalProjectCriteria().hasAtLeastStars(props.personalProjects.mustHaveAtLeastStars)
+                ) { props.personalProjects.mustHaveAtLeastStars > 0 }
+                .addIf("hasDefaultBranch", criteriaProvider.getInvalidProjectCriteria().hasDefaultBranch(), props.projects.mustHaveDefaultBranch)
+                .addIf("isRepositoryNotEmpty", criteriaProvider.getInvalidProjectCriteria().isRepositoryNotEmpty(), props.projects.mustHaveNotEmptyRepo)
+                .addIf("canCreateMergeRequest", criteriaProvider.getInvalidProjectCriteria().canCreateMergeRequest(), props.projects.mustBeAbleToCreateMergeRequest)
+                .addIf("canForkProject", criteriaProvider.getInvalidProjectCriteria().canForkProject(), props.projects.mustBeAbleToFork)
+                .addIf("hasVisibilityAtMost${props.projects.maxVisibility}", criteriaProvider.getInvalidProjectCriteria().hasVisibilityAtMost(props.projects.maxVisibility), props.projects.maxVisibility != Visibility.PRIVATE)
+                .addIf("isNotArchived", criteriaProvider.getInvalidProjectCriteria().isNotArchived(), !props.projects.includeArchived)
+            val lastActivityWithin = props.projects.lastActivityWithin
+            if (lastActivityWithin != null) {
+                builder.add("lastActivityWithin${lastActivityWithin.toHumanReadable()}", criteriaProvider.getInvalidProjectCriteria().hasActivityAfter(LocalDate.now().minus(lastActivityWithin)))
+            }
+            return builder.build()
         }
     }
 

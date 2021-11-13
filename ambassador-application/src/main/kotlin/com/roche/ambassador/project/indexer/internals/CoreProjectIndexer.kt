@@ -101,6 +101,7 @@ internal class CoreProjectIndexer(
         producerScope.launch {
             supervisorScope {
                 log.info("Indexing started on {} with source filter {}", source.name(), filter)
+                log.info("Criteria used: {}", indexingCriteria.getAllCriteriaNames())
                 onStarted()
                 source.flow(filter)
                     .buffer(1000)

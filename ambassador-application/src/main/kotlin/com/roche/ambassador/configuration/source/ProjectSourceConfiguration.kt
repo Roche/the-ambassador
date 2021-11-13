@@ -6,6 +6,7 @@ import com.roche.ambassador.configuration.source.ProjectSourcesProperties.System
 import com.roche.ambassador.fake.FakeSource
 import com.roche.ambassador.gitlab.GitLabSource
 import com.roche.gitlab.api.GitLab
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.Duration
@@ -25,10 +26,11 @@ open class ProjectSourceConfiguration {
     }
 
     private fun configureFake(): FakeSource {
-        val spec = GenerationSpec(30000, true)
+        val spec = GenerationSpec(5000, true)
         return FakeSource(spec)
     }
 
+    @ExperimentalCoroutinesApi
     private fun configureGitLab(
         projectSourcesProperties: ProjectSourcesProperties
     ): GitLabSource {

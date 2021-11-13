@@ -18,7 +18,7 @@ internal class CoreProjectIndexerFactory(
     private val platformTransactionManager: PlatformTransactionManager
 ) : IndexerFactory {
     override fun create(source: ProjectSource<Any>,): ProjectIndexer {
-        val criteria = IndexingCriteria.forProvider(source, source)
+        val criteria = IndexingCriteria.forProvider(source, source, indexerProperties.criteria)
         return CoreProjectIndexer(
             source,
             projectEntityRepository,

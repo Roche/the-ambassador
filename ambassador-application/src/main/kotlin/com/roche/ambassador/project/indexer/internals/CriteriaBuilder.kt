@@ -3,37 +3,24 @@ package com.roche.ambassador.project.indexer.internals
 import com.roche.ambassador.model.source.CriterionVerifier
 import com.roche.ambassador.model.source.ProjectDetailsResolver
 import com.roche.ambassador.project.indexer.IndexingCriterion
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.jvm.jvmErasure
-import kotlin.reflect.jvm.kotlinFunction
+import java.util.function.Supplier
 
 internal class CriteriaBuilder<T>(private val projectDetailsResolver: ProjectDetailsResolver<T>) {
     private val criteria: MutableSet<IndexingCriterion<T>> = mutableSetOf()
 
-    fun addCriteria(name: String, verifier: CriterionVerifier<T>): CriteriaBuilder<T> {
+    fun add(name: String, verifier: CriterionVerifier<T>): CriteriaBuilder<T> {
         criteria.add(IndexingCriterion(name, verifier, projectDetailsResolver))
         return this
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun createCriteriaFrom(criteriaHolder: Any): CriteriaBuilder<T> {
-        val createdCriteria = criteriaHolder.javaClass.declaredMethods
-            .filter {
-                val returnType = it.kotlinFunction?.returnType
-                if (returnType != null) {
-                    val isFunction = returnType.jvmErasure.isSubclassOf(kotlin.jvm.functions.Function1::class)
-                    val hasBooleanReturnType = returnType.arguments.size == 2 && returnType.arguments[1].type?.isSubtypeOf(Boolean::class.createType()) ?: false
-                    isFunction && hasBooleanReturnType
-                } else {
-                    false
-                }
-            }
-            .map { it.name to it.invoke(criteriaHolder) as CriterionVerifier<T> }
-            .map { IndexingCriterion(it.first, it.second, projectDetailsResolver) }
-            .toList()
-        this.criteria.addAll(createdCriteria)
+    fun addIf(name: String, verifier: CriterionVerifier<T>, condition: Supplier<Boolean>): CriteriaBuilder<T> {
+        return addIf(name, verifier, condition.get())
+    }
+
+    fun addIf(name: String, verifier: CriterionVerifier<T>, flag: Boolean): CriteriaBuilder<T> {
+        if (flag) {
+            return add(name, verifier)
+        }
         return this
     }
 
