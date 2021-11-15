@@ -68,7 +68,7 @@ jobs:
           sarif_file: 'trivy-results.sarif'
       - name: Docker meta
         id: meta
-#        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || contains(github.ref, 'refs/tags/') }}
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || contains(github.ref, 'refs/tags/') }}
         uses: docker/metadata-action@v3
         with:
           images: ghcr.io/roche/ambassador-indexer
@@ -79,10 +79,12 @@ jobs:
             type=semver,pattern={{major}},event=tag
             type=sha,event=tag
       - name: Tag docker image
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || contains(github.ref, 'refs/tags/') }}
         run: |
           tags="${{ steps.meta.outputs.tags }}"
           for tag in ${tags}; do docker tag ghcr.io/roche/ambassador-indexer:latest $tag; done
-          docker images
+          echo 'Ready tags to be published:'
+          docker images | grep 'ghcr.io/roche/ambassador-indexer'
       - name: Login to GitHub Container Registry
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || contains(github.ref, 'refs/tags/') }}
         uses: docker/login-action@v1
