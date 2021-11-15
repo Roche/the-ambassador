@@ -20,10 +20,11 @@ jobs:
           distribution: 'adopt'
           cache: gradle
       - name: Run detekt
-        run: ./gradlew detekt -x integrationTest -x test -x architectureTest
-      - name: Upload SARIF
+        run: ./gradlew detekt -PrunDetekt
+      - name: Upload Detekt Sarif
         id: detekt-sarif
         uses: github/codeql-action/upload-sarif@v1
         if: success() || failure()
         with:
-          sarif_file: build/reports/detekt/merge.sarif
+          sarif_file: build/reports/detekt.sarif
+
