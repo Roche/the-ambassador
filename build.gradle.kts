@@ -12,12 +12,12 @@ idea {
 
 fun createMergeTask(outputName: String): RegisteringDomainObjectDelegateProviderWithTypeAndAction<out TaskContainer, ReportMergeTask> {
     return tasks.registering(ReportMergeTask::class) {
-        output.set(rootProject.buildDir.resolve("reports/detekt/$outputName"))
+        output.set(rootProject.buildDir.resolve("reports/$outputName"))
     }
 }
 
-val reportMergeSarif by createMergeTask("merge.sarif")
-val reportMergeXml by createMergeTask("merge.xml")
+val reportMergeSarif by createMergeTask("detekt.sarif")
+val reportMergeXml by createMergeTask("detekt.xml")
 
 subprojects {
     plugins.withType(io.gitlab.arturbosch.detekt.DetektPlugin::class) {
