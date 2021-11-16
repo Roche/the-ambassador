@@ -45,7 +45,6 @@ object SimpleActivityScoreCalculator : TestCalculator<ActivityData> {
         score += boostForDocumentation(data.readme, 100, 100)
         score += boostForDocumentation(data.contributionGuide, 100, 100)
         score += boostForDocumentation(data.license, 50, 5)
-        score += boostForDocumentation(data.changelog, 50, 10)
         if (data.description != null && data.description.length >= 30) {
             score += 50
         }
@@ -74,7 +73,6 @@ data class ActivityData(
     val private: Boolean = false,
     val readme: Documentation = Documentation.notExistent(),
     val contributionGuide: Documentation = Documentation.notExistent(),
-    val changelog: Documentation = Documentation.notExistent(),
     val license: Documentation = Documentation.notExistent(),
     val description: String? = null,
     val commitsTimeline: Timeline? = Timeline()
@@ -83,7 +81,7 @@ data class ActivityData(
     fun toFeatures(): Features = Features(
         forksFeature(), starsFeature(), lastActivityFeature(),
         createdDateFeature(), visibilityFeature(), readmeFeature(), contributionGuideFeature(),
-        changelogFeature(), licenseFeature(), descriptionFeature(), commitsFeature(), issuesFeature()
+        licenseFeature(), descriptionFeature(), commitsFeature(), issuesFeature()
     )
 
     fun visibility(): Visibility = if (private) {
@@ -99,7 +97,6 @@ data class ActivityData(
     fun visibilityFeature(): VisibilityFeature = VisibilityFeature(visibility())
     fun readmeFeature(): ReadmeFeature = ReadmeFeature(readme.toExcerptFile())
     fun contributionGuideFeature(): ContributingGuideFeature = ContributingGuideFeature(contributionGuide.toRawFile())
-    fun changelogFeature(): ChangelogFeature = ChangelogFeature(changelog.toRawFile())
     fun licenseFeature(): LicenseFeature = LicenseFeature(license.toRawFile())
     fun descriptionFeature(): DescriptionFeature = DescriptionFeature(description)
     fun commitsFeature(): CommitsFeature = CommitsFeature(commitsTimeline)

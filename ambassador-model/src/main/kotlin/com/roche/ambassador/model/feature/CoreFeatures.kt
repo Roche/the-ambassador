@@ -72,18 +72,21 @@ class LicenseFeature(value: RawFile?) : FileFeature<RawFile>(value, "License") {
     }
 }
 
+@Deprecated(message = "Not used in any score")
 class CiDefinitionFeature(value: RawFile?) : FileFeature<RawFile>(value, "CI definition") {
     companion object : FeatureReaderFactory<CiDefinitionFeature> {
         override fun create(): FeatureReader<CiDefinitionFeature> = FeatureReader.createForFile(".gitlab-ci.yml") { CiDefinitionFeature(it) }
     }
 }
 
+@Deprecated(message = "Not used in any score")
 class ChangelogFeature(value: RawFile?) : FileFeature<RawFile>(value, "Changelog") {
     companion object : FeatureReaderFactory<ChangelogFeature> {
         override fun create(): FeatureReader<ChangelogFeature> = FeatureReader.createForFile("CHANGELOG.md") { ChangelogFeature(it) }
     }
 }
 
+@Deprecated(message = "Not used in any score")
 class GitignoreFeature(value: RawFile?) : FileFeature<RawFile>(value, ".gitignore") {
     companion object : FeatureReaderFactory<GitignoreFeature> {
         override fun create(): FeatureReader<GitignoreFeature> = FeatureReader.createForFile(".gitignore") { GitignoreFeature(it) }
@@ -179,6 +182,7 @@ class MembersFeature(value: Map<AccessLevel, Int>) : AbstractFeature<Map<AccessL
     }
 }
 
+@Deprecated(message = "Not used in any score")
 class PullRequestsFeature(value: Timeline) : TimelineFeature(value, "Pull Requests") {
     companion object : FeatureReaderFactory<PullRequestsFeature> {
         override fun create(): FeatureReader<PullRequestsFeature> = FeatureReader.create { project, source ->

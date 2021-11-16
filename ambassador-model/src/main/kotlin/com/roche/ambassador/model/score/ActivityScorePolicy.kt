@@ -33,7 +33,6 @@ object ActivityScorePolicy : ScorePolicy {
             .withFeature(ContributingGuideFeature::class).forFile(100, 100)
             .withFeature(ReadmeFeature::class).forFile(100, 100)
             .withFeature(LicenseFeature::class).forFile(50, 5)
-            .withFeature(ChangelogFeature::class).forFile(50, 10)
             .withFeature(DescriptionFeature::class)
                 .filter { it.value().exists() && it.value().get().length >= 30 }
                 .calculate { _, score -> score + 50 }

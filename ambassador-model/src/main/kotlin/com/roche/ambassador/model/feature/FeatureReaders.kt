@@ -10,11 +10,7 @@ object FeatureReaders {
         LanguagesFeature.create(),
         ContributorsFeature.create(),
         TagsFeature.create(),
-        VisibilityFeature.create(),
-        CiDefinitionFeature.create(),
-        GitignoreFeature.create(),
-        ChangelogFeature.create(),
-        CommitsFeature.create(),
+        VisibilityFeature.create(), CommitsFeature.create(),
         ReleasesFeature.create(),
         ProtectedBranchesFeature.create(),
         ReadmeFeature.create(),
@@ -25,7 +21,6 @@ object FeatureReaders {
         DescriptionFeature.create(),
         IssuesFeature.create(),
         MembersFeature.create(),
-        PullRequestsFeature.create()
     )
 
     fun all(): List<FeatureReader<*>> {

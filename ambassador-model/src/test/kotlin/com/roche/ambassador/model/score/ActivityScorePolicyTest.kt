@@ -43,14 +43,14 @@ class ActivityScorePolicyTest {
         val commitsTimeline = TimelineGenerator.withWeekAverage(50.0, 12)
         val data = ActivityData(
             10, 10, 10, LocalDate.now().minusDays(2), LocalDate.now().minusMonths(2),
-            false, documentation, documentation, documentation, documentation, fairy.textProducer().word(30), commitsTimeline
+            false, documentation, documentation, documentation, fairy.textProducer().word(30), commitsTimeline
         )
 
         // when
         val result = SimpleActivityScoreCalculator.calculate(data)
 
         // then result is based on manual calculation based on algorithm defined above
-        assertThat(result).isEqualTo(1526.0)
+        assertThat(result).isEqualTo(1516.0)
 
         // when calculate activity score using policy
         val activity = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
@@ -67,7 +67,7 @@ class ActivityScorePolicyTest {
                 ContributingGuideFeature::class,
                 ReadmeFeature::class,
                 LicenseFeature::class,
-                ChangelogFeature::class,
+//                ChangelogFeature::class,
                 DescriptionFeature::class,
                 IssuesFeature::class
             )
@@ -229,17 +229,17 @@ class ActivityScorePolicyTest {
         verifyDocumentationBoost(expectedBoost, length, LicenseFeature::class) { ActivityData(license = it) }
     }
 
-    @ParameterizedTest(name = "should boost by {0} when changelog has length {1}")
-    @CsvSource(
-        "10,51",
-        "10,50",
-        "0,49",
-        "0,0",
-        "0,-1",
-    )
-    fun `should use changelog only`(expectedBoost: Double, length: Long) {
-        verifyDocumentationBoost(expectedBoost, length, ChangelogFeature::class) { ActivityData(changelog = it) }
-    }
+//    @ParameterizedTest(name = "should boost by {0} when changelog has length {1}")
+//    @CsvSource(
+//        "10,51",
+//        "10,50",
+//        "0,49",
+//        "0,0",
+//        "0,-1",
+//    )
+//    fun `should use changelog only`(expectedBoost: Double, length: Long) {
+//        verifyDocumentationBoost(expectedBoost, length, ChangelogFeature::class) { ActivityData(changelog = it) }
+//    }
 
     private fun verifyDocumentationBoost(
         expectedBoost: Double,
