@@ -6,7 +6,7 @@ import com.roche.ambassador.model.project.Visibility
 import com.roche.ambassador.model.source.IndexingCriteriaProvider
 import com.roche.ambassador.model.source.ProjectDetailsResolver
 import com.roche.ambassador.project.indexer.IndexingCriterion
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
 
@@ -33,7 +33,7 @@ internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
                 .addIf("isNotArchived", criteriaProvider.getInvalidProjectCriteria().isNotArchived(), !props.projects.includeArchived)
             val lastActivityWithin = props.projects.lastActivityWithin
             if (lastActivityWithin != null) {
-                builder.add("lastActivityWithin${lastActivityWithin.toHumanReadable()}", criteriaProvider.getInvalidProjectCriteria().hasActivityAfter(LocalDate.now().minus(lastActivityWithin)))
+                builder.add("lastActivityWithin${lastActivityWithin.toHumanReadable()}", criteriaProvider.getInvalidProjectCriteria().hasActivityAfter(LocalDateTime.now().minus(lastActivityWithin).toLocalDate()))
             }
             return builder.build()
         }

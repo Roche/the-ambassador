@@ -47,11 +47,13 @@ abstract class Api(val basePath: String, val client: GitLabHttpClient) {
         }
     }
 
-    protected suspend inline fun <reified T> doGetPage(pagination: Pagination, vararg inputs: Any): Page<T> {
-        return client.getPage(path = basePath, pagination) {
+    protected suspend inline fun <reified T> doGetPage(path: String, pagination: Pagination, vararg inputs: Any): Page<T> {
+        return client.getPage(path = "$basePath/$path", pagination) {
             applyQueryParameters(*inputs)
         }
     }
+
+    protected suspend inline fun <reified T> doGetPage(pagination: Pagination, vararg inputs: Any): Page<T> = doGetPage("", pagination, *inputs)
 
     protected suspend inline fun <reified T> doGetList(vararg inputs: Any): List<T> {
         return client.getList(path = basePath) {

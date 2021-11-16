@@ -1,8 +1,11 @@
 package com.roche.ambassador.project.indexer
 
+import com.roche.ambassador.configuration.properties.IndexerProperties
+import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
 import com.roche.ambassador.configuration.source.ProjectSources
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.model.project.ProjectFilter
 import com.roche.ambassador.model.source.ProjectDetailsResolver
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.security.AuthenticationContext
@@ -19,8 +22,10 @@ internal class ProjectIndexingService(
     private val indexerFactory: IndexerFactory,
     private val indexingRepository: IndexingRepository,
     private val indexingLock: IndexingLock,
+    indexerProperties: IndexerProperties
 ) {
 
+    private val criteriaProperties: IndexingCriteriaProperties = indexerProperties.criteria
     private val indexersInUse: MutableMap<UUID, ProjectIndexer> = ConcurrentHashMap()
 
     companion object {
@@ -85,8 +90,15 @@ internal class ProjectIndexingService(
             val indexer = createIndexer()
             idx = indexingRepository.save(idx)
             indexersInUse[idx.getId()!!] = indexer
+            val filter = ProjectFilter.Builder()
+                .archived(criteriaProperties.projects.includeArchived)
+                .groups(*criteriaProperties.projects.groups.toTypedArray())
+                .visibility(criteriaProperties.projects.maxVisibility)
+                .lastActivityAfter(criteriaProperties.projects.lastActivityAfter)
+                .build()
             val stats = Statistics()
             indexer.indexAll(
+                filter = filter,
                 onStarted = { stats.startTiming() },
                 onProjectIndexingStarted = { stats.recordStarted() },
                 onProjectIndexingFinished = { stats.recordFinished() },

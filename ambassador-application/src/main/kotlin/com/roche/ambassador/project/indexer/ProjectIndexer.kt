@@ -1,12 +1,14 @@
 package com.roche.ambassador.project.indexer
 
 import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.model.project.ProjectFilter
 import com.roche.ambassador.model.source.ProjectSource
 
 interface ProjectIndexer {
 
     suspend fun indexOne(id: Long): Project
     suspend fun indexAll(
+        filter: ProjectFilter = ProjectFilter(null, null, null),
         onStarted: IndexingStartedCallback = {},
         onFinished: IndexingFinishedCallback = {},
         onError: IndexingErrorCallback = {},

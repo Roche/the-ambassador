@@ -88,6 +88,7 @@ internal class CoreProjectIndexer(
 
     @SuppressWarnings("TooGenericExceptionCaught")
     override suspend fun indexAll(
+        filter: ProjectFilter,
         onStarted: IndexingStartedCallback,
         onFinished: IndexingFinishedCallback,
         onError: IndexingErrorCallback,
@@ -96,8 +97,6 @@ internal class CoreProjectIndexer(
         onProjectIndexingError: ProjectIndexingErrorCallback,
         onProjectIndexingFinished: ProjectIndexingFinishedCallback
     ) {
-        val lastActivityAfterHalfYear = LocalDateTime.now().minusDays(183)
-        val filter = ProjectFilter(Visibility.INTERNAL, false, lastActivityAfterHalfYear)
         producerScope.launch {
             supervisorScope {
                 log.info("Indexing started on {} with source filter {}", source.name(), filter)

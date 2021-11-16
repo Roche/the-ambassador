@@ -12,6 +12,7 @@ import com.roche.ambassador.model.source.PersonalProjectCriteria
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Timeline
 import com.roche.gitlab.api.GitLab
+import com.roche.gitlab.api.groups.GroupProjectListQuery
 import com.roche.gitlab.api.model.AccessLevelName
 import com.roche.gitlab.api.model.AccessLevelName.*
 import com.roche.gitlab.api.model.IssueStatisticsQuery
@@ -21,9 +22,11 @@ import com.roche.gitlab.api.project.ProjectQuery
 import com.roche.gitlab.api.project.commits.CommitsQuery
 import com.roche.gitlab.api.project.mergerequests.MergeRequest
 import com.roche.gitlab.api.project.mergerequests.MergeRequestsQuery
+import com.roche.gitlab.api.utils.Pager
 import com.roche.gitlab.api.utils.Pagination
 import com.roche.gitlab.api.utils.Sort
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import java.time.LocalDateTime
@@ -60,22 +63,40 @@ class GitLabSource(
         return Optional.ofNullable(GitLabProjectMapper.mapGitLabProjectToOpenSourceProject(prj))
     }
 
+    private suspend fun ProducerScope<GitLabProject>.publishFromPager(pager: Pager<GitLabProject>) {
+        for (page in pager) {
+            for (project in page) {
+                log.debug("Publishing project {}", project.id)
+                send(project)
+            }
+        }
+    }
+
     override suspend fun flow(filter: ProjectFilter): Flow<GitLabProject> {
         val visibility = VisibilityMapper.fromAmbassador(filter.visibility!!)
-        val query = ProjectListQuery(
-            withStatistics = true,
-            withCustomAttributes = false,
-            archived = filter.archived,
-            visibility = visibility,
-            lastActivityAfter = filter.lastActivityAfter
-        )
         return channelFlow {
-            val pager = gitlab.projects().paging(query, Pagination(itemsPerPage = 50))
-            for (page in pager) {
-                for (project in page) {
-                    log.debug("Publishing project {}", project.id)
-                    send(project)
+            if (filter.groups.isNotEmpty()) {
+                val query = GroupProjectListQuery(
+                    withCustomAttributes = false,
+                    archived = filter.archived,
+                    visibility = visibility,
+                )
+                filter.groups.forEach {
+                    val pager = gitlab.groups()
+                        .withPath(it)
+                        .projects(query, Pagination(itemsPerPage = 50))
+                    publishFromPager(pager)
                 }
+            } else {
+                val query = ProjectListQuery(
+                    withStatistics = true,
+                    withCustomAttributes = false,
+                    archived = filter.archived,
+                    visibility = visibility,
+                    lastActivityAfter = filter.lastActivityAfter
+                )
+                val pager = gitlab.projects().paging(query, Pagination(itemsPerPage = 50))
+                publishFromPager(pager)
             }
         }
     }
@@ -147,7 +168,7 @@ class GitLabSource(
         gitlab.projects()
             .withId(projectId.toLong())
             .releases()
-            .paging(fromPagination = Pagination(itemsPerPage = 50))
+            .paging(fromPagination = Pagination(itemsPerPage = 100))
             .forEach {
                 if (it.releasedAt != null) {
                     timeline.increment(it.releasedAt!!)
@@ -176,7 +197,7 @@ class GitLabSource(
         gitlab.projects()
             .withId(projectId.toLong())
             .members()
-            .paging()
+            .paging(fromPagination = Pagination(itemsPerPage = 100))
             .forEach {
                 if (it.state == UserState.ACTIVE) {
                     members.add(Member(it.id, it.name, it.email, it.username, mapAccessLevel(it.accessLevel)))
