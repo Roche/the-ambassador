@@ -5,14 +5,15 @@ import com.roche.ambassador.model.Feature
 import com.roche.ambassador.model.Importance
 import com.roche.ambassador.model.Value
 import com.roche.ambassador.model.utils.Range
+import java.lang.IllegalArgumentException
 
 abstract class AbstractFeature<T>(
     value: T?,
-    protected val name: String,
     weight: Double = 1.0,
     protected val importance: Importance = Importance.low()
 ) : Feature<T> {
 
+    protected val name: String = FeatureNameLookup.getFeatureName(this::class).orElseThrow { IllegalArgumentException("Name of feature is not defined") }
     protected val value: Value<T> = Value.of(value)
     protected val weight: Double = WEIGHT_RANGE.adjust(weight)
 

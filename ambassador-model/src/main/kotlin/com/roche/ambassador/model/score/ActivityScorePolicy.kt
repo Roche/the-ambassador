@@ -32,7 +32,6 @@ object ActivityScorePolicy : ScorePolicy {
         return Score.builder("Documentation", features)
             .withFeature(ContributingGuideFeature::class).forFile(100, 100)
             .withFeature(ReadmeFeature::class).forFile(100, 100)
-            .withFeature(LicenseFeature::class).forFile(50, 5)
             .withFeature(DescriptionFeature::class)
                 .filter { it.value().exists() && it.value().get().length >= 30 }
                 .calculate { _, score -> score + 50 }

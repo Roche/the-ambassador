@@ -14,6 +14,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     implementation("org.apache.commons:commons-math3:3.6.1")
+    testImplementation("org.reflections:reflections:0.10.2")
+
 }
 
 description = "ambassador-model"

@@ -10,7 +10,8 @@ object FeatureReaders {
         LanguagesFeature.create(),
         ContributorsFeature.create(),
         TagsFeature.create(),
-        VisibilityFeature.create(), CommitsFeature.create(),
+        VisibilityFeature.create(),
+        CommitsFeature.create(),
         ReleasesFeature.create(),
         ProtectedBranchesFeature.create(),
         ReadmeFeature.create(),
@@ -23,7 +24,9 @@ object FeatureReaders {
         MembersFeature.create(),
     )
 
-    fun all(): List<FeatureReader<*>> {
-        return readers
+    fun getProjectBasedReaders(): List<FeatureReader<*>> {
+        return readers.filter { !it.isUsingExternalSource() }
     }
+
+    fun all(): List<FeatureReader<*>> = readers
 }

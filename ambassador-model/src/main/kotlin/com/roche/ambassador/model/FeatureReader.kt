@@ -8,6 +8,7 @@ import java.util.*
 interface FeatureReader<T : Feature<*>> {
 
     suspend fun read(project: Project, source: ProjectSource<*>): Optional<T>
+    fun isUsingExternalSource(): Boolean = true
 
     companion object {
         fun <T : Feature<*>> create(reader: suspend (Project, ProjectSource<*>) -> T?): FeatureReader<T> {
@@ -15,7 +16,7 @@ interface FeatureReader<T : Feature<*>> {
         }
 
         fun <T : Feature<*>> createForProject(reader: suspend (Project) -> T?): FeatureReader<T> {
-            return create { project, _ -> reader.invoke(project) }
+            return ProjectBasedFeatureReader(reader)
         }
 
         fun <T : Feature<*>> createForFile(path: String, reader: suspend (RawFile) -> T?): FeatureReader<T> {
@@ -47,5 +48,10 @@ interface FeatureReader<T : Feature<*>> {
 
     private class DefaultFeatureReader<T : Feature<*>>(private val reader: suspend (Project, ProjectSource<*>) -> T?) : FeatureReader<T> {
         override suspend fun read(project: Project, source: ProjectSource<*>): Optional<T> = Optional.ofNullable(reader.invoke(project, source))
+    }
+
+    private class ProjectBasedFeatureReader<T : Feature<*>>(private val reader: suspend (Project) -> T?) : FeatureReader<T> {
+        override suspend fun read(project: Project, source: ProjectSource<*>): Optional<T> = Optional.ofNullable(reader.invoke(project))
+        override fun isUsingExternalSource(): Boolean = false
     }
 }

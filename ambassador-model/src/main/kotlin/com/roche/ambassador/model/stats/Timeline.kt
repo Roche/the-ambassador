@@ -1,7 +1,5 @@
 package com.roche.ambassador.model.stats
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -9,25 +7,20 @@ import java.util.stream.Collectors
 import kotlin.NoSuchElementException
 
 class Timeline(
-    @JsonIgnore private val data: MutableMap<LocalDate, Int>,
+    val series: MutableMap<LocalDate, Int>,
     val aggregation: TimelineAggregation = TimelineAggregation.NONE
 ) {
 
     constructor() : this(hashMapOf())
 
-    fun empty(): Boolean = data.isEmpty()
-
-    @JsonProperty("series")
-    fun series(): List<Point> = data.toSortedMap()
-        .toList()
-        .map { Point(it.first, it.second) }
+    fun empty(): Boolean = series.isEmpty()
 
     override fun toString(): String {
-        return data.toString()
+        return series.toString()
     }
 
     fun sum(): Long {
-        return data.values.fold(0) { acc, v -> acc + v }
+        return series.values.fold(0) { acc, v -> acc + v }
     }
 
     fun average(): Double {
@@ -38,24 +31,24 @@ class Timeline(
     }
 
     fun count(): Int {
-        return data.size
+        return series.size
     }
 
     fun add(date: Date, value: Int): Timeline {
         val key = Instant.ofEpochMilli(date.time)
             .atZone(ZoneId.systemDefault())
             .toLocalDate()
-        data.merge(key, value, Integer::sum)
+        series.merge(key, value, Integer::sum)
         return this
     }
 
     fun add(date: LocalDate, value: Int): Timeline {
-        data.merge(date, value, Integer::sum)
+        series.merge(date, value, Integer::sum)
         return this
     }
 
     fun add(date: LocalDateTime, value: Int): Timeline {
-        data.merge(date.toLocalDate(), value, Integer::sum)
+        series.merge(date.toLocalDate(), value, Integer::sum)
         return this
     }
 
@@ -89,7 +82,7 @@ class Timeline(
     }
 
     fun movingAverage(size: Int, step: Int): List<Pair<LocalDate, Double>> {
-        return data.entries
+        return series.entries
             .sortedBy { it.key }
             .windowed(size, step)
             .map { x -> Pair(x.first().key, x.sumOf { it.value }.toDouble() / x.size) }
@@ -112,12 +105,12 @@ class Timeline(
             return remap(ChronoUnit.YEARS) { it.key.withDayOfYear(1) }
         }
 
-        private fun expand(data: MutableMap<LocalDate, Int>, chronoUnit: ChronoUnit) {
-            if (data.isEmpty()) {
+        private fun expand(series: MutableMap<LocalDate, Int>, chronoUnit: ChronoUnit) {
+            if (series.isEmpty()) {
                 return
             }
-            val min = data.minOf { it.key }
-            val max = data.maxOf { it.key }
+            val min = series.minOf { it.key }
+            val max = series.maxOf { it.key }
             val dateRange = min..max
             val stepper = when (chronoUnit) {
                 ChronoUnit.YEARS -> dateRange stepYears 1
@@ -126,12 +119,12 @@ class Timeline(
                 else -> dateRange stepMonths 1
             }
             for (date in stepper) {
-                data.putIfAbsent(date, 0)
+                series.putIfAbsent(date, 0)
             }
         }
 
         private fun remap(chronoUnit: ChronoUnit, keyMapper: (MutableMap.MutableEntry<LocalDate, Int>) -> (LocalDate)): Timeline {
-            val new = data.entries
+            val new = series.entries
                 .stream()
                 .collect(
                     Collectors.toMap(
@@ -202,10 +195,8 @@ class Timeline(
 
         private fun filtered(boundaryDateSupplier: (LocalDate, Long) -> LocalDate): Timeline {
             val boundaryDate = boundaryDateSupplier(LocalDate.now(), last)
-            val filteredData = data.filterKeys { it.isAfter(boundaryDate) }
-            return Timeline(filteredData.toMutableMap())
+            val filteredseries = series.filterKeys { it.isAfter(boundaryDate) }
+            return Timeline(filteredseries.toMutableMap())
         }
     }
-
-    data class Point(val date: LocalDate, val count: Int)
 }

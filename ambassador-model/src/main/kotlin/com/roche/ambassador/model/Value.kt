@@ -1,8 +1,14 @@
 package com.roche.ambassador.model
 
-class Value<T> private constructor(private val value: T?) {
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonUnwrapped
 
+class Value<T> private constructor(@JsonUnwrapped private val value: T?) {
+
+    @JsonIgnore
     fun get(): T = value!!
+
+    @JsonIgnore
     fun exists(): Boolean = value != null
 
     fun orElse(elseHandler: () -> T): T {
