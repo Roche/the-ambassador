@@ -4,6 +4,6 @@ ambassador:
     url: https://test.com
     token: __nothing__
     system: fake
-    indexEvery: 24h
+    gracePeriod: 24h
     clientId: whatever
     clientSecret: whatever

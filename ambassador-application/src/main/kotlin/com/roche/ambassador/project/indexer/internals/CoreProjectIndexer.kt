@@ -8,7 +8,6 @@ import com.roche.ambassador.model.ScorecardCalculator
 import com.roche.ambassador.model.feature.FeatureReaders
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
-import com.roche.ambassador.model.project.Visibility
 import com.roche.ambassador.model.score.ActivityScorePolicy
 import com.roche.ambassador.model.score.CriticalityScorePolicy
 import com.roche.ambassador.model.source.ProjectSource
@@ -104,7 +103,7 @@ internal class CoreProjectIndexer(
                 onStarted()
                 source.flow(filter)
                     .buffer(1000)
-                    .filter { it.isProjectWithinIndexingPeriod() }
+                    .filter { it.isProjectWithinGracePeriod() }
                     .onEach { onProjectIndexingStarted(it) }
                     .filter {
                         val result = indexingCriteria.evaluate(it)
@@ -175,11 +174,11 @@ internal class CoreProjectIndexer(
         }
     }
 
-    private fun Any.isProjectWithinIndexingPeriod(): Boolean {
+    private fun Any.isProjectWithinGracePeriod(): Boolean {
         // TODO make this calculation directly in db to improve performance
         val id = source.resolveId(this)
         val shouldBeIndexed = projectEntityRepository.findById(id.toLong())
-            .filter { !it.wasIndexedBefore(LocalDateTime.now().minus(indexerProperties.indexEvery)) }
+            .filter { !it.wasIndexedBefore(LocalDateTime.now().minus(indexerProperties.gracePeriod)) }
             .isEmpty
         if (!shouldBeIndexed) {
             log.info("Project '{}' (id={}) was indexed recently and does not need to be reindex now. Skipping...", source.resolveName(this), source.resolveId(this))

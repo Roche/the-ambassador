@@ -21,7 +21,7 @@ data class IndexerProperties(
     val historySize: Int = 10,
 
     @NotNull
-    val indexEvery: Duration = Duration.ofDays(7),
+    val gracePeriod: Duration = Duration.ofDays(7),
 
     @NestedConfigurationProperty
     @Valid
