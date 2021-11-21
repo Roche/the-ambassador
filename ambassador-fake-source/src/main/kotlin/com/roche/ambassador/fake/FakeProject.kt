@@ -16,7 +16,7 @@ class FakeProject(
     var avatarUrl: String? = null,
     var description: String? = null,
     var defaultBranch: String? = null,
-    var stats: Statistics = Statistics(0, 0, 0, 0, 0, 0, 0, 0, 0),
+    var stats: Statistics = Statistics.no(),
     var lastUpdatedDate: LocalDate? = null,
     var forked: Boolean = false,
     var emptyRepository: Boolean = false,

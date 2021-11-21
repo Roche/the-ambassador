@@ -10,4 +10,8 @@ data class Statistics(
     val repositorySize: Long,
     val storageSize: Long,
     val wikiSize: Long,
-)
+) {
+    companion object {
+        fun no(): Statistics = Statistics(0, 0, 0, 0, 0, 0, 0, 0, 0)
+    }
+}
