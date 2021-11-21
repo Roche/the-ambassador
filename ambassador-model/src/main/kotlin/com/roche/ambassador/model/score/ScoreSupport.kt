@@ -4,6 +4,7 @@ import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.Feature
 import com.roche.ambassador.model.Score
 import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.feature.FileFeature
 import java.util.function.Predicate
 import kotlin.reflect.KClass
 
@@ -90,4 +91,13 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
             return scoreBuilder
         }
     }
+}
+
+fun <T : FileFeature<*>> ScoreBuilder.FeatureScoreBuilder<T, ScoreBuilder.ParentScoreBuilder>.forFile(
+    minimumSize: Long,
+    boost: Int
+): ScoreBuilder.ParentScoreBuilder {
+    return this
+        .filter { it.hasSizeAtLeast(minimumSize) }
+        .calculate { _, score -> score + boost }
 }

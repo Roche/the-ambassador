@@ -18,15 +18,6 @@ object ActivityScorePolicy : ScorePolicy {
         }
     }
 
-    fun <T : FileFeature<*>> ScoreBuilder.FeatureScoreBuilder<T, ScoreBuilder.ParentScoreBuilder>.forFile(
-        minimumSize: Long,
-        boost: Int
-    ): ScoreBuilder.ParentScoreBuilder {
-        return this
-            .filter { it.hasSizeAtLeast(minimumSize) }
-            .calculate { _, score -> score + boost }
-    }
-
     private fun getDocumentationScore(features: Features): Score {
         // @formatter:off
         return Score.builder("Documentation", features)
