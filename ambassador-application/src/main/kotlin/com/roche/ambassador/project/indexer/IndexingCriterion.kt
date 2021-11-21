@@ -1,27 +1,23 @@
 package com.roche.ambassador.project.indexer
 
 import com.roche.ambassador.model.criteria.Criterion
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.source.CriterionVerifier
-import com.roche.ambassador.model.source.ProjectDetailsResolver
 
-class IndexingCriterion<T>(
+class IndexingCriterion(
     val name: String,
-    private val criteriaVerifier: CriterionVerifier<T>,
-    private val projectDetailsResolver: ProjectDetailsResolver<T>,
-    private val failureMessageSupplier: ((T) -> String)? = null
-) : Criterion<T> {
+    private val criteriaVerifier: CriterionVerifier,
+    private val failureMessageSupplier: ((Project) -> String)? = null
+) : Criterion<Project> {
 
-    override fun getFailureMessage(input: T): String = failureMessageSupplier?.invoke(input) ?: "Evaluation of ${this.name} criteria failed on project '${
-        projectDetailsResolver.resolveName(
-            input
-        )
-    }' (id=${projectDetailsResolver.resolveId(input)})"
+    override fun getFailureMessage(input: Project): String =
+        failureMessageSupplier?.invoke(input) ?: "Evaluation of ${this.name} criteria failed on project '${input.name}' (id=${input.id})"
 
-    override fun evaluate(input: T): Boolean = criteriaVerifier(input)
+    override fun evaluate(input: Project): Boolean = criteriaVerifier(input)
 
     override fun toString(): String = name
 
-    override fun equals(other: Any?): Boolean = if (other is IndexingCriterion<*>) {
+    override fun equals(other: Any?): Boolean = if (other is IndexingCriterion) {
         this.name == other.name
     } else {
         false

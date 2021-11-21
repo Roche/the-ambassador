@@ -19,7 +19,7 @@ internal class Statistics {
     fun recordStarted() = started.incrementAndGet()
     fun recordFinished() = finished.incrementAndGet()
     fun recordError(t: Throwable) = errors.computeIfAbsent(t.javaClass.simpleName) { AtomicLong() }.incrementAndGet()
-    fun recordExclusion(failedCriteria: List<IndexingCriterion<Any>>) {
+    fun recordExclusion(failedCriteria: List<IndexingCriterion>) {
         exclusionsCount.incrementAndGet()
         failedCriteria
             .map { it.name }

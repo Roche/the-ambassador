@@ -44,7 +44,6 @@ object SimpleActivityScoreCalculator : TestCalculator<ActivityData> {
 
         score += boostForDocumentation(data.readme, 100, 100)
         score += boostForDocumentation(data.contributionGuide, 100, 100)
-        score += boostForDocumentation(data.license, 50, 5)
         if (data.description != null && data.description.length >= 30) {
             score += 50
         }

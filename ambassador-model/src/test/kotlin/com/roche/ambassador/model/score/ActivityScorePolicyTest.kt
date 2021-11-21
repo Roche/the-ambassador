@@ -50,7 +50,7 @@ class ActivityScorePolicyTest {
         val result = SimpleActivityScoreCalculator.calculate(data)
 
         // then result is based on manual calculation based on algorithm defined above
-        assertThat(result).isEqualTo(1516.0)
+        assertThat(result).isEqualTo(1511.0)
 
         // when calculate activity score using policy
         val activity = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
@@ -66,8 +66,6 @@ class ActivityScorePolicyTest {
                 CreatedDateFeature::class,
                 ContributingGuideFeature::class,
                 ReadmeFeature::class,
-                LicenseFeature::class,
-//                ChangelogFeature::class,
                 DescriptionFeature::class,
                 IssuesFeature::class
             )
@@ -216,30 +214,6 @@ class ActivityScorePolicyTest {
     fun `should use contribution guide only`(expectedBoost: Double, length: Long) {
         verifyDocumentationBoost(expectedBoost, length, ContributingGuideFeature::class) { ActivityData(contributionGuide = it) }
     }
-
-    @ParameterizedTest(name = "should boost by {0} when license has length {1}")
-    @CsvSource(
-        "5,51",
-        "5,50",
-        "0,49",
-        "0,0",
-        "0,-1",
-    )
-    fun `should use license only`(expectedBoost: Double, length: Long) {
-        verifyDocumentationBoost(expectedBoost, length, LicenseFeature::class) { ActivityData(license = it) }
-    }
-
-//    @ParameterizedTest(name = "should boost by {0} when changelog has length {1}")
-//    @CsvSource(
-//        "10,51",
-//        "10,50",
-//        "0,49",
-//        "0,0",
-//        "0,-1",
-//    )
-//    fun `should use changelog only`(expectedBoost: Double, length: Long) {
-//        verifyDocumentationBoost(expectedBoost, length, ChangelogFeature::class) { ActivityData(changelog = it) }
-//    }
 
     private fun verifyDocumentationBoost(
         expectedBoost: Double,

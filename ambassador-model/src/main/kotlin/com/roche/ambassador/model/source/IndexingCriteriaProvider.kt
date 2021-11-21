@@ -1,10 +1,11 @@
 package com.roche.ambassador.model.source
 
-interface IndexingCriteriaProvider<T> {
+import com.roche.ambassador.model.project.Project
 
-    fun getForkedProjectCriteria(): ForkedProjectCriteria<T>
-    fun getInvalidProjectCriteria(): InvalidProjectCriteria<T>
-    fun getPersonalProjectCriteria(): PersonalProjectCriteria<T>
+object IndexingCriteriaProvider {
+
+    fun getInvalidProjectCriteria(): InvalidProjectCriteria = InvalidProjectCriteria
+    fun getPersonalProjectCriteria(): PersonalProjectCriteria = PersonalProjectCriteria
 }
 
-typealias CriterionVerifier<T> = (T) -> Boolean
+typealias CriterionVerifier = (Project) -> Boolean

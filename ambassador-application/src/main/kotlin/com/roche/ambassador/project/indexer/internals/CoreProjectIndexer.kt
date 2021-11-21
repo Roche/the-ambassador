@@ -27,7 +27,7 @@ internal class CoreProjectIndexer(
     private val projectEntityRepository: ProjectEntityRepository,
     concurrencyProvider: ConcurrencyProvider,
     private val indexerProperties: IndexerProperties,
-    private val indexingCriteria: IndexingCriteria<Any>,
+    private val indexingCriteria: IndexingCriteria,
     private val transactionTemplate: TransactionTemplate
 ) : ProjectIndexer {
 
@@ -126,21 +126,12 @@ internal class CoreProjectIndexer(
                     }
                     .collect {
                         consumerScope.launch {
-                            val name = source.resolveName(it)
-                            val id = source.resolveId(it)
                             try {
-                                log.info("Indexing project '{}' (id={})", name, id)
-                                val projectToSave = Optional.ofNullable(source.map(it))
-
-                                if (projectToSave.isPresent) {
-                                    val project = projectToSave.get()
-                                    index(project)
-                                    onProjectIndexingFinished(project)
-                                } else {
-                                    log.warn("Project '{}' (id={}) not indexed, because it could not be analyzed", name, id)
-                                }
+                                log.info("Indexing project '{}' (id={})", it.name, it.id)
+                                index(it)
+                                onProjectIndexingFinished(it)
                             } catch (e: Throwable) {
-                                log.error("Failed while indexing project '{}' (id={}): {}", name, id, e.message)
+                                log.error("Failed while indexing project '{}' (id={}): {}", it.name, it.id, e.message)
                                 onProjectIndexingError(e, it)
                             } finally {
                                 projectToIndexCount.decrementAndGet()
@@ -174,14 +165,13 @@ internal class CoreProjectIndexer(
         }
     }
 
-    private fun Any.isProjectWithinGracePeriod(): Boolean {
+    private fun Project.isProjectWithinGracePeriod(): Boolean {
         // TODO make this calculation directly in db to improve performance
-        val id = source.resolveId(this)
-        val shouldBeIndexed = projectEntityRepository.findById(id.toLong())
+        val shouldBeIndexed = projectEntityRepository.findById(id)
             .filter { !it.wasIndexedBefore(LocalDateTime.now().minus(indexerProperties.gracePeriod)) }
             .isEmpty
         if (!shouldBeIndexed) {
-            log.info("Project '{}' (id={}) was indexed recently and does not need to be reindex now. Skipping...", source.resolveName(this), source.resolveId(this))
+            log.info("Project '{}' (id={}) was indexed recently and does not need to be reindex now. Skipping...", name, id)
         }
         return shouldBeIndexed
     }

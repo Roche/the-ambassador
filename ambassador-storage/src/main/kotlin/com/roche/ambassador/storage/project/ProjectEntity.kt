@@ -5,12 +5,17 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType
 import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "project")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
+@NamedEntityGraph(
+    name = "Project.history",
+    attributeNodes = [NamedAttributeNode("history")]
+)
 class ProjectEntity(
     @Id var id: Long? = null,
     var name: String? = null,
@@ -39,6 +44,8 @@ class ProjectEntity(
 ) {
 
     fun wasIndexedBefore(otherDate: LocalDateTime): Boolean = lastIndexedDate.isBefore(otherDate)
+
+    fun wasIndexedBefore(otherDate: LocalDate): Boolean = lastIndexedDate.isBefore(otherDate.atStartOfDay())
 
     fun snapshot(): ProjectHistoryEntity {
         val historyEntry = ProjectHistoryEntity.from(this)

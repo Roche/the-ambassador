@@ -43,12 +43,12 @@ class SearchableProjectRepositoryTest(
 
         // then
         assertThat(result).hasSize(15)
-        assertThat(result.totalElements).isEqualTo(45)
+        assertThat(result.totalElements).isEqualTo(38)
 
         // when
         val result2 = repository.search(SearchQuery.of("acc"), PageRequest.of(0, 15))
         assertThat(result2).hasSize(15)
-        assertThat(result2.totalElements).isEqualTo(348)
+        assertThat(result2.totalElements).isEqualTo(380)
 
         // when
         val result3 = repository.search(SearchQuery.of("accioaccio"), PageRequest.of(0, 15))
@@ -63,7 +63,7 @@ class SearchableProjectRepositoryTest(
 
         // then
         assertThat(result).hasSize(15)
-        assertThat(result.totalElements).isEqualTo(212)
+        assertThat(result.totalElements).isEqualTo(226)
         assertOnlySelectAndCountQueries()
     }
 
@@ -73,7 +73,7 @@ class SearchableProjectRepositoryTest(
         val result = repository.search(SearchQuery.of(), PageRequest.of(0, 30))
 
         // then
-        assertThat(result.totalElements).isEqualTo(474)
+        assertThat(result.totalElements).isEqualTo(500)
         assertThat(result.content)
             .hasSize(30)
             .isSortedAccordingTo { projectEntity, projectEntity2 -> projectEntity2.extractScore().compareTo(projectEntity.extractScore()) }

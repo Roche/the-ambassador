@@ -1,5 +1,6 @@
 package com.roche.ambassador.storage.project
 
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository
@@ -10,5 +11,7 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
     @Query("delete from project", nativeQuery = true)
     @Modifying
     override fun deleteAll()
+
+    @EntityGraph(value = "Project.history")
     override fun findById(id: Long): Optional<ProjectEntity>
 }

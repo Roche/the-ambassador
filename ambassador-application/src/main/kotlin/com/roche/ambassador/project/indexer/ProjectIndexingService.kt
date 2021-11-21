@@ -6,7 +6,6 @@ import com.roche.ambassador.configuration.source.ProjectSources
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
-import com.roche.ambassador.model.source.ProjectDetailsResolver
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.security.AuthenticationContext
 import com.roche.ambassador.storage.indexing.Indexing
@@ -60,16 +59,15 @@ internal class ProjectIndexingService(
     }
 
     private fun handleExcludedProject(
-        projectDetailsResolver: ProjectDetailsResolver<Any>,
         stats: Statistics,
-        failedCriteria: List<IndexingCriterion<Any>>,
-        project: Any
+        failedCriteria: List<IndexingCriterion>,
+        project: Project
     ) {
         val failedCriteriaString = failedCriteria.joinToString(", ") { it.name }
         log.warn(
             "Project '{}' (id={}) is excluded from indexing because not meet criteria: {}",
-            projectDetailsResolver.resolveName(project),
-            projectDetailsResolver.resolveId(project),
+            project.name,
+            project.id,
             failedCriteriaString
         )
         stats.recordExclusion(failedCriteria)
@@ -91,7 +89,7 @@ internal class ProjectIndexingService(
             idx = indexingRepository.save(idx)
             indexersInUse[idx.getId()!!] = indexer
             val filter = ProjectFilter.Builder()
-                .archived(criteriaProperties.projects.includeArchived)
+                .archived(!criteriaProperties.projects.excludeArchived)
                 .groups(*criteriaProperties.projects.groups.toTypedArray())
                 .visibility(criteriaProperties.projects.maxVisibility)
                 .lastActivityAfter(criteriaProperties.projects.lastActivityAfter)
@@ -103,7 +101,7 @@ internal class ProjectIndexingService(
                 onProjectIndexingStarted = { stats.recordStarted() },
                 onProjectIndexingFinished = { stats.recordFinished() },
                 onProjectIndexingError = { t, _ -> stats.recordError(t) },
-                onProjectExcludedByCriteria = { criteria, project -> handleExcludedProject(indexer.getSource(), stats, criteria, project) },
+                onProjectExcludedByCriteria = { criteria, project -> handleExcludedProject(stats, criteria, project) },
                 onFinished = {
                     stats.stopTiming()
                     idx.finish(stats.asIndexingStatistics())

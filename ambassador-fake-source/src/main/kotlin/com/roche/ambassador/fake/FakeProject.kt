@@ -1,6 +1,6 @@
 package com.roche.ambassador.fake
 
-import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.Visibility
 import com.roche.ambassador.model.stats.Statistics
@@ -19,10 +19,15 @@ class FakeProject(
     var stats: Statistics = Statistics(0, 0, 0, 0, 0, 0, 0, 0, 0),
     var lastUpdatedDate: LocalDate? = null,
     var forked: Boolean = false,
-    var emptyRepository: Boolean = false
+    var emptyRepository: Boolean = false,
+    var canFork: Boolean = true,
+    var canCreatePullRequest: Boolean = true
 ) {
 
     fun asProject(): Project = Project(
-        id, url, avatarUrl, name, description, tags, visibility, defaultBranch, stats, createdDate, lastUpdatedDate, Features()
+        id, url, avatarUrl, name,
+        description, tags, visibility, defaultBranch,
+        false, emptyRepository, forked, stats,
+        createdDate, lastUpdatedDate, Permissions(canFork, canCreatePullRequest)
     )
 }

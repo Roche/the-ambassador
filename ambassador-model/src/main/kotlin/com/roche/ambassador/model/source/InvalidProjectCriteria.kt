@@ -3,14 +3,43 @@ package com.roche.ambassador.model.source
 import com.roche.ambassador.model.project.Visibility
 import java.time.LocalDate
 
-interface InvalidProjectCriteria<T> {
+object InvalidProjectCriteria {
 
-    fun hasDefaultBranch(): CriterionVerifier<T>
-    fun isRepositoryNotEmpty(): CriterionVerifier<T>
-    fun canCreateMergeRequest(): CriterionVerifier<T>
-    fun canForkProject(): CriterionVerifier<T>
-    fun hasVisibilityAtMost(visibility: Visibility): CriterionVerifier<T>
-    fun isNotArchived(): CriterionVerifier<T>
-    fun hasActivityAfter(date: LocalDate): CriterionVerifier<T>
+    fun hasDefaultBranch(): CriterionVerifier = {
+        it.defaultBranch != null
+    }
+
+    fun isRepositoryNotEmpty(): CriterionVerifier = {
+        !it.empty
+    }
+
+    fun canCreateMergeRequest(): CriterionVerifier = {
+        it.permissions?.canEveryoneCreatePullRequest ?: false
+    }
+
+    fun canForkProject(): CriterionVerifier = {
+        it.permissions?.canEveryoneFork ?: false
+    }
+
+    fun hasVisibilityAtMost(visibility: Visibility): CriterionVerifier = {
+        when (visibility) {
+            Visibility.PUBLIC -> it.visibility == Visibility.PUBLIC
+            Visibility.INTERNAL -> it.visibility != Visibility.PRIVATE
+            Visibility.PRIVATE -> true
+            else -> false
+        }
+    }
+
+    fun excludeArchived(): CriterionVerifier = {
+        !it.archived
+    }
+
+    fun hasActivityAfter(date: LocalDate): CriterionVerifier = {
+        it.lastActivityDate != null && it.lastActivityDate.isAfter(date)
+    }
+
+    fun excludeForked(): CriterionVerifier = {
+        !it.forked
+    }
 
 }

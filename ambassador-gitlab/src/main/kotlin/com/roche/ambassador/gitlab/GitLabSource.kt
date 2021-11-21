@@ -6,9 +6,6 @@ import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.project.*
-import com.roche.ambassador.model.source.ForkedProjectCriteria
-import com.roche.ambassador.model.source.InvalidProjectCriteria
-import com.roche.ambassador.model.source.PersonalProjectCriteria
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Timeline
 import com.roche.gitlab.api.GitLab
@@ -63,16 +60,17 @@ class GitLabSource(
         return Optional.ofNullable(GitLabProjectMapper.mapGitLabProjectToOpenSourceProject(prj))
     }
 
-    private suspend fun ProducerScope<GitLabProject>.publishFromPager(pager: Pager<GitLabProject>) {
+    private suspend fun ProducerScope<Project>.publishFromPager(pager: Pager<GitLabProject>) {
         for (page in pager) {
             for (project in page) {
-                log.debug("Publishing project {}", project.id)
-                send(project)
+                val mapped = GitLabProjectMapper.mapGitLabProjectToOpenSourceProject(project)
+                log.debug("Publishing project {}", mapped.id)
+                send(mapped)
             }
         }
     }
 
-    override suspend fun flow(filter: ProjectFilter): Flow<GitLabProject> {
+    override suspend fun flow(filter: ProjectFilter): Flow<Project> {
         val visibility = VisibilityMapper.fromAmbassador(filter.visibility!!)
         return channelFlow {
             if (filter.groups.isNotEmpty()) {
@@ -103,13 +101,6 @@ class GitLabSource(
 
     override fun name(): String = "GitLab"
 
-    override suspend fun map(input: GitLabProject): Project = GitLabProjectMapper.mapGitLabProjectToOpenSourceProject(input)
-
-    override fun getInvalidProjectCriteria(): InvalidProjectCriteria<GitLabProject> = GitLabInvalidProjectCriteria
-    override fun resolveName(project: GitLabProject): String = project.nameWithNamespace!!
-    override fun resolveId(project: GitLabProject): String = project.id!!.toString()
-    override fun getForkedProjectCriteria(): ForkedProjectCriteria<GitLabProject> = GitLabForkedProjectCriteria
-    override fun getPersonalProjectCriteria(): PersonalProjectCriteria<GitLabProject> = GitLabPersonalProjectCriteria
     override fun getOAuth2ClientProperties(): OAuth2ClientProperties = oAuth2ClientProperties
 
     override suspend fun readIssues(projectId: String): Issues {

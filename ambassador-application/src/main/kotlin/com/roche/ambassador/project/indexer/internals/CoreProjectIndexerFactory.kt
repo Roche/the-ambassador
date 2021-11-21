@@ -2,6 +2,7 @@ package com.roche.ambassador.project.indexer.internals
 
 import com.roche.ambassador.ConcurrencyProvider
 import com.roche.ambassador.configuration.properties.IndexerProperties
+import com.roche.ambassador.model.source.IndexingCriteriaProvider
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.project.indexer.IndexerFactory
 import com.roche.ambassador.project.indexer.ProjectIndexer
@@ -18,7 +19,7 @@ internal class CoreProjectIndexerFactory(
     private val platformTransactionManager: PlatformTransactionManager
 ) : IndexerFactory {
     override fun create(source: ProjectSource<Any>,): ProjectIndexer {
-        val criteria = IndexingCriteria.forProvider(source, source, indexerProperties.criteria)
+        val criteria = IndexingCriteria.forProvider(IndexingCriteriaProvider, indexerProperties.criteria)
         return CoreProjectIndexer(
             source,
             projectEntityRepository,

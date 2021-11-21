@@ -23,27 +23,17 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
 
     override fun userDetailsProvider(attributes: Map<String, Any>): UserDetailsProvider? = null
 
-    override fun getForkedProjectCriteria(): FakeForkedProjectCriteria = FakeForkedProjectCriteria
-
-    override fun getInvalidProjectCriteria(): FakeInvalidProjectCriteria = FakeInvalidProjectCriteria
-
-    override fun getPersonalProjectCriteria(): FakePersonalProjectCriteria = FakePersonalProjectCriteria
-
-    override fun resolveName(project: FakeProject): String = project.name
-
-    override fun resolveId(project: FakeProject): String = project.id.toString()
-
     override suspend fun getById(id: String): Optional<Project> {
         return Optional.of(id)
             .map { generate(it, ProjectFilter(visibility = Visibility.INTERNAL, false, null)) }
             .map { it.asProject() }
     }
 
-    override suspend fun flow(filter: ProjectFilter): Flow<FakeProject> {
+    override suspend fun flow(filter: ProjectFilter): Flow<Project> {
         return kotlinx.coroutines.flow.flow {
             for (i in 1..spec.count) {
                 val project = generate(i.toString(), filter)
-                emit(project)
+                emit(map(project))
             }
         }
     }
@@ -77,7 +67,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
         )
     }
 
-    override suspend fun map(input: FakeProject): Project = input.asProject()
+    private fun map(input: FakeProject): Project = input.asProject()
 
     override suspend fun readIssues(projectId: String): Issues {
         val open = fakeDataProvider.nextInt()

@@ -2,25 +2,24 @@ package com.roche.ambassador.project.indexer.internals
 
 import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
 import com.roche.ambassador.extensions.toHumanReadable
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.Visibility
 import com.roche.ambassador.model.source.IndexingCriteriaProvider
-import com.roche.ambassador.model.source.ProjectDetailsResolver
 import com.roche.ambassador.project.indexer.IndexingCriterion
 import java.time.LocalDateTime
 
-internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
+internal open class IndexingCriteria(vararg criteria: IndexingCriterion) {
 
     private val criteria = criteria.toList()
 
     companion object {
 
         fun forProvider(
-            projectDetailsResolver: ProjectDetailsResolver<Any>,
-            criteriaProvider: IndexingCriteriaProvider<Any>,
+            criteriaProvider: IndexingCriteriaProvider,
             props: IndexingCriteriaProperties
-        ): IndexingCriteria<Any> {
-            val builder =  CriteriaBuilder(projectDetailsResolver)
-                .addIf("excludeAllForks", criteriaProvider.getForkedProjectCriteria().excludeAllWithForks(), props.forks.excludeAll)
+        ): IndexingCriteria {
+            val builder = CriteriaBuilder()
+                .addIf("excludeAllForks", criteriaProvider.getInvalidProjectCriteria().excludeForked(), props.projects.excludeForks)
                 .addIf(
                     "personalProjectHasAtLeast${props.personalProjects.mustHaveAtLeastStars}Stars",
                     criteriaProvider.getPersonalProjectCriteria().hasAtLeastStars(props.personalProjects.mustHaveAtLeastStars)
@@ -29,18 +28,24 @@ internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
                 .addIf("isRepositoryNotEmpty", criteriaProvider.getInvalidProjectCriteria().isRepositoryNotEmpty(), props.projects.mustHaveNotEmptyRepo)
                 .addIf("canCreateMergeRequest", criteriaProvider.getInvalidProjectCriteria().canCreateMergeRequest(), props.projects.mustBeAbleToCreateMergeRequest)
                 .addIf("canForkProject", criteriaProvider.getInvalidProjectCriteria().canForkProject(), props.projects.mustBeAbleToFork)
-                .addIf("hasVisibilityAtMost${props.projects.maxVisibility}", criteriaProvider.getInvalidProjectCriteria().hasVisibilityAtMost(props.projects.maxVisibility), props.projects.maxVisibility != Visibility.PRIVATE)
-                .addIf("isNotArchived", criteriaProvider.getInvalidProjectCriteria().isNotArchived(), !props.projects.includeArchived)
+                .addIf(
+                    "hasVisibilityAtMost${props.projects.maxVisibility}", criteriaProvider.getInvalidProjectCriteria().hasVisibilityAtMost(props.projects.maxVisibility),
+                    props.projects.maxVisibility != Visibility.PRIVATE
+                )
+                .addIf("excludeArchived", criteriaProvider.getInvalidProjectCriteria().excludeArchived(), props.projects.excludeArchived)
             val lastActivityWithin = props.projects.lastActivityWithin
             if (lastActivityWithin != null) {
-                builder.add("lastActivityWithin${lastActivityWithin.toHumanReadable()}", criteriaProvider.getInvalidProjectCriteria().hasActivityAfter(LocalDateTime.now().minus(lastActivityWithin).toLocalDate()))
+                builder.add(
+                    "lastActivityWithin${lastActivityWithin.toHumanReadable()}",
+                    criteriaProvider.getInvalidProjectCriteria().hasActivityAfter(LocalDateTime.now().minus(lastActivityWithin).toLocalDate())
+                )
             }
             return builder.build()
         }
     }
 
-    open fun evaluate(input: T): CriteriaEvaluationResult<T> {
-        val failedCriteria = mutableListOf<IndexingCriterion<T>>()
+    open fun evaluate(input: Project): CriteriaEvaluationResult<Project> {
+        val failedCriteria = mutableListOf<IndexingCriterion>()
         for (criterion in criteria) {
             if (!criterion.test(input)) {
                 failedCriteria.add(criterion)
@@ -52,12 +57,12 @@ internal open class IndexingCriteria<T>(vararg criteria: IndexingCriterion<T>) {
     fun getAllCriteriaNames() = criteria.joinToString(",") { it.name }
 
     data class CriteriaEvaluationResult<T> internal constructor(
-        val failedCriteria: List<IndexingCriterion<T>> = listOf()
+        val failedCriteria: List<IndexingCriterion> = listOf()
     ) {
         val success = failedCriteria.isEmpty()
         val failure = failedCriteria.isNotEmpty()
 
-        fun whenFailed(block: (List<IndexingCriterion<T>>) -> Unit) {
+        fun whenFailed(block: (List<IndexingCriterion>) -> Unit) {
             if (!success) {
                 block.invoke(failedCriteria)
             }

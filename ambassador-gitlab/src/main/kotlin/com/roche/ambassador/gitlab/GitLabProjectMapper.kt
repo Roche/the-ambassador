@@ -1,8 +1,10 @@
 package com.roche.ambassador.gitlab
 
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.stats.Statistics
+import com.roche.gitlab.api.project.model.FeatureAccessLevel
 import java.util.*
 import com.roche.gitlab.api.project.model.Project as GitLabProject
 
@@ -10,7 +12,7 @@ internal object GitLabProjectMapper {
     private val log by LoggerDelegate()
 
     fun mapGitLabProjectToOpenSourceProject(gitlabProject: GitLabProject): Project {
-        log.debug("Mapping project {} to OS project", gitlabProject.name)
+        log.debug("Mapping project {} to Ambassador project", gitlabProject.name)
         val visibility = VisibilityMapper.fromGitLab(gitlabProject.visibility!!)
         val stats = if (gitlabProject.statistics != null) {
             val glStats = gitlabProject.statistics!!
@@ -26,7 +28,7 @@ internal object GitLabProjectMapper {
                 glStats.wikiSize
             )
         } else {
-            Statistics(0, 0, 0, 0, 0, 0, 0, 0, 0)
+            Statistics(gitlabProject.forksCount!!, gitlabProject.starCount!!, 0, 0, 0, 0, 0, 0, 0)
         }
         return Project(
             id = gitlabProject.id!!.toLong(),
@@ -42,8 +44,14 @@ internal object GitLabProjectMapper {
             defaultBranch = gitlabProject.defaultBranch,
             potentialReadmePath = toRelativePath(gitlabProject.readmeUrl, gitlabProject.defaultBranch),
             potentialLicensePath = toRelativePath(gitlabProject.licenseUrl, gitlabProject.defaultBranch),
+            archived = gitlabProject.archived ?: false,
+            empty = gitlabProject.emptyRepo ?: false,
+            forked = gitlabProject.isForked(),
+            permissions = Permissions(canEveryoneAccess(gitlabProject.forkingAccessLevel), canEveryoneAccess(gitlabProject.mergeRequestsAccessLevel))
         )
     }
+
+    private fun canEveryoneAccess(featureAccessLevel: FeatureAccessLevel?): Boolean = featureAccessLevel?.canEveryoneAccess() ?: false
 
     private fun toRelativePath(url: String?, ref: String?): String? {
         if (url == null || ref == null) {
