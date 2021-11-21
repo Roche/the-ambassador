@@ -19,7 +19,7 @@ interface ProjectIndexer {
     )
 
     fun forciblyStop(terminateImmediately: Boolean)
-    fun getSource(): ProjectSource<Any>
+    fun getSource(): ProjectSource
 }
 
 typealias IndexingStartedCallback = () -> Unit

@@ -21,14 +21,9 @@ object ProjectCreator {
 
             FeatureReaders
                 .all()
-                .map { project.readFeature(it, source as ProjectSource<Any>) }
+                .map { project.readFeature(it, source as ProjectSource) }
 
-            val scorecard = ScorecardCalculator(
-                setOf(
-                    ActivityScorePolicy,
-                    CriticalityScorePolicy
-                )
-            ).calculateFor(project)
+            val scorecard = ScorecardCalculator.withAllPolicies().calculateFor(project)
             project.scorecard = scorecard
             project
         }

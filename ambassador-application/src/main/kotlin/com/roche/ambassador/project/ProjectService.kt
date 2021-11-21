@@ -38,7 +38,7 @@ open class ProjectService(
         log.debug("Searching for project with query: {}", query)
         val q = SearchQuery(query.query, query.visibility.orElse(Visibility.INTERNAL))
         val result = projectSearchRepository.search(q, pageable)
-            .map { SimpleProjectDto.from(it.project!!) }
+            .map { SimpleProjectDto.from(it.project) }
         return Paged.from(result)
     }
 

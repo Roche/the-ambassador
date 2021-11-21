@@ -7,11 +7,11 @@ import java.util.*
 
 interface FeatureReader<T : Feature<*>> {
 
-    suspend fun read(project: Project, source: ProjectSource<*>): Optional<T>
+    suspend fun read(project: Project, source: ProjectSource): Optional<T>
     fun isUsingExternalSource(): Boolean = true
 
     companion object {
-        fun <T : Feature<*>> create(reader: suspend (Project, ProjectSource<*>) -> T?): FeatureReader<T> {
+        fun <T : Feature<*>> create(reader: suspend (Project, ProjectSource) -> T?): FeatureReader<T> {
             return DefaultFeatureReader(reader)
         }
 
@@ -46,12 +46,12 @@ interface FeatureReader<T : Feature<*>> {
         }
     }
 
-    private class DefaultFeatureReader<T : Feature<*>>(private val reader: suspend (Project, ProjectSource<*>) -> T?) : FeatureReader<T> {
-        override suspend fun read(project: Project, source: ProjectSource<*>): Optional<T> = Optional.ofNullable(reader.invoke(project, source))
+    private class DefaultFeatureReader<T : Feature<*>>(private val reader: suspend (Project, ProjectSource) -> T?) : FeatureReader<T> {
+        override suspend fun read(project: Project, source: ProjectSource): Optional<T> = Optional.ofNullable(reader.invoke(project, source))
     }
 
     private class ProjectBasedFeatureReader<T : Feature<*>>(private val reader: suspend (Project) -> T?) : FeatureReader<T> {
-        override suspend fun read(project: Project, source: ProjectSource<*>): Optional<T> = Optional.ofNullable(reader.invoke(project))
+        override suspend fun read(project: Project, source: ProjectSource): Optional<T> = Optional.ofNullable(reader.invoke(project))
         override fun isUsingExternalSource(): Boolean = false
     }
 }

@@ -76,7 +76,7 @@ internal class ProjectIndexingService(
     @Suppress("UNCHECKED_CAST")
     private fun createIndexer(): ProjectIndexer {
         // FIXME don't get fixed source
-        val source = sources.get("gitlab").get() as ProjectSource<Any>
+        val source = sources.get("gitlab").get()
         return indexerFactory.create(source)
     }
 

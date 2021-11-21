@@ -15,11 +15,11 @@ class ProjectHistoryEntity(
     @Id @GeneratedValue var id: UUID? = null,
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false, updatable = false)
-    var parent: ProjectEntity? = null,
+    var parent: ProjectEntity,
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", updatable = false)
     @Basic(fetch = FetchType.LAZY)
-    var project: Project? = null,
+    var project: Project,
     @Column(name = "indexed_date", updatable = false)
     var indexedDate: LocalDateTime = LocalDateTime.now()
 ) {

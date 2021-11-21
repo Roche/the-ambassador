@@ -23,7 +23,7 @@ data class ProjectHistoryDto(
 ) {
     companion object {
         fun from(projectHistoryEntity: ProjectHistoryEntity): ProjectHistoryDto {
-            val project = projectHistoryEntity.project!!
+            val project = projectHistoryEntity.project
             return ProjectHistoryDto(
                 project.url, project.name,
                 project.description, project.tags, project.visibility,

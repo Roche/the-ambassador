@@ -38,7 +38,7 @@ data class Project(
 ) {
     private var scores: Scores? = null
 
-    suspend fun readFeature(featureReader: FeatureReader<*>, source: ProjectSource<Any>) {
+    suspend fun readFeature(featureReader: FeatureReader<*>, source: ProjectSource) {
         featureReader.read(this, source)
             .filter { it.exists() }
             .ifPresent { features.add(it) }

@@ -8,7 +8,7 @@ import com.roche.ambassador.model.stats.Timeline
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
-interface ProjectSource<T> : Specification, OAuth2AuthenticationProvider {
+interface ProjectSource : Specification, OAuth2AuthenticationProvider {
 
     suspend fun getById(id: String): Optional<Project>
     suspend fun flow(filter: ProjectFilter): Flow<Project>

@@ -22,7 +22,7 @@ class ProjectEntity(
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
-    var project: Project? = null,
+    var project: Project,
     var stars: Int = 0,
     @Column(name = "criticality_score")
     var criticalityScore: Double? = 0.0,

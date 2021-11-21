@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.util.*
 
-class FakeSource(val spec: GenerationSpec) : ProjectSource<FakeProject> {
+class FakeSource(val spec: GenerationSpec) : ProjectSource {
 
     private val fakeDataProvider: FakeDataProvider = FakeDataProvider()
 

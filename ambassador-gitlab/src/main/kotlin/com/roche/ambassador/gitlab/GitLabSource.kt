@@ -33,9 +33,7 @@ import com.roche.gitlab.api.model.AccessLevel as BranchingAccessLevel
 import com.roche.gitlab.api.project.model.Project as GitLabProject
 
 @ExperimentalCoroutinesApi
-class GitLabSource(
-    private val gitlab: GitLab
-) : ProjectSource<GitLabProject> {
+class GitLabSource(private val gitlab: GitLab) : ProjectSource {
 
     private val oAuth2ClientProperties = OAuth2ClientProperties(
         name = name(),

@@ -6,19 +6,18 @@ import com.roche.ambassador.model.source.IndexingCriteriaProvider
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.project.indexer.IndexerFactory
 import com.roche.ambassador.project.indexer.ProjectIndexer
+import com.roche.ambassador.project.indexer.steps.*
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import org.springframework.stereotype.Component
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
 
 @Component
 internal class CoreProjectIndexerFactory(
     private val projectEntityRepository: ProjectEntityRepository,
     private val concurrencyProvider: ConcurrencyProvider,
     private val indexerProperties: IndexerProperties,
-    private val platformTransactionManager: PlatformTransactionManager
+    private val steps: List<IndexingStep>
 ) : IndexerFactory {
-    override fun create(source: ProjectSource<Any>,): ProjectIndexer {
+    override fun create(source: ProjectSource): ProjectIndexer {
         val criteria = IndexingCriteria.forProvider(IndexingCriteriaProvider, indexerProperties.criteria)
         return CoreProjectIndexer(
             source,
@@ -26,7 +25,7 @@ internal class CoreProjectIndexerFactory(
             concurrencyProvider,
             indexerProperties,
             criteria,
-            TransactionTemplate(platformTransactionManager)
+            steps
         )
     }
 }

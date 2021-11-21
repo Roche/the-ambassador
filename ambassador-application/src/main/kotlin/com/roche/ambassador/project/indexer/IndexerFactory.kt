@@ -4,5 +4,5 @@ import com.roche.ambassador.model.source.ProjectSource
 
 interface IndexerFactory {
 
-    fun create(source: ProjectSource<Any>): ProjectIndexer
+    fun create(source: ProjectSource): ProjectIndexer
 }

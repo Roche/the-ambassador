@@ -5,6 +5,7 @@ plugins {
     id("testing-conventions")
     id("spring-conventions")
     id("jooq-conventions")
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.6.0"
 }
 
 tasks.getByName("sourcesJar") {
