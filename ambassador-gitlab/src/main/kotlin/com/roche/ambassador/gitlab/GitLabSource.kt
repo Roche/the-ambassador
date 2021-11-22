@@ -76,6 +76,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
                     withCustomAttributes = false,
                     archived = filter.archived,
                     visibility = visibility,
+                    includeSubgroups = true
                 )
                 filter.groups.forEach {
                     val pager = gitlab.groups()

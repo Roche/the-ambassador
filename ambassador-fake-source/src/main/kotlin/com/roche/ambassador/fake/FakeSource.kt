@@ -4,6 +4,7 @@ import com.roche.ambassador.GenerationSpec
 import com.roche.ambassador.OAuth2ClientProperties
 import com.roche.ambassador.UserDetailsProvider
 import com.roche.ambassador.model.files.RawFile
+import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.*
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Statistics
@@ -52,9 +53,15 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource {
             fakeDataProvider.nextLong(min = 0, max = 500000)
         )
         val createdDate = fakeDataProvider.date(from = LocalDate.now().minusYears(5))
+        val group = Group(
+            fakeDataProvider.nextLong(1, 1500), fakeDataProvider.projectUrl(),
+            fakeDataProvider.avatarUrl(), fakeDataProvider.description(), fakeDataProvider.name(),
+            fakeDataProvider.parentName(), fakeDataProvider.groupType()
+        )
         return FakeProject(
             id.toLong(),
             name,
+            "${fakeDataProvider.parentName()}/$name",
             filter.visibility ?: fakeDataProvider.visibility(),
             createdDate,
             fakeDataProvider.tags(),
@@ -63,7 +70,8 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource {
             fakeDataProvider.description(),
             fakeDataProvider.defaultBranch(),
             stats,
-            fakeDataProvider.date(from = createdDate)
+            fakeDataProvider.date(from = createdDate),
+            group = group
         )
     }
 

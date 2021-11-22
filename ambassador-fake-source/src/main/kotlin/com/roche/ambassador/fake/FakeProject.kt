@@ -1,5 +1,6 @@
 package com.roche.ambassador.fake
 
+import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.Visibility
@@ -9,6 +10,7 @@ import java.time.LocalDate
 class FakeProject(
     val id: Long,
     val name: String,
+    val fullName: String,
     var visibility: Visibility,
     var createdDate: LocalDate,
     var tags: List<String>,
@@ -21,13 +23,15 @@ class FakeProject(
     var forked: Boolean = false,
     var emptyRepository: Boolean = false,
     var canFork: Boolean = true,
-    var canCreatePullRequest: Boolean = true
+    var canCreatePullRequest: Boolean = true,
+    var group: Group
 ) {
 
     fun asProject(): Project = Project(
-        id, url, avatarUrl, name,
+        id, url, avatarUrl, name, fullName,
         description, tags, visibility, defaultBranch,
         false, emptyRepository, forked, stats,
-        createdDate, lastUpdatedDate, Permissions(canFork, canCreatePullRequest)
+        createdDate, lastUpdatedDate, Permissions(canFork, canCreatePullRequest),
+        parent = group
     )
 }

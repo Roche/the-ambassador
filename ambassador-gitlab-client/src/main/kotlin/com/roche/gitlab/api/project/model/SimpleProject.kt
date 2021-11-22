@@ -49,7 +49,7 @@ open class SimpleProject(
 ) {
 
     @JsonProperty("namespace_id")
-    fun getNamespaceId(): Int? {
+    fun getNamespaceId(): Long? {
         return namespace?.id
     }
 }

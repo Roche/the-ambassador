@@ -8,7 +8,7 @@ data class Namespace(
     @JsonProperty("full_path")
     var fullPath: String? = null,
     @JsonProperty("id")
-    var id: Int? = null,
+    var id: Long? = null,
     @JsonProperty("kind")
     var kind: NamespaceKind? = null,
     @JsonProperty("name")

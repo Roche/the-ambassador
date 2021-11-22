@@ -14,5 +14,7 @@ data class GroupProjectListQuery(
     @QueryParam("with_custom_attributes") val withCustomAttributes: Boolean? = null,
     @QueryParam("with_issues_enabled") val withIssuesEnabled: Boolean? = null,
     @QueryParam("with_merge_requests_enabled") val withMergeRequestsEnabled: Boolean? = null,
+    @QueryParam("include_subgroups") val includeSubgroups: Boolean? = null,
+    @QueryParam("with_shared") val withShared: Boolean? = null,
     @QueryParam("min_access_level") val minAccessLevel: AccessLevelName? = null,
 )
