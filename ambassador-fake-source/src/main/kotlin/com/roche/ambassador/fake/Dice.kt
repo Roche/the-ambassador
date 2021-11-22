@@ -8,6 +8,8 @@ internal class Dice<T>(val sides: Int, vararg suppliers: Supplier<T>) {
     private val random = Random(System.currentTimeMillis())
     private val suppliers: List<Supplier<T>>
 
+    constructor(vararg suppliers: Supplier<T>) : this(suppliers.size, *suppliers)
+
     init {
         if (sides < 3) {
             throw IllegalStateException("Dice must have at least 3 sides!")

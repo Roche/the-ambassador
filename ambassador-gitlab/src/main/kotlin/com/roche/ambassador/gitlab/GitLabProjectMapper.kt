@@ -1,10 +1,12 @@
 package com.roche.ambassador.gitlab
 
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.gitlab.api.project.model.FeatureAccessLevel
+import com.roche.gitlab.api.project.model.NamespaceKind
 import java.util.*
 import com.roche.gitlab.api.project.model.Project as GitLabProject
 
@@ -30,6 +32,20 @@ internal object GitLabProjectMapper {
         } else {
             Statistics(gitlabProject.forksCount!!, gitlabProject.starCount!!, 0, 0, 0, 0, 0, 0, 0)
         }
+        val namespace = gitlabProject.namespace
+        val group = if (namespace != null) {
+            val type = when (namespace.kind) {
+                NamespaceKind.GROUP -> Group.Type.GROUP
+                NamespaceKind.USER -> Group.Type.USER
+                else -> Group.Type.UNKNOWN
+            }
+            Group(
+                namespace.id!!, namespace.webUrl!!, namespace.avatarUrl, null, namespace.name!!,
+                namespace.fullPath!!, type, null
+            )
+        } else {
+            null
+        }
         return Project(
             id = gitlabProject.id!!.toLong(),
             url = gitlabProject.webUrl,
@@ -47,7 +63,9 @@ internal object GitLabProjectMapper {
             archived = gitlabProject.archived ?: false,
             empty = gitlabProject.emptyRepo ?: false,
             forked = gitlabProject.isForked(),
-            permissions = Permissions(canEveryoneAccess(gitlabProject.forkingAccessLevel), canEveryoneAccess(gitlabProject.mergeRequestsAccessLevel))
+            permissions = Permissions(canEveryoneAccess(gitlabProject.forkingAccessLevel), canEveryoneAccess(gitlabProject.mergeRequestsAccessLevel)),
+            fullName = gitlabProject.pathWithNamespace ?: gitlabProject.path,
+            parent = group,
         )
     }
 

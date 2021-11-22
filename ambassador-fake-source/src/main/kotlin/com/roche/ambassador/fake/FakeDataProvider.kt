@@ -6,6 +6,7 @@ import com.roche.ambassador.extensions.sha256
 import com.roche.ambassador.extensions.toDate
 import com.roche.ambassador.extensions.toLocalDate
 import com.roche.ambassador.model.files.RawFile
+import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.AccessLevel
 import com.roche.ambassador.model.project.Contributor
 import com.roche.ambassador.model.project.Member
@@ -18,14 +19,15 @@ import kotlin.math.floor
 class FakeDataProvider {
 
     private val faker = Faker(Locale.ENGLISH, RandomService())
-    private val nameDice = Dice(
-        6, faker.witcher()::monster,
+    private val nameDice = Dice(faker.witcher()::monster,
         faker.witcher()::location,
         faker.pokemon()::name, faker.harryPotter()::spell, faker.beer()::name,
         faker.lordOfTheRings()::location
     )
-    private val descriptionDice = Dice(
-        10, faker.witcher()::monster, faker.witcher()::location,
+    private val parentNameDice = Dice(faker.aviation()::aircraft,
+        faker.starTrek()::character, faker.dragonBall()::character
+    )
+    private val descriptionDice = Dice(faker.witcher()::monster, faker.witcher()::location,
         faker.medical()::diseaseName, faker.rockBand()::name, faker.aviation()::airport,
         faker.chuckNorris()::fact, faker.programmingLanguage()::name, faker.gameOfThrones()::character,
         faker.gameOfThrones()::quote, faker.space()::star
@@ -33,8 +35,11 @@ class FakeDataProvider {
     private val languageDice = Dice.ofEnum<Language>()
     private val accessLevelDice = Dice.ofEnum<AccessLevel>()
     private val branchTypeDice = Dice.ofEnum<BranchType>()
+    private val groupTypeDice = Dice.ofEnum<Group.Type>()
 
     fun name(): String = nameDice.rollForData()
+
+    fun parentName(): String = parentNameDice.rollForData()
 
     fun description(): String {
         return faker.lorem().sentence(200).substring(0, 1020)
@@ -109,6 +114,8 @@ class FakeDataProvider {
     fun defaultBranch(): String? {
         return withBinaryChance(95, { "main" }, { null })
     }
+
+    fun groupType(): Group.Type = groupTypeDice.rollForData()
 
     private fun generateDoubles(count: Int, maxDecimals: Int, total: Double): List<Double> {
         var subtotal = total

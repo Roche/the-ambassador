@@ -8,18 +8,20 @@ import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.Scorecard
 import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.LanguagesFeature
+import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.score.ActivityScorePolicy
 import com.roche.ambassador.model.score.CriticalityScorePolicy
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Statistics
 import java.time.LocalDate
 
-@JsonPropertyOrder("id", "name", "description", "url", "createdDate", "lastActivityDate")
+@JsonPropertyOrder("id", "name", "fullName", "description", "url", "createdDate", "lastActivityDate")
 data class Project(
     val id: Long,
     val url: String?,
     val avatarUrl: String?,
     val name: String,
+    val fullName: String,
     val description: String?,
     val tags: List<String>,
     val visibility: Visibility,
@@ -33,6 +35,7 @@ data class Project(
     val permissions: Permissions?,
     val features: Features = Features(),
     var scorecard: Scorecard? = null,
+    val parent: Group? = null,
     @JsonIgnore val potentialReadmePath: String? = null,
     @JsonIgnore val potentialLicensePath: String? = null
 ) {

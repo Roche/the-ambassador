@@ -179,7 +179,7 @@ data class Project(
     fun isForked(): Boolean = forkedFrom != null
 
     companion object {
-        fun forCreate(name: String, path: String, namespaceId: Int? = null, description: String? = null): Project {
+        fun forCreate(name: String, path: String, namespaceId: Long? = null, description: String? = null): Project {
             val namespace = Namespace(id = namespaceId)
             return Project(name = name, path = path, description = description, namespace = namespace, visibility = Visibility.PUBLIC)
         }
@@ -187,7 +187,7 @@ data class Project(
         fun forCreate(
             name: String,
             pathNamingStrategy: PathNamingStrategy = PathNamingStrategy.default(),
-            namespaceId: Int? = null,
+            namespaceId: Long? = null,
             description: String? = null
         ): Project {
             return forCreate(name = name, path = pathNamingStrategy.getPathFor(name), description = description, namespaceId = namespaceId)
