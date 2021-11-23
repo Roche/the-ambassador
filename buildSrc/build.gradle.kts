@@ -30,6 +30,6 @@ dependencies {
     implementation("org.flywaydb:flyway-core:8.0.5")
 
 //    implementation("org.testcontainers:postgresql:1.15.2") // TODO remove
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.5.31")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.6.0")
     implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1")
 }
