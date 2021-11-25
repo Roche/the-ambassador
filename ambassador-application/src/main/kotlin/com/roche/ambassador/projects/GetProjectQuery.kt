@@ -1,4 +1,4 @@
-package com.roche.ambassador.project
+package com.roche.ambassador.projects
 
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam

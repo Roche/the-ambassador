@@ -1,4 +1,4 @@
-package com.roche.ambassador.project
+package com.roche.ambassador.projects
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.roche.ambassador.model.Visibility

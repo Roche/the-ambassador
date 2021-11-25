@@ -1,4 +1,4 @@
-package com.roche.ambassador.group
+package com.roche.ambassador.groups
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.roche.ambassador.model.Visibility

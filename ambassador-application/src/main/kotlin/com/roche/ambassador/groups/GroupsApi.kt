@@ -1,4 +1,4 @@
-package com.roche.ambassador.group
+package com.roche.ambassador.groups
 
 import com.roche.ambassador.commons.api.Paged
 import io.swagger.v3.oas.annotations.Operation
@@ -15,8 +15,8 @@ import javax.validation.constraints.Min
 
 @RestController
 @RequestMapping("/groups")
-@Tag(name = "Group API", description = "API to read or search indexed groups")
-internal open class GroupApi(private val groupService: GroupService) {
+@Tag(name = "Groups API", description = "API to read or search indexed groups")
+internal open class GroupsApi(private val groupsService: GroupsService) {
 
     @Operation(summary = "Get indexed group by ID", tags = ["group"])
     @ApiResponses(
@@ -25,7 +25,7 @@ internal open class GroupApi(private val groupService: GroupService) {
     )
     @GetMapping("{id}")
     open suspend fun get(@PathVariable @Min(1) id: Long): GroupDto? {
-        return groupService.getGroup(id)
+        return groupsService.getGroup(id)
     }
 
     @Operation(summary = "Search for indexed groups", tags = ["group"])
@@ -38,7 +38,7 @@ internal open class GroupApi(private val groupService: GroupService) {
         @PageableDefault(size = 25)
         pageable: Pageable
     ): Paged<SimpleGroupDto> {
-        return groupService.search(query, pageable)
+        return groupsService.search(query, pageable)
     }
 
 }

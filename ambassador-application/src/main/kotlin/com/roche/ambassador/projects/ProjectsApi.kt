@@ -1,4 +1,4 @@
-package com.roche.ambassador.project
+package com.roche.ambassador.projects
 
 import com.roche.ambassador.commons.api.Paged
 import com.roche.ambassador.model.project.Project
@@ -17,8 +17,8 @@ import javax.validation.constraints.Min
 
 @RestController
 @RequestMapping("/projects")
-@Tag(name = "Project API", description = "API to read or search indexed projects")
-internal open class ProjectApi(private val projectService: ProjectService) {
+@Tag(name = "Projects API", description = "API to read or search indexed projects")
+internal open class ProjectsApi(private val projectService: ProjectsService) {
 
     @Operation(summary = "Get indexed project by ID", tags = ["project"])
     @ApiResponses(

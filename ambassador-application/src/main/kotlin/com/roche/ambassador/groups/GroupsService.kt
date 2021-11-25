@@ -1,10 +1,10 @@
-package com.roche.ambassador.group
+package com.roche.ambassador.groups
 
 import com.roche.ambassador.commons.api.Paged
 import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.Visibility
-import com.roche.ambassador.project.SimpleProjectDto
+import com.roche.ambassador.projects.SimpleProjectDto
 import com.roche.ambassador.storage.group.GroupEntityRepository
 import com.roche.ambassador.storage.group.GroupSearchQuery
 import com.roche.ambassador.storage.group.GroupSearchRepository
@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
-internal class GroupService(
+internal class GroupsService(
     private val projectEntityRepository: ProjectEntityRepository,
     private val groupEntityRepository: GroupEntityRepository,
     private val groupSearchRepository: GroupSearchRepository,

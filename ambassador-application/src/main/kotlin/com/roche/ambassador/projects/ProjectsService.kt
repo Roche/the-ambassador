@@ -1,7 +1,8 @@
-package com.roche.ambassador.project
+package com.roche.ambassador.projects
 
 import com.roche.ambassador.commons.api.Paged
 import com.roche.ambassador.exceptions.Exceptions
+import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.storage.project.ProjectEntityRepository
@@ -18,13 +19,15 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @CacheConfig(cacheNames = ["projects"])
 @Transactional(readOnly = true)
-open class ProjectService(
+open class ProjectsService(
     private val projectEntityRepository: ProjectEntityRepository,
     private val projectSearchRepository: ProjectSearchRepository,
     private val projectHistoryRepository: ProjectHistoryRepository
 ) {
 
-    private val log = LoggerFactory.getLogger(ProjectService::class.java)
+    companion object {
+        private val log by LoggerDelegate()
+    }
 
     @Cacheable(key = "#id.toString()") // TODO use CacheMono to enable reactive caching
     suspend fun getProject(id: Long): Project? {
