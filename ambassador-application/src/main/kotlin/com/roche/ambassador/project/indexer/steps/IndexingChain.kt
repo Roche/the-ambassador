@@ -1,6 +1,5 @@
 package com.roche.ambassador.project.indexer.steps
 
-import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.source.ProjectSource
 import kotlinx.coroutines.CoroutineScope
@@ -10,10 +9,6 @@ class IndexingChain(
     private val source: ProjectSource,
     private val coroutineScope: CoroutineScope
 ) {
-
-    companion object {
-        private val log by LoggerDelegate()
-    }
 
     suspend fun accept(project: Project): IndexingContext {
         val firstStep = steps[0]

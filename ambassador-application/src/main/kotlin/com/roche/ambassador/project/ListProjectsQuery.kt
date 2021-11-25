@@ -1,6 +1,6 @@
 package com.roche.ambassador.project
 
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import org.springframework.web.bind.annotation.RequestParam
 import java.util.*
 

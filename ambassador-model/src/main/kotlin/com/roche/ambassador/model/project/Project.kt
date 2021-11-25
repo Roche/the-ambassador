@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.Scorecard
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.LanguagesFeature
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.score.ActivityScorePolicy
 import com.roche.ambassador.model.score.CriticalityScorePolicy
+import com.roche.ambassador.model.score.Scores
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Statistics
 import java.time.LocalDate

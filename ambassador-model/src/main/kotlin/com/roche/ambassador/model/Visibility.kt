@@ -1,4 +1,4 @@
-package com.roche.ambassador.model.project
+package com.roche.ambassador.model
 
 enum class Visibility(val level: Int) {
     PUBLIC(0),
@@ -10,4 +10,6 @@ enum class Visibility(val level: Int) {
     fun getThisAndLessStrict(): List<Visibility> {
         return values().filter { it.level <= this.level }
     }
+
+    fun isMoreStrictThan(visibility: Visibility): Boolean = getThisAndLessStrict().contains(visibility)
 }

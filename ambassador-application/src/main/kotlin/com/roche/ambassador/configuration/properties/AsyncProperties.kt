@@ -6,5 +6,5 @@ import javax.validation.constraints.NotBlank
 data class AsyncProperties(
     @Min(1) val corePoolSize: Int = 2,
     @Min(1) val maxPoolsSize: Int = 10,
-    @NotBlank val threadNamePrefix: String? = null
+    @NotBlank val threadNamePrefix: String
 )

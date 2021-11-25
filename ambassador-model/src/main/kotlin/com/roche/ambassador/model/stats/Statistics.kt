@@ -1,17 +1,13 @@
 package com.roche.ambassador.model.stats
 
 data class Statistics(
-    val forks: Int,
-    val stars: Int,
-    val commits: Long,
-    val jobArtifactsSize: Long,
-    val lfsObjectsSize: Long,
-    val packagesSize: Long,
-    val repositorySize: Long,
-    val storageSize: Long,
-    val wikiSize: Long,
-) {
-    companion object {
-        fun no(): Statistics = Statistics(0, 0, 0, 0, 0, 0, 0, 0, 0)
-    }
-}
+    val forks: Int? = null,
+    val stars: Int? = null,
+    val commits: Long? = null,
+    val jobArtifactsSize: Long? = null,
+    val lfsObjectsSize: Long? = null,
+    val packagesSize: Long? = null,
+    val repositorySize: Long? = null,
+    val storageSize: Long? = null,
+    val wikiSize: Long? = null,
+)

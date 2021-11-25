@@ -1,6 +1,6 @@
 package com.roche.ambassador.model.source
 
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import java.time.LocalDate
 
 object InvalidProjectCriteria {
@@ -22,12 +22,7 @@ object InvalidProjectCriteria {
     }
 
     fun hasVisibilityAtMost(visibility: Visibility): CriterionVerifier = {
-        when (visibility) {
-            Visibility.PUBLIC -> it.visibility == Visibility.PUBLIC
-            Visibility.INTERNAL -> it.visibility != Visibility.PRIVATE
-            Visibility.PRIVATE -> true
-            else -> false
-        }
+        visibility.isMoreStrictThan(it.visibility)
     }
 
     fun excludeArchived(): CriterionVerifier = {

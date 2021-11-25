@@ -5,11 +5,14 @@ import com.roche.ambassador.UserDetailsProvider
 import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.files.RawFile
+import com.roche.ambassador.model.group.Group
+import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Timeline
 import com.roche.gitlab.api.GitLab
 import com.roche.gitlab.api.groups.GroupProjectListQuery
+import com.roche.gitlab.api.groups.GroupsListQuery
 import com.roche.gitlab.api.model.AccessLevelName
 import com.roche.gitlab.api.model.AccessLevelName.*
 import com.roche.gitlab.api.model.IssueStatisticsQuery
@@ -30,7 +33,6 @@ import java.time.LocalDateTime
 import java.util.*
 import kotlin.streams.toList
 import com.roche.gitlab.api.model.AccessLevel as BranchingAccessLevel
-import com.roche.gitlab.api.project.model.Project as GitLabProject
 
 @ExperimentalCoroutinesApi
 class GitLabSource(private val gitlab: GitLab) : ProjectSource {
@@ -55,15 +57,16 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
             .withId(id.toLong())
             .get(ProjectQuery(true, true, true))
             .orElseThrow { Exceptions.NotFoundException("Project with ID $id not found") }
-        return Optional.ofNullable(GitLabProjectMapper.mapGitLabProjectToOpenSourceProject(prj))
+        return Optional.ofNullable(GitLabMapper.fromGitLabProject(prj))
     }
 
-    private suspend fun ProducerScope<Project>.publishFromPager(pager: Pager<GitLabProject>) {
+    private suspend fun <T, U> ProducerScope<U>.publishFromPager(pager: Pager<T>, mapper: (T) -> U, filter: (T) -> Boolean = { true }) {
         for (page in pager) {
-            for (project in page) {
-                val mapped = GitLabProjectMapper.mapGitLabProjectToOpenSourceProject(project)
-                log.debug("Publishing project {}", mapped.id)
-                send(mapped)
+            for (item in page) {
+                if (filter.invoke(item)) { // client-side filtering faking server behavior for missing filters
+                    val mapped = mapper.invoke(item)
+                    send(mapped)
+                }
             }
         }
     }
@@ -82,7 +85,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
                     val pager = gitlab.groups()
                         .withPath(it)
                         .projects(query, Pagination(itemsPerPage = 50))
-                    publishFromPager(pager)
+                    publishFromPager(pager, GitLabMapper::fromGitLabProject)
                 }
             } else {
                 val query = ProjectListQuery(
@@ -93,7 +96,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
                     lastActivityAfter = filter.lastActivityAfter
                 )
                 val pager = gitlab.projects().paging(query, Pagination(itemsPerPage = 50))
-                publishFromPager(pager)
+                publishFromPager(pager, GitLabMapper::fromGitLabProject)
             }
         }
     }
@@ -210,6 +213,23 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
             .forEach { timeline.increment(it.updatedAt) }
         log.info("Finished reading project {} pull requests timeline", projectId)
         return timeline
+    }
+
+    override suspend fun flowGroups(filter: GroupFilter): Flow<Group> {
+        return channelFlow {
+            val query = GroupsListQuery(
+                withCustomAttributes = false,
+                statistics = true
+            )
+            val pager = gitlab.groups().paging(query, Pagination(itemsPerPage = 50))
+            publishFromPager(pager, GitLabMapper::fromGitLabGroup) {
+                if (filter.visibility != null) {
+                    filter.visibility!!.isMoreStrictThan(VisibilityMapper.fromGitLab(it.visibility))
+                } else {
+                    true
+                }
+            }
+        }
     }
 
     @Suppress("DEPRECATION")

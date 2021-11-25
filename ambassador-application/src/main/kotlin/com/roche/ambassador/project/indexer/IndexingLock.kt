@@ -10,7 +10,7 @@ import java.util.*
 
 internal sealed class IndexingLock {
     abstract fun tryLock(indexing: Indexing): Boolean
-    abstract fun isLocked(indexing: Indexing = Indexing.startAll()): Boolean
+    abstract fun isLocked(indexing: Indexing = Indexing.startAll(source = "_")): Boolean
     abstract fun isLocked(indexingId: UUID): Boolean
     abstract fun unlock(indexingId: UUID)
 

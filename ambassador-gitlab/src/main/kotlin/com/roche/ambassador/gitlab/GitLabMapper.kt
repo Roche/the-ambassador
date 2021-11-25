@@ -9,13 +9,35 @@ import com.roche.gitlab.api.project.model.FeatureAccessLevel
 import com.roche.gitlab.api.project.model.NamespaceKind
 import java.util.*
 import com.roche.gitlab.api.project.model.Project as GitLabProject
+import com.roche.gitlab.api.groups.Group as GitLabGroup
+import com.roche.gitlab.api.groups.Statistics as GitLabStatistics
 
-internal object GitLabProjectMapper {
+internal object GitLabMapper {
     private val log by LoggerDelegate()
 
-    fun mapGitLabProjectToOpenSourceProject(gitlabProject: GitLabProject): Project {
+    fun fromGitLabGroup(gitlabGroup: GitLabGroup): Group {
+        log.debug("Mapping group {} to Ambassador group", gitlabGroup.name)
+        val visibility = VisibilityMapper.fromGitLab(gitlabGroup.visibility)
+        return Group(
+            gitlabGroup.id, gitlabGroup.name, gitlabGroup.fullPath!!, gitlabGroup.description,
+            gitlabGroup.webUrl!!, gitlabGroup.avatarUrl, visibility,
+            gitlabGroup.createdAt?.toLocalDate(), Group.Type.UNKNOWN, gitlabGroup.parentId,
+            if (gitlabGroup.statistics != null) {
+                createStatistics(gitlabGroup.statistics!!)
+            } else {
+                null
+            }
+        )
+    }
+
+    private fun createStatistics(stats: GitLabStatistics): Statistics {
+        return Statistics(null, null, null, stats.jobArtifactsSize,
+        stats.lfsObjectsSize, stats.packagesSize, stats.repositorySize, stats.storageSize, stats.wikiSize)
+    }
+
+    fun fromGitLabProject(gitlabProject: GitLabProject): Project {
         log.debug("Mapping project {} to Ambassador project", gitlabProject.name)
-        val visibility = VisibilityMapper.fromGitLab(gitlabProject.visibility!!)
+        val visibility = VisibilityMapper.fromGitLab(gitlabProject.visibility)
         val stats = if (gitlabProject.statistics != null) {
             val glStats = gitlabProject.statistics!!
             Statistics(
@@ -40,8 +62,9 @@ internal object GitLabProjectMapper {
                 else -> Group.Type.UNKNOWN
             }
             Group(
-                namespace.id!!, namespace.webUrl!!, namespace.avatarUrl, null, namespace.name!!,
-                namespace.fullPath!!, type, null
+                namespace.id!!, namespace.name!!, namespace.fullPath!!, null,
+                namespace.webUrl!!, namespace.avatarUrl, null, null,
+                type, null
             )
         } else {
             null

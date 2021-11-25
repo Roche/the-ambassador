@@ -1,6 +1,6 @@
 package com.roche.ambassador.configuration.properties
 
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import java.time.Duration
 import java.time.LocalDateTime
 import javax.validation.constraints.Min

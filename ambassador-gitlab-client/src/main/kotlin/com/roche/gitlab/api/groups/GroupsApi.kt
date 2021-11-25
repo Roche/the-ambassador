@@ -6,6 +6,7 @@ import com.roche.gitlab.api.project.ProjectApi
 import com.roche.gitlab.api.project.model.Project
 import com.roche.gitlab.api.utils.PageProvider
 import com.roche.gitlab.api.utils.Pager
+import com.roche.gitlab.api.utils.Pagination
 
 class GroupsApi(basePath: String, client: GitLabHttpClient) : Api(basePath, client) {
 
@@ -15,6 +16,13 @@ class GroupsApi(basePath: String, client: GitLabHttpClient) : Api(basePath, clie
 
     fun withPath(path: String): GroupApi {
         return GroupApi("$basePath/$path", client)
+    }
+
+    fun paging(query: GroupsListQuery, pagination: Pagination): Pager<Group> {
+        val pageProvider: PageProvider<Group> = {
+            doGetPage(it, query)
+        }
+        return Pager(pagination, pageProvider)
     }
 
 }

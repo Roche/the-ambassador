@@ -9,7 +9,7 @@ class IndexingTest {
 
     @Test
     fun `new indexing should be already in progress`() {
-        val indexing = Indexing()
+        val indexing = Indexing(source = "whatever")
         assertThat(indexing.status).isEqualTo(IndexingStatus.IN_PROGRESS)
         assertThat(indexing.lock).isNull()
         assertThat(indexing.startedDate)
@@ -19,7 +19,7 @@ class IndexingTest {
     @Test
     fun `should update status and finish date when finishing indexing`() {
         // given
-        val indexing = Indexing()
+        val indexing = Indexing(source = "whatever")
         val stats = IndexingStatistics(10, 10, 10, 10)
 
         // when
@@ -36,7 +36,7 @@ class IndexingTest {
     @Test
     fun `should update status and finish date when failed indexing`() {
         // given
-        val indexing = Indexing()
+        val indexing = Indexing(source = "whatever")
 
         // when
         indexing.fail()
@@ -50,7 +50,7 @@ class IndexingTest {
     @Test
     fun `should create a lock if attempt to lock and not locked`() {
         // given
-        val indexing = Indexing()
+        val indexing = Indexing(source = "whatever")
 
         // when
         indexing.lock()
@@ -65,7 +65,7 @@ class IndexingTest {
     fun `should not create a lock if attempt to lock and already locked`() {
         // given
         val currentLock = Lock(UUID.randomUUID())
-        val indexing = Indexing(lock = currentLock)
+        val indexing = Indexing(lock = currentLock, source = "whatever")
 
         // when
         indexing.lock()
@@ -79,7 +79,7 @@ class IndexingTest {
     fun `should release a lock if attempt to unlock and already locked`() {
         // given
         val currentLock = Lock(UUID.randomUUID())
-        val indexing = Indexing(lock = currentLock)
+        val indexing = Indexing(lock = currentLock, source = "whatever")
 
         // when
         indexing.unlock()
@@ -90,12 +90,12 @@ class IndexingTest {
 
     @Test
     fun `indexing is locked when lock has ID`() {
-        val lockedIndexing = Indexing(lock = Lock(UUID.randomUUID()))
+        val lockedIndexing = Indexing(lock = Lock(UUID.randomUUID()), source = "whatever")
 
-        assertThat(lockedIndexing.isLocked()).isTrue()
+        assertThat(lockedIndexing.isLocked()).isTrue
 
-        val unlockedIndexing = Indexing(lock = Lock())
+        val unlockedIndexing = Indexing(lock = Lock(), source = "whatever")
 
-        assertThat(unlockedIndexing.isLocked()).isFalse()
+        assertThat(unlockedIndexing.isLocked()).isFalse
     }
 }

@@ -2,7 +2,7 @@ package com.roche.ambassador.model.score
 
 import com.roche.ambassador.model.Score
 import com.roche.ambassador.model.feature.*
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import kotlin.math.*
 
 object ActivityScorePolicy : ScorePolicy {

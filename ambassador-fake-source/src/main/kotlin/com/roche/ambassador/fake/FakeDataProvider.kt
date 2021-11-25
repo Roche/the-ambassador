@@ -10,7 +10,7 @@ import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.AccessLevel
 import com.roche.ambassador.model.project.Contributor
 import com.roche.ambassador.model.project.Member
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import java.time.LocalDate
 import java.util.*
 import java.util.function.Supplier

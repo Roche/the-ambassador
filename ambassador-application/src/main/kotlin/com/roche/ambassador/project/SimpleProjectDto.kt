@@ -2,7 +2,7 @@ package com.roche.ambassador.project
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.roche.ambassador.model.project.Project
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import java.time.LocalDate
 
 @JsonPropertyOrder("id", "name", "description", "url", "tags", "score")
@@ -38,7 +38,7 @@ data class SimpleProjectDto(
                 mainLanguage = project.getMainLanguage(),
                 criticalityScore = project.getScores().criticality,
                 activityScore = project.getScores().activity.toInt(),
-                stars = project.stats.stars,
+                stars = project.stats.stars ?: 0,
                 score = project.getScores().total
             )
         }

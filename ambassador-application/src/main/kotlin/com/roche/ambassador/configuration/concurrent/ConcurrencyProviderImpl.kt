@@ -17,24 +17,26 @@ internal class ConcurrencyProviderImpl(indexerProperties: IndexerProperties) : C
 
     private val producerExecutor: ExecutorService
     private val consumerExecutor: ExecutorService
+    private val supportingExecutor: ExecutorService
 
     init {
         val properties = indexerProperties.concurrency
         val consumerThreadFactory = CustomizableThreadFactory(properties.consumerThreadPrefix)
         val producerThreadFactory = CustomizableThreadFactory(properties.producerThreadPrefix)
+        val supportingThreadFactory = CustomizableThreadFactory(properties.supportingThreadPrefix)
+        val supportingExecutorThreads = max(1, ceil(properties.concurrencyLevel * 0.15).roundToInt())
         val producerExecutorThreads = max(1, ceil(properties.concurrencyLevel * 0.1).roundToInt())
-        val consumerExecutorThreads = max(1, properties.concurrencyLevel - producerExecutorThreads)
+        val consumerExecutorThreads = max(1, properties.concurrencyLevel - producerExecutorThreads - supportingExecutorThreads)
         producerExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(producerExecutorThreads, producerThreadFactory)
         consumerExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(consumerExecutorThreads, consumerThreadFactory)
+        supportingExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(supportingExecutorThreads, supportingThreadFactory)
     }
 
-    override fun getSourceProjectProducerDispatcher(): CoroutineDispatcher {
-        return producerExecutor.asCoroutineDispatcher()
-    }
+    override fun getSourceProjectProducerDispatcher(): CoroutineDispatcher = producerExecutor.asCoroutineDispatcher()
 
-    override fun getIndexingConsumerDispatcher(): CoroutineDispatcher {
-        return consumerExecutor.asCoroutineDispatcher()
-    }
+    override fun getIndexingConsumerDispatcher(): CoroutineDispatcher = consumerExecutor.asCoroutineDispatcher()
+
+    override fun getSupportingDispatcher(): CoroutineDispatcher = supportingExecutor.asCoroutineDispatcher()
 
     class MdcThreadPoolExecutor private constructor(
         private val fixedContext: Map<String, String>?,

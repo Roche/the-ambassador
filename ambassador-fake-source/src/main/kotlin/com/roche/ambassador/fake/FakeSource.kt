@@ -3,14 +3,17 @@ package com.roche.ambassador.fake
 import com.roche.ambassador.GenerationSpec
 import com.roche.ambassador.OAuth2ClientProperties
 import com.roche.ambassador.UserDetailsProvider
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.group.Group
+import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.ambassador.model.stats.Timeline
 import com.roche.ambassador.model.stats.TimelineGenerator
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
 import java.util.*
 
@@ -31,7 +34,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource {
     }
 
     override suspend fun flow(filter: ProjectFilter): Flow<Project> {
-        return kotlinx.coroutines.flow.flow {
+        return flow {
             for (i in 1..spec.count) {
                 val project = generate(i.toString(), filter)
                 emit(map(project))
@@ -53,11 +56,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource {
             fakeDataProvider.nextLong(min = 0, max = 500000)
         )
         val createdDate = fakeDataProvider.date(from = LocalDate.now().minusYears(5))
-        val group = Group(
-            fakeDataProvider.nextLong(1, 1500), fakeDataProvider.projectUrl(),
-            fakeDataProvider.avatarUrl(), fakeDataProvider.description(), fakeDataProvider.name(),
-            fakeDataProvider.parentName(), fakeDataProvider.groupType()
-        )
+        val group = generateGroup(fakeDataProvider.nextLong(1, 1500), GroupFilter())
         return FakeProject(
             id.toLong(),
             name,
@@ -127,6 +126,26 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource {
                                                      { fakeDataProvider.nextDouble(1, 15) },
                                                      { 0.0 })!! // not active project
         return TimelineGenerator.withWeekAverage(mean, Calendar.getInstance().getActualMaximum(Calendar.WEEK_OF_YEAR))
+    }
+
+    override suspend fun flowGroups(filter: GroupFilter): Flow<Group> {
+        return flow {
+            for (i in 1..spec.count) {
+                val group = generateGroup(i, filter)
+                emit(group)
+            }
+        }
+    }
+
+    private fun generateGroup(id: Long, filter: GroupFilter): Group {
+        return Group(
+            id, fakeDataProvider.projectUrl(),
+            fakeDataProvider.avatarUrl(), fakeDataProvider.description(),
+            fakeDataProvider.name(), fakeDataProvider.parentName(),
+            filter.visibility ?: fakeDataProvider.visibility(),
+            fakeDataProvider.date(),
+            fakeDataProvider.groupType(), null
+        )
     }
 
     fun createFakeId(): Long = fakeDataProvider.nextLong(1, 30000)

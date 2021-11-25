@@ -65,7 +65,7 @@ class ProjectEntity(
     fun updateIndex(project: Project) {
         this.name = project.name
         this.project = project
-        this.stars = project.stats.stars
+        this.stars = project.stats.stars ?: 0
         this.criticalityScore = project.getScores().criticality
         this.activityScore = project.getScores().activity
         this.score = project.getScores().total
@@ -93,7 +93,7 @@ class ProjectEntity(
     override fun hashCode(): Int {
         var result = id?.hashCode() ?: 0
         result = 31 * result + (name?.hashCode() ?: 0)
-        result = 31 * result + (project?.hashCode() ?: 0)
+        result = 31 * result + (project.hashCode())
         result = 31 * result + stars
         result = 31 * result + (criticalityScore?.hashCode() ?: 0)
         result = 31 * result + (activityScore?.hashCode() ?: 0)
@@ -107,7 +107,7 @@ class ProjectEntity(
             return ProjectEntity(
                 project.id, project.name,
                 project,
-                project.stats.stars,
+                project.stats.stars ?: 0,
                 project.getScores().criticality,
                 project.getScores().activity,
                 project.getScores().total,

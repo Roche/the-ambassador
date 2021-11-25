@@ -24,7 +24,9 @@ data class Indexing internal constructor(
     @Embedded var stats: IndexingStatistics? = null,
     @Embedded
     @AttributeOverride(name = "id", column = Column(name = "indexing_lock"))
-    var lock: Lock? = null
+    var lock: Lock? = null,
+    @Column(name = "source")
+    var source: String,
 ) : Identifiable {
 
     override fun getId(): UUID? = id
@@ -64,11 +66,12 @@ data class Indexing internal constructor(
     companion object {
         const val ALL_TARGET = "__ALL__"
 
-        fun start(startedBy: String = "unknown", target: String = ALL_TARGET): Indexing = Indexing(
+        fun start(startedBy: String = "unknown", source: String, target: String = ALL_TARGET): Indexing = Indexing(
             startedBy = startedBy,
-            target = target
+            target = target,
+            source = source
         )
 
-        fun startAll(startedBy: String = "unknown"): Indexing = start(startedBy)
+        fun startAll(startedBy: String = "unknown", source: String): Indexing = start(startedBy, source)
     }
 }

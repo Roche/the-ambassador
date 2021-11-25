@@ -1,7 +1,7 @@
 package com.roche.ambassador.project
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.storage.project.ProjectHistoryEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -29,7 +29,7 @@ data class ProjectHistoryDto(
                 project.description, project.tags, project.visibility,
                 project.lastActivityDate, project.getMainLanguage(),
                 project.getScores().criticality, project.getScores().activity,
-                project.stats.stars, project.getScores().total, projectHistoryEntity.indexedDate
+                project.stats.stars ?: 0, project.getScores().total, projectHistoryEntity.indexedDate
             )
         }
     }
