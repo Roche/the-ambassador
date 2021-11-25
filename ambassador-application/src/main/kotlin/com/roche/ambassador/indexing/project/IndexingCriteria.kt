@@ -1,14 +1,14 @@
-package com.roche.ambassador.project.indexer.internals
+package com.roche.ambassador.indexing.project
 
 import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
 import com.roche.ambassador.extensions.toHumanReadable
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.source.IndexingCriteriaProvider
-import com.roche.ambassador.project.indexer.IndexingCriterion
+import com.roche.ambassador.indexing.IndexingCriterion
 import java.time.LocalDateTime
 
-internal open class IndexingCriteria(vararg criteria: IndexingCriterion) {
+class IndexingCriteria(vararg criteria: IndexingCriterion) {
 
     private val criteria = criteria.toList()
 

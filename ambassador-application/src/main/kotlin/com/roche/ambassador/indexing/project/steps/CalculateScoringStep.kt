@@ -1,13 +1,14 @@
-package com.roche.ambassador.project.indexer.steps
+package com.roche.ambassador.indexing.project.steps
 
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.model.ScorecardCalculator
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
 @Order(5)
-class CalculateScoringStep : IndexingStep {
+internal class CalculateScoringStep : IndexingStep {
 
     companion object {
         private val log by LoggerDelegate()

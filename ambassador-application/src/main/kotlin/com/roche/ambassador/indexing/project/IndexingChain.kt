@@ -1,10 +1,11 @@
-package com.roche.ambassador.project.indexer.steps
+package com.roche.ambassador.indexing.project
 
+import com.roche.ambassador.indexing.project.steps.IndexingStep
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.source.ProjectSource
 import kotlinx.coroutines.CoroutineScope
 
-class IndexingChain(
+internal class IndexingChain(
     private val steps: List<IndexingStep>,
     private val source: ProjectSource,
     private val coroutineScope: CoroutineScope

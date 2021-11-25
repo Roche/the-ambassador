@@ -1,4 +1,4 @@
-package com.roche.ambassador.project.indexer
+package com.roche.ambassador.indexing
 
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.security.HasAdminPermission
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.constraints.Min
 
-@Tag(name = "Project Indexer API", description = "Trigger or stop indexing of project(s) from source")
 @RestController
-@RequestMapping("/projects/indexer")
+@RequestMapping("/indexing")
+@Tag(name = "Indexing API", description = "API handle indexing")
 @HasAdminPermission
-internal open class ProjectIndexingApi(private val service: ProjectIndexingService) {
+internal class IndexingApi(private val service: IndexingService) {
 
     @Operation(summary = "Trigger indexing of all projects within source")
     @ApiResponses(
@@ -36,7 +36,7 @@ internal open class ProjectIndexingApi(private val service: ProjectIndexingServi
         ApiResponse(responseCode = "403", description = "Insufficient privileges, admin needed"),
         ApiResponse(responseCode = "404", description = "Project not found in source")
     )
-    @GetMapping("{id}")
+    @GetMapping("/project/{id}")
     suspend fun reindexOne(@PathVariable @Min(1) id: Long): Project? {
         return service.reindex(id)
     }
@@ -68,4 +68,5 @@ internal open class ProjectIndexingApi(private val service: ProjectIndexingServi
     ) {
         service.forciblyStop(indexingId, terminate.orElse(false))
     }
+
 }

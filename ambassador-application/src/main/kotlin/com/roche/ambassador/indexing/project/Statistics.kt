@@ -1,6 +1,7 @@
-package com.roche.ambassador.project.indexer
+package com.roche.ambassador.indexing.project
 
 import com.roche.ambassador.extensions.toHumanReadable
+import com.roche.ambassador.indexing.IndexingCriterion
 import com.roche.ambassador.storage.indexing.IndexingStatistics
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap

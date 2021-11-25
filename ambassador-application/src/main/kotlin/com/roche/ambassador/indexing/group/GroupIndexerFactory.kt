@@ -1,4 +1,4 @@
-package com.roche.ambassador.group.indexer
+package com.roche.ambassador.indexing.group
 
 import com.roche.ambassador.ConcurrencyProvider
 import com.roche.ambassador.configuration.properties.IndexerProperties

@@ -1,8 +1,8 @@
-package com.roche.ambassador.group.indexer
+package com.roche.ambassador.indexing.group
 
 import com.roche.ambassador.configuration.source.ProjectSources
 import com.roche.ambassador.extensions.LoggerDelegate
-import com.roche.ambassador.project.indexer.IndexingFinishedEvent
+import com.roche.ambassador.indexing.IndexingFinishedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 

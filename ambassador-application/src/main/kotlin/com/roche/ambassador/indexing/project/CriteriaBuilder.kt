@@ -1,7 +1,7 @@
-package com.roche.ambassador.project.indexer.internals
+package com.roche.ambassador.indexing.project
 
 import com.roche.ambassador.model.source.CriterionVerifier
-import com.roche.ambassador.project.indexer.IndexingCriterion
+import com.roche.ambassador.indexing.IndexingCriterion
 import java.util.function.Supplier
 
 internal class CriteriaBuilder {

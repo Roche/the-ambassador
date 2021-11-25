@@ -1,5 +1,6 @@
-package com.roche.ambassador.project.indexer
+package com.roche.ambassador.indexing
 
+import com.roche.ambassador.indexing.project.ProjectIndexer
 import com.roche.ambassador.model.source.ProjectSource
 
 interface IndexerFactory {

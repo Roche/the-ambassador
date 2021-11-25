@@ -1,14 +1,14 @@
-package com.roche.ambassador.project.indexer.internals
+package com.roche.ambassador.indexing.project
 
 import com.roche.ambassador.ConcurrencyProvider
 import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.*
+import com.roche.ambassador.indexing.project.steps.IndexingStep
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
 import com.roche.ambassador.model.source.ProjectSource
-import com.roche.ambassador.project.indexer.*
-import com.roche.ambassador.project.indexer.steps.*
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -16,14 +16,14 @@ import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
-internal class CoreProjectIndexer(
+class ProjectIndexer internal constructor(
     private val source: ProjectSource,
     private val projectEntityRepository: ProjectEntityRepository,
     concurrencyProvider: ConcurrencyProvider,
     private val indexerProperties: IndexerProperties,
     private val indexingCriteria: IndexingCriteria,
     steps: List<IndexingStep>
-) : ProjectIndexer {
+) : Indexer<Project, Long, ProjectFilter> {
 
     private val producerScope = CoroutineScope(concurrencyProvider.getSourceProjectProducerDispatcher())
     private val consumerScope = CoroutineScope(concurrencyProvider.getIndexingConsumerDispatcher() + SupervisorJob())
@@ -52,10 +52,10 @@ internal class CoreProjectIndexer(
         onStarted: IndexingStartedCallback,
         onFinished: IndexingFinishedCallback,
         onError: IndexingErrorCallback,
-        onProjectIndexingStarted: ProjectIndexingStartedCallback,
-        onProjectExcludedByCriteria: ProjectExcludedByCriteriaCallback,
-        onProjectIndexingError: ProjectIndexingErrorCallback,
-        onProjectIndexingFinished: ProjectIndexingFinishedCallback
+        onObjectIndexingStarted: ObjectIndexingStartedCallback<Project>,
+        onObjectExcludedByCriteria: ObjectExcludedByCriteriaCallback<Project>,
+        onObjectIndexingError: ObjectIndexingErrorCallback<Project>,
+        onObjectIndexingFinished: ObjectIndexingFinishedCallback<Project>
     ) {
         producerScope.launch {
             supervisorScope {
@@ -65,8 +65,8 @@ internal class CoreProjectIndexer(
                 source.flow(filter)
                     .buffer(1000)
                     .filter { it.isProjectWithinGracePeriod() }
-                    .onEach { onProjectIndexingStarted(it) }
-                    .filter { filterByCriteria(it, onProjectExcludedByCriteria) }
+                    .onEach { onObjectIndexingStarted(it) }
+                    .filter { filterByCriteria(it, onObjectExcludedByCriteria) }
                     .onEach { projectToIndexCount.incrementAndGet() }
                     .onCompletion {
                         log.info("Finished producing projects to index from source")
@@ -79,15 +79,15 @@ internal class CoreProjectIndexer(
                         onError(it)
                         tryFinish(onFinished)
                     }
-                    .collect { index(it, onProjectIndexingFinished, onProjectIndexingError, onFinished) }
+                    .collect { index(it, onObjectIndexingFinished, onObjectIndexingError, onFinished) }
             }
         }
     }
 
     private suspend fun index(
         project: Project,
-        onProjectIndexingFinished: ProjectIndexingFinishedCallback,
-        onProjectIndexingError: ProjectIndexingErrorCallback,
+        onProjectIndexingFinished: ObjectIndexingFinishedCallback<Project>,
+        onProjectIndexingError: ObjectIndexingErrorCallback<Project>,
         onFinished: IndexingFinishedCallback
     ) {
         consumerScope.launch {
@@ -107,7 +107,7 @@ internal class CoreProjectIndexer(
 
     private fun filterByCriteria(
         project: Project,
-        onProjectExcludedByCriteria: ProjectExcludedByCriteriaCallback
+        onProjectExcludedByCriteria: ObjectExcludedByCriteriaCallback<Project>
     ): Boolean {
         val result = indexingCriteria.evaluate(project)
         if (result.failure) {
@@ -125,9 +125,7 @@ internal class CoreProjectIndexer(
             log.warn("Waiting for projects in progress to finish indexing")
         }
     }
-
-    override fun getSource(): ProjectSource = source
-
+    
     private fun tryFinish(onFinished: IndexingFinishedCallback) {
         if (projectToIndexCount.get() == 0 &&
             sourceFinishedProducing.get() &&

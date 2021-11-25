@@ -1,6 +1,7 @@
-package com.roche.ambassador.project.indexer.steps
+package com.roche.ambassador.indexing.project.steps
 
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.feature.FeatureReaders
 import kotlinx.coroutines.async
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @Order(4)
-class ReadFeaturesStep : IndexingStep {
+internal class ReadFeaturesStep : IndexingStep {
 
     companion object {
         private val log by LoggerDelegate()

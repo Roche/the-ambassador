@@ -1,7 +1,9 @@
-package com.roche.ambassador.group.indexer
+package com.roche.ambassador.indexing.group
 
 import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.*
+import com.roche.ambassador.indexing.IndexingForciblyStoppedException
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.score.Scores
@@ -12,6 +14,7 @@ import com.roche.ambassador.storage.group.GroupEntityRepository
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import com.roche.ambassador.storage.project.ProjectGroupProjection
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -24,7 +27,7 @@ internal class GroupIndexer(
     private val groupEntityRepository: GroupEntityRepository,
     private val coroutineScope: CoroutineScope,
     private val indexerProperties: IndexerProperties
-) {
+) : Indexer<Group, Long, GroupFilter> {
 
     companion object {
         private val log by LoggerDelegate()
@@ -76,5 +79,22 @@ internal class GroupIndexer(
         } else {
             Statistics(forks, stars)
         }
+    }
+
+    override suspend fun indexOne(id: Long): Group {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun indexAll(
+        filter: GroupFilter, onStarted: IndexingStartedCallback, onFinished: IndexingFinishedCallback, onError: IndexingErrorCallback,
+        onObjectIndexingStarted: ObjectIndexingStartedCallback<Group>, onObjectExcludedByCriteria: ObjectExcludedByCriteriaCallback<Group>,
+        onObjectIndexingError: ObjectIndexingErrorCallback<Group>, onObjectIndexingFinished: ObjectIndexingFinishedCallback<Group>
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun forciblyStop(terminateImmediately: Boolean) {
+        val cause = IndexingForciblyStoppedException("Indexing forcibly stopped on demand")
+        coroutineScope.cancel("Forcibly terminated all indexing in progress", cause)
     }
 }

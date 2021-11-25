@@ -3,8 +3,8 @@ package com.roche.ambassador.commons.api
 import com.roche.ambassador.commons.validation.ValidationError
 import com.roche.ambassador.exceptions.Exceptions.NotFoundException
 import com.roche.ambassador.extensions.LoggerDelegate
-import com.roche.ambassador.project.indexer.IndexingAlreadyStartedException
-import com.roche.ambassador.project.indexer.IndexingDto
+import com.roche.ambassador.indexing.IndexingAlreadyStartedException
+import com.roche.ambassador.indexing.IndexingDto
 import com.roche.ambassador.storage.InvalidSortFieldException
 import io.swagger.v3.oas.annotations.Hidden
 import org.springframework.http.HttpStatus

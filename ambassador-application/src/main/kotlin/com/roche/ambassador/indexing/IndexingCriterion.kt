@@ -1,4 +1,4 @@
-package com.roche.ambassador.project.indexer
+package com.roche.ambassador.indexing
 
 import com.roche.ambassador.model.criteria.Criterion
 import com.roche.ambassador.model.project.Project

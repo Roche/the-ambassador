@@ -1,9 +1,11 @@
-package com.roche.ambassador.project.indexer
+package com.roche.ambassador.indexing
 
 import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
 import com.roche.ambassador.configuration.source.ProjectSources
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.project.*
+import com.roche.ambassador.indexing.project.Statistics
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
 import com.roche.ambassador.security.AuthenticationContext
@@ -16,7 +18,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 @Service
-internal class ProjectIndexingService(
+internal class IndexingService(
     private val sources: ProjectSources,
     private val indexerFactory: IndexerFactory,
     private val indexingRepository: IndexingRepository,
@@ -26,7 +28,7 @@ internal class ProjectIndexingService(
 ) {
 
     private val criteriaProperties: IndexingCriteriaProperties = indexerProperties.criteria
-    private val indexersInUse: MutableMap<UUID, ProjectIndexer> = ConcurrentHashMap()
+    private val indexersInUse: MutableMap<UUID, Indexer<*, *, *>> = ConcurrentHashMap()
 
     companion object {
         private val log by LoggerDelegate()
@@ -100,10 +102,10 @@ internal class ProjectIndexingService(
             indexer.indexAll(
                 filter = filter,
                 onStarted = { stats.startTiming() },
-                onProjectIndexingStarted = { stats.recordStarted() },
-                onProjectIndexingFinished = { stats.recordFinished() },
-                onProjectIndexingError = { t, _ -> stats.recordError(t) },
-                onProjectExcludedByCriteria = { criteria, project -> handleExcludedProject(stats, criteria, project) },
+                onObjectIndexingStarted = { stats.recordStarted() },
+                onObjectIndexingFinished = { stats.recordFinished() },
+                onObjectIndexingError = { t, _ -> stats.recordError(t) },
+                onObjectExcludedByCriteria = { criteria, project -> handleExcludedProject(stats, criteria, project) },
                 onFinished = {
                     stats.stopTiming()
                     idx.finish(stats.asIndexingStatistics())
@@ -127,7 +129,7 @@ internal class ProjectIndexingService(
     }
 
     // FIXME don't hardcode source name!
-    suspend fun reindex(id: Long, sourceName: String = "gitlab"): Project? {
+    suspend fun reindex(id: Long, sourceName: String = "gitlab"): Project {
         val indexer = createIndexer(sourceName)
         return indexer.indexOne(id)
     }

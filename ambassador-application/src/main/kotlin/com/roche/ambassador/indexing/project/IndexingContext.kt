@@ -1,5 +1,6 @@
-package com.roche.ambassador.project.indexer.steps
+package com.roche.ambassador.indexing.project
 
+import com.roche.ambassador.indexing.project.steps.IndexingStep
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.storage.project.ProjectEntity

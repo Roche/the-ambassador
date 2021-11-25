@@ -1,7 +1,6 @@
-package com.roche.ambassador.project.indexer.internals
+package com.roche.ambassador.indexing
 
 import com.roche.ambassador.extensions.LoggerDelegate
-import com.roche.ambassador.project.indexer.ProjectIndexingService
 import com.roche.ambassador.storage.indexing.IndexingRepository
 import kotlinx.coroutines.runBlocking
 import org.springframework.context.event.ContextClosedEvent
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @SuppressWarnings("UnusedPrivateMember")
 internal class ContextEventHandlersForIndexing(
-    val service: ProjectIndexingService,
+    val service: IndexingService,
     val indexingRepository: IndexingRepository
 ) {
     private val log by LoggerDelegate()

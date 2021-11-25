@@ -1,6 +1,7 @@
-package com.roche.ambassador.project.indexer.steps
+package com.roche.ambassador.indexing.project.steps
 
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.storage.project.ProjectEntity
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import org.springframework.core.annotation.Order
@@ -9,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Order(6)
-class SaveProjectStep(private val projectEntityRepository: ProjectEntityRepository) : IndexingStep {
+internal class SaveProjectStep(private val projectEntityRepository: ProjectEntityRepository) : IndexingStep {
 
     companion object {
         private val log by LoggerDelegate()

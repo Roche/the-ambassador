@@ -1,4 +1,4 @@
-package com.roche.ambassador.project.indexer
+package com.roche.ambassador.indexing
 
 import com.roche.ambassador.events.Event
 import com.roche.ambassador.storage.indexing.Indexing
