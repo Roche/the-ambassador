@@ -1,5 +1,6 @@
 package com.roche.ambassador.model.project
 
+import com.roche.ambassador.model.Visibility
 import java.time.LocalDateTime
 
 data class ProjectFilter constructor(

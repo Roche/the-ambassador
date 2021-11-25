@@ -6,7 +6,7 @@ import com.roche.ambassador.model.extensions.toRawFile
 import com.roche.ambassador.model.feature.*
 import com.roche.ambassador.model.files.Documentation
 import com.roche.ambassador.model.project.Issues
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.stats.Timeline
 import java.time.LocalDate
 import kotlin.math.ln

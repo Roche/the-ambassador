@@ -3,7 +3,7 @@ package com.roche.ambassador.project.indexer.internals
 import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
 import com.roche.ambassador.extensions.toHumanReadable
 import com.roche.ambassador.model.project.Project
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.source.IndexingCriteriaProvider
 import com.roche.ambassador.project.indexer.IndexingCriterion
 import java.time.LocalDateTime

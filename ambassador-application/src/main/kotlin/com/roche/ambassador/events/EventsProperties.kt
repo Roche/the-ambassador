@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated
 @ConfigurationProperties(prefix = "ambassador.events")
 @Validated
 @ConstructorBinding
-internal class EventsProperties(
+class EventsProperties(
     @NestedConfigurationProperty
-    val async: AsyncProperties = AsyncProperties()
+    val async: AsyncProperties = AsyncProperties(threadNamePrefix = "events-")
 )

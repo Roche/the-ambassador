@@ -24,11 +24,11 @@ import java.util.concurrent.TimeUnit
  */
 @PersistenceTest
 @Timeout(5, unit = TimeUnit.SECONDS)
-@Import(JooqConfiguration::class, SearchableProjectEntityRepository::class)
+@Import(JooqConfiguration::class, ProjectSearchRepository::class)
 @Sql("/sql/projects_for_search.sql")
-class SearchableProjectRepositoryTest(
+class ProjectSearchRepositoryTest(
     @Autowired private val entityRepository: ProjectEntityRepository,
-    @Autowired private val repository: SearchableProjectEntityRepository
+    @Autowired private val repository: ProjectSearchRepository
 ) {
 
     @AfterEach
@@ -39,19 +39,19 @@ class SearchableProjectRepositoryTest(
     @Test
     fun `should find all expected results`() {
         // when
-        val result = repository.search(SearchQuery.of("accio"), PageRequest.of(0, 15))
+        val result = repository.search(ProjectSearchQuery.of("accio"), PageRequest.of(0, 15))
 
         // then
         assertThat(result).hasSize(15)
-        assertThat(result.totalElements).isEqualTo(38)
+        assertThat(result.totalElements).isEqualTo(29)
 
         // when
-        val result2 = repository.search(SearchQuery.of("acc"), PageRequest.of(0, 15))
+        val result2 = repository.search(ProjectSearchQuery.of("acc"), PageRequest.of(0, 15))
         assertThat(result2).hasSize(15)
-        assertThat(result2.totalElements).isEqualTo(380)
+        assertThat(result2.totalElements).isEqualTo(364)
 
         // when
-        val result3 = repository.search(SearchQuery.of("accioaccio"), PageRequest.of(0, 15))
+        val result3 = repository.search(ProjectSearchQuery.of("accioaccio"), PageRequest.of(0, 15))
         assertThat(result3).hasSize(0)
         assertThat(result3.totalElements).isEqualTo(0)
     }
@@ -59,18 +59,18 @@ class SearchableProjectRepositoryTest(
     @Test
     fun `should use basic word of form and find results`() {
         // when
-        val result = repository.search(SearchQuery.of("EXPEDITIONS"), PageRequest.of(0, 15))
+        val result = repository.search(ProjectSearchQuery.of("EXPEDITIONS"), PageRequest.of(0, 15))
 
         // then
         assertThat(result).hasSize(15)
-        assertThat(result.totalElements).isEqualTo(226)
+        assertThat(result.totalElements).isEqualTo(242)
         assertOnlySelectAndCountQueries()
     }
 
     @Test
     fun `should find all sorted by score if no query provided`() {
         // when
-        val result = repository.search(SearchQuery.of(), PageRequest.of(0, 30))
+        val result = repository.search(ProjectSearchQuery.of(), PageRequest.of(0, 30))
 
         // then
         assertThat(result.totalElements).isEqualTo(500)
@@ -83,17 +83,17 @@ class SearchableProjectRepositoryTest(
     @Test
     fun `should sort by defined field`() {
         // when
-        val result = repository.search(SearchQuery.of("accio"), PageRequest.of(0, 30, Sort.by("name")))
+        val result = repository.search(ProjectSearchQuery.of("accio"), PageRequest.of(0, 15, Sort.by("name")))
 
         // then
         assertThat(result.content)
-            .hasSize(30)
+            .hasSize(15)
             .isSortedAccordingTo { projectEntity, projectEntity2 -> projectEntity.name!!.compareTo(projectEntity2.name!!) }
         assertOnlySelectAndCountQueries()
     }
 
     private fun ProjectEntity.extractScore(): Double {
-        return project?.scorecard?.value ?: 0.0
+        return project.scorecard?.value ?: 0.0
     }
 
     private fun assertOnlySelectAndCountQueries(){

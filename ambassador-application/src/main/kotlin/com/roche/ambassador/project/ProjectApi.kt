@@ -2,6 +2,8 @@ package com.roche.ambassador.project
 
 import com.roche.ambassador.commons.api.Paged
 import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.storage.project.ProjectEntityRepository
+import com.roche.ambassador.storage.project.ProjectGroupProjection
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses

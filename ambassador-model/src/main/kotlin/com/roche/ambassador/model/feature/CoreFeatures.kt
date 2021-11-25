@@ -2,7 +2,7 @@ package com.roche.ambassador.model.feature
 
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.Importance
-import com.roche.ambassador.model.IndexEntry
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.files.ExcerptFile
 import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.project.*

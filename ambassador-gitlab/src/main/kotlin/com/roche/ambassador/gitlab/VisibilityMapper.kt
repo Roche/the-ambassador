@@ -1,6 +1,6 @@
 package com.roche.ambassador.gitlab
 
-import com.roche.ambassador.model.project.Visibility
+import com.roche.ambassador.model.Visibility
 import com.roche.gitlab.api.model.Visibility as GitLabVisibility
 
 internal object VisibilityMapper {

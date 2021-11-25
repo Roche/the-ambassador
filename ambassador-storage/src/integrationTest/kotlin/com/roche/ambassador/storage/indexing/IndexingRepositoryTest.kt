@@ -29,7 +29,7 @@ internal class IndexingRepositoryTest(@Autowired private val indexingRepository:
         @Test
         fun `should create single indexing`() {
             // given
-            val indexing = Indexing.start(target = ALL_TARGET)
+            val indexing = Indexing.start(source = "whatever", target = ALL_TARGET)
 
             // when
             val saved = indexingRepository.save(indexing)
@@ -44,7 +44,7 @@ internal class IndexingRepositoryTest(@Autowired private val indexingRepository:
         fun `should be able to store indexing history`() {
             // when
             indexingRepository.saveAll(
-                listOf(Indexing.startAll().finish(), Indexing.startAll().finish(), Indexing.startAll().finish(), Indexing.startAll().finish())
+                listOf(Indexing.startAll(source = "whatever", ).finish(), Indexing.startAll(source = "whatever", ).finish(), Indexing.startAll(source = "whatever", ).finish(), Indexing.startAll(source = "whatever", ).finish())
             )
 
             // then
@@ -55,9 +55,9 @@ internal class IndexingRepositoryTest(@Autowired private val indexingRepository:
         @Test
         fun `should throw exception when saving two entries with a lock and same target`() {
             // given
-            val indexing = Indexing.start(target = ALL_TARGET)
+            val indexing = Indexing.start(source = "whatever", target = ALL_TARGET)
             indexing.lock()
-            val indexing2 = Indexing.start(target = ALL_TARGET)
+            val indexing2 = Indexing.start(source = "whatever", target = ALL_TARGET)
             indexing2.lock()
 
             // when & then
@@ -72,9 +72,9 @@ internal class IndexingRepositoryTest(@Autowired private val indexingRepository:
         @Test
         fun `should allow indexing lock on entries with different target`() {
             // given
-            val indexing = Indexing.start(target = ALL_TARGET)
+            val indexing = Indexing.start(source = "whatever", target = ALL_TARGET)
             indexing.lock()
-            val indexing2 = Indexing.start(target = "another target")
+            val indexing2 = Indexing.start(source = "whatever", target = "another target")
             indexing2.lock()
 
             // when & then
@@ -90,9 +90,9 @@ internal class IndexingRepositoryTest(@Autowired private val indexingRepository:
         @Test
         fun `should not throw exception when saving two entries without a lock and one with lock`() {
             // given
-            val indexing = Indexing.start(target = "first target")
+            val indexing = Indexing.start(source = "whatever", target = "first target")
             indexing.lock()
-            val indexing2 = Indexing.start(target = "second target")
+            val indexing2 = Indexing.start(source = "whatever", target = "second target")
             indexing2.lock()
 
             // when
@@ -107,7 +107,7 @@ internal class IndexingRepositoryTest(@Autowired private val indexingRepository:
         @Test
         fun `should update and unlock started indexing`() {
             // given
-            val indexing = Indexing.startAll()
+            val indexing = Indexing.startAll(source = "whatever", )
             indexing.lock()
 
             // when

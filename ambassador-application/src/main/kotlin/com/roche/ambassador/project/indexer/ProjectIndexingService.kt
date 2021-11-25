@@ -6,11 +6,11 @@ import com.roche.ambassador.configuration.source.ProjectSources
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
-import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.security.AuthenticationContext
 import com.roche.ambassador.storage.indexing.Indexing
 import com.roche.ambassador.storage.indexing.IndexingRepository
 import com.roche.ambassador.storage.indexing.IndexingStatus
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -21,6 +21,7 @@ internal class ProjectIndexingService(
     private val indexerFactory: IndexerFactory,
     private val indexingRepository: IndexingRepository,
     private val indexingLock: IndexingLock,
+    private val eventPublisher: ApplicationEventPublisher,
     indexerProperties: IndexerProperties
 ) {
 
@@ -74,18 +75,19 @@ internal class ProjectIndexingService(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun createIndexer(): ProjectIndexer {
+    private fun createIndexer(sourceName: String): ProjectIndexer {
         // FIXME don't get fixed source
-        val source = sources.get("gitlab").get()
+        val source = sources.get(sourceName).get()
         return indexerFactory.create(source)
     }
 
-    suspend fun reindex(): IndexingDto {
+    // FIXME don't hardcode source name!
+    suspend fun reindex(sourceName: String = "gitlab"): IndexingDto {
         val user = AuthenticationContext.currentUserNameOrElse("unknown")
         log.info("Indexing of all projects within source repository started by {}", user)
-        var idx = Indexing.startAll(startedBy = user)
+        var idx = Indexing.startAll(startedBy = user, source = sourceName)
         if (indexingLock.tryLock(idx)) {
-            val indexer = createIndexer()
+            val indexer = createIndexer(sourceName)
             idx = indexingRepository.save(idx)
             indexersInUse[idx.getId()!!] = indexer
             val filter = ProjectFilter.Builder()
@@ -108,8 +110,9 @@ internal class ProjectIndexingService(
                     indexingRepository.save(idx)
                     indexersInUse.remove(idx.getId())
                     indexingLock.unlock(idx.getId()!!)
-                    log.info("Indexing has finished")
+                    log.info("Projects indexing has finished")
                     log.info("Report:\n{}", stats.getReport())
+                    eventPublisher.publishEvent(IndexingFinishedEvent(idx))
                 }
             )
             return IndexingDto.from(idx)
@@ -123,8 +126,9 @@ internal class ProjectIndexingService(
         }
     }
 
-    suspend fun reindex(id: Long): Project? {
-        val indexer = createIndexer()
+    // FIXME don't hardcode source name!
+    suspend fun reindex(id: Long, sourceName: String = "gitlab"): Project? {
+        val indexer = createIndexer(sourceName)
         return indexer.indexOne(id)
     }
 }
