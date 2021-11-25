@@ -5,8 +5,6 @@ import com.roche.ambassador.fake.FakeSource
 import com.roche.ambassador.model.ScorecardCalculator
 import com.roche.ambassador.model.feature.FeatureReaders
 import com.roche.ambassador.model.project.Project
-import com.roche.ambassador.model.score.ActivityScorePolicy
-import com.roche.ambassador.model.score.CriticalityScorePolicy
 import com.roche.ambassador.model.source.ProjectSource
 import kotlinx.coroutines.runBlocking
 

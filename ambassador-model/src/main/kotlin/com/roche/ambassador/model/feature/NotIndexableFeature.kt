@@ -1,7 +1,6 @@
 package com.roche.ambassador.model.feature
 
 import com.roche.ambassador.model.Importance
-import com.roche.ambassador.model.IndexEntry
 
 abstract class NotIndexableFeature<T>(
     value: T?,

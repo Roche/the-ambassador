@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.roche.gitlab.api.model.Visibility
 import com.roche.gitlab.api.utils.Dates
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class Group(
