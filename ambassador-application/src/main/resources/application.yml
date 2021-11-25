@@ -28,6 +28,13 @@ ambassador:
     concurrency:
       concurrencyLevel: 30
     lock-type: in_memory
+
+    criteria:
+      projects:
+        groups:
+          - gitlab
+#          - roche-cloud
+##          - autovalidate
   events:
     async:
       thread-name-prefix: events-

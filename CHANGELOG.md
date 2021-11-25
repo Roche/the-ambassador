@@ -1,4 +1,4 @@
-#  (2021-11-22)
+#  (2021-11-25)
 
 
 ### Bug Fixes
@@ -37,6 +37,7 @@
 * **gitlab-client:** add project merge requests API support ([0107d46](https://github.com/Roche/the-ambassador/commit/0107d4680a72223528935994d03f87ee307beb3b))
 * **gitlab-client:** enable retries on errors, including support for rate limiting and adjusting retry delay based on retry-after header ([676edf7](https://github.com/Roche/the-ambassador/commit/676edf70d4d8a5582d4ba03105e67221f3cdd69c))
 * **gitlab-client:** read fork relationship information for forked projects ([b712f9b](https://github.com/Roche/the-ambassador/commit/b712f9bcc116231dea26f1468037fd59ed006505))
+* **groups:** index groups, add API for fetching groups including full text search ([cb2bee0](https://github.com/Roche/the-ambassador/commit/cb2bee09d19de9f9ec505105dbd163876eda7b5b))
 * **i18n:** enable internationalization support ([450c712](https://github.com/Roche/the-ambassador/commit/450c712a5ff3c828fd4c8439b5a1a2f6d2c50fe7))
 * index all features as is, without additional re-calculation ([5ed74d2](https://github.com/Roche/the-ambassador/commit/5ed74d202c83aea90c9cf2d7eeac50199ca654a2))
 * **indexer:** block indexing of new projects when indexing is already running ([d066b7e](https://github.com/Roche/the-ambassador/commit/d066b7e587e51da072f9c48f4ff7402582b755c1))
