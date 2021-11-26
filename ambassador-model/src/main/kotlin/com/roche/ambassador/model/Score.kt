@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.score.ScoreBuilder
+import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -117,6 +118,16 @@ abstract class AbstractScore(
     override fun subScores() = subScores
 
     override fun name() = name
+
+    fun getSubScoreByName(name: String): Optional<Score> {
+        return Optional.ofNullable(subScores.firstOrNull { it.name() == name })
+    }
+
+    fun getSubScoreValueByNameOrZero(name: String): Double {
+        return getSubScoreByName(name)
+            .map { it.value() }
+            .orElseGet { 0.0 }
+    }
 
     @JsonIgnore
     override fun explain(): Explanation {

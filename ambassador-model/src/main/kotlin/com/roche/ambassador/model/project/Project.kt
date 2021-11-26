@@ -1,17 +1,13 @@
 package com.roche.ambassador.model.project
 
-import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.Scorecard
 import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.LanguagesFeature
 import com.roche.ambassador.model.group.Group
-import com.roche.ambassador.model.score.ActivityScorePolicy
-import com.roche.ambassador.model.score.CriticalityScorePolicy
 import com.roche.ambassador.model.score.Scores
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Statistics
@@ -41,7 +37,6 @@ data class Project(
     @JsonIgnore val potentialReadmePath: String? = null,
     @JsonIgnore val potentialLicensePath: String? = null
 ) {
-    private var scores: Scores? = null
 
     suspend fun readFeature(featureReader: FeatureReader<*>, source: ProjectSource) {
         featureReader.read(this, source)
@@ -49,18 +44,16 @@ data class Project(
             .ifPresent { features.add(it) }
     }
 
-    @JsonGetter("scores")
+    @JsonIgnore
     fun getScores(): Scores {
-        if (scores == null) {
-            val activityScore = ActivityScorePolicy.calculateScoreOf(this.features).value()
-            val criticalityScore = CriticalityScorePolicy.calculateScoreOf(this.features).value()
-            this.scores = Scores(
-                activity = activityScore,
-                criticality = criticalityScore,
-                total = (criticalityScore * activityScore).round(2)
-            )
+        val immutableScorecard = scorecard
+        if (immutableScorecard != null) {
+            val total = immutableScorecard.value
+            val criticality = immutableScorecard.getSubScoreValueByNameOrZero("criticality")
+            val activity = immutableScorecard.getSubScoreValueByNameOrZero("activity")
+            return Scores(activity, criticality, total)
         }
-        return scores as Scores
+        return Scores(0.0, 0.0, 0.0)
     }
 
     @JsonIgnore
