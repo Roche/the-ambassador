@@ -26,6 +26,20 @@ object EnumSerialization {
         )
     }
 
+    fun <E> toStringSerializer(propertyProvider: (E) -> Optional<String>): JsonSerializer<E> {
+        return PropertySerializer(
+            { generator, value -> generator.writeNumber(value) },
+            propertyProvider
+        )
+    }
+
+    fun <E> fromStringDeserializer(enumProvider: (String) -> Optional<E>): JsonDeserializer<E> {
+        return PropertyDeserializer(
+            { Optional.ofNullable(it.valueAsString) },
+            enumProvider
+        )
+    }
+
     class PropertyDeserializer<T, E>(
         private val valueReader: (JsonParser) -> Optional<T>,
         private val enumProvider: (T) -> Optional<E>
