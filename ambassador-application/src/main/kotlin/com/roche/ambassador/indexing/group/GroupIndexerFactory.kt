@@ -2,7 +2,7 @@ package com.roche.ambassador.indexing.group
 
 import com.roche.ambassador.ConcurrencyProvider
 import com.roche.ambassador.configuration.properties.IndexerProperties
-import com.roche.ambassador.model.source.ProjectSource
+import com.roche.ambassador.model.source.GroupSource
 import com.roche.ambassador.storage.group.GroupEntityRepository
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.CoroutineScope
@@ -18,5 +18,5 @@ internal class GroupIndexerFactory(
 
     private val coroutineScope = CoroutineScope(concurrencyProvider.getSupportingDispatcher())
 
-    fun create(source: ProjectSource): GroupIndexer = GroupIndexer(source, projectEntityRepository, groupEntityRepository, coroutineScope, indexerProperties)
+    fun create(source: GroupSource): GroupIndexer = GroupIndexer(source, projectEntityRepository, groupEntityRepository, coroutineScope, indexerProperties)
 }

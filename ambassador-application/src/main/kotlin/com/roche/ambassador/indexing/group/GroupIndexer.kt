@@ -7,7 +7,7 @@ import com.roche.ambassador.indexing.IndexingForciblyStoppedException
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.score.Scores
-import com.roche.ambassador.model.source.ProjectSource
+import com.roche.ambassador.model.source.GroupSource
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.ambassador.storage.group.GroupEntity
 import com.roche.ambassador.storage.group.GroupEntityRepository
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
 internal class GroupIndexer(
-    private val source: ProjectSource,
+    private val source: GroupSource,
     private val projectEntityRepository: ProjectEntityRepository,
     private val groupEntityRepository: GroupEntityRepository,
     private val coroutineScope: CoroutineScope,
