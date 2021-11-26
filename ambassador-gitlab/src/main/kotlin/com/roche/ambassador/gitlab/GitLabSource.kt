@@ -21,7 +21,6 @@ import com.roche.gitlab.api.model.UserState
 import com.roche.gitlab.api.project.ProjectListQuery
 import com.roche.gitlab.api.project.ProjectQuery
 import com.roche.gitlab.api.project.commits.CommitsQuery
-import com.roche.gitlab.api.project.events.Action
 import com.roche.gitlab.api.project.events.EventsListQuery
 import com.roche.gitlab.api.project.events.TargetType
 import com.roche.gitlab.api.project.mergerequests.MergeRequest
@@ -138,8 +137,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource, GroupSource {
         log.info("Reading project {} commits timeline", projectId)
         val query = CommitsQuery(
             refName = ref,
-            since = LocalDateTime.now().minusDays(LOOKBACK_DAYS),
-            until = LocalDateTime.now(),
+            since = LocalDateTime.now().minusYears(1),
             withStats = false
         )
         gitlab.projects()
@@ -222,7 +220,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource, GroupSource {
     }
 
     override suspend fun readComments(projectId: String): Timeline {
-        log.info("Reading project {} comments")
+        log.info("Reading project {} comments", projectId)
         val query = EventsListQuery(action = "commented", target = "note", after = LocalDate.now().minusDays(LOOKBACK_DAYS))
         val timeline = Timeline()
         gitlab.projects()
