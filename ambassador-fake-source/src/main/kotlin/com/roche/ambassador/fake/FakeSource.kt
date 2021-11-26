@@ -8,6 +8,7 @@ import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
+import com.roche.ambassador.model.source.GroupSource
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.ambassador.model.stats.Timeline
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
 import java.util.*
 
-class FakeSource(val spec: GenerationSpec) : ProjectSource {
+class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
 
     private val fakeDataProvider: FakeDataProvider = FakeDataProvider()
 
@@ -79,7 +80,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource {
     override suspend fun readIssues(projectId: String): Issues {
         val open = fakeDataProvider.nextInt()
         val closed = fakeDataProvider.nextInt()
-        return Issues(open + closed, open, closed, fakeDataProvider.nextInt(max = closed), fakeDataProvider.nextInt(max = open))
+        return Issues(open + closed, open, closed, fakeDataProvider.nextInt(max = (closed+open)), fakeDataProvider.nextInt(max = closed), fakeDataProvider.nextInt(max = open))
     }
 
     override suspend fun readContributors(projectId: String): List<Contributor> = fakeDataProvider.generate(max = 50, generator = fakeDataProvider::contributor)
@@ -122,8 +123,16 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource {
     }
 
     override suspend fun readPullRequests(projectId: String): Timeline {
-        val mean = fakeDataProvider.withBinaryChance(95,
-                                                     { fakeDataProvider.nextDouble(1, 15) },
+        return createWeeklyTimelineByMeanWithEmptyChance(5)
+    }
+
+    override suspend fun readComments(projectId: String): Timeline {
+        return createWeeklyTimelineByMeanWithEmptyChance(10)
+    }
+
+    private fun createWeeklyTimelineByMeanWithEmptyChance(emptyChance: Int, min: Int = 1, max: Int = 15): Timeline {
+        val mean = fakeDataProvider.withBinaryChance(100 - emptyChance,
+                                                     { fakeDataProvider.nextDouble(min, max) },
                                                      { 0.0 })!! // not active project
         return TimelineGenerator.withWeekAverage(mean, Calendar.getInstance().getActualMaximum(Calendar.WEEK_OF_YEAR))
     }

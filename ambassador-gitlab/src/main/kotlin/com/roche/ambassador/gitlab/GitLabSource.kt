@@ -8,6 +8,7 @@ import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
+import com.roche.ambassador.model.source.GroupSource
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Timeline
 import com.roche.gitlab.api.GitLab
@@ -20,6 +21,9 @@ import com.roche.gitlab.api.model.UserState
 import com.roche.gitlab.api.project.ProjectListQuery
 import com.roche.gitlab.api.project.ProjectQuery
 import com.roche.gitlab.api.project.commits.CommitsQuery
+import com.roche.gitlab.api.project.events.Action
+import com.roche.gitlab.api.project.events.EventsListQuery
+import com.roche.gitlab.api.project.events.TargetType
 import com.roche.gitlab.api.project.mergerequests.MergeRequest
 import com.roche.gitlab.api.project.mergerequests.MergeRequestsQuery
 import com.roche.gitlab.api.utils.Pager
@@ -29,13 +33,14 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.streams.toList
 import com.roche.gitlab.api.model.AccessLevel as BranchingAccessLevel
 
 @ExperimentalCoroutinesApi
-class GitLabSource(private val gitlab: GitLab) : ProjectSource {
+class GitLabSource(private val gitlab: GitLab) : ProjectSource, GroupSource {
 
     private val oAuth2ClientProperties = OAuth2ClientProperties(
         name = name(),
@@ -49,6 +54,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
 
     companion object {
         private val log by LoggerDelegate()
+        const val LOOKBACK_DAYS: Long = 90
     }
 
     override suspend fun getById(id: String): Optional<Project> {
@@ -109,10 +115,10 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
         log.info("Reading project {} issues", projectId)
         val projectApi = gitlab.projects().withId(projectId.toLong())
         val actual = projectApi.issueStatistics().get().counts
-        val nowMinus90Days = LocalDateTime.now().minusDays(90)
+        val nowMinus90Days = LocalDateTime.now().minusDays(LOOKBACK_DAYS)
         val last90Days = projectApi.issueStatistics().get(IssueStatisticsQuery(updatedAfter = nowMinus90Days)).counts
         log.info("Finished reading project {} issues", projectId)
-        return Issues(actual.all, actual.opened, actual.closed, last90Days.closed, last90Days.opened)
+        return Issues(actual.all, actual.opened, actual.closed, last90Days.all, last90Days.closed, last90Days.opened)
     }
 
     override suspend fun readContributors(projectId: String): List<Contributor> {
@@ -132,7 +138,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
         log.info("Reading project {} commits timeline", projectId)
         val query = CommitsQuery(
             refName = ref,
-            since = LocalDateTime.now().minusDays(90),
+            since = LocalDateTime.now().minusDays(LOOKBACK_DAYS),
             until = LocalDateTime.now(),
             withStats = false
         )
@@ -204,13 +210,31 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource {
         val timeline = Timeline()
         val query = MergeRequestsQuery(
             state = MergeRequest.State.MERGED.name.toLowerCase(),
-            updatedAfter = LocalDateTime.now().minusDays(90)
+            updatedAfter = LocalDateTime.now().minusDays(LOOKBACK_DAYS)
         )
         gitlab.projects()
             .withId(projectId.toLong())
             .mergeRequests()
             .simplePaging(query, fromPagination = Pagination(itemsPerPage = 100))
             .forEach { timeline.increment(it.updatedAt) }
+        log.info("Finished reading project {} pull requests timeline", projectId)
+        return timeline
+    }
+
+    override suspend fun readComments(projectId: String): Timeline {
+        log.info("Reading project {} comments")
+        val query = EventsListQuery(action = "commented", target = "note", after = LocalDate.now().minusDays(LOOKBACK_DAYS))
+        val timeline = Timeline()
+        gitlab.projects()
+            .withId(projectId.toLong())
+            .events()
+            .paging(query, Pagination(itemsPerPage = 100))
+            .forEach {
+                val note = it.note
+                if (note != null && note.noteableType == TargetType.ISSUE) {
+                    timeline.increment(note.createdAt)
+                }
+            }
         log.info("Finished reading project {} pull requests timeline", projectId)
         return timeline
     }

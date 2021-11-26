@@ -3,14 +3,12 @@ package com.roche.ambassador.model.source
 import com.roche.ambassador.OAuth2AuthenticationProvider
 import com.roche.ambassador.model.Specification
 import com.roche.ambassador.model.files.RawFile
-import com.roche.ambassador.model.group.Group
-import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
 import com.roche.ambassador.model.stats.Timeline
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
-interface ProjectSource : Specification, OAuth2AuthenticationProvider {
+interface ProjectSource : Specification, GroupSource, OAuth2AuthenticationProvider {
 
     suspend fun getById(id: String): Optional<Project>
     suspend fun flow(filter: ProjectFilter): Flow<Project>
@@ -24,5 +22,6 @@ interface ProjectSource : Specification, OAuth2AuthenticationProvider {
     suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch>
     suspend fun readMembers(projectId: String): List<Member>
     suspend fun readPullRequests(projectId: String): Timeline
-    suspend fun flowGroups(filter: GroupFilter): Flow<Group>
+    suspend fun readComments(projectId: String): Timeline
+
 }
