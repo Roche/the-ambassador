@@ -5,6 +5,7 @@ import com.roche.ambassador.model.Feature
 import com.roche.ambassador.model.Score
 import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.FileFeature
+import com.roche.ambassador.model.files.File
 import java.util.function.Predicate
 import kotlin.reflect.KClass
 
@@ -23,7 +24,7 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     protected val normalizers = mutableListOf<ScoreNormalizer>()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Feature<*>> withFeature(featureType: KClass<T>): FeatureScoreBuilder<T, SELF> {
+    fun <V, T : Feature<V>> withFeature(featureType: KClass<T>): FeatureScoreBuilder<V, T, SELF> {
         expectedFeatures.add(featureType)
         val feature = features.find(featureType)
         return FeatureScoreBuilder(feature.orElse(null), this as SELF)
@@ -45,26 +46,26 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
         return SubScoreBuilder(name, this, features)
     }
 
-    class FeatureScoreBuilder<T : Feature<*>, U : ScoreBuilder<U>> internal constructor(
+    class FeatureScoreBuilder<V, T : Feature<V>, U : ScoreBuilder<U>> internal constructor(
         private val feature: T?,
         private val scoreBuilder: U
     ) {
-        private val filters = mutableListOf<Predicate<T>>()
+        private val filters = mutableListOf<Predicate<V>>()
 
-        fun filter(predicate: Predicate<T>): FeatureScoreBuilder<T, U> {
+        fun filter(predicate: Predicate<V>): FeatureScoreBuilder<V, T, U> {
             filters.add(predicate)
             return this
         }
 
-        fun filter(predicate: (T) -> Boolean): FeatureScoreBuilder<T, U> {
+        fun filter(predicate: (V) -> Boolean): FeatureScoreBuilder<V, T, U> {
             filters.add(predicate)
             return this
         }
 
-        fun calculate(calculator: (T, Double) -> Double): U {
-            if (feature != null && feature.exists() && filters.stream().allMatch { it.test(feature) }) {
+        fun calculate(calculator: (V, Double) -> Double): U {
+            if (feature != null && feature.exists() && filters.stream().allMatch { it.test(feature.value().get()) }) {
                 scoreBuilder.usedFeatures.add(feature)
-                val partialScore = calculator(feature, scoreBuilder.score)
+                val partialScore = calculator(feature.value().get(), scoreBuilder.score)
                 scoreBuilder.score = partialScore
             }
             return scoreBuilder
@@ -93,7 +94,7 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     }
 }
 
-fun <T : FileFeature<*>> ScoreBuilder.FeatureScoreBuilder<T, ScoreBuilder.ParentScoreBuilder>.forFile(
+fun <V : File, T : FileFeature<V>> ScoreBuilder.FeatureScoreBuilder<V, T, ScoreBuilder.ParentScoreBuilder>.forFile(
     minimumSize: Long,
     boost: Int
 ): ScoreBuilder.ParentScoreBuilder {

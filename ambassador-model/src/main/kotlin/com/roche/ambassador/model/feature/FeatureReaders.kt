@@ -22,6 +22,7 @@ object FeatureReaders {
         DescriptionFeature.create(),
         IssuesFeature.create(),
         MembersFeature.create(),
+        CommentsFeature.create()
     )
 
     fun getProjectBasedReaders(): List<FeatureReader<*>> {

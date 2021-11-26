@@ -31,7 +31,8 @@ object FeatureNameLookup {
             "releases" to ReleasesFeature::class,
             "issues" to IssuesFeature::class,
             "members" to MembersFeature::class,
-            "pullRequests" to PullRequestsFeature::class
+            "pullRequests" to PullRequestsFeature::class,
+            "issuesComments" to CommentsFeature::class
         )
     )
 

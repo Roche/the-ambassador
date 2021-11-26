@@ -186,3 +186,12 @@ class PullRequestsFeature(value: Timeline) : TimelineFeature(value) {
         }
     }
 }
+
+class CommentsFeature(value: Timeline) : TimelineFeature(value) {
+    companion object : FeatureReaderFactory<CommentsFeature> {
+        override fun create(): FeatureReader<CommentsFeature> = FeatureReader.create { project, source ->
+            val comments = source.readComments(project.id.toString())
+            CommentsFeature(comments)
+        }
+    }
+}
