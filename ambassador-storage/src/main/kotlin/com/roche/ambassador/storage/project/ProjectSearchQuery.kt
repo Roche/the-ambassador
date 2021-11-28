@@ -6,7 +6,9 @@ import java.util.*
 
 data class ProjectSearchQuery(
     override val query: Optional<String>,
-    val visibility: Visibility = Visibility.INTERNAL
+    val visibility: Visibility = Visibility.INTERNAL,
+    val language: String? = null,
+    val tags: List<String> = listOf()
 ) : SearchQuery(query) {
     companion object {
         fun of(query: String? = null, visibility: Visibility = Visibility.INTERNAL): ProjectSearchQuery {

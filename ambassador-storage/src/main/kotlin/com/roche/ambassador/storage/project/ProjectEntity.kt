@@ -23,6 +23,7 @@ class ProjectEntity(
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     var project: Project,
+    var language: String? = null,
     var stars: Int = 0,
     @Column(name = "criticality_score")
     var criticalityScore: Double? = 0.0,
@@ -70,6 +71,7 @@ class ProjectEntity(
         this.activityScore = project.getScores().activity
         this.score = project.getScores().total
         this.lastIndexedDate = LocalDateTime.now()
+        this.language = project.getMainLanguage()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -92,9 +94,10 @@ class ProjectEntity(
 
     companion object Factory {
         fun from(project: Project): ProjectEntity {
+            val lang = project.getMainLanguage()
             return ProjectEntity(
                 project.id, project.name,
-                project,
+                project, lang,
                 project.stats.stars ?: 0,
                 project.getScores().criticality,
                 project.getScores().activity,

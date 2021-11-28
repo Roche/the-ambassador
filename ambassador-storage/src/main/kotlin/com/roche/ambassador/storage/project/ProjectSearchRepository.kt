@@ -23,6 +23,9 @@ class ProjectSearchRepository(
 
     override fun additionalSearchCriteria(whereBuilder: SelectConditionStep<*>, searchQuery: ProjectSearchQuery) {
         whereBuilder.and(byVisibility(searchQuery.visibility))
+        if (searchQuery.language != null) {
+            whereBuilder.and(PROJECT.LANGUAGE.equalIgnoreCase(searchQuery.language))
+        }
     }
 
     private fun byVisibility(visibility: Visibility): Condition {

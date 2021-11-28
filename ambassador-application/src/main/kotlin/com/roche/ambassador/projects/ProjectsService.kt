@@ -3,13 +3,12 @@ package com.roche.ambassador.projects
 import com.roche.ambassador.commons.api.Paged
 import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
-import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.Visibility
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import com.roche.ambassador.storage.project.ProjectHistoryRepository
-import com.roche.ambassador.storage.project.ProjectSearchRepository
 import com.roche.ambassador.storage.project.ProjectSearchQuery
-import org.slf4j.LoggerFactory
+import com.roche.ambassador.storage.project.ProjectSearchRepository
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Pageable
@@ -39,7 +38,12 @@ open class ProjectsService(
 
     suspend fun search(query: ListProjectsQuery, pageable: Pageable): Paged<SimpleProjectDto> {
         log.debug("Searching for project with query: {}", query)
-        val q = ProjectSearchQuery(query.query, query.visibility.orElse(Visibility.INTERNAL))
+        val q = ProjectSearchQuery(
+            query.query,
+            query.visibility.orElse(Visibility.INTERNAL),
+            query.language.orElse(null),
+            query.tags
+        )
         val result = projectSearchRepository.search(q, pageable)
             .map { SimpleProjectDto.from(it.project) }
         return Paged.from(result)
