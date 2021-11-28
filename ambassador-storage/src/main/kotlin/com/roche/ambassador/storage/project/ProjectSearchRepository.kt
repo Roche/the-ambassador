@@ -23,9 +23,17 @@ class ProjectSearchRepository(
 
     override fun additionalSearchCriteria(whereBuilder: SelectConditionStep<*>, searchQuery: ProjectSearchQuery) {
         whereBuilder.and(byVisibility(searchQuery.visibility))
+             if (searchQuery.tags.isNotEmpty()) {
+            whereBuilder.and(byTags(searchQuery.tags))
+        }
         if (searchQuery.language != null) {
             whereBuilder.and(PROJECT.LANGUAGE.equalIgnoreCase(searchQuery.language))
         }
+    }
+
+    private fun byTags(tags: List<String>): Condition {
+        val json = Json(PROJECT.PROJECT_)
+        return json.inArray("tags", *tags.toTypedArray())
     }
 
     private fun byVisibility(visibility: Visibility): Condition {
