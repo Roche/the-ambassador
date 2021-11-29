@@ -1,0 +1,11 @@
+# Configuration for commit linter Commitsar
+# Reference: https://commitsar.aevea.ee/
+verbose: true
+commits:
+  strict: false
+  limit: 30
+  all: true
+  upstreamBranch: origin/master
+
+pull_request:
+  conventional: true
