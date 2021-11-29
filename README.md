@@ -1,71 +1,108 @@
-<p align="center">
-    <h2 align="center">The Ambassador</h3>
-</p>
+<div align="center">
+  <h1 align="center">The Ambassador</h1>
+  <br />
+  <a href="#about"><strong>Explore the docs »</strong></a>
+  <br />
+  <br />
+  <a href="https://github.com/Roche/the-ambassador/issues/new?assignees=&labels=bug&template=01_BUG_REPORT.md&title=bug%3A+">Report a Bug</a>
+  ·
+  <a href="https://github.com/Roche/the-ambassador/issues/new?assignees=&labels=enhancement&template=02_FEATURE_REQUEST.md&title=feat%3A+">Request a Feature</a>
+  ·
+  <a href="https://github.com/Roche/the-ambassador/discussions">Ask a Question</a>
+</div>
 
-<p align="center">
-    <a href="https://github.com/Roche/the-ambassador/actions/workflows/ci.yml" alt="Build">
-        <img alt="GitHub Workflow for CI" src="https://img.shields.io/github/workflow/status/Roche/the-ambassador/CI/master"></a>
-    <a href="https://sonarcloud.io/project/overview?id=Roche_the-ambassador" alt="Quality gate">
-        <img src="https://sonarcloud.io/api/project_badges/measure?project=Roche_the-ambassador&metric=alert_status" /> </a>
-    <a href="https://github.com/Roche/the-ambassador/commits/master" alt="Last Commit">
-        <img alt="Last Commit" src="https://img.shields.io/github/last-commit/Roche/the-ambassador/master"></a>
-    <a href="https://github.com/Roche/the-ambassador/graphs/contributors" alt="Contributors">
-        <img src="https://img.shields.io/github/contributors/Roche/the-ambassador" /></a>
-    <a href="https://github.com/Roche/the-ambassador/pulse" alt="Activity">
-        <img src="https://img.shields.io/github/commit-activity/m/Roche/the-ambassador" /></a>
-    <a href="https://sonarcloud.io/project/overview?id=Roche_the-ambassador" alt="Language">
-        <img src="https://img.shields.io/github/languages/top/Roche/the-ambassador" /> </a>
-</p>
+<div align="center">
+<br />
 
-The Ambassador will help users of coding platforms to
-create findable, well documented and offering good quality projects.
-It measures project scores (criticality, activity, scorecard),
+[![CI](https://img.shields.io/github/workflow/status/Roche/the-ambassador/CI/master?style=flat-square)](https://github.com/Roche/the-ambassador/actions/workflows/ci.yml)
+[![quality gate](https://sonarcloud.io/api/project_badges/measure?project=Roche_the-ambassador&metric=alert_status&style=flat-square)](https://sonarcloud.io/project/overview?id=Roche_the-ambassador)
+[![Last Commit](https://img.shields.io/github/last-commit/Roche/the-ambassador/master?style=flat-square)](https://github.com/Roche/the-ambassador/commits/master)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/Roche/the-ambassador?style=flat-square)](https://github.com/Roche/the-ambassador/pulse)
+[![Project license](https://img.shields.io/github/license/Roche/the-ambassador.svg?style=flat-square)](LICENSE)
+
+[![Pull Requests welcome](https://img.shields.io/badge/PRs-welcome-bc36f0.svg?style=flat-square)](https://github.com/Roche/the-ambassador/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with love by Roche](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-Roche-0B41CD.svg?style=flat-square)](https://github.com/Roche)
+
+</div>
+
+<details open="open">
+<summary>Table of Contents</summary>
+
+- [✨ About](#about)
+  * [💡 Motivation](#motivation)
+  * [🔥 Features](#features)
+  * [🚧 Built With](#built-with)
+- [🚀 Getting Started](#getting-started)
+- [☁️ Deploying](#deploying)
+- [⌨️️ Contributing](#contributing)
+- [👨‍💻 👩‍💻 Contributors](#contributors)
+
+</details>
+
+## <a id="about"></a> ✨ About
+
+The Ambassador helps users of coding platforms to create findable, well maintained,
+properly documented and secure projects. It's purpose is to promote creating
+Open Source and InnerSource software, that others can rely on.
+It measures project scores (criticality, activity, scorecard), proactively advises projects
 and provides a handy API for querying indexed and rated projects.
 
-## 💡 Motivation
+### <a id="motivation"></a> 💡 Motivation
 
 - Automate analysis of quality posture of software projects
 - Proactively notify projects' about potential improvements they can implement
 - Help build a community of professionals openly sharing code
-- Rate projects that are following good Open and Inner Source practices
+- Rate projects that are following good Open and InnerSource practices
+- Discover dependencies between projects, packages, people and organizations
 
 It is inspired by [OSSF Security Scorecard](https://github.com/ossf/scorecard),
 [InnerSource Patterns](https://github.com/InnerSourceCommons/InnerSourcePatterns)
 and... life 😄
 
-## 🔥 Features
+### <a id="features"></a> 🔥 Features
 
-- customizable indexing criteria
-- calculating projects' criticality, activity scores and a scorecard
-- full text search of indexed projects to easily find important projects
+- calculating projects' criticality, activity and security scores
+- full text search of projects to easily find important and interesting projects
 - indexing history, enabling users to see how their projects changed over time
-- handful API  
+- customizable indexing criteria
+- handful API
 - GitLab support
 - authentication using OAuth2
-  
+
 More to come, including:
 - advising projects through pull requests and issues how they can improve
-- indexing of proje
-- multi-source support, allowing indexing projects from multiple coding platforms
-- support for GitHub, Bitbucket  
-- webcomponents to easily embed projects on your pages
+- discovering dependency trees of software packages, contributors, collaborators and organizations
+- multi-source support, allowing indexing projects from multiple coding platforms, including GitHub and Bitbucket
+- give badges to projects
+- webcomponents to easily embed projects search on your own page
 - simple, standalone UI providing advanced search and visualization capabilities
   of indexed projects
 - cloud-native deployment on Kubernetes
 
-## 🚀 Quickstart
+### <a id="built-with"></a> 🚧 Built With
+
+- Kotlin
+- Spring Boot
+- PostgreSQL
+- jOOQ
+- Gradle
+
+## <a id="getting-started"></a> 🚀 Getting Started
 
 To be added soon...
 
-## ☁️ Deploy
+## <a id="deploying"></a> ☁️ Deploying
 
 To be added soon...
 
-## ⌨️️ Contributing
+## <a id="contributing"></a> ⌨️️ Contributing
 
-To be added soon...
+First off, thanks for taking the time to contribute! Contributions are what make the open-source community such
+an amazing place to learn, inspire, and create. Any contributions you make will benefit everybody else and are **greatly appreciated**.
 
-## Contributors
+Please read [our contribution guidelines](CONTRIBUTING.md), and thank you for being involved!
+
+## <a id="contributors"></a> 👨‍💻 👩‍💻 Contributors
 
 <!-- readme: contributors -start -->
 <table>

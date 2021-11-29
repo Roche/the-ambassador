@@ -71,3 +71,13 @@ Please try to create bug reports that are:
    so please follow the specification in your commit messages.
 5. Push to the branch (`git push origin feat/amazing_feature`)
 6. [Open a Pull Request](https://github.com/Roche/the-ambassador/compare?expand=1)
+
+## Project assistance
+
+If you want to say **thank you** or/and support active development of The Ambassador:
+
+- Add a [GitHub Star](https://github.com/Roche/the-ambassador) to the project.
+- Tweet about the The Ambassador.
+- Write interesting articles about the project on [Dev.to](https://dev.to/), [Medium](https://medium.com/) or your personal blog.
+
+Together, we can make The Ambassador **better**!
