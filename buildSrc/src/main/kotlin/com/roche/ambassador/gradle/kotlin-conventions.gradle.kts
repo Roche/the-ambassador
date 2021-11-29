@@ -9,7 +9,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt")
 }
 
-val jvmTargetVersion: String by rootProject.extra
+val jdkVersion: String by rootProject.extra
 val detektVersion: String by extra
 val kotlinVersion: String by extra
 
@@ -18,7 +18,7 @@ val applyKotlinOptions: (KotlinJvmOptions) -> Unit = {
     it.freeCompilerArgs = listOf("-Xjsr305=strict")
     it.allWarningsAsErrors = false
     it.jdkHome = javaToolchains.compilerFor(java.toolchain).get().metadata.installationPath.asFile.absolutePath
-    it.jvmTarget = jvmTargetVersion
+    it.jvmTarget = jdkVersion
     it.languageVersion = kotlinVersion
     it.apiVersion = kotlinVersion
 }
@@ -43,12 +43,6 @@ detekt {
     config = files("$rootDir/detekt.yml")
 
     autoCorrect = true
-    reports {
-        xml.enabled = true
-        html.enabled = false
-        txt.enabled = false
-        sarif.enabled = true
-    }
     parallel = true
 }
 
@@ -58,7 +52,13 @@ dependencies {
 
 tasks.withType<Detekt>().configureEach {
     // Target version of the generated JVM bytecode. It is used for type resolution.
-    this.jvmTarget = jvmTargetVersion
+    this.jvmTarget = jdkVersion
+    reports {
+        xml.required.set(true)
+        html.required.set(false)
+        txt.required.set(false)
+        sarif.required.set(true)
+    }
     this.onlyIf { project.hasProperty("runDetekt") }
 }
 

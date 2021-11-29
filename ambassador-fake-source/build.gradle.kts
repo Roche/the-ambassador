@@ -1,15 +1,6 @@
 plugins {
     id("kotlin-conventions")
     id("testing-conventions")
-    id("spring-conventions")
-}
-
-tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-    enabled = false
-}
-
-tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
-    enabled = false
 }
 
 val kotlinCoroutinesVersion: String by extra

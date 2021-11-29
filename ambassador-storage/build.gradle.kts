@@ -1,4 +1,6 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 import org.springframework.boot.gradle.tasks.bundling.BootJar
+import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     id("kotlin-conventions")
@@ -16,7 +18,11 @@ tasks.getByName<BootJar>("bootJar") {
     enabled = false
 }
 
-tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
+tasks.getByName<BootBuildImage>("bootBuildImage") {
+    enabled = false
+}
+
+tasks.getByName<BootRun>("bootRun") {
     enabled = false
 }
 
