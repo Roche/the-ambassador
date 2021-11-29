@@ -39,13 +39,14 @@ class CriticalityScorePolicyTest {
             50, 42, 224,
             LocalDate.now().minusMonths(127), LocalDate.now(),
             TimelineGenerator.withWeekAverage(20.0, 52),
-            TimelineGenerator.withTotalEvents(15, startDate = LocalDate.now().minusMonths(11))
+            TimelineGenerator.withTotalEvents(15, startDate = LocalDate.now().minusMonths(11)),
+            TimelineGenerator.withTotalEvents(50, startDate = LocalDate.now().minusMonths(2)),
         )
 
         // when
         val result = SimpleCriticalityScoreCalculator.calculate(data)
 
-        val exact = 0.4222
+        val exact = 0.697
         // then result is based on manual calculation based on algorithm defined above
         assertThat(result).isBetween(exact * 0.9, exact * 1.1)
 
@@ -54,7 +55,7 @@ class CriticalityScorePolicyTest {
 
         // then all expected features and subscores are used
         assertThat(criticality)
-            .hasScoresSize(0)
+            .hasScoresSize(1)
             .hasValue(result)
             .hasFeatures(
                 LastActivityDateFeature::class,
@@ -62,17 +63,18 @@ class CriticalityScorePolicyTest {
                 CreatedDateFeature::class,
                 ContributorsFeature::class,
                 IssuesFeature::class,
-                ReleasesFeature::class
+                ReleasesFeature::class,
+                CommentsFeature::class
             )
     }
 
     @ParameterizedTest
     @CsvSource(
         "0, 0",
-        "10, 0.0662",
-        "4999, 0.2353",
-        "5000, 0.2353",
-        "5001, 0.2353",
+        "10, 0.1024",
+        "4999, 0.3636",
+        "5000, 0.3636",
+        "5001, 0.3636",
     )
     fun `should use contributors count only`(contributorsCount: Int, expected: Double) {
         // given
@@ -85,14 +87,14 @@ class CriticalityScorePolicyTest {
     @ParameterizedTest
     @CsvSource(
         "0, 0",
-        "10, 0.0166",
-        "4999, 0.0588",
-        "5000, 0.0588",
-        "5001, 0.0588",
+        "10, 0.0256",
+        "4999, 0.0909",
+        "5000, 0.0909",
+        "5001, 0.0909",
     )
-    fun `should use open issues count only`(openIssues: Int, expected: Double) {
+    fun `should use open issues count only`(updatedIssues: Int, expected: Double) {
         // given
-        val data = CriticalityData(openedIssuesIn90Days = openIssues)
+        val data = CriticalityData(updatedIssuesIn90Days = updatedIssues)
 
         // expect
         assertWithData(data, expected)
@@ -101,10 +103,10 @@ class CriticalityScorePolicyTest {
     @ParameterizedTest
     @CsvSource(
         "0, 0",
-        "10, 0.0166",
-        "4999, 0.0588",
-        "5000, 0.0588",
-        "5001, 0.0588",
+        "10, 0.0256",
+        "4999, 0.0909",
+        "5000, 0.0909",
+        "5001, 0.0909",
     )
     fun `should use closed issues count only`(closedIssues: Int, expected: Double) {
         // given
@@ -170,35 +172,35 @@ class CriticalityScorePolicyTest {
         fun commitTimelines(): Stream<Arguments> {
             return Stream.of(
                 Arguments.of(TimelineGenerator.withWeekAverage(0.0, 52), 0),
-                Arguments.of(TimelineGenerator.withWeekAverage(5.0, 52), .03051),
-                Arguments.of(TimelineGenerator.withWeekAverage(50.0, 52), .06695),
-                Arguments.of(TimelineGenerator.withWeekAverage(500.0, 52), .10586),
-                Arguments.of(TimelineGenerator.withWeekAverage(500.0, 104), .10586),
-                Arguments.of(TimelineGenerator.withWeekAverage(1000.0, 52), .11764),
-                Arguments.of(TimelineGenerator.withWeekAverage(2000.0, 52), .11764),
+                Arguments.of(TimelineGenerator.withWeekAverage(5.0, 52), .0467),
+                Arguments.of(TimelineGenerator.withWeekAverage(50.0, 52), .1024),
+                Arguments.of(TimelineGenerator.withWeekAverage(500.0, 52), .1628),
+                Arguments.of(TimelineGenerator.withWeekAverage(500.0, 104), .1628),
+                Arguments.of(TimelineGenerator.withWeekAverage(1000.0, 52), .1818),
+                Arguments.of(TimelineGenerator.withWeekAverage(2000.0, 52), .1818),
             )
         }
         @JvmStatic
         fun releaseTimelines(): Stream<Arguments> {
             return Stream.of(
                 Arguments.of(TimelineGenerator.withTotalEvents(0, startDate = LocalDate.now().minusYears(0)), 0.0),
-                Arguments.of(TimelineGenerator.withTotalEvents(24, startDate = LocalDate.now().minusYears(2)), .0458),
-                Arguments.of(TimelineGenerator.withTotalEvents(12, startDate = LocalDate.now().minusYears(1)), .0458),
-                Arguments.of(TimelineGenerator.withTotalEvents(26, startDate = LocalDate.now().minusYears(1)), .0588),
-                Arguments.of(TimelineGenerator.withTotalEvents(26, startDate = LocalDate.now().minusMonths(6)), .0588),
-                Arguments.of(TimelineGenerator.withTotalEvents(27, startDate = LocalDate.now().minusYears(1)), .0588),
-                Arguments.of(TimelineGenerator.withTotalEvents(50, startDate = LocalDate.now().minusYears(1)), .0588),
+                Arguments.of(TimelineGenerator.withTotalEvents(24, startDate = LocalDate.now().minusYears(2)), .0707),
+                Arguments.of(TimelineGenerator.withTotalEvents(12, startDate = LocalDate.now().minusYears(1)), .0707),
+                Arguments.of(TimelineGenerator.withTotalEvents(26, startDate = LocalDate.now().minusYears(1)), .0909),
+                Arguments.of(TimelineGenerator.withTotalEvents(26, startDate = LocalDate.now().minusMonths(6)), .0909),
+                Arguments.of(TimelineGenerator.withTotalEvents(27, startDate = LocalDate.now().minusYears(1)), .0909),
+                Arguments.of(TimelineGenerator.withTotalEvents(50, startDate = LocalDate.now().minusYears(1)), .0909),
             )
         }
 
         @JvmStatic
         fun dates(): Stream<Arguments> {
             return Stream.of(
-                Arguments.of(LocalDate.now().minusYears(10), .1176),
-                Arguments.of(LocalDate.now().minusDays(121), .034),
-                Arguments.of(LocalDate.now().minusDays(120), .034),
-                Arguments.of(LocalDate.now().minusDays(119), .034),
-                Arguments.of(LocalDate.now().minusDays(60), .017),
+                Arguments.of(LocalDate.now().minusYears(10), .1818),
+                Arguments.of(LocalDate.now().minusDays(121), .0526),
+                Arguments.of(LocalDate.now().minusDays(120), .0526),
+                Arguments.of(LocalDate.now().minusDays(119), .0526),
+                Arguments.of(LocalDate.now().minusDays(60), .0263),
                 Arguments.of(LocalDate.now().minusMonths(1).plusDays(1), .0),
                 Arguments.of(LocalDate.now().minusDays(5), .0),
                 Arguments.of(LocalDate.now(), .0)

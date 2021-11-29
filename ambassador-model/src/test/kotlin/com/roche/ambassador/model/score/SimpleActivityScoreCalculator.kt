@@ -1,12 +1,12 @@
 package com.roche.ambassador.model.score
 
 import com.roche.ambassador.extensions.daysUntilNow
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.extensions.toExcerptFile
 import com.roche.ambassador.model.extensions.toRawFile
 import com.roche.ambassador.model.feature.*
 import com.roche.ambassador.model.files.Documentation
 import com.roche.ambassador.model.project.Issues
-import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.stats.Timeline
 import java.time.LocalDate
 import kotlin.math.ln
@@ -99,5 +99,5 @@ data class ActivityData(
     fun licenseFeature(): LicenseFeature = LicenseFeature(license.toRawFile())
     fun descriptionFeature(): DescriptionFeature = DescriptionFeature(description)
     fun commitsFeature(): CommitsFeature = CommitsFeature(commitsTimeline)
-    fun issuesFeature(): IssuesFeature = IssuesFeature(Issues(openIssues, openIssues, 0, 0, 0))
+    fun issuesFeature(): IssuesFeature = IssuesFeature(Issues(openIssues, openIssues, 0, 0, 0, 0))
 }
