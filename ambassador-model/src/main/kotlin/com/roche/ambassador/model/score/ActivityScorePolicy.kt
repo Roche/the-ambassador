@@ -2,8 +2,8 @@ package com.roche.ambassador.model.score
 
 import com.roche.ambassador.extensions.daysUntilNow
 import com.roche.ambassador.model.Score
-import com.roche.ambassador.model.feature.*
 import com.roche.ambassador.model.Visibility
+import com.roche.ambassador.model.feature.*
 import kotlin.math.*
 
 object ActivityScorePolicy : ScorePolicy {
@@ -12,7 +12,7 @@ object ActivityScorePolicy : ScorePolicy {
     override fun calculateScoreOf(features: Features): Score {
         val contributionScore = getContributionScore(features)
         val documentationScore = getDocumentationScore(features)
-        return Score.zip("Activity Score", contributionScore, documentationScore) { s1, s2 ->
+        return Score.zip("Activity", contributionScore, documentationScore) { s1, s2 ->
             val result = s1 + s2
             val logScaled = logScaleNormalizer().invoke(result)
             roundingNormalizer().invoke(logScaled)

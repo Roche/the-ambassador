@@ -120,7 +120,7 @@ abstract class AbstractScore(
     override fun name() = name
 
     fun getSubScoreByName(name: String): Optional<Score> {
-        return Optional.ofNullable(subScores.firstOrNull { it.name() == name })
+        return Optional.ofNullable(subScores.firstOrNull { it.name().equals(name, ignoreCase = true) })
     }
 
     fun getSubScoreValueByNameOrZero(name: String): Double {
