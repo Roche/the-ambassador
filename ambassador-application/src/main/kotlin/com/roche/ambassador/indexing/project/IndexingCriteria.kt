@@ -28,6 +28,7 @@ class IndexingCriteria(vararg criteria: IndexingCriterion) {
                 .addIf("isRepositoryNotEmpty", criteriaProvider.getInvalidProjectCriteria().isRepositoryNotEmpty(), props.projects.mustHaveNotEmptyRepo)
                 .addIf("canCreateMergeRequest", criteriaProvider.getInvalidProjectCriteria().canCreateMergeRequest(), props.projects.mustBeAbleToCreateMergeRequest)
                 .addIf("canForkProject", criteriaProvider.getInvalidProjectCriteria().canForkProject(), props.projects.mustBeAbleToFork)
+                .addIf("excludeGroups", criteriaProvider.getInvalidProjectCriteria().excludeGroups(props.projects.excludeGroups), props.projects.excludeGroups.isNotEmpty())
                 .addIf(
                     "hasVisibilityAtMost${props.projects.maxVisibility}", criteriaProvider.getInvalidProjectCriteria().hasVisibilityAtMost(props.projects.maxVisibility),
                     props.projects.maxVisibility != Visibility.PRIVATE

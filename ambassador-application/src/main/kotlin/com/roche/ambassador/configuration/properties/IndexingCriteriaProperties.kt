@@ -1,17 +1,19 @@
 package com.roche.ambassador.configuration.properties
 
 import com.roche.ambassador.model.Visibility
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 import java.time.Duration
 import java.time.LocalDateTime
 import javax.validation.constraints.Min
 
 data class IndexingCriteriaProperties(
-    val projects: Projects = Projects(),
-    val personalProjects: PersonalProjects = PersonalProjects()
+    @NestedConfigurationProperty val projects: Projects = Projects(),
+    @NestedConfigurationProperty val personalProjects: PersonalProjects = PersonalProjects()
 ) {
 
     data class Projects(
         val groups: List<String> = listOf(),
+        val excludeGroups: List<String> = listOf(),
         val excludeArchived: Boolean = true,
         val excludeForks: Boolean = true,
         val maxVisibility: Visibility = Visibility.INTERNAL,

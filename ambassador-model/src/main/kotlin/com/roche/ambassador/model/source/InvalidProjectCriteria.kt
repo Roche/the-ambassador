@@ -1,6 +1,7 @@
 package com.roche.ambassador.model.source
 
 import com.roche.ambassador.model.Visibility
+import com.roche.ambassador.model.group.Group
 import java.time.LocalDate
 
 object InvalidProjectCriteria {
@@ -35,6 +36,21 @@ object InvalidProjectCriteria {
 
     fun excludeForked(): CriterionVerifier = {
         !it.forked
+    }
+
+    fun excludeGroups(groups: List<String>): CriterionVerifier = {
+        val parent = it.parent
+        if (parent != null) {
+            groups.none { group -> isExcludedGroup(parent, group) }
+        } else {
+            true
+        }
+    }
+
+    private fun isExcludedGroup(group: Group, groupId: String): Boolean {
+        return groupId == group.id.toString()
+            || groupId.equals(group.name, ignoreCase = true)
+            || groupId.equals(group.fullName, ignoreCase = true)
     }
 
 }
