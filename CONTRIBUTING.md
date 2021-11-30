@@ -27,10 +27,32 @@ To set up a development environment, please follow these steps:
    docker run -d -p 5432:5432 -v ambassador -e POSTGRES_PASSWORD=postgres --name ambassador postgres:13 
    ```
 
-4. Configure local project source in `application-secrets.yml`, which contains placeholders.
-   As of now, you can either use `fake` source, which generates fake data,
-   or `gitlab` source.
-   For GitLab source you need to provide valid URL and [Personal Access Token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html.
+4. Configure local project source.
+   - create `application-secrets.yml` under `ambassador-application/src/main/resources`
+   - use one of these template for configuration:
+     
+     * `fake` source, which generates fake data:
+       ```yaml
+       ambassador:
+         source:
+           name: gitlab # currently name must be always set to this
+           url: http://fake.com
+           token: fake
+           system: fake
+       ```
+       
+     * `gitlab` source, connected to existing GitLab instance
+       ```yaml
+       ambassador:
+         source:
+           name: gitlab
+           url: <gitlab_url>
+           token: <persona_access_token>
+           system: gitlab
+           # clientId: <oauth2_client_id> # optional, not needed for local setup running without security
+           # clientSecret: <oauth2_secret>
+       ```
+       For GitLab source you need to provide valid URL and [Personal Access Token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html).
    
 5. [optional] To limit amount of data indexed, until you learn more about
    Ambassador, it is recommended to set up `ambassador.indexer.criteria.projects.groups`
