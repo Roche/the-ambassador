@@ -1,10 +1,12 @@
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
+// FIXME disabled temporarily kapt to not process spring configuration, because it misses some properties and extends build time two times
+
 plugins {
     id("kotlin-conventions")
     id("testing-conventions")
     id("spring-conventions")
-    kotlin("kapt")
+//    kotlin("kapt")
 }
 
 val springdocVersion: String by extra
@@ -34,9 +36,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    kapt("org.springframework.boot:spring-boot-configuration-processor")
+//    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+//    kapt("org.springframework.boot:spring-boot-configuration-processor")
 }
+
+//kapt {
+//    annotationProcessor("org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor")
+//}
 
 tasks.getByName<BootBuildImage>("bootBuildImage") {
     builder = "paketobuildpacks/builder"

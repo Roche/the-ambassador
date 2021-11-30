@@ -10,6 +10,11 @@ idea {
     module.isDownloadSources = true
 }
 
+val jdkVersion: String by rootProject.extra
+val kotlinVersion: String by extra
+
+logger.lifecycle("Using Kotlin $kotlinVersion, JDK $jdkVersion")
+
 fun createMergeTask(outputName: String): RegisteringDomainObjectDelegateProviderWithTypeAndAction<out TaskContainer, ReportMergeTask> {
     return tasks.registering(ReportMergeTask::class) {
         output.set(rootProject.buildDir.resolve("reports/$outputName"))

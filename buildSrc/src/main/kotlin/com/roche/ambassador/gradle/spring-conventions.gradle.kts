@@ -1,6 +1,3 @@
-val springBootVersion: String by extra
-logger.lifecycle("Setting up Spring Boot version {} in project {}...", springBootVersion, project.name)
-
 plugins {
     id("java-conventions")
 

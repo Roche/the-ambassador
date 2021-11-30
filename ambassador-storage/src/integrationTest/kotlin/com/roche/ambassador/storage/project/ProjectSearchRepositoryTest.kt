@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
  * because tests here are quite long running due to a number of data to insert and query
  */
 @PersistenceTest
-@Timeout(5, unit = TimeUnit.SECONDS)
+@Timeout(6, unit = TimeUnit.SECONDS)
 @Import(JooqConfiguration::class, ProjectSearchRepository::class)
 @Sql("/sql/projects_for_search.sql")
 class ProjectSearchRepositoryTest(

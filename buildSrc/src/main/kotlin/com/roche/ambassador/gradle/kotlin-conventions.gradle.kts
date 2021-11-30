@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 import io.gitlab.arturbosch.detekt.Detekt
+import org.gradle.jvm.toolchain.internal.CurrentJvmToolchainSpec
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 plugins {
@@ -17,21 +19,23 @@ val applyKotlinOptions: (KotlinJvmOptions) -> Unit = {
     @Suppress("SpellCheckingInspection")
     it.freeCompilerArgs = listOf("-Xjsr305=strict")
     it.allWarningsAsErrors = false
-    it.jdkHome = javaToolchains.compilerFor(java.toolchain).get().metadata.installationPath.asFile.absolutePath
-    it.jvmTarget = jdkVersion
     it.languageVersion = kotlinVersion
     it.apiVersion = kotlinVersion
 }
 
+kotlin {
+    jvmToolchain {
+        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+    }
+}
+
 tasks.compileKotlin {
-    logger.info("Configuring KotlinCompile {} in project {}...", name, project.name)
     kotlinOptions {
         applyKotlinOptions(this)
     }
 }
 
 tasks.compileTestKotlin {
-    logger.info("Configuring KotlinTestCompile {} in project {}...", name, project.name)
     kotlinOptions {
         applyKotlinOptions(this)
     }

@@ -3,8 +3,6 @@
 //for (String key : properties.stringPropertyNames()) {
 //    ext.set(key, properties.getProperty(key))
 //}
-//val springBootVersion = project.properties
-//println("spring: $springBootVersion")
 //val detektVersion : String by extra
 //val jooqVersion : String by extra
 
