@@ -1,5 +1,6 @@
 <div align="center">
-  <h1 align="center">The Ambassador</h1>
+  <img src="./docs/logo.png" />
+  <br />
   <br />
   <a href="#about"><strong>Explore the docs »</strong></a>
   <br />
