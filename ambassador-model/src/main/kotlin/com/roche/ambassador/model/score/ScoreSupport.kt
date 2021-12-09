@@ -14,7 +14,8 @@ typealias ScoreNormalizer = (Double) -> Double
 open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     protected val name: String,
     private val features: Features,
-    initialScore: Double
+    initialScore: Double,
+    private val experimental: Boolean = false,
 ) {
     protected val usedFeatures: MutableSet<Feature<*>> = mutableSetOf()
     protected val expectedFeatures: MutableSet<KClass<*>> = mutableSetOf()
@@ -39,11 +40,11 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
         normalizers.forEach {
             score = it.invoke(score)
         }
-        return Score.final(name, score, usedFeatures, subScores)
+        return Score.final(name, score, usedFeatures, subScores, experimental)
     }
 
-    fun withSubScore(name: String): SubScoreBuilder {
-        return SubScoreBuilder(name, this, features)
+    fun withSubScore(name: String, initialScore: Double = 0.0, experimental: Boolean = false): SubScoreBuilder {
+        return SubScoreBuilder(name, this, features, initialScore, experimental)
     }
 
     class FeatureScoreBuilder<V, T : Feature<V>, U : ScoreBuilder<U>> internal constructor(
@@ -75,15 +76,17 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     class ParentScoreBuilder internal constructor(
         name: String,
         features: Features,
-        initialScore: Double = 0.0
-    ) : ScoreBuilder<ParentScoreBuilder>(name, features, initialScore)
+        initialScore: Double = 0.0,
+        experimental: Boolean = false,
+    ) : ScoreBuilder<ParentScoreBuilder>(name, features, initialScore, experimental)
 
     class SubScoreBuilder internal constructor(
         name: String,
         private val scoreBuilder: ScoreBuilder<*>,
         features: Features,
-        initialScore: Double = 0.0
-    ) : ScoreBuilder<SubScoreBuilder>(name, features, initialScore) {
+        initialScore: Double = 0.0,
+        experimental: Boolean,
+    ) : ScoreBuilder<SubScoreBuilder>(name, features, initialScore, experimental) {
 
         fun reduce(reducer: (Double, Double) -> Double): ScoreBuilder<*> {
             val reduced = if (this.score.isNaN() || this.score.isInfinite()) {

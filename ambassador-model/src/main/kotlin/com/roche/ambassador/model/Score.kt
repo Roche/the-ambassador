@@ -15,6 +15,8 @@ interface Score : Specification, Explainable {
     fun features(): Set<Feature<*>>
     fun subScores(): Set<Score>
 
+    fun isExperimental(): Boolean = false
+
     @JsonIgnore
     fun isComposite(): Boolean = subScores().isNotEmpty()
 
@@ -50,34 +52,37 @@ interface Score : Specification, Explainable {
 
         fun zip(name: String, first: Score, second: Score, zipper: (Double, Double) -> Double): Score {
             val value = zipper.invoke(first.value(), second.value())
-            return composite(name, value, mutableSetOf(first, second))
+            return composite(name, value, mutableSetOf(first, second), first.isExperimental() || second.isExperimental())
         }
 
-        fun builder(name: String, features: Features, initialScore: Double = 0.0): ScoreBuilder.ParentScoreBuilder = ScoreBuilder.ParentScoreBuilder(name, features, initialScore)
+        fun builder(name: String, features: Features, experimental: Boolean = false, initialScore: Double = 0.0): ScoreBuilder.ParentScoreBuilder = ScoreBuilder.ParentScoreBuilder(name, features, initialScore, experimental)
 
         internal fun composite(
             name: String,
             value: Double,
-            subScores: MutableSet<Score>
+            subScores: MutableSet<Score>,
+            experimental: Boolean
         ): Score {
-            return CompositeScore(name, value, subScores)
+            return CompositeScore(name, value, subScores, experimental)
         }
 
         fun final(
             name: String,
             value: Double,
             features: Set<Feature<*>>,
-            subScores: Set<Score>
-        ): Score = finalWithNames(name, value, features, features.map { it.name() }.toSet(), subScores)
+            subScores: Set<Score>,
+            experimental: Boolean
+        ): Score = finalWithNames(name, value, features, features.map { it.name() }.toSet(), subScores, experimental)
 
         fun finalWithNames(
             name: String,
             value: Double,
             features: Set<Feature<*>>,
             featureNames: Set<String>,
-            subScores: Set<Score>
+            subScores: Set<Score>,
+            experimental: Boolean
         ): Score {
-            return FinalScore(name, value, features.toSet(), featureNames, subScores)
+            return FinalScore(name, value, features.toSet(), featureNames, subScores, experimental)
         }
     }
 }
@@ -86,8 +91,9 @@ interface Score : Specification, Explainable {
 internal data class CompositeScore(
     val name: String,
     val value: Double,
-    val subScores: MutableSet<Score>
-) : AbstractScore(name, setOf(), subScores) {
+    val subScores: MutableSet<Score>,
+    val experimental: Boolean = false
+) : AbstractScore(name, setOf(), subScores, experimental) {
     override fun value(): Double = value
 }
 
@@ -100,7 +106,8 @@ internal data class FinalScore(
     @JsonProperty("features")
     val featureNames: Set<String>,
     val subScores: Set<Score>,
-) : AbstractScore(name, features, subScores) {
+    val experimental: Boolean = false,
+) : AbstractScore(name, features, subScores, experimental) {
 
     override fun value(): Double = value
 }
@@ -109,7 +116,8 @@ abstract class AbstractScore(
     private val name: String,
     @JsonIgnore
     private val features: Set<Feature<*>> = mutableSetOf(),
-    private val subScores: Set<Score> = mutableSetOf()
+    private val subScores: Set<Score> = mutableSetOf(),
+    private val experimental: Boolean = false
 ) : Score {
 
     @JsonIgnore
@@ -118,6 +126,8 @@ abstract class AbstractScore(
     override fun subScores() = subScores
 
     override fun name() = name
+
+    override fun isExperimental(): Boolean = experimental
 
     fun getSubScoreByName(name: String): Optional<Score> {
         return Optional.ofNullable(subScores.firstOrNull { it.name().equals(name, ignoreCase = true) })

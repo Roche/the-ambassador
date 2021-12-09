@@ -16,8 +16,11 @@ class ScorecardCalculator(vararg policy: ScorePolicy) {
         } else if (project.scorecard != null && project.scorecard!!.isCalculated()) {
             return project.scorecard!!
         }
-        // as of now calculate final score as a multiplication of all scores
-        val score = scores.map { it.value() }.reduce { one, two -> one * two }
+        // as of now calculate final score as a multiplication of all non-experimental scores
+        val score = scores
+            .filterNot { it.isExperimental() }
+            .map { it.value() }
+            .reduce { one, two -> one * two }
         return Scorecard.of(project, score, scores)
     }
 
