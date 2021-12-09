@@ -33,7 +33,7 @@ object ActivityScorePolicy : ScorePolicy {
 
     private fun getContributionScore(features: Features): Score {
         // @formatter:off
-        return Score.builder("Contribution", features, INITIAL_SCORE)
+        return Score.builder("Contribution", features, false, INITIAL_SCORE)
             .withFeature(StarsFeature::class).calculate { starsFeature, score -> score + starsFeature * 2 }
             .withFeature(ForksFeature::class).calculate { forksFeature, score -> score + forksFeature * 5 }
             .withFeature(IssuesFeature::class).calculate { feature, score -> score + feature.open / 5 }
