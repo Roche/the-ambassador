@@ -18,7 +18,8 @@ internal object ScoreDeserializer : StdDeserializer<Score>(Score::class.java) {
         val score = tree.tryGet("value").map { it.doubleValue() }.orElse(0.0)
         val features = tree.readNestedValue<Set<String>>("features", p).orElseGet { setOf() }
         val scores = tree.readNestedValue<Set<Score>>("subScores", p).orElseGet { setOf() }
-        return Score.finalWithNames(name, score, setOf(), features, scores)
+        val experimental = tree.tryGet("experimental").map { it.booleanValue() }.orElse(false)
+        return Score.finalWithNames(name, score, setOf(), features, scores, experimental)
     }
 }
 

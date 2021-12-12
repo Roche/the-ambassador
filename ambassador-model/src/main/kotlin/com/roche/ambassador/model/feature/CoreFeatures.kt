@@ -1,5 +1,7 @@
 package com.roche.ambassador.model.feature
 
+import com.roche.ambassador.extensions.substringWithFullWords
+import com.roche.ambassador.markdown.MarkdownParser
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.Importance
 import com.roche.ambassador.model.Visibility
@@ -11,7 +13,10 @@ import com.roche.ambassador.model.project.Issues
 import com.roche.ambassador.model.project.ProtectedBranch
 import com.roche.ambassador.model.stats.Timeline
 import java.time.LocalDate
+import java.util.*
 import java.util.stream.Collectors
+
+val parser = MarkdownParser()
 
 class ContributorsFeature(contributors: List<Contributor>?) : AbstractFeature<List<Contributor>>(contributors, importance = Importance.high()) {
     companion object : FeatureReaderFactory<ContributorsFeature> {
@@ -50,7 +55,15 @@ class ForksFeature(value: Int?) : NotIndexableFeature<Int>(value) {
 
 class ReadmeFeature(value: ExcerptFile?) : FileFeature<ExcerptFile>(value) {
     companion object : FeatureReaderFactory<ReadmeFeature> {
-        override fun create(): FeatureReader<ReadmeFeature> = FeatureReader.createForFile({ setOf(it.potentialReadmePath ?: "README.md") }) { ReadmeFeature(it.asExcerptFile()) }
+        override fun create(): FeatureReader<ReadmeFeature> = FeatureReader.createForFile({ setOf(it.potentialReadmePath ?: "README.md") }) {
+            val excerpt = Optional.ofNullable(it.content)
+                .flatMap { content -> parser.parseSilently(content, "readme") }
+                .map { doc -> doc.asText().substringWithFullWords(0, 3000) }
+                .orElse(null)
+
+            val mef = ExcerptFile(it.exists, it.hash, it.language, it.contentLength, it.url, excerpt)
+            ReadmeFeature(mef)
+        }
     }
 }
 

@@ -26,7 +26,7 @@ open class RawFile(
     contentLength: Long?,
     url: String?,
     @JsonIgnore
-    private val content: String?
+    val content: String?
 ) : File(exists, hash, language, contentLength, url) {
 
     fun asExcerptFile(): ExcerptFile {
