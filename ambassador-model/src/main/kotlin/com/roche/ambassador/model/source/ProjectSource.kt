@@ -24,4 +24,6 @@ interface ProjectSource : Specification, GroupSource, OAuth2AuthenticationProvid
     suspend fun readPullRequests(projectId: String): Timeline
     suspend fun readComments(projectId: String): Timeline
 
+    fun issues(): IssuesManager
+
 }

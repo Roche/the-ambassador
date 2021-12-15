@@ -9,6 +9,7 @@ import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
 import com.roche.ambassador.model.source.GroupSource
+import com.roche.ambassador.model.source.IssuesManager
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.ambassador.model.stats.Timeline
@@ -21,6 +22,7 @@ import java.util.*
 class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
 
     private val fakeDataProvider: FakeDataProvider = FakeDataProvider()
+    private val issuesManager = FakeIssuesManager()
 
     override fun name(): String = "Fake"
 
@@ -129,6 +131,8 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
     override suspend fun readComments(projectId: String): Timeline {
         return createWeeklyTimelineByMeanWithEmptyChance(10)
     }
+
+    override fun issues(): IssuesManager = issuesManager
 
     private fun createWeeklyTimelineByMeanWithEmptyChance(emptyChance: Int, min: Int = 1, max: Int = 15): Timeline {
         val mean = fakeDataProvider.withBinaryChance(100 - emptyChance,
