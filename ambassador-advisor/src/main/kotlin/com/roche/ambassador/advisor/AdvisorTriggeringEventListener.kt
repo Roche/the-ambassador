@@ -11,7 +11,7 @@ import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
 @Component
-class AdvisorTriggeringEventListener(
+internal class AdvisorTriggeringEventListener(
     private val advisorManager: AdvisorManager,
     concurrencyProvider: ConcurrencyProvider,
     private val advisorProperties: AdvisorProperties
@@ -28,10 +28,8 @@ class AdvisorTriggeringEventListener(
         if (advisorProperties.isEnabled()) {
             val project = event.data
             log.debug("Received project indexing finished event for project {} (id={}). Starting advising flow...", project.name, project.id)
-            if (project.id == 36832L && project.name.contains("ambassador-advisor-testing")) {
-                coroutineScope.launch {
-                    advisorManager.giveAdvices(project)
-                }
+            coroutineScope.launch {
+                advisorManager.giveAdvices(project)
             }
             log.debug("Advices for project {} (id={}) were given", project.name, project.id)
         }

@@ -36,16 +36,18 @@ open class ProjectSourceConfiguration {
         projectSourcesProperties: ProjectSourcesProperties
     ): GitLabSource {
 
+        // @formatter:off
         val gitlabApi = GitLab.builder()
             .retry()
-            .maxAttempts(10)
-            .exponentialBackoff(2.0, Duration.ofMinutes(5))
-            .build()
+                .maxAttempts(10)
+                .exponentialBackoff(2.0, Duration.ofMinutes(5))
+                .build()
             .httpClient()
-            .logging().nothing().and()
+                .logging().nothing().and()
             .authenticated().withPersonalAccessToken(projectSourcesProperties.token)
             .url(projectSourcesProperties.url)
             .build()
+        // @formatter:on
         return GitLabSource(projectSourcesProperties.name, gitlabApi)
     }
 }

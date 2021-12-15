@@ -13,9 +13,7 @@ import com.roche.ambassador.storage.advisor.AdvisoryMessageEntity
 import org.springframework.stereotype.Component
 
 @Component
-class IssueAdvisor(
-    advisorProperties: AdvisorProperties
-) : Advisor {
+internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
 
     private val issueAdviceGiver: IssueAdviceGiver = IssueAdviceGiver.forMode(advisorProperties.mode)
 
