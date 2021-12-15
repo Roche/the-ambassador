@@ -1,0 +1,3 @@
+ambassador:
+  advisor:
+    mode: DRY_RUN # FIXME currently run by default only in dry-run mode until stable version released
