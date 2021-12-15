@@ -32,8 +32,6 @@ class GitLabHttpClient(
         noinline block: HttpRequestBuilder.() -> Unit = {}
     ): T = withCircuitBreaker { client.get(urlString, block) }
 
-    suspend inline fun <reified T> post(builder: HttpRequestBuilder): T = withCircuitBreaker { client.post(builder) }
-
     suspend inline fun <reified T> post(
         scheme: String = "http",
         host: String = "localhost",
@@ -42,6 +40,15 @@ class GitLabHttpClient(
         body: Any = EmptyContent,
         noinline block: HttpRequestBuilder.() -> Unit = {}
     ): T = withCircuitBreaker { client.post(scheme, host, port, path, body, block) }
+
+    suspend inline fun <reified T> put(
+        scheme: String = "http",
+        host: String = "localhost",
+        port: Int = DEFAULT_PORT,
+        path: String = "/",
+        body: Any = EmptyContent,
+        noinline block: HttpRequestBuilder.() -> Unit = {}
+    ): T = withCircuitBreaker { client.put(scheme, host, port, path, body, block) }
 
     suspend inline fun <reified T> delete(
         scheme: String = "http",

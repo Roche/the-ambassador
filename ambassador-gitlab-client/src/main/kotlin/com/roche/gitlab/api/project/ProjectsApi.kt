@@ -11,7 +11,7 @@ import com.roche.gitlab.api.utils.Pagination
 class ProjectsApi(basePath: String, httpClient: GitLabHttpClient) : Api(basePath, httpClient) {
 
     suspend fun create(project: Project): Project {
-        return doPost(body = project)
+        return doPostSelf(body = project)
     }
 
     suspend fun paging(

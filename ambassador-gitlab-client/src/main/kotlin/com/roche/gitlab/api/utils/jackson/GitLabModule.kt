@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.roche.gitlab.api.model.AccessLevelName
 import com.roche.gitlab.api.project.events.Action
 import com.roche.gitlab.api.project.events.TargetType
+import com.roche.gitlab.api.project.issues.IssueType
 import java.util.*
 
 class GitLabModule : SimpleModule("GitLab API Module", Version.unknownVersion()) {
@@ -16,5 +17,7 @@ class GitLabModule : SimpleModule("GitLab API Module", Version.unknownVersion())
         addDeserializer(Action::class.java, EnumSerialization.fromStringDeserializer { Action.from(it) })
         addSerializer(TargetType::class.java, EnumSerialization.toStringSerializer { Optional.ofNullable(it.value) })
         addDeserializer(TargetType::class.java, EnumSerialization.fromStringDeserializer { TargetType.from(it) })
+        addSerializer(IssueType::class.java, EnumSerialization.toStringSerializer { Optional.ofNullable(it.value) })
+        addDeserializer(IssueType::class.java, EnumSerialization.fromStringDeserializer { IssueType.from(it) })
     }
 }
