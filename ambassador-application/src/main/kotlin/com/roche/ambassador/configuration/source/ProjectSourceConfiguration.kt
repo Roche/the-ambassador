@@ -5,6 +5,7 @@ import com.roche.ambassador.configuration.source.ProjectSourcesProperties.System
 import com.roche.ambassador.configuration.source.ProjectSourcesProperties.System.GITLAB
 import com.roche.ambassador.fake.FakeSource
 import com.roche.ambassador.gitlab.GitLabSource
+import com.roche.ambassador.model.source.ProjectSources
 import com.roche.gitlab.api.GitLab
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.springframework.context.annotation.Bean
@@ -37,12 +38,14 @@ open class ProjectSourceConfiguration {
 
         val gitlabApi = GitLab.builder()
             .retry()
-                .maxAttempts(10)
-                .exponentialBackoff(2.0, Duration.ofMinutes(5))
-                .build()
+            .maxAttempts(10)
+            .exponentialBackoff(2.0, Duration.ofMinutes(5))
+            .build()
+            .httpClient()
+            .logging().nothing().and()
             .authenticated().withPersonalAccessToken(projectSourcesProperties.token)
             .url(projectSourcesProperties.url)
             .build()
-        return GitLabSource(gitlabApi)
+        return GitLabSource(projectSourcesProperties.name, gitlabApi)
     }
 }
