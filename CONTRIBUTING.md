@@ -24,7 +24,7 @@ To set up a development environment, please follow these steps:
 3. Start Postgres 13 database
 
    ```bash
-   docker run -d -p 5432:5432 -v ambassador -e POSTGRES_PASSWORD=postgres --name ambassador postgres:13 
+   docker run -d -p 5432:5432 -v ambassador -e POSTGRES_PASSWORD=postgres --name ambassador postgres:14 
    ```
 
 4. Configure local project source.

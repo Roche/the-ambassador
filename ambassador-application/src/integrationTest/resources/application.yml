@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:tc:postgresql:13://localhost:5454/postgres
+    url: jdbc:tc:postgresql:14://localhost:5454/postgres
     username: postgres
     password: postgres
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver

@@ -60,7 +60,7 @@ jooq {
             password = "postgres"
             driver = "org.testcontainers.jdbc.ContainerDatabaseDriver"
             url =
-                "jdbc:tc:postgresql:13:///ambassador?TC_TMPFS=/testtmpfs:rw&amp;TC_INITFUNCTION=com.roche.ambassador.gradle.utils.DatabaseInit::flyway"
+                "jdbc:tc:postgresql:14:///ambassador?TC_TMPFS=/testtmpfs:rw&amp;TC_INITFUNCTION=com.roche.ambassador.gradle.utils.DatabaseInit::flyway"
         }
         generator {
             target {

@@ -253,3 +253,4 @@ gradle-app.setting
 /.idea/aws.xml
 
 postgres_data/
+.jpb/
