@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://ambassador-db:5432/ambassador
+    username: postgres
+    password: postgres
+ambassador:
+  source:
+    name: gitlab
+    url: http://fake
+    token: fake
+    system: fake # change to gitlab and provide valid token and URL if you want to connect to real system

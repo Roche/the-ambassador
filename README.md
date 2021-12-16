@@ -87,6 +87,7 @@ More to come, including:
 - PostgreSQL
 - jOOQ
 - Gradle
+- Docker
 
 ## <a id="getting-started"></a> 🚀 Getting Started
 

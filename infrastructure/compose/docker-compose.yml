@@ -1,0 +1,37 @@
+# Docker engine version 19.10+ is required
+version: '3.9'
+services:
+  ambassador:
+    image: ghcr.io/roche/ambassador-indexer:latest
+    depends_on:
+      - "ambassador-db"
+    networks:
+      - ambassador
+    ports:
+      - "8081:8080"
+    environment:
+      - spring.profiles.active=docker-compose
+      - SPRING_CONFIG_ADDITIONAL_LOCATION=file:///config/
+    configs:
+      - source: ambassador-config
+        target: /config/application-docker-compose.yml
+  ambassador-db:
+    image: postgres:14
+    networks:
+      - ambassador
+    volumes:
+      - ambassador-db-data:/var/lib/postgresql/data
+    env_file:
+      - .db.env
+    logging:
+      driver: none
+
+networks:
+  ambassador:
+
+volumes:
+  ambassador-db-data:
+
+configs:
+  ambassador-config:
+    file: ./application.yml
