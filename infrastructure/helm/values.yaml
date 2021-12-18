@@ -1,0 +1,29 @@
+global:
+  postgresql:
+    postgresqlDatabase: ambassador-db
+    postgresqlUsername: ambassador
+    postgresqlPassword: ambassador
+#    existingSecret: 'postgres-secrets'
+    host: ""
+    port: 5432
+
+ambassador:
+
+
+## Installation & configuration of stable/prostgresql
+## See requirements.yaml for current version
+postgresql:
+  install: true
+  # This just needs to be set. It will use a second entry in existingSecret for postgresql-postgres-password
+  image:
+    tag: 14.1.0
+  postgresqlPostgresPassword: bogus
+  usePasswordFile: true
+  readReplicas:
+    persistence:
+      enabled: false
+  primary:
+    podAnnotations:
+      postgresql.ambassador/init-revision: "1"
+  metrics:
+    enabled: false
