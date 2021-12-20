@@ -6,6 +6,7 @@ metadata:
   labels:
   {{- include "indexer.labels" . | nindent 4 }}
 data:
+  # remove datasource and use Secret instead
   application-datasource.yml: |
     {{- include "database.yml" . | nindent 4 }}
   application-source.yml: |
