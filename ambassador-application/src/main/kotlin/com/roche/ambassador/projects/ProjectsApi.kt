@@ -1,6 +1,7 @@
 package com.roche.ambassador.projects
 
 import com.roche.ambassador.commons.api.Paged
+import com.roche.ambassador.model.files.DocumentType
 import com.roche.ambassador.model.project.Project
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -42,6 +43,36 @@ internal open class ProjectsApi(private val projectService: ProjectsService) {
         pageable: Pageable
     ): Paged<ProjectHistoryDto> {
         return projectService.getProjectHistory(id, pageable)
+    }
+
+    @Operation(summary = "Get readme", description = "Read actual project readme if it exists", tags = ["project"])
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Project readme retrieved"),
+        ApiResponse(responseCode = "404", description = "Readme not found")
+    )
+    @GetMapping("{id}/readme")
+    open suspend fun readme(@PathVariable @Min(1) id: Long): DocumentDto {
+        return projectService.getDocument(id, DocumentType.README)
+    }
+
+    @Operation(summary = "Get license", description = "Read actual license if it exists", tags = ["project"])
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Project license retrieved"),
+        ApiResponse(responseCode = "404", description = "License not found")
+    )
+    @GetMapping("{id}/license")
+    open suspend fun license(@PathVariable @Min(1) id: Long): DocumentDto{
+        return projectService.getDocument(id, DocumentType.LICENSE)
+    }
+
+    @Operation(summary = "Get contribution guide", description = "Read actual contribution guide if it exists", tags = ["project"])
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Project contribution guide retrieved"),
+        ApiResponse(responseCode = "404", description = "Contribution guide not found")
+    )
+    @GetMapping("{id}/contribution-guide")
+    open suspend fun contributionGuide(@PathVariable @Min(1) id: Long): DocumentDto {
+        return projectService.getDocument(id, DocumentType.CONTRIBUTION_GUIDE)
     }
 
     @Operation(summary = "Search for indexed projects", description = "", tags = ["project"])
