@@ -11,7 +11,7 @@ import java.util.*
 interface ProjectSource : Specification, GroupSource, OAuth2AuthenticationProvider {
 
     suspend fun getById(id: String): Optional<Project>
-    suspend fun flow(filter: ProjectFilter): Flow<Project>
+    fun flow(filter: ProjectFilter): Flow<Project>
 
     suspend fun readIssues(projectId: String): Issues
     suspend fun readContributors(projectId: String): List<Contributor>

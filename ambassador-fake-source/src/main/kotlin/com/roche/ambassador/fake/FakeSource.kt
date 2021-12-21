@@ -34,7 +34,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
             .map { it.asProject() }
     }
 
-    override suspend fun flow(filter: ProjectFilter): Flow<Project> {
+    override fun flow(filter: ProjectFilter): Flow<Project> {
         return flow {
             for (i in 1..spec.count) {
                 val project = generate(i.toString(), filter)
@@ -137,7 +137,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
         return TimelineGenerator.withWeekAverage(mean, Calendar.getInstance().getActualMaximum(Calendar.WEEK_OF_YEAR))
     }
 
-    override suspend fun flowGroups(filter: GroupFilter): Flow<Group> {
+    override fun flowGroups(filter: GroupFilter): Flow<Group> {
         return flow {
             for (i in 1..spec.count) {
                 val group = generateGroup(i, filter)

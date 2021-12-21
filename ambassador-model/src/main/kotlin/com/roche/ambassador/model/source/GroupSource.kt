@@ -6,5 +6,5 @@ import com.roche.ambassador.model.group.GroupFilter
 import kotlinx.coroutines.flow.Flow
 
 interface GroupSource : Specification {
-    suspend fun flowGroups(filter: GroupFilter): Flow<Group>
+    fun flowGroups(filter: GroupFilter): Flow<Group>
 }

@@ -76,7 +76,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource, GroupSource {
         }
     }
 
-    override suspend fun flow(filter: ProjectFilter): Flow<Project> {
+    override fun flow(filter: ProjectFilter): Flow<Project> {
         val visibility = VisibilityMapper.fromAmbassador(filter.visibility!!)
         return channelFlow {
             if (filter.groups.isNotEmpty()) {
@@ -237,7 +237,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource, GroupSource {
         return timeline
     }
 
-    override suspend fun flowGroups(filter: GroupFilter): Flow<Group> {
+    override fun flowGroups(filter: GroupFilter): Flow<Group> {
         return channelFlow {
             val query = GroupsListQuery(
                 withCustomAttributes = false,
