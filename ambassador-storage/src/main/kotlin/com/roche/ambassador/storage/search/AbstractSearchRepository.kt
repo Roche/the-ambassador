@@ -20,13 +20,12 @@ abstract class AbstractSearchRepository<T, Q : SearchQuery, ID>(
     }
 
     override fun search(query: Q, pageable: Pageable): Page<T> {
-        val rankField = if (pageable.sort.isSorted || query.query.isEmpty) {
-            defaultScoreColumn().`as`(RANK_FIELD)
-        } else {
-            rank(textsearchColumn(), query.query.get())
-        }
+        val textSearchQuery: TextQueryHolder? = query.query
+            .map { TextQueryHolder(it) }
+            .orElse(null)
+        val rankField = textSearchQuery?.asRank() ?: defaultScoreColumn().`as`(RANK_FIELD)
         val q = dsl.select(idColumn(), nameColumn(), dataColumn(), rankField).from(table())
-        buildQuery(query, q)
+        buildQuery(query, textSearchQuery, q)
 
         if (pageable.sort.isSorted) {
             q.orderBy(Sorting.within(table()).by(pageable.sort))
@@ -37,7 +36,7 @@ abstract class AbstractSearchRepository<T, Q : SearchQuery, ID>(
         q.offset(pageable.offset)
 
         val records = q.fetch(mapper())
-        val c = count(query).toLong()
+        val c = count(query, textSearchQuery).toLong()
         return PageImpl(records, pageable, c)
     }
 
@@ -48,36 +47,57 @@ abstract class AbstractSearchRepository<T, Q : SearchQuery, ID>(
     protected abstract fun textsearchColumn(): TableField<*, *>
     protected abstract fun defaultScoreColumn(): TableField<*, *>
     protected abstract fun mapper(): RecordMapper<Record4<ID, String, *, *>, T>
-
-
-    private fun count(query: Q): Int {
-        val s = dsl.select(DSL.count()).from(table())
-        buildQuery(query, s)
-        return s.fetch { it.value1() }.first()
-    }
-
-    private fun rank(field: TableField<*, *>, query: String): Field<Double> {
-        return DSL.field("ts_rank_cd({0}, to_tsquery({1}, {2})) * {3}",
-                         Double::class.java, field, DSL.inline(language), DSL.inline("$query:*"), defaultScoreColumn()).`as`(RANK_FIELD)
-    }
-
-    private fun buildQuery(query: Q, q: SelectWhereStep<*>) {
-        val whereBuilder = q.where()
-        query.query.ifPresent { applyFullTextSearch(whereBuilder, it) }
-
-        additionalSearchCriteria(whereBuilder, query)
-    }
-
-    private fun applyFullTextSearch(q: SelectConditionStep<out Record>, query: String) {
-        q.and(textsearch(textsearchColumn(), query))
-    }
-
-    private fun textsearch(field: TableField<*, *>, query: String): Field<Boolean> {
-        return DSL.field("{0} @@ to_tsquery({1}, {2})", Boolean::class.java, field, DSL.inline(language), DSL.inline("$query:*"))
-    }
-
     protected open fun additionalSearchCriteria(whereBuilder: SelectConditionStep<*>, searchQuery: Q) {
         // empty
     }
 
+    private fun count(query: Q, textQueryHolder: TextQueryHolder?): Int {
+        val select = dsl.select(DSL.count()).from(table())
+        buildQuery(query, textQueryHolder, select)
+        return select.fetch { it.value1() }.first()
+    }
+
+    private fun buildQuery(query: Q, textQueryHolder: TextQueryHolder?, q: SelectWhereStep<*>) {
+        val whereBuilder = q.where()
+        if (textQueryHolder != null) {
+            applyFullTextSearch(whereBuilder, textQueryHolder)
+        }
+        additionalSearchCriteria(whereBuilder, query)
+    }
+
+    private fun applyFullTextSearch(q: SelectConditionStep<out Record>, query: TextQueryHolder) {
+        q.and(query.asQuery())
+    }
+    private inner class TextQueryHolder(query: String) {
+
+        private val function: SearchFunction
+        private val query: Param<String>
+        private val lang: Param<String> = DSL.inline(language)
+
+        init {
+            val trimmed = query.trim()
+            if (trimmed.split(" ").size > 1) {
+                this.function = SearchFunction.WEBSEARCH
+                this.query = DSL.inline(trimmed)
+            } else {
+                this.function = SearchFunction.SIMPLE
+                this.query = DSL.inline("$trimmed:*")
+            }
+        }
+
+        fun asQuery(): Field<Boolean> {
+            val fullQuery = "{0} @@ ${function.function}"
+            return DSL.field(fullQuery, Boolean::class.java, textsearchColumn(), lang, query)
+        }
+
+        fun asRank(): Field<Double> {
+            val fullField = "ts_rank_cd({0}, ${function.function}) * {3}"
+            return DSL.field(fullField, Double::class.java, textsearchColumn(), lang, query, defaultScoreColumn()).`as`(RANK_FIELD)
+        }
+    }
+
+    private enum class SearchFunction(val function: String) {
+        WEBSEARCH("websearch_to_tsquery({1}, {2})"),
+        SIMPLE("to_tsquery({1}, {2})")
+    }
 }

@@ -1,0 +1,1 @@
+CREATE INDEX CONCURRENTLY project_textsearch_idx ON project USING GIN (textsearch);
