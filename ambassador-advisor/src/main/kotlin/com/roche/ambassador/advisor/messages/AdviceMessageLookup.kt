@@ -19,7 +19,21 @@ class AdviceMessageLookup(private val messageSource: MessageSource) {
         private const val DETAILS_KEY = "details"
         private const val REMEDIATION_KEY = "remediation"
         private const val PRIORITY_KEY = "priority"
-        private const val LINKS_KEY = "links"
+    }
+
+    fun readRaw(key: String): Optional<String> {
+        return try {
+            Optional.of(messageSource.getAdviceMessagePart(key))
+        } catch (e: AdviceMessageNotFoundException) {
+            Optional.empty()
+        }
+    }
+
+    fun readRawAsList(key: String): List<String> {
+        return readRaw(key)
+            .map { it.split(",") }
+            .orElseGet { listOf() }
+            .map { it.trim() }
     }
 
     @Cacheable("advice-messages")
@@ -30,7 +44,6 @@ class AdviceMessageLookup(private val messageSource: MessageSource) {
         val remediation = messageSource.getAdviceMessagePart(key, REMEDIATION_KEY)
         val priorityStr = messageSource.getAdviceMessagePart(key, PRIORITY_KEY).uppercase()
         val priority = AdviceMessage.AdvicePriority.valueOf(priorityStr)
-//        val links = messageSource.getAdviceMessage(key, NAME_KEY)
         return AdviceMessage(
             name = name,
             details = details,
@@ -40,8 +53,18 @@ class AdviceMessageLookup(private val messageSource: MessageSource) {
         )
     }
 
-    private fun MessageSource.getAdviceMessagePart(name: String, key: String): String {
-        val fullKey = "$KEY_PREFIX.$name.$key"
+    private fun StringJoiner.addIfNotNullOrEmpty(newElement: CharSequence?): StringJoiner {
+        if (newElement != null && newElement.isNotBlank()) {
+            return add(newElement)
+        }
+        return this
+    }
+
+    private fun MessageSource.getAdviceMessagePart(vararg parts: String): String {
+        val sj = StringJoiner(".")
+        sj.add(KEY_PREFIX)
+        parts.forEach { sj.addIfNotNullOrEmpty(it) }
+        val fullKey = sj.toString()
         return try {
             getMessage(fullKey, null, Locale.getDefault())
         } catch (e: NoSuchMessageException) {

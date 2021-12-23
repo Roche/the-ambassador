@@ -8,11 +8,11 @@ data class AdviceMessage(
     var priority: AdvicePriority,
 ) {
 
-    enum class AdvicePriority {
-        CRITICAL,
-        HIGH,
-        MEDIUM,
-        LOW
+    enum class AdvicePriority(val level: Int) {
+        CRITICAL(0),
+        HIGH(1),
+        MEDIUM(2),
+        LOW(3)
     }
 
 }

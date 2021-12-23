@@ -5,5 +5,6 @@ class Advice<T>(
     val name: String,
     val title: String,
     val description: String,
+    val labels: List<String>,
     val details: T?,
 )

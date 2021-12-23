@@ -23,16 +23,17 @@ class AdvisorContext(
 
     companion object {
         private val log by LoggerDelegate()
+        private const val DEFAULT_NAME = "The Ambassador Advice"
     }
 
     private val advices: MutableSet<GivenAdvisoryMessage> = mutableSetOf()
 
     fun <T> createAdvice(adviceSimpleName: String, data: AdviceData, details: T? = null): Advice<T> {
-        val config = getAdviceConfig(adviceSimpleName)
-        // TODO provide configuration somehow (title, labels)
         val description: String = templateEngine.process("issue_en.md", data)
-//        val details: String = templateEngine.generateContent(adviceSimpleName, data)
-        val advice = Advice(project.id, adviceSimpleName, config.name, description, details)
+        val name = adviceMessageLookup.readRaw("$adviceSimpleName.name")
+            .orElse(DEFAULT_NAME)
+        val labels = adviceMessageLookup.readRawAsList("$adviceSimpleName.labels")
+        val advice = Advice(project.id, adviceSimpleName, name, description, labels, details)
         advices += advice
         return advice
     }

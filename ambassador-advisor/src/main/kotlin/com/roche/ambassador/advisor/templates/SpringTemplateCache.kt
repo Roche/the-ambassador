@@ -11,9 +11,7 @@ import java.util.*
 
 internal class SpringTemplateCache(private val cache: Cache) : TemplateCache {
 
-    override fun clear() {
-        cache.clear()
-    }
+    override fun clear() = cache.clear()
 
     override fun evict(source: TemplateSource) = cache.evict(source)
 
