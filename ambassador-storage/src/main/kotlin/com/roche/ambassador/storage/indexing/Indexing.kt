@@ -1,6 +1,6 @@
 package com.roche.ambassador.storage.indexing
 
-import com.roche.ambassador.storage.Identifiable
+import com.roche.ambassador.Identifiable
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
@@ -27,9 +27,13 @@ data class Indexing internal constructor(
     var lock: Lock? = null,
     @Column(name = "source")
     var source: String,
-) : Identifiable {
+) : Identifiable<UUID> {
 
     override fun getId(): UUID? = id
+
+    override fun setId(id: UUID?) {
+        this.id = id
+    }
 
     fun finish(stats: IndexingStatistics? = null): Indexing {
         this.status = IndexingStatus.FINISHED

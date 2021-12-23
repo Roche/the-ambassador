@@ -18,7 +18,7 @@ internal object DefaultPathNamingStrategy : PathNamingStrategy {
 
     override fun getPathFor(vararg names: String): String {
         return names
-            .map { it.toLowerCase() }
+            .map { it.lowercase() }
             .joinToString(separator = SEPARATOR) { it.replace(WHITESPACE_REGEX, SEPARATOR) }
     }
 }

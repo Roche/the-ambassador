@@ -50,7 +50,7 @@ fun HttpRequestBuilder.applyQueryParameters(vararg inputs: Any) {
 
 fun parseValue(value: Any): Any {
     if (value.javaClass.isEnum) {
-        return (value as Enum<*>).name.toLowerCase()
+        return (value as Enum<*>).name.lowercase()
     }
     return value
 }

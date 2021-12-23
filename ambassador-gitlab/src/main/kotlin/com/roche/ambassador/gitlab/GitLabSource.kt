@@ -9,6 +9,7 @@ import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
 import com.roche.ambassador.model.source.GroupSource
+import com.roche.ambassador.model.source.IssuesManager
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Timeline
 import com.roche.gitlab.api.GitLab
@@ -39,7 +40,7 @@ import kotlin.streams.toList
 import com.roche.gitlab.api.model.AccessLevel as BranchingAccessLevel
 
 @ExperimentalCoroutinesApi
-class GitLabSource(private val gitlab: GitLab) : ProjectSource, GroupSource {
+class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource, GroupSource {
 
     private val oAuth2ClientProperties = OAuth2ClientProperties(
         name = name(),
@@ -106,7 +107,7 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource, GroupSource {
         }
     }
 
-    override fun name(): String = "GitLab"
+    override fun name(): String = name
 
     override fun getOAuth2ClientProperties(): OAuth2ClientProperties = oAuth2ClientProperties
 
@@ -236,6 +237,8 @@ class GitLabSource(private val gitlab: GitLab) : ProjectSource, GroupSource {
         log.info("Finished reading project {} pull requests timeline", projectId)
         return timeline
     }
+
+    override fun issues(): IssuesManager = GitLabIssuesManager(gitlab)
 
     override fun flowGroups(filter: GroupFilter): Flow<Group> {
         return channelFlow {

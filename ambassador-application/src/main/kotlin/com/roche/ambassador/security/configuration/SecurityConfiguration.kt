@@ -1,8 +1,8 @@
 package com.roche.ambassador.security.configuration
 
-import com.roche.ambassador.configuration.source.ProjectSources
 import com.roche.ambassador.configuration.source.ProjectSourcesProperties
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.model.source.ProjectSources
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.session.SessionProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties

@@ -1,4 +1,4 @@
-package com.roche.ambassador.events
+package com.roche.ambassador.model.events
 
 import java.util.*
 

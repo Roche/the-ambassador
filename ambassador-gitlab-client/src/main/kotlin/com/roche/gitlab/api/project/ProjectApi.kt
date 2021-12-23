@@ -5,6 +5,7 @@ import com.roche.gitlab.api.IssueStatisticsApi
 import com.roche.gitlab.api.client.GitLabHttpClient
 import com.roche.gitlab.api.project.branches.ProtectedBranchesApi
 import com.roche.gitlab.api.project.events.EventsApi
+import com.roche.gitlab.api.project.issues.IssuesApi
 import com.roche.gitlab.api.project.members.MembersApi
 import com.roche.gitlab.api.project.mergerequests.MergeRequestsApi
 import com.roche.gitlab.api.project.model.Project
@@ -42,4 +43,6 @@ class ProjectApi internal constructor(basePath: String, client: GitLabHttpClient
     fun packages(): PackagesApi = PackagesApi("$basePath/packages", client)
 
     fun events(): EventsApi = EventsApi("$basePath/events", client)
+
+    fun issues(): IssuesApi = IssuesApi("$basePath/issues", client)
 }

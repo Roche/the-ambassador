@@ -1,13 +1,13 @@
 package com.roche.ambassador.projects
 
 import com.roche.ambassador.commons.api.Paged
-import com.roche.ambassador.configuration.source.ProjectSources
 import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.files.DocumentType
 import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.model.source.ProjectSources
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import com.roche.ambassador.storage.project.ProjectHistoryRepository
 import com.roche.ambassador.storage.project.ProjectSearchQuery

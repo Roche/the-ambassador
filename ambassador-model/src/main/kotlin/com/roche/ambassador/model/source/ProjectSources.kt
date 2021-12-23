@@ -1,6 +1,5 @@
-package com.roche.ambassador.configuration.source
+package com.roche.ambassador.model.source
 
-import com.roche.ambassador.model.source.ProjectSource
 import java.util.*
 
 class ProjectSources(private val sources: Map<String, ProjectSource>) {

@@ -2,12 +2,12 @@ package com.roche.ambassador.indexing
 
 import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
-import com.roche.ambassador.configuration.source.ProjectSources
 import com.roche.ambassador.extensions.LoggerDelegate
-import com.roche.ambassador.indexing.project.*
+import com.roche.ambassador.indexing.project.ProjectIndexer
 import com.roche.ambassador.indexing.project.Statistics
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
+import com.roche.ambassador.model.source.ProjectSources
 import com.roche.ambassador.security.AuthenticationContext
 import com.roche.ambassador.storage.indexing.Indexing
 import com.roche.ambassador.storage.indexing.IndexingRepository

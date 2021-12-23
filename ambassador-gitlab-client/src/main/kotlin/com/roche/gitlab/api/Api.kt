@@ -15,8 +15,8 @@ abstract class Api(val basePath: String, val client: GitLabHttpClient) {
         headers: Map<String, Any?> = mapOf()
     ): T {
         return client.get(path = "$basePath/$path") {
-            params.forEach { parameter(it.key, it.value) }
-            headers.forEach { header(it.key, it.value) }
+            params.apply(this::parameter)
+            headers.apply(this::header)
         }
     }
 
@@ -41,8 +41,8 @@ abstract class Api(val basePath: String, val client: GitLabHttpClient) {
     ): Optional<T> {
         return client.optionally {
             get(path = "$basePath/$path") {
-                params.forEach { parameter(it.key, it.value) }
-                headers.forEach { header(it.key, it.value) }
+                params.apply(this::parameter)
+                headers.apply(this::header)
             }
         }
     }
@@ -72,18 +72,43 @@ abstract class Api(val basePath: String, val client: GitLabHttpClient) {
         }
     }
 
-    protected suspend inline fun <reified T> doPost(
+    protected suspend inline fun <reified T> doPostSelf(
         path: String = "",
         body: T,
         params: Map<String, Any?> = mapOf(),
         headers: Map<String, Any?> = mapOf(),
         contentType: ContentType = ContentType.Application.Json
     ): T {
+        return doPost(path, body as Any, params, headers, contentType)
+    }
+
+    protected suspend inline fun <reified T> doPost(
+        path: String = "",
+        body: Any,
+        params: Map<String, Any?> = mapOf(),
+        headers: Map<String, Any?> = mapOf(),
+        contentType: ContentType = ContentType.Application.Json
+    ): T {
         return client.post(path = "$basePath/$path") {
             contentType(contentType)
-            params.forEach { parameter(it.key, it.value) }
-            headers.forEach { header(it.key, it.value) }
-            this.body = body as Any
+            params.apply(this::parameter)
+            headers.apply(this::header)
+            this.body = body
+        }
+    }
+
+    protected suspend inline fun <reified T> doPut(
+        path: String = "",
+        body: Any,
+        params: Map<String, Any?> = mapOf(),
+        headers: Map<String, Any?> = mapOf(),
+        contentType: ContentType = ContentType.Application.Json
+    ): T {
+        return client.put(path = "$basePath/$path") {
+            contentType(contentType)
+            params.apply(this::parameter)
+            headers.apply(this::header)
+            this.body = body
         }
     }
 
@@ -93,8 +118,12 @@ abstract class Api(val basePath: String, val client: GitLabHttpClient) {
         headers: Map<String, Any?> = mapOf()
     ) {
         return client.delete(path = "$basePath/$path") {
-            params.forEach { parameter(it.key, it.value) }
-            headers.forEach { header(it.key, it.value) }
+            params.apply(this::parameter)
+            headers.apply(this::header)
         }
+    }
+
+    protected fun <T, U> Map<T, U?>.apply(handler: (T, U?) -> Unit) {
+        forEach(handler)
     }
 }

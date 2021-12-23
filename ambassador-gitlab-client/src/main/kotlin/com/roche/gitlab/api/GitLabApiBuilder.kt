@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.roche.gitlab.api.auth.AnonymousAuthProvider
 import com.roche.gitlab.api.auth.PrivateTokenAuthProvider
 import com.roche.gitlab.api.client.GitLabHttpClient
@@ -30,7 +31,7 @@ import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.network.sockets.ConnectTimeoutException
-import java.io.IOException
+import java.net.SocketException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -50,7 +51,7 @@ class GitLabApiBuilder internal constructor() {
             Exceptions.RateLimitReachedException::class.java,
             Exceptions.ServerErrorException::class.java,
             CallNotPermittedException::class.java,
-            IOException::class.java
+            SocketException::class.java
         )
 
     fun url(url: String): GitLabApiBuilder {
@@ -72,7 +73,7 @@ class GitLabApiBuilder internal constructor() {
     }
 
     fun httpClient(): HttpClientBuilder {
-        return HttpClientBuilder(this)
+        return httpClientBuilder
     }
 
     fun build(): GitLab {
@@ -150,7 +151,7 @@ class GitLabApiBuilder internal constructor() {
         private var socketTimeout = 10000L
         private var clientThreadsCount = 4
         private var objectMapper = JsonMapper.builder()
-            .addModules(Jdk8Module(), JavaTimeModule(), GitLabModule())
+            .addModules(Jdk8Module(), JavaTimeModule(), GitLabModule(), KotlinModule.Builder().build())
             .visibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY)
             .visibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY)
             .defaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))

@@ -28,7 +28,7 @@ object EnumSerialization {
 
     fun <E> toStringSerializer(propertyProvider: (E) -> Optional<String>): JsonSerializer<E> {
         return PropertySerializer(
-            { generator, value -> generator.writeNumber(value) },
+            { generator, value -> generator.writeString(value) },
             propertyProvider
         )
     }
