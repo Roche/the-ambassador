@@ -19,7 +19,7 @@ sealed class ConditionsBuilder<A : BuildableAdvice> constructor(
 
     fun <T> alwaysFalse() = alwaysFalse<A, T>(this)
 
-    fun <T> alwaysTrue() = alwaysFalse<A, T>(this)
+    fun <T> alwaysTrue() = alwaysTrue<A, T>(this)
 
     infix fun has(predicate: Project.() -> Boolean): Has<A, Project> {
         val has = Has(predicate, context.project, this)

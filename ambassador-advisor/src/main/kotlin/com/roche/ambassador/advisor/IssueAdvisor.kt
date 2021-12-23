@@ -11,6 +11,7 @@ import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.source.Issue
 import com.roche.ambassador.storage.advisor.AdvisoryMessageEntity
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
@@ -25,9 +26,11 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
         val issueAdvice = IssueAdvice(context.project.name)
         Dsl.advise(issueAdvice, context) {
             // @formatter:off
-            has    { visibility == Visibility.PRIVATE }                   then "visibility.private"
-            has    { description.isNullOrBlank() }                        then "description.missing"
-            has    { !description.isNullOrBlank() && description!!.length < 30 } then "description.nonInformative"
+            has    { visibility == Visibility.PRIVATE } then "visibility.private"
+            conditionally {
+                has { description.isNullOrBlank() } then "description.missing"
+                has { description!!.length < 30 }   then "description.short"
+            }
             has    { tags.isEmpty() }                                     then "tags.empty"
             hasNot { permissions?.canEveryoneFork ?: false }              then "forking.disabled"
             hasNot { permissions?.canEveryoneCreatePullRequest ?: false } then "pullrequest.disabled"
@@ -53,26 +56,53 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
         object NormalIssueGiver : IssueAdviceGiver {
             override suspend fun giveAdvise(context: AdvisorContext, issueAdvice: IssueAdvice) {
                 val existingAdvisoryMessageToUpdate = resolveAdvisoryMessageToUpdate(context)
-                if (issueAdvice.getProblems().isEmpty()) {
+                val advice: Advice<*> = context.createAdvice<Unit>("issue", issueAdvice)
+                val issue: Issue = advice.asIssue(existingAdvisoryMessageToUpdate?.referenceId)
+
+                val referenceId = if (issueAdvice.getProblems().isEmpty()) {
                     log.info("No problems found for project '{}' (id={})", context.project.name, context.project.id)
-                    // TODO close and clean issue if exists
+                    closeIssueIfExists(existingAdvisoryMessageToUpdate, issue, context)
                 } else {
-                    val advice: Advice<*> = context.createAdvice<Unit>("issue", issueAdvice)
-                    val issue: Issue = advice.asIssue(existingAdvisoryMessageToUpdate?.referenceId)
-                    try {
-                        val sentIssue = if (existingAdvisoryMessageToUpdate == null) {
-                            log.info("Creating new issue advice")
-                            context.source.issues().create(issue)
-                        } else {
-                            log.info("Updating existing issue advice")
-                            context.source.issues().update(issue)
-                        }
-                        context.markGiven(advice, sentIssue.getId()!!, AdvisoryMessageEntity.Type.ISSUE, existingAdvisoryMessageToUpdate)
-                    } catch (ex: AmbassadorException) {
-                        log.error("Unable to create issue advice for project '{}' (id={}) in source '{}'", context.project.name, context.project.id, context.source.name(), ex)
-                        throw AdvisorException("Failed creating issue advice in source", ex)
-                    }
+                    createOrUpdateIssue(existingAdvisoryMessageToUpdate, context, issue)
                 }
+                if (referenceId != null) {
+                    context.markGiven(advice, referenceId, AdvisoryMessageEntity.Type.ISSUE, existingAdvisoryMessageToUpdate)
+                }
+            }
+
+            private suspend fun createOrUpdateIssue(
+                existingAdvisoryMessageToUpdate: AdvisoryMessageEntity?,
+                context: AdvisorContext,
+                issue: Issue
+            ): Long {
+                try {
+                    val sentIssue = if (existingAdvisoryMessageToUpdate == null) {
+                        log.info("Creating new issue advice in project {}", issue.projectId)
+                        context.source.issues().create(issue)
+                    } else {
+                        log.info("Updating existing issue advice in project {}", issue.projectId)
+                        context.source.issues().update(issue)
+                    }
+                    return sentIssue.getId()!!
+                } catch (ex: AmbassadorException) {
+                    log.error("Unable to create issue advice for project '{}' (id={}) in source '{}'", context.project.name, context.project.id, context.source.name(), ex)
+                    throw AdvisorException("Failed creating issue advice in source", ex)
+                }
+            }
+
+            private suspend fun closeIssueIfExists(
+                existingAdvisoryMessageToUpdate: AdvisoryMessageEntity?,
+                issue: Issue,
+                context: AdvisorContext,
+            ) : Long? {
+                if (existingAdvisoryMessageToUpdate != null) {
+                    log.info("Closing existing issue {} in project {}", existingAdvisoryMessageToUpdate.referenceId, issue.projectId)
+                    val toUpdate = issue.withStatus(Issue.Status.CLOSED)
+                    context.source.issues().update(toUpdate)
+                    existingAdvisoryMessageToUpdate.closedDate = LocalDateTime.now()
+                    return existingAdvisoryMessageToUpdate.referenceId
+                }
+                return null
             }
 
             private fun resolveAdvisoryMessageToUpdate(context: AdvisorContext): AdvisoryMessageEntity? {
@@ -91,13 +121,13 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
             }
 
             private fun Advice<*>.asIssue(issueId: Long?): Issue {
-                return Issue(issueId, projectId, title, description, listOf(), Issue.Status.OPEN) // TODO get labels from somewhere
+                return Issue(issueId, projectId, title, description, labels, Issue.Status.OPEN)
             }
         }
 
         object DryRunIssueGiver : IssueAdviceGiver {
             override suspend fun giveAdvise(context: AdvisorContext, issueAdvice: IssueAdvice) {
-                val sb = StringBuilder("Issue with following messages would be created in project '${issueAdvice.projectName}':\n")
+                val sb = StringBuilder("Issue with following messages would be created or updated in project '${issueAdvice.projectName}':\n")
                 issueAdvice.getProblems()
                     .forEach {
                         sb += "  - "
