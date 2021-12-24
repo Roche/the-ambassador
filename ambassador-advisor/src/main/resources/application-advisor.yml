@@ -1,3 +1,19 @@
 ambassador:
   advisor:
-    mode: DRY_RUN # FIXME currently run by default only in dry-run mode until stable version released
+    mode: dry_run # FIXME currently run by default only in dry-run mode until stable version released
+
+  badges:
+    provider: shields
+    config:
+      style: flat-square
+      url: https://img.shields.io/static/v1
+      cacheSeconds: 3600
+      template: "{{message}}"
+    colors:
+      red: ff1f26
+      orange: ff7d29
+      yellow: ffd60c
+      green: 00b458
+      blue: 0b41cd
+      lightblue: bde3ff
+      lightgray: dbd6d1
