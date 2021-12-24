@@ -48,7 +48,7 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
                     AdvisorProperties.Mode.NORMAL -> NormalIssueGiver
                     AdvisorProperties.Mode.DRY_RUN -> DryRunIssueGiver
                     AdvisorProperties.Mode.DISABLED -> NoOpIssueGiver
-                    else -> throw IllegalStateException("Unsupported mode: $mode")
+                    else -> throw AdvisorException("Unsupported mode: $mode")
                 }
             }
         }

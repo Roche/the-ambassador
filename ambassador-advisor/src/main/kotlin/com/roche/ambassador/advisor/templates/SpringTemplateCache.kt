@@ -5,6 +5,7 @@ import com.github.jknack.handlebars.Parser
 import com.github.jknack.handlebars.Template
 import com.github.jknack.handlebars.cache.TemplateCache
 import com.github.jknack.handlebars.io.TemplateSource
+import com.roche.ambassador.advisor.common.AdvisorException
 import org.springframework.cache.Cache
 import java.io.IOException
 import java.util.*
@@ -25,7 +26,8 @@ internal class SpringTemplateCache(private val cache: Cache) : TemplateCache {
         try {
             return parser.parse(source)
         } catch (ex: IOException) {
-            throw Handlebars.Utils.propagate(ex)
+            val propagated = Handlebars.Utils.propagate(ex)
+            throw AdvisorException("Failed to parse handlebars template at ${source.filename()}", propagated)
         }
     }
 
