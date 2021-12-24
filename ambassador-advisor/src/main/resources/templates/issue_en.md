@@ -7,7 +7,7 @@ which impede it's transparency, discoverability, security or durability.
 
 | Priority | Reason | Details | Remediation |
 |----------|--------|---------|-------------|
-{{#each problems}}| {{priority}} | {{reason}} | {{details}} | {{remediation}} |
+{{#each problems}}| {{priorityBadge}} | {{reason}} | {{details}} | {{remediation}} |
 {{/each}}
 
 ## What next?
