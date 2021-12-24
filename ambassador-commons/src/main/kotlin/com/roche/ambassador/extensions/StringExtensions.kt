@@ -114,6 +114,13 @@ fun String.sha256(): Optional<String> {
     }
 }
 
+fun StringJoiner.addIfNotNullOrEmpty(newElement: CharSequence?): StringJoiner {
+    if (newElement != null && newElement.isNotBlank()) {
+        return add(newElement)
+    }
+    return this
+}
+
 private fun toDelimiterSet(delimiters: CharArray): Set<Int> {
     val delimiterHashSet: MutableSet<Int> = HashSet()
     delimiterHashSet.add(Character.codePointAt(charArrayOf(' '), 0))

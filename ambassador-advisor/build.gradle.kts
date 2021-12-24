@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":ambassador-commons"))
     implementation(project(":ambassador-storage"))
     implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinCoroutinesVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.github.jknack:handlebars:4.3.0")
