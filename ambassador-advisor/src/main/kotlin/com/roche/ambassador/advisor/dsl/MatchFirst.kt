@@ -3,7 +3,7 @@ package com.roche.ambassador.advisor.dsl
 import com.roche.ambassador.advisor.AdvisorContext
 import com.roche.ambassador.advisor.model.BuildableAdvice
 
-class Conditionally<A : BuildableAdvice> internal constructor(
+class MatchFirst<A : BuildableAdvice> internal constructor(
     buildableAdvice: A,
     context: AdvisorContext,
 ) : ConditionsBuilder<A>(buildableAdvice, context) {
