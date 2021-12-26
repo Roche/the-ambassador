@@ -27,7 +27,7 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
         Dsl.advise(issueAdvice, context) {
             // @formatter:off
             has    { visibility == Visibility.PRIVATE } then "visibility.private"
-            conditionally {
+            matchFirst {
                 has { description.isNullOrBlank() } then "description.missing"
                 has { description!!.length < 30 }   then "description.short"
             }
