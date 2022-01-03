@@ -50,8 +50,7 @@ class GitLabApiBuilder internal constructor() {
             Exceptions.RequestTimeoutException::class.java,
             Exceptions.RateLimitReachedException::class.java,
             Exceptions.ServerErrorException::class.java,
-            CallNotPermittedException::class.java,
-            SocketException::class.java
+            CallNotPermittedException::class.java
         )
 
     fun url(url: String): GitLabApiBuilder {
