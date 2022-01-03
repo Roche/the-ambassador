@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank
 @ConstructorBinding
 @Validated
 internal data class OpenApiProperties(
-    @NotBlank val title: String,
+    @NotBlank val title: String = "The Ambassador API",
     val description: String?,
     val tags: List<Tag> = listOf(),
     @NestedConfigurationProperty val contact: Contact?,

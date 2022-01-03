@@ -29,6 +29,9 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
     override fun getOAuth2ClientProperties(): OAuth2ClientProperties? = null
 
     override fun userDetailsProvider(attributes: Map<String, Any>): UserDetailsProvider? = null
+    override suspend fun ping() {
+        // do nothing
+    }
 
     override suspend fun getById(id: String): Optional<Project> {
         return Optional.of(id)

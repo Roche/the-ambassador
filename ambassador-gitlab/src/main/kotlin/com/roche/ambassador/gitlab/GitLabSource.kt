@@ -4,6 +4,8 @@ import com.roche.ambassador.OAuth2ClientProperties
 import com.roche.ambassador.UserDetailsProvider
 import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.health.UnhealthyComponentException
+import com.roche.ambassador.health.UnhealthyComponentException.Status
 import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
@@ -13,6 +15,10 @@ import com.roche.ambassador.model.source.IssuesManager
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Timeline
 import com.roche.gitlab.api.GitLab
+import com.roche.gitlab.api.exceptions.Exceptions.ForbiddenException
+import com.roche.gitlab.api.exceptions.Exceptions.GitLabApiException
+import com.roche.gitlab.api.exceptions.Exceptions.RateLimitReachedException
+import com.roche.gitlab.api.exceptions.Exceptions.UnauthorizedException
 import com.roche.gitlab.api.groups.GroupProjectListQuery
 import com.roche.gitlab.api.groups.GroupsListQuery
 import com.roche.gitlab.api.model.AccessLevelName
@@ -33,6 +39,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import java.net.SocketException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -55,6 +62,22 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
     companion object {
         private val log by LoggerDelegate()
         const val LOOKBACK_DAYS: Long = 90
+    }
+
+    override suspend fun ping() {
+        try {
+            gitlab.me().get()
+        } catch (ex: Throwable) {
+            val status = when (ex) {
+                is UnauthorizedException -> Status.UNAUTHORIZED
+                is ForbiddenException -> Status.UNAUTHORIZED
+                is RateLimitReachedException -> Status.RATE_LIMITED
+                is GitLabApiException -> Status.UNAVAILABLE
+                is SocketException -> Status.UNAVAILABLE
+                else -> Status.UNKNOWN
+            }
+            throw UnhealthyComponentException(status, "GitLab @ ${gitlab.url()} is unhealthy", ex)
+        }
     }
 
     override suspend fun getById(id: String): Optional<Project> {

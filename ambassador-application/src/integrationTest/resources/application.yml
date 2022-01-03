@@ -27,6 +27,20 @@ ambassador:
   events:
     async:
       thread-name-prefix: events-
+  advisor:
+    mode: dry_run
+  badges:
+    provider: text
+    config:
+      template: "{{message}}"
+    colors:
+      red: ff0000
+      orange: ffee00
+      yellow: ff5522
+      green: 00ff00
+      blue: 00ff00
+      lightblue: 22ee33
+      lightgray: d3d3d3
 
 springdoc:
   api-docs:
