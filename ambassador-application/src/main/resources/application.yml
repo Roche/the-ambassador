@@ -25,6 +25,27 @@ springdoc:
   api-docs:
     groups:
       enabled: true
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+    diskspace:
+      threshold: 30MB
+
+  endpoint:
+    health:
+      show-components: when_authorized
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,sources
+      roles:
+        - ROLE_ADMIN
+
 ---
 ambassador:
   language: english
