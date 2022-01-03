@@ -50,14 +50,22 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-{{/*          livenessProbe:*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /*/}}
-{{/*              port: http*/}}
-{{/*          readinessProbe:*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /*/}}
-{{/*              port: http*/}}
+          livenessProbe:
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 20
+            timeoutSeconds: 2
+            periodSeconds: 10
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
