@@ -1,5 +1,6 @@
 package com.roche.ambassador.advisor.badges
 
+import com.roche.ambassador.advisor.common.AdvisorConfigurationException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 

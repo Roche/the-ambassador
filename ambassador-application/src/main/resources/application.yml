@@ -21,14 +21,44 @@ spring:
       language: ${ambassador.language}
     mixed: true
 
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+---
 ambassador:
   language: english
   security:
-    enabled: false
+    enabled: true
   indexer:
     concurrency:
+      producerThreadPrefix: indxr-
+      consumerThreadPrefix: prj-indxr-
+      supportingThreadPrefix: spprt-
       concurrencyLevel: 30
     lock-type: in_memory
+    historySize: 10
+    gracePeriod: 7d
+    criteria:
+      projects:
+        excludeArchived: true
+        excludeForks: true
+        maxVisibility: internal
+        lastActivityWithin: 365d
+        mustHaveDefaultBranch: true
+        mustHaveNotEmptyRepo: true
+        mustBeAbleToCreateMergeRequest: true
+        mustBeAbleToFork: true
   events:
     async:
       thread-name-prefix: events-
+      corePoolSize: 2
+      maxPoolsSize: 10
+  openapi:
+    title: The Ambassador API
+    contact:
+      name: Mateusz Filipowicz
+      url: https://github.com/Roche
+    license:
+      name: Apache-2.0
+      url: https://www.apache.org/licenses/LICENSE-2.0.txt

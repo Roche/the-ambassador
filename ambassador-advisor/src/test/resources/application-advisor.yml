@@ -1,0 +1,16 @@
+ambassador:
+  advisor:
+    mode: dry_run
+
+  badges:
+    provider: text
+    config:
+      template: "{{message}}"
+    colors:
+      red: ff1f26
+      orange: ff7d29
+      yellow: ffd60c
+      green: 00b458
+      blue: 0b41cd
+      lightblue: bde3ff
+      lightgray: dbd6d1
