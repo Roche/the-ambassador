@@ -20,6 +20,7 @@ sources:
 maintainers:
   - name: Mateusz Filipowicz
     email: mateusz.filipowicz@roche.com
+    url: https://github.com/filipowm
 dependencies:
   - name: indexer
     version: 0.1.0
