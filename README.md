@@ -20,6 +20,7 @@
 [![Last Commit](https://img.shields.io/github/last-commit/Roche/the-ambassador/master?style=flat-square)](https://github.com/Roche/the-ambassador/commits/master)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/Roche/the-ambassador?style=flat-square)](https://github.com/Roche/the-ambassador/pulse)
 [![Project license](https://img.shields.io/github/license/Roche/the-ambassador.svg?style=flat-square)](LICENSE)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/the-ambassador)](https://artifacthub.io/packages/search?repo=the-ambassador)
 
 [![Pull Requests welcome](https://img.shields.io/badge/PRs-welcome-bc36f0.svg?style=flat-square)](https://github.com/Roche/the-ambassador/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 [![code with love by Roche](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-Roche-0B41CD.svg?style=flat-square)](https://github.com/Roche)

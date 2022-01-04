@@ -9,10 +9,4 @@ data:
   # remove datasource and use Secret instead
   application-datasource.yml: |
     {{- include "database.yml" . | nindent 4 }}
-  application-source.yml: |
-    ambassador:
-      source:
-        name: gitlab
-        url: https://fake
-        token: fake
-        system: fake
+  application.yml: |- {{- toYaml $.Values.appConfig | toString | nindent 4 }}

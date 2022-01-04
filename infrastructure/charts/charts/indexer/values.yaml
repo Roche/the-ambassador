@@ -1,5 +1,15 @@
 replicaCount: 1
 
+appConfig:
+  ambassador: # ambassador-specific configuration as defined in application.yml
+    security:
+      enabled: false
+    source:
+      name: gitlab
+      url: https://fake
+      token: fake
+      system: fake
+
 image:
   repository: ghcr.io/roche/ambassador-indexer
   pullPolicy: IfNotPresent
