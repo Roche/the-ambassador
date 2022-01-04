@@ -2,7 +2,8 @@ name: Helm Chart
 on:
   push:
     branches:
-      - '*'
+      - master
+      - develop
     tags:
       - '*'
     paths:
@@ -10,6 +11,8 @@ on:
   pull_request:
     branches:
       - '*'
+    paths:
+      - 'infrastructure/charts/**'
 
 jobs:
   cleanup-runs:
@@ -67,6 +70,7 @@ jobs:
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.1
+        if: ${{ contains(github.ref, 'refs/tags/') }}
         with:
           charts_dir: infrastructure
           charts_repo_url: https://roche.github.io/the-ambassador/
