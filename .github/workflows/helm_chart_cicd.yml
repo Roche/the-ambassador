@@ -45,13 +45,13 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.1.0
 
-      - name: Run chart-testing (list-changed)
-        id: list-changed
-        run: |
-          changed=$(ct list-changed --chart-dirs infrastructure/)
-          if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
-          fi
+#      - name: Run chart-testing (list-changed)
+#        id: list-changed
+#        run: |
+#          changed=$(ct list-changed --chart-dirs infrastructure/)
+#          if [[ -n "$changed" ]]; then
+#            echo "::set-output name=changed::true"
+#          fi
 
       - name: Run chart-testing (lint)
         run: ct lint --chart-dirs infrastructure/
