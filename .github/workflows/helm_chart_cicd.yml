@@ -1,12 +1,12 @@
-name: Release Helm Chart
+name: Helm Chart CI/CD
 on:
   push:
     branches:
       - '*'
     tags:
       - '*'
-#    paths:
-#      - 'infrastructure/charts/**'
+    paths:
+      - 'infrastructure/charts/**'
   pull_request:
     branches:
       - '*'
@@ -48,13 +48,13 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed)
+          changed=$(ct list-changed --chart-dirs infrastructure/)
           if [[ -n "$changed" ]]; then
             echo "::set-output name=changed::true"
           fi
 
       - name: Run chart-testing (lint)
-        run: ct lint --chart-dirs infrastructure/charts
+        run: ct lint --chart-dirs infrastructure/
 
 #      - name: Create kind cluster
 #        uses: helm/kind-action@v1.2.0
