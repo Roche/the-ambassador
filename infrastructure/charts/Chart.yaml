@@ -1,0 +1,29 @@
+apiVersion: v2
+name: ambassador
+description: A Helm chart for Kubernetes
+type: application
+
+# This is the chart version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed.
+appVersion: 0.0.1
+
+keywords:
+  - ambassador
+  - inner-source
+  - open-source
+home: https://github.com/Roche/the-ambassador
+sources:
+  - https://github.com/Roche/the-ambassador
+maintainers:
+  - name: filipowm
+    email: mateusz.filipowicz@roche.com
+dependencies:
+  - name: indexer
+    version: 0.0.1
+  - name: postgresql
+    version: 10.13.14
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.install

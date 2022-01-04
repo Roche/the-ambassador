@@ -254,3 +254,6 @@ gradle-app.setting
 
 postgres_data/
 .jpb/
+
+*.lock
+*.tgz
