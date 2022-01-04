@@ -1,4 +1,4 @@
-name: Helm Chart CI/CD
+name: Helm Chart
 on:
   push:
     branches:
@@ -44,6 +44,9 @@ jobs:
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.1.0
+
+      - name: Update chart dependencies
+        run: helm dependency update infrastructure/charts
 
 #      - name: Run chart-testing (list-changed)
 #        id: list-changed
