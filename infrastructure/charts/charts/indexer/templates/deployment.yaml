@@ -51,7 +51,7 @@ spec:
               containerPort: 8080
               protocol: TCP
           livenessProbe:
-            initialDelaySeconds: 10
+            initialDelaySeconds: 15
             timeoutSeconds: 1
             periodSeconds: 10
             failureThreshold: 3

@@ -18,7 +18,7 @@ home: https://github.com/Roche/the-ambassador
 sources:
   - https://github.com/Roche/the-ambassador
 maintainers:
-  - name: Mateusz Filipowicz
+  - name: filipowm
     email: mateusz.filipowicz@roche.com
 dependencies:
   - name: indexer

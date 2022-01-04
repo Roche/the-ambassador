@@ -14,7 +14,6 @@ spring:
   profiles:
     include:
       - secrets
-      - open-api
       - advisor
   flyway:
     placeholders:

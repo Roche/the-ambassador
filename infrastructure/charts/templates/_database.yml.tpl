@@ -5,7 +5,7 @@ Returns the contents of the `database.yml` blob for Rails pods
 {{- if .Values.global.postgresql.host }}
 {{ .Values.global.postgresql.host }}:{{ .Values.global.postgresql.port }}
 {{- else }}
-ambassador-postgresql.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.postgresql.port }}
+{{ .Release.Name }}-postgresql.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.global.postgresql.port }}
 {{- end }}
 {{- end }}
 
