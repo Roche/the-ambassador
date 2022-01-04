@@ -26,7 +26,7 @@ internal class FakeExternalDatastore<ID, T : Identifiable<ID>> private construct
 
     fun create(value: T): T {
         if (value.getId() != null) {
-            throw IllegalArgumentException()
+            throw IllegalArgumentException("Value should have ID set")
         }
         val id = idGenerator.invoke()
         value.setId(id)
@@ -37,9 +37,9 @@ internal class FakeExternalDatastore<ID, T : Identifiable<ID>> private construct
     fun read(id: ID): Optional<T> = Optional.ofNullable(data.get(id))
 
     fun update(value: T): T {
-        val id = value.getId() ?: throw IllegalArgumentException()
+        val id = value.getId() ?: throw IllegalArgumentException("Value should have ID set")
         if (!data.containsKey(id)) {
-            throw IllegalStateException()
+            throw IllegalStateException("No record found with given ID: $id")
         }
         data[id] = value
         return value
@@ -47,7 +47,7 @@ internal class FakeExternalDatastore<ID, T : Identifiable<ID>> private construct
 
     fun delete(id: ID): Boolean {
         if (!data.contains(id)) {
-            throw IllegalStateException()
+            throw IllegalStateException("No record found with given ID: $id")
         }
         return data.remove(id) != null
     }

@@ -26,7 +26,7 @@ data class User(
     @JsonProperty("email")
     val email: String? = null,
     @JsonProperty("external")
-    val `external`: Boolean? = null,
+    val external: Boolean? = null,
     @JsonProperty("id")
     val id: Int? = null,
     @JsonProperty("identities")

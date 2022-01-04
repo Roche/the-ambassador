@@ -31,6 +31,7 @@ class AdviceMessageLookup(
         return try {
             Optional.of(messageSource.getAdviceMessagePart(key))
         } catch (e: AdviceMessageNotFoundException) {
+            log.warn("Missing advice message under {} key", key)
             Optional.empty()
         }
     }

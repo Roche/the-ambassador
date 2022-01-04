@@ -75,7 +75,6 @@ class ContributingGuideFeature(value: RawFile?) : FileFeature<RawFile>(value) {
 
 class LicenseFeature(value: RawFile?) : FileFeature<RawFile>(value) {
     companion object : FeatureReaderFactory<LicenseFeature> {
-        val name = "license"
         override fun create(): FeatureReader<LicenseFeature> = FeatureReader.createForFile({ setOf(it.potentialLicensePath ?: "LICENSE") }) { LicenseFeature(it) }
     }
 }

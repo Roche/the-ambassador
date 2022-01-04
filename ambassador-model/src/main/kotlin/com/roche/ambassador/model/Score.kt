@@ -55,7 +55,9 @@ interface Score : Specification, Explainable {
             return composite(name, value, mutableSetOf(first, second), first.isExperimental() || second.isExperimental())
         }
 
-        fun builder(name: String, features: Features, experimental: Boolean = false, initialScore: Double = 0.0): ScoreBuilder.ParentScoreBuilder = ScoreBuilder.ParentScoreBuilder(name, features, initialScore, experimental)
+        fun builder(name: String, features: Features, experimental: Boolean = false, initialScore: Double = 0.0): ScoreBuilder.ParentScoreBuilder {
+            return ScoreBuilder.ParentScoreBuilder(name, features, initialScore, experimental)
+        }
 
         internal fun composite(
             name: String,
