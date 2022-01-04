@@ -11,5 +11,4 @@ enum class DocumentType(val feature: KClass<out Feature<out File>>) {
     README(ReadmeFeature::class),
     CONTRIBUTION_GUIDE(ContributingGuideFeature::class),
     LICENSE(LicenseFeature::class)
-
 }

@@ -1,6 +1,5 @@
 package com.roche.gitlab.api.groups
 
-
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.roche.gitlab.api.model.Visibility

@@ -15,9 +15,9 @@ class Json(private val field: Field<*>) {
     }
 
     fun inArray(name: String, vararg values: String): Condition {
-        val arr = values.mapIndexed { index, v -> "{${index+2}}" }.joinToString()
+        val arr = values.mapIndexed { index, v -> "{${index + 2}}" }.joinToString()
 
-        return DSL.condition("jsonb_exists_any(({0} -> {1})::jsonb, array[${arr}])", field, name, *values)
+        return DSL.condition("jsonb_exists_any(({0} -> {1})::jsonb, array[$arr])", field, name, *values)
     }
 
     fun <T> jsonField(name: String, type: Class<T>): Field<T> {

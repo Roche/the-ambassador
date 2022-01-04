@@ -5,5 +5,4 @@ import com.roche.ambassador.advisor.messages.AdviceMessage
 interface BuildableAdvice {
 
     fun apply(message: AdviceMessage)
-
 }

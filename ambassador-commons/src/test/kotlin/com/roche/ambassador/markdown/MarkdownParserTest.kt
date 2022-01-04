@@ -141,9 +141,11 @@ class MarkdownParserTest {
 
         // then
         assertThat(result.content).isNotNull
-            .hasSubsectionTitles("Introduction", "Installation",
-                                 "Running the tools", "Details on the tools",
-                                 "System requirements", "Development", "License")
+            .hasSubsectionTitles(
+                "Introduction", "Installation",
+                "Running the tools", "Details on the tools",
+                "System requirements", "Development", "License"
+            )
     }
 
     private fun readFile(name: String): String {
@@ -179,5 +181,4 @@ class MarkdownParserTest {
     private fun ObjectAssert<Section>.childAt(idx: Int): ObjectAssert<Section> {
         return extracting { it.subsections[idx] } as ObjectAssert<Section>
     }
-
 }

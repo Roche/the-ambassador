@@ -35,5 +35,4 @@ internal class SpringTemplateCache(private val cache: Cache) : TemplateCache {
         // NOOP
         return this
     }
-
 }

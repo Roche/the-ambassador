@@ -125,7 +125,7 @@ class ProjectIndexer internal constructor(
             log.warn("Waiting for projects in progress to finish indexing")
         }
     }
-    
+
     private fun tryFinish(onFinished: IndexingFinishedCallback) {
         if (projectToIndexCount.get() == 0 &&
             sourceFinishedProducing.get() &&

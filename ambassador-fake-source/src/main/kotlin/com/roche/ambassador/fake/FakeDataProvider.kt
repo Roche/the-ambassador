@@ -5,12 +5,12 @@ import com.github.javafaker.service.RandomService
 import com.roche.ambassador.extensions.sha256
 import com.roche.ambassador.extensions.toDate
 import com.roche.ambassador.extensions.toLocalDate
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.AccessLevel
 import com.roche.ambassador.model.project.Contributor
 import com.roche.ambassador.model.project.Member
-import com.roche.ambassador.model.Visibility
 import java.time.LocalDate
 import java.util.*
 import java.util.function.Supplier
@@ -19,15 +19,18 @@ import kotlin.math.floor
 class FakeDataProvider {
 
     private val faker = Faker(Locale.ENGLISH, RandomService())
-    private val nameDice = Dice(faker.witcher()::monster,
+    private val nameDice = Dice(
+        faker.witcher()::monster,
         faker.witcher()::location,
         faker.pokemon()::name, faker.harryPotter()::spell, faker.beer()::name,
         faker.lordOfTheRings()::location
     )
-    private val parentNameDice = Dice(faker.aviation()::aircraft,
+    private val parentNameDice = Dice(
+        faker.aviation()::aircraft,
         faker.starTrek()::character, faker.dragonBall()::character
     )
-    private val descriptionDice = Dice(faker.witcher()::monster, faker.witcher()::location,
+    private val descriptionDice = Dice(
+        faker.witcher()::monster, faker.witcher()::location,
         faker.medical()::diseaseName, faker.rockBand()::name, faker.aviation()::airport,
         faker.chuckNorris()::fact, faker.programmingLanguage()::name, faker.gameOfThrones()::character,
         faker.gameOfThrones()::quote, faker.space()::star

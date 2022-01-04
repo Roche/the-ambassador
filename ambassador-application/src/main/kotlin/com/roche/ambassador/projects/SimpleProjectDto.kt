@@ -1,8 +1,8 @@
 package com.roche.ambassador.projects
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.Visibility
+import com.roche.ambassador.model.project.Project
 import java.time.LocalDate
 
 @JsonPropertyOrder("id", "name", "description", "url", "tags", "score")

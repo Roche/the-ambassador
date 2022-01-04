@@ -27,11 +27,11 @@ internal class NoSecurityConfiguration {
             .logout().disable()
             .cors().disable()
             .authorizeExchange()
-                .anyExchange().permitAll().and()
+            .anyExchange().permitAll().and()
             .anonymous()
-                .principal(anonymousUser)
-                .authorities(anonymousUser.authorities)
-                .and()
+            .principal(anonymousUser)
+            .authorities(anonymousUser.authorities)
+            .and()
             .build()
         // @formatter:on
     }

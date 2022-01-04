@@ -72,5 +72,4 @@ class AdviceMessageLookup(
             throw AdviceMessageNotFoundException(fullKey, "Missing advice configuration", e)
         }
     }
-
 }

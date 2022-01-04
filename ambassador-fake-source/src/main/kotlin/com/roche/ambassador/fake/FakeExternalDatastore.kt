@@ -5,7 +5,10 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
-internal class FakeExternalDatastore<ID, T : Identifiable<ID>> private constructor(maxSize: Int, private val idGenerator: IdGenerator<ID>) {
+internal class FakeExternalDatastore<ID, T : Identifiable<ID>> private constructor(
+    maxSize: Int,
+    private val idGenerator: IdGenerator<ID>
+) {
 
     companion object {
         fun <T : Identifiable<Long>> withLong(maxSize: Int = 100): FakeExternalDatastore<Long, T> {

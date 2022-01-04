@@ -9,10 +9,10 @@ import javax.persistence.*
 @Entity
 @Table(name = "\"group\"")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
-//@NamedEntityGraph(
+// @NamedEntityGraph(
 //    name = "Group.history",
 //    attributeNodes = [NamedAttributeNode("history")]
-//)
+// )
 class GroupEntity(
     @Id var id: Long? = null,
     var name: String? = null,
@@ -29,4 +29,5 @@ class GroupEntity(
     @Column(name = "criticality_score")
     var criticalityScore: Double = 0.0,
     @Column(name = "stars")
-    var stars: Int = 0)
+    var stars: Int = 0
+)

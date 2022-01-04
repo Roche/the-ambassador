@@ -89,7 +89,11 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
         return Optional.ofNullable(GitLabMapper.fromGitLabProject(prj))
     }
 
-    private suspend fun <T, U> ProducerScope<U>.publishFromPager(pager: Pager<T>, mapper: (T) -> U, filter: (T) -> Boolean = { true }) {
+    private suspend fun <T, U> ProducerScope<U>.publishFromPager(
+        pager: Pager<T>,
+        mapper: (T) -> U,
+        filter: (T) -> Boolean = { true }
+    ) {
         for (page in pager) {
             for (item in page) {
                 if (filter.invoke(item)) { // client-side filtering faking server behavior for missing filters

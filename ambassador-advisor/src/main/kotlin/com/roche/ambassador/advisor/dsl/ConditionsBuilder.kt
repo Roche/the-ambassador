@@ -34,5 +34,4 @@ sealed class ConditionsBuilder<A : BuildableAdvice> constructor(
     }
 
     infix fun hasNot(predicate: Project.() -> Boolean): Has<A, Project> = has(not(predicate))
-
 }

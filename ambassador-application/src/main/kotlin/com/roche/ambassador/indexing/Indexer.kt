@@ -15,7 +15,6 @@ interface Indexer<T, ID, F> {
     )
 
     fun forciblyStop(terminateImmediately: Boolean)
-
 }
 
 typealias IndexingStartedCallback = () -> Unit

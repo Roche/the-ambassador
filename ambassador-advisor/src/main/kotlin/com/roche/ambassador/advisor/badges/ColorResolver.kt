@@ -9,5 +9,4 @@ internal class ColorResolver(private val colors: Map<Color, String>) {
     } else {
         colors[color]
     }
-
 }

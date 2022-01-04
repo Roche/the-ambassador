@@ -6,5 +6,4 @@ interface Pingable {
 
     @Throws(UnhealthyComponentException::class)
     suspend fun ping()
-
 }

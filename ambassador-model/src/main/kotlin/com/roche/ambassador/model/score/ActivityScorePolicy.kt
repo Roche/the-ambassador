@@ -25,8 +25,8 @@ object ActivityScorePolicy : ScorePolicy {
             .withFeature(ContributingGuideFeature::class).forFile(100, 100)
             .withFeature(ReadmeFeature::class).forFile(100, 100)
             .withFeature(DescriptionFeature::class)
-                .filter { it.length >= 30 }
-                .calculate { _, score -> score + 50 }
+            .filter { it.length >= 30 }
+            .calculate { _, score -> score + 50 }
             .build()
         // @formatter:on
     }
@@ -41,22 +41,22 @@ object ActivityScorePolicy : ScorePolicy {
             .withFeature(LastActivityDateFeature::class).calculate { feature, score -> score * (1 + (100 - min(feature.daysUntilNow(), 100).toDouble()) / 100) }
             .withFeature(CommitsFeature::class)
             // average commits: adds a bonus multiplier between 0..1 to overall score (1 => 10 commits per week, 0 = less than 3 commits per week)
-                .calculate { commitsFeature, score ->
-                    val avg = commitsFeature.by().weeks().average()
-                    score * (1 + min(max(avg - 3, .0), 7.0) / 7)
-                }
+            .calculate { commitsFeature, score ->
+                val avg = commitsFeature.by().weeks().average()
+                score * (1 + min(max(avg - 3, .0), 7.0) / 7)
+            }
             // average commits: adds a bonus multiplier between 0..1 to overall score (1 = >10 commits per week, 0 = less than 3 commits per week)
             .withSubScore("Young project boost")
-                // all repositories updated in the previous year will receive a boost of maximum 1000 declining by days since last update
-                .withFeature(LastActivityDateFeature::class).calculate { feature, _ -> (1000 - min(feature.daysUntilNow(), 365).toDouble() * 2.74) }
-                // gradually scale down boost according to repository creation date to mix with "real" engagement stats
-                .withFeature(CreatedDateFeature::class).calculate { feature, score -> score * (365 - min(feature.daysUntilNow(), 365).toDouble()) / 365 }
-                .addNormalizer { abs(it) } // sometimes calculations return negative zero, making comparison (0.0d).equals(-0.0d) fail
-                .reduce { aggScore, subScore -> aggScore + max(subScore, 0.0) }
+            // all repositories updated in the previous year will receive a boost of maximum 1000 declining by days since last update
+            .withFeature(LastActivityDateFeature::class).calculate { feature, _ -> (1000 - min(feature.daysUntilNow(), 365).toDouble() * 2.74) }
+            // gradually scale down boost according to repository creation date to mix with "real" engagement stats
+            .withFeature(CreatedDateFeature::class).calculate { feature, score -> score * (365 - min(feature.daysUntilNow(), 365).toDouble()) / 365 }
+            .addNormalizer { abs(it) } // sometimes calculations return negative zero, making comparison (0.0d).equals(-0.0d) fail
+            .reduce { aggScore, subScore -> aggScore + max(subScore, 0.0) }
             // penalize private projects
             .withFeature(VisibilityFeature::class)
-                .filter { it == Visibility.PRIVATE }
-                .calculate { _, score -> score * .3 }
+            .filter { it == Visibility.PRIVATE }
+            .calculate { _, score -> score * .3 }
             .build()
         // @formatter:on
     }

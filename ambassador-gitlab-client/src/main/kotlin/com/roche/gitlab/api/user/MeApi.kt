@@ -6,5 +6,4 @@ import com.roche.gitlab.api.client.GitLabHttpClient
 class MeApi(basePath: String, httpClient: GitLabHttpClient) : Api(basePath, httpClient) {
 
     suspend fun get(): User = doGet()
-
 }

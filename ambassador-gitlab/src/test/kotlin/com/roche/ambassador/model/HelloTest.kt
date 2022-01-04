@@ -1,5 +1,3 @@
 package com.roche.ambassador.model
 
-class HelloTest {
-
-}
+class HelloTest

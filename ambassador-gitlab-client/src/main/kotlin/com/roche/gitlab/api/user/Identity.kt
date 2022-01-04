@@ -1,6 +1,5 @@
 package com.roche.gitlab.api.user
 
-
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Identity(

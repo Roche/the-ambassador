@@ -15,12 +15,14 @@ internal class LocaleWebFilter(val localeContextResolver: LocaleContextResolver)
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         return tryGetFromRequest(exchange)
             .switchIfEmpty(ReactiveLocaleContextHolder.getContextMono())
-            .switchIfEmpty(Mono.defer {
-                val ctx = localeContextResolver.resolveLocaleContext(exchange)
-                chain.filter(exchange)
-                    .contextWrite(ReactiveLocaleContextHolder.withLocaleContext(Mono.just(ctx)))
-                    .then(Mono.empty())
-            }).flatMap { chain.filter(exchange).contextWrite(ReactiveLocaleContextHolder.withLocaleContext(Mono.just(it))) }
+            .switchIfEmpty(
+                Mono.defer {
+                    val ctx = localeContextResolver.resolveLocaleContext(exchange)
+                    chain.filter(exchange)
+                        .contextWrite(ReactiveLocaleContextHolder.withLocaleContext(Mono.just(ctx)))
+                        .then(Mono.empty())
+                }
+            ).flatMap { chain.filter(exchange).contextWrite(ReactiveLocaleContextHolder.withLocaleContext(Mono.just(it))) }
     }
 
     private fun tryGetFromRequest(exchange: ServerWebExchange): Mono<LocaleContext> {

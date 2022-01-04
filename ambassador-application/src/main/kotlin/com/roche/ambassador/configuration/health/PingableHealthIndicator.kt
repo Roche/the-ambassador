@@ -57,5 +57,4 @@ internal class PingableHealthIndicator(
         lastStatus.set(health)
         return health
     }
-
 }

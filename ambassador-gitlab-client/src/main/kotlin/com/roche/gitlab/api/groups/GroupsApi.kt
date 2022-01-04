@@ -22,5 +22,4 @@ class GroupsApi(basePath: String, client: GitLabHttpClient) : Api(basePath, clie
         }
         return Pager(pagination, pageProvider)
     }
-
 }

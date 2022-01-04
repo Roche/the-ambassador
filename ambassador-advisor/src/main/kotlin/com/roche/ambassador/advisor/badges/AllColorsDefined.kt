@@ -10,7 +10,11 @@ import kotlin.reflect.KClass
 @Constraint(validatedBy = [AllColorsDefinedValidator::class])
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
 @Retention(AnnotationRetention.RUNTIME)
-internal annotation class AllColorsDefined(val message: String = "Not all colors were defined", val groups: Array<KClass<*>> = [], val payload: Array<KClass<out Payload>> = [])
+internal annotation class AllColorsDefined(
+    val message: String = "Not all colors were defined",
+    val groups: Array<KClass<*>> = [],
+    val payload: Array<KClass<out Payload>> = []
+)
 
 internal class AllColorsDefinedValidator : ConstraintValidator<AllColorsDefined, Map<Color, String>> {
     override fun isValid(value: Map<Color, String>, context: ConstraintValidatorContext): Boolean {
@@ -28,5 +32,4 @@ internal class AllColorsDefinedValidator : ConstraintValidator<AllColorsDefined,
         }
         return missingColors.isEmpty()
     }
-
 }

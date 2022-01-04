@@ -4,5 +4,4 @@ interface Identifiable<T> {
 
     fun getId(): T?
     fun setId(id: T?)
-
 }

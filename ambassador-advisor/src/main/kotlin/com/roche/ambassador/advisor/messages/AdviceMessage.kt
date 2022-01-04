@@ -17,5 +17,4 @@ data class AdviceMessage(
         MEDIUM(2, Color.YELLOW),
         LOW(3, Color.BLUE)
     }
-
 }

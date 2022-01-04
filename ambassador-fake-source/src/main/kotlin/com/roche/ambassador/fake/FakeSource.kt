@@ -85,7 +85,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
     override suspend fun readIssues(projectId: String): Issues {
         val open = fakeDataProvider.nextInt()
         val closed = fakeDataProvider.nextInt()
-        return Issues(open + closed, open, closed, fakeDataProvider.nextInt(max = (closed+open)), fakeDataProvider.nextInt(max = closed), fakeDataProvider.nextInt(max = open))
+        return Issues(open + closed, open, closed, fakeDataProvider.nextInt(max = (closed + open)), fakeDataProvider.nextInt(max = closed), fakeDataProvider.nextInt(max = open))
     }
 
     override suspend fun readContributors(projectId: String): List<Contributor> = fakeDataProvider.generate(max = 50, generator = fakeDataProvider::contributor)
@@ -95,23 +95,29 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
     }
 
     override suspend fun readCommits(projectId: String, ref: String): Timeline {
-        val mean = fakeDataProvider.withBinaryChance(95,
-                                                     { fakeDataProvider.nextDouble(1, 100) },
-                                                     { 0.0 })!! // not active project
+        val mean = fakeDataProvider.withBinaryChance(
+            95,
+            { fakeDataProvider.nextDouble(1, 100) },
+            { 0.0 }
+        )!! // not active project
         return TimelineGenerator.withWeekAverage(mean, Calendar.getInstance().getActualMaximum(Calendar.WEEK_OF_YEAR))
     }
 
     override suspend fun readFile(projectId: String, path: String, ref: String): Optional<RawFile> {
-        val value = fakeDataProvider.withBinaryChance(1,
-                                                      { fakeDataProvider.createFile() },
-                                                      { RawFile.notExistent() })
+        val value = fakeDataProvider.withBinaryChance(
+            1,
+            { fakeDataProvider.createFile() },
+            { RawFile.notExistent() }
+        )
         return Optional.of(value!!)
     }
 
     override suspend fun readReleases(projectId: String): Timeline {
-        val events = fakeDataProvider.withBinaryChance(30,
-                                                       { fakeDataProvider.nextInt(1, 24) },
-                                                       { 0 })!! // not active project
+        val events = fakeDataProvider.withBinaryChance(
+            30,
+            { fakeDataProvider.nextInt(1, 24) },
+            { 0 }
+        )!! // not active project
         return TimelineGenerator.withTotalEvents(events, startDate = LocalDate.now().minusYears(1))
     }
 
@@ -138,9 +144,11 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
     override fun issues(): IssuesManager = issuesManager
 
     private fun createWeeklyTimelineByMeanWithEmptyChance(emptyChance: Int, min: Int = 1, max: Int = 15): Timeline {
-        val mean = fakeDataProvider.withBinaryChance(100 - emptyChance,
-                                                     { fakeDataProvider.nextDouble(min, max) },
-                                                     { 0.0 })!! // not active project
+        val mean = fakeDataProvider.withBinaryChance(
+            100 - emptyChance,
+            { fakeDataProvider.nextDouble(min, max) },
+            { 0.0 }
+        )!! // not active project
         return TimelineGenerator.withWeekAverage(mean, Calendar.getInstance().getActualMaximum(Calendar.WEEK_OF_YEAR))
     }
 

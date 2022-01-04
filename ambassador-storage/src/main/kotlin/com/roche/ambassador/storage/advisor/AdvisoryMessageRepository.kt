@@ -6,5 +6,4 @@ import java.util.*
 interface AdvisoryMessageRepository : CrudRepository<AdvisoryMessageEntity, UUID> {
 
     fun findAllByProjectIdAndSourceAndClosedDateNull(projectId: Long, source: String): List<AdvisoryMessageEntity>
-
 }

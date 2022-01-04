@@ -86,9 +86,14 @@ internal class GroupIndexer(
     }
 
     override suspend fun indexAll(
-        filter: GroupFilter, onStarted: IndexingStartedCallback, onFinished: IndexingFinishedCallback, onError: IndexingErrorCallback,
-        onObjectIndexingStarted: ObjectIndexingStartedCallback<Group>, onObjectExcludedByCriteria: ObjectExcludedByCriteriaCallback<Group>,
-        onObjectIndexingError: ObjectIndexingErrorCallback<Group>, onObjectIndexingFinished: ObjectIndexingFinishedCallback<Group>
+        filter: GroupFilter,
+        onStarted: IndexingStartedCallback,
+        onFinished: IndexingFinishedCallback,
+        onError: IndexingErrorCallback,
+        onObjectIndexingStarted: ObjectIndexingStartedCallback<Group>,
+        onObjectExcludedByCriteria: ObjectExcludedByCriteriaCallback<Group>,
+        onObjectIndexingError: ObjectIndexingErrorCallback<Group>,
+        onObjectIndexingFinished: ObjectIndexingFinishedCallback<Group>
     ) {
         TODO("Not yet implemented")
     }

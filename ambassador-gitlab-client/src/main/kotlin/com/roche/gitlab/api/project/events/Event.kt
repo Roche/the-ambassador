@@ -1,6 +1,5 @@
 package com.roche.gitlab.api.project.events
 
-
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.roche.gitlab.api.utils.Dates
@@ -34,6 +33,4 @@ data class Event(
     val targetTitle: String? = null,
     @JsonProperty("target_type")
     val targetType: TargetType? = null
-) {
-
-}
+)

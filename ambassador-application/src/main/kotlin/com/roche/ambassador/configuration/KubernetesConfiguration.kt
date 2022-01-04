@@ -18,5 +18,4 @@ internal class KubernetesConfiguration {
     fun onInit() {
         log.info("Discovered that Ambassador is deployed on Kubernetes. Applied Kubernetes-specific configuration")
     }
-
 }

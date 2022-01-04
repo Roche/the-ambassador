@@ -51,9 +51,9 @@ object CriticalityScorePolicy : ScorePolicy {
             .withFeature(CommitsFeature::class).calculate { feature, score -> score + COMMIT_FREQUENCY.calc(feature.last(1).years().by().weeks().average()) }
             .withFeature(ReleasesFeature::class).calculate { feature, score -> score + RECENT_RELEASES_COUNT.calc(feature.last(1).years().sum()) }
             .withSubScore("comments")
-                .withFeature(CommentsFeature::class).calculate { feature, _ -> feature.sum().toDouble() }
-                .withFeature(IssuesFeature::class).calculate { feature, score -> COMMENT_FREQUENCY.calc(score / feature.allIn90Days) }
-                .reduce { aggScore, subScore -> aggScore + subScore }
+            .withFeature(CommentsFeature::class).calculate { feature, _ -> feature.sum().toDouble() }
+            .withFeature(IssuesFeature::class).calculate { feature, score -> COMMENT_FREQUENCY.calc(score / feature.allIn90Days) }
+            .reduce { aggScore, subScore -> aggScore + subScore }
 //            .withFeature(DependentsFeature::class).calculate { feature, score -> score + CREATED_SINCE.calc(feature.monthsUntilNow().toDouble()) }
             .addNormalizer { it / weightsTotal }
             .addNormalizer { it.round(4) }

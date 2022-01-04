@@ -21,7 +21,7 @@ internal class GroupIndexingInitializer(
     fun handle(indexingFinishedEvent: IndexingFinishedEvent) {
         log.info("Indexing groups after indexing {} on {} has finished", indexingFinishedEvent.data.getId(), indexingFinishedEvent.data.source)
         projectSources.get(indexingFinishedEvent.data.source)
-            .ifPresentOrElse( { groupIndexerFactory.create(it).indexAll() }) {
+            .ifPresentOrElse({ groupIndexerFactory.create(it).indexAll() }) {
                 log.warn(
                     "Source with name {} was not found. Unable to index groups after {} indexing",
                     indexingFinishedEvent.data.target, indexingFinishedEvent.data.getId()

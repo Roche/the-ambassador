@@ -39,5 +39,4 @@ object FeatureNameLookup {
     fun getFeatureName(type: KClass<out Feature<*>>): Optional<String> = Optional.ofNullable(lookup.inverse[type])
 
     fun getFeatureType(name: String): Optional<KClass<out Feature<*>>> = Optional.ofNullable(lookup[name])
-
 }

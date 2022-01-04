@@ -3,7 +3,7 @@ package com.roche.ambassador.configuration
 import com.roche.ambassador.document.*
 import org.springframework.context.annotation.Bean
 
-//@Configuration
+// @Configuration
 internal open class TextAnalysisConfiguration {
 
     @Bean

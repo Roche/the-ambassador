@@ -1,8 +1,8 @@
 package com.roche.ambassador.storage.project
 
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
-import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.stats.Statistics
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

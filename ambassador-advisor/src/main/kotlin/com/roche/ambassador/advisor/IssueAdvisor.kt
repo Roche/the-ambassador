@@ -26,13 +26,13 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
         val issueAdvice = IssueAdvice(context.project.name)
         Dsl.advise(issueAdvice, context) {
             // @formatter:off
-            has    { visibility == Visibility.PRIVATE } then "visibility.private"
+            has { visibility == Visibility.PRIVATE } then "visibility.private"
             matchFirst {
                 has { description.isNullOrBlank() } then "description.missing"
-                has { description!!.length < 30 }   then "description.short"
+                has { description!!.length < 30 } then "description.short"
             }
-            has    { tags.isEmpty() }                                     then "tags.empty"
-            hasNot { permissions?.canEveryoneFork ?: false }              then "forking.disabled"
+            has { tags.isEmpty() } then "tags.empty"
+            hasNot { permissions?.canEveryoneFork ?: false } then "forking.disabled"
             hasNot { permissions?.canEveryoneCreatePullRequest ?: false } then "pullrequest.disabled"
             // @formatter:on
         }
@@ -94,7 +94,7 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
                 existingAdvisoryMessageToUpdate: AdvisoryMessageEntity?,
                 issue: Issue,
                 context: AdvisorContext,
-            ) : Long? {
+            ): Long? {
                 if (existingAdvisoryMessageToUpdate != null) {
                     log.info("Closing existing issue {} in project {}", existingAdvisoryMessageToUpdate.referenceId, issue.projectId)
                     val toUpdate = issue.withStatus(Issue.Status.CLOSED)

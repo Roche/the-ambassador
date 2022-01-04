@@ -12,5 +12,4 @@ interface IssuesManager {
     } else {
         update(issue)
     }
-
 }

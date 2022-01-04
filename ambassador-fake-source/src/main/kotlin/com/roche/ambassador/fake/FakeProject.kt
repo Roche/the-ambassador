@@ -1,9 +1,9 @@
 package com.roche.ambassador.fake
 
+import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
-import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.stats.Statistics
 import java.time.LocalDate
 

@@ -40,7 +40,12 @@ class AdvisorContext(
 
     fun getAdviceConfig(key: String): AdviceMessage = adviceMessageLookup.get(key)
 
-    fun markGiven(advice: Advice<*>, referenceId: Long, type: AdvisoryMessageEntity.Type, existingAdvisoryMessage: AdvisoryMessageEntity? = null) {
+    fun markGiven(
+        advice: Advice<*>,
+        referenceId: Long,
+        type: AdvisoryMessageEntity.Type,
+        existingAdvisoryMessage: AdvisoryMessageEntity? = null
+    ) {
         val advicesToTrack = advices
             .filter { it.advice == advice }
             .filter { it.advisoryMessage == null }

@@ -39,9 +39,11 @@ class ValidationError(
 
         fun from(constraintViolations: Set<ConstraintViolation<*>>): ValidationError {
             val fieldErrors = constraintViolations.stream()
-                .collect(Collectors.toMap(
-                    { it.propertyPath.toString() }, { it.message }
-                ))
+                .collect(
+                    Collectors.toMap(
+                        { it.propertyPath.toString() }, { it.message }
+                    )
+                )
             return ValidationError(
                 "Failed validating input",
                 fieldErrors.size,

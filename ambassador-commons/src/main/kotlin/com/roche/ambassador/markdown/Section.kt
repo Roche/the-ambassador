@@ -11,5 +11,4 @@ data class Section(
 
     @JsonIgnore
     fun isEmpty(): Boolean = title == null && text == null && subsections.isEmpty() && links.isEmpty()
-
 }

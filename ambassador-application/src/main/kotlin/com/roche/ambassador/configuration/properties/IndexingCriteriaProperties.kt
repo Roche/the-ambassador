@@ -35,4 +35,3 @@ data class IndexingCriteriaProperties(
         @Min(0) val mustHaveAtLeastStars: Int = 0
     )
 }
-

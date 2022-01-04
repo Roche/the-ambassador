@@ -31,7 +31,6 @@ import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.network.sockets.ConnectTimeoutException
-import java.net.SocketException
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 
@@ -215,9 +214,11 @@ class GitLabApiBuilder internal constructor() {
                     this.threadsCount = clientThreadsCount
                 }
                 defaultRequest {
-                    this.url.takeFrom(URLBuilder().takeFrom(gitLabApiBuilder.url).apply {
-                        encodedPath += url.encodedPath
-                    })
+                    this.url.takeFrom(
+                        URLBuilder().takeFrom(gitLabApiBuilder.url).apply {
+                            encodedPath += url.encodedPath
+                        }
+                    )
                 }
                 install(Auth) {
                     providers.add(gitLabApiBuilder.authProvider)

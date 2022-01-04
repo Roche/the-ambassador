@@ -8,5 +8,4 @@ data class MarkdownDocument(
     fun asText(): String {
         return MarkdownDocumentToTextFormatter.format(this)
     }
-
 }

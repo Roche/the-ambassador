@@ -17,5 +17,4 @@ class IssuesApi(basePath: String, httpClient: GitLabHttpClient) : Api(basePath, 
     }
 
     suspend fun get(id: Long): Optional<Issue> = doGetOptional(path = "$id")
-
 }

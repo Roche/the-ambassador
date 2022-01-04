@@ -68,5 +68,4 @@ internal class IndexingApi(private val service: IndexingService) {
     ) {
         service.forciblyStop(indexingId, terminate.orElse(false))
     }
-
 }

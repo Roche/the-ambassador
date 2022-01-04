@@ -22,5 +22,4 @@ class TemplateEngine(private val handlebars: Handlebars) {
         val context = Context.newContext(model)
         return compiler(template).apply(context)
     }
-
 }

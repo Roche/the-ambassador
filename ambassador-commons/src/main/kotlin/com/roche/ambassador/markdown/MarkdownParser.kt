@@ -21,5 +21,4 @@ class MarkdownParser(private val parser: Parser = Parser.builder().build()) {
             Optional.empty()
         }
     }
-
 }

@@ -8,5 +8,5 @@ data class GroupsListQuery(
     @QueryParam("all_available") val allAvailable: Boolean? = null,
     @QueryParam val owned: Boolean? = null,
     @QueryParam("with_custom_attributes") val withCustomAttributes: Boolean? = null,
-    @QueryParam("top_level_only") val topLevelOnly: Boolean? = null,) {
-}
+    @QueryParam("top_level_only") val topLevelOnly: Boolean? = null,
+)

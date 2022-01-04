@@ -2,10 +2,10 @@ package com.roche.ambassador.indexing.project
 
 import com.roche.ambassador.ConcurrencyProvider
 import com.roche.ambassador.configuration.properties.IndexerProperties
-import com.roche.ambassador.model.source.IndexingCriteriaProvider
-import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.indexing.IndexerFactory
 import com.roche.ambassador.indexing.project.steps.IndexingStep
+import com.roche.ambassador.model.source.IndexingCriteriaProvider
+import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import org.springframework.stereotype.Component
 

@@ -18,11 +18,13 @@ class FeatureNameLookupTest {
             .map { FeatureNameLookup.getFeatureName(it.kotlin) to it }
 
         // expect
-        assertThat(classes).allSatisfy(Consumer {
-            assertThat(it.first)
-                .describedAs("Feature %s should have name defined", it.second.simpleName)
-                .isPresent
-        })
+        assertThat(classes).allSatisfy(
+            Consumer {
+                assertThat(it.first)
+                    .describedAs("Feature %s should have name defined", it.second.simpleName)
+                    .isPresent
+            }
+        )
 
         assertThat(classes.map { it.first.get() }.toSet())
             .describedAs("Feature names must be unique")

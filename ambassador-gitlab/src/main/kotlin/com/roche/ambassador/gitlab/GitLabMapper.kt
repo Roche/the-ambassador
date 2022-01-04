@@ -8,9 +8,9 @@ import com.roche.ambassador.model.stats.Statistics
 import com.roche.gitlab.api.project.model.FeatureAccessLevel
 import com.roche.gitlab.api.project.model.NamespaceKind
 import java.util.*
-import com.roche.gitlab.api.project.model.Project as GitLabProject
 import com.roche.gitlab.api.groups.Group as GitLabGroup
 import com.roche.gitlab.api.groups.Statistics as GitLabStatistics
+import com.roche.gitlab.api.project.model.Project as GitLabProject
 
 internal object GitLabMapper {
     private val log by LoggerDelegate()
@@ -31,8 +31,10 @@ internal object GitLabMapper {
     }
 
     private fun createStatistics(stats: GitLabStatistics): Statistics {
-        return Statistics(null, null, null, stats.jobArtifactsSize,
-        stats.lfsObjectsSize, stats.packagesSize, stats.repositorySize, stats.storageSize, stats.wikiSize)
+        return Statistics(
+            null, null, null, stats.jobArtifactsSize,
+            stats.lfsObjectsSize, stats.packagesSize, stats.repositorySize, stats.storageSize, stats.wikiSize
+        )
     }
 
     fun fromGitLabProject(gitlabProject: GitLabProject): Project {

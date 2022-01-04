@@ -27,5 +27,4 @@ data class Issue(
     fun withStatus(status: Status): Issue {
         return Issue(id, projectId, title, description, labels, status)
     }
-
 }

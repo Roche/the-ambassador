@@ -1,6 +1,5 @@
 package com.roche.gitlab.api.groups
 
-
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Statistics(

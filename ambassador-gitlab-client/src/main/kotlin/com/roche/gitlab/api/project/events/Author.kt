@@ -1,6 +1,5 @@
 package com.roche.gitlab.api.project.events
 
-
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Author(

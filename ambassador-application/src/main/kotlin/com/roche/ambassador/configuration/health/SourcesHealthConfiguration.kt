@@ -26,5 +26,4 @@ class SourcesHealthConfiguration {
             .toMap()
         return CompositeReactiveHealthContributor.fromMap(indicators)
     }
-
 }

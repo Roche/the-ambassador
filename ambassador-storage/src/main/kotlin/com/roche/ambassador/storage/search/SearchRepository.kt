@@ -6,5 +6,4 @@ import org.springframework.data.domain.Pageable
 interface SearchRepository<T, Q : SearchQuery> {
 
     fun search(query: Q, pageable: Pageable): Page<T>
-
 }

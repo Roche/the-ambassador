@@ -37,13 +37,15 @@ class MarkdownDocumentToTextFormatterTest {
         val result = MarkdownDocumentToTextFormatter.format(doc)
 
         // then
-        assertThat(result).isEqualTo("""
+        assertThat(result).isEqualTo(
+            """
         title 1
         
         title 2
         
         title 3
-        """.trimIndent())
+            """.trimIndent()
+        )
     }
 
     @Test
@@ -54,7 +56,8 @@ class MarkdownDocumentToTextFormatterTest {
         val result = MarkdownDocumentToTextFormatter.format(doc)
 
         // then
-        assertThat(result).isEqualTo("""
+        assertThat(result).isEqualTo(
+            """
         title 1
         
         text 1
@@ -62,7 +65,8 @@ class MarkdownDocumentToTextFormatterTest {
         title 2
         
         text 2
-        """.trimIndent())
+            """.trimIndent()
+        )
     }
 
     @Test

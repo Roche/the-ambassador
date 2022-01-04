@@ -23,7 +23,5 @@ internal object MarkdownDocumentToTextFormatter {
             section.subsections
                 .forEach { format(it, appendable) }
         }
-
     }
-
 }

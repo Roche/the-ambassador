@@ -40,5 +40,4 @@ internal open class GroupsApi(private val groupsService: GroupsService) {
     ): Paged<SimpleGroupDto> {
         return groupsService.search(query, pageable)
     }
-
 }

@@ -25,5 +25,4 @@ internal open class WebConfiguration : WebFluxConfigurer {
             .allowedMethods("*")
             .maxAge(3600)
     }
-
 }

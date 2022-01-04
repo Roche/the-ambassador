@@ -13,5 +13,4 @@ internal class LoadExistingProjectStep(private val projectEntityRepository: Proj
             context.entity = it
         }
     }
-
 }

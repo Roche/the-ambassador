@@ -61,7 +61,7 @@ internal open class ProjectsApi(private val projectService: ProjectsService) {
         ApiResponse(responseCode = "404", description = "License not found")
     )
     @GetMapping("{id}/license")
-    open suspend fun license(@PathVariable @Min(1) id: Long): DocumentDto{
+    open suspend fun license(@PathVariable @Min(1) id: Long): DocumentDto {
         return projectService.getDocument(id, DocumentType.LICENSE)
     }
 

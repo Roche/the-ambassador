@@ -17,5 +17,4 @@ internal class IndexingChain(
         steps.forEach { it.handle(context) } // TODO this is not really a true chain, should be changed later when we have more steps
         return context
     }
-
 }
