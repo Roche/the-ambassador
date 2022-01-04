@@ -3,49 +3,51 @@ kind: Deployment
 metadata:
   name: {{ include "indexer.fullname" . }}
   namespace: {{ $.Release.Namespace }}
-  labels:
-    {{- include "indexer.labels" . | nindent 4 }}
+  labels: {{- include "indexer.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
-    matchLabels:
-      {{- include "indexer.selectorLabels" . | nindent 6 }}
+    matchLabels: {{- include "indexer.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      labels:
-        {{- include "indexer.selectorLabels" . | nindent 8 }}
+      labels: {{- include "indexer.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+      imagePullSecrets: {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "indexer.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
         - name: config
           configMap:
             name: {{ include "indexer.fullname" . }}
+        - name: secrets
+          secret:
+            secretName: {{ include "indexer.fullname" . }}
+            items:
+              - key: application-secrets.yml
+                path: application-secrets.yml
       containers:
         - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: spring.profiles.active
-              value: kubernetes,source,datasource
             - name: SPRING_CONFIG_ADDITIONAL_LOCATION
-              value: file:///config/
+              value: file:///config/,file:///secrets/
           volumeMounts:
             - mountPath: /config/
               name: config
+              readOnly: true
+            - mountPath: /secrets/
+              name: secrets
+              readOnly: true
           ports:
             - name: http
               containerPort: 8080
@@ -66,17 +68,13 @@ spec:
             httpGet:
               path: /actuator/health/readiness
               port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
+      affinity: {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
+      tolerations: {{- toYaml . | nindent 8 }}
       {{- end }}

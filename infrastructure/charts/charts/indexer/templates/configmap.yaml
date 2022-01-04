@@ -3,10 +3,6 @@ kind: ConfigMap
 metadata:
   name: {{ include "indexer.fullname" . }}
   namespace: {{ $.Release.Namespace }}
-  labels:
-  {{- include "indexer.labels" . | nindent 4 }}
+  labels: {{- include "indexer.labels" . | nindent 4 }}
 data:
-  # remove datasource and use Secret instead
-  application-datasource.yml: |
-    {{- include "database.yml" . | nindent 4 }}
   application.yml: |- {{- toYaml $.Values.appConfig | toString | nindent 4 }}

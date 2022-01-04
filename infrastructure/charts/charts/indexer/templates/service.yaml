@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: {{ include "indexer.fullname" . }}
   namespace: {{ $.Release.Namespace }}
-  labels:
-    {{- include "indexer.labels" . | nindent 4 }}
+  labels: {{- include "indexer.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,5 +11,4 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-  selector:
-    {{- include "indexer.selectorLabels" . | nindent 4 }}
+  selector: {{- include "indexer.selectorLabels" . | nindent 4 }}

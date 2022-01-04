@@ -17,11 +17,9 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   namespace: {{ $.Release.Namespace }}
-  labels:
-    {{- include "indexer.labels" . | nindent 4 }}
+  labels: {{- include "indexer.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
+  annotations: {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
