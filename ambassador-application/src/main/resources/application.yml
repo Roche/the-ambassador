@@ -42,6 +42,8 @@ management:
       group:
         readiness:
           include: readinessState,sources
+        startup:
+          include: startupState
       roles:
         - ROLE_ADMIN
 

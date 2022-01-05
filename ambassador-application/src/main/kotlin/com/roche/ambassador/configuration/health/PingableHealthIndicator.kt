@@ -1,5 +1,6 @@
 package com.roche.ambassador.configuration.health
 
+import com.roche.ambassador.configuration.health.Constants.UP
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.health.Pingable
 import com.roche.ambassador.health.UnhealthyComponentException
@@ -26,7 +27,6 @@ internal class PingableHealthIndicator(
 
     companion object {
         private val log by LoggerDelegate()
-        private val UP = Health.up().build()
     }
 
     override fun health(): Mono<Health> {
