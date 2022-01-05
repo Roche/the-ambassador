@@ -70,7 +70,7 @@ jobs:
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.1
-        if: ${{ contains(github.ref, 'refs/tags/') }}
+#        if: ${{ contains(github.ref, 'refs/tags/') }}
         with:
           charts_dir: infrastructure
           charts_repo_url: https://roche.github.io/the-ambassador/
