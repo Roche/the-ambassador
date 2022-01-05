@@ -87,6 +87,23 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+probes:
+  startup:
+    initialDelaySeconds: 0
+    timeoutSeconds: 1
+    periodSeconds: 3
+    failureThreshold: 60
+  liveness:
+    initialDelaySeconds: 0
+    timeoutSeconds: 1
+    periodSeconds: 10
+    failureThreshold: 1
+  readiness:
+    initialDelaySeconds: 20
+    timeoutSeconds: 2
+    periodSeconds: 10
+    failureThreshold: 3
+
 nodeSelector: {}
 
 tolerations: []
