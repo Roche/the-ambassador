@@ -5,6 +5,7 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels: {{- include "indexer.labels" . | nindent 4 }}
 spec:
-  minAvailable: 1
+  minAvailable: {{ .Values.pdb.minAvailable }}
+  maxUnavailable: {{ .Values.pdb.maxUnavailable }}
   selector:
     matchLabels: {{- include "indexer.selectorLabels" . | nindent 6 }}
