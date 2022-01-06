@@ -24,6 +24,6 @@ dependencies:
   - name: indexer
     version: 0.2.0-SNAPSHOT
   - name: postgresql
-    version: 10.13.14
+    version: 10.15.1
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.install
