@@ -75,7 +75,7 @@ class DurationStringBuilder {
 
     private fun applyTime(time: Long, literal: String): String? {
         return if (time > 0) {
-            "${time}${literal}"
+            "${time}$literal"
         } else {
             null
         }

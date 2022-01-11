@@ -26,5 +26,4 @@ object CiStabilityPolicy {
         }
         return CiStability(stabilityLevel, stabilityLevelPercentage, failures, successes, total, state)
     }
-
 }

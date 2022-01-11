@@ -110,7 +110,7 @@ internal object GitLabMapper {
     }
 
     fun fromGitLabState(state: MergeRequest.State): PullRequest.State {
-        return when(state) {
+        return when (state) {
             MergeRequest.State.MERGED -> PullRequest.State.MERGED
             MergeRequest.State.CLOSED -> PullRequest.State.CLOSED
             else -> PullRequest.State.OPEN
@@ -118,7 +118,7 @@ internal object GitLabMapper {
     }
 
     fun fromGitLabState(state: SimplePipeline.Status): CiExecution.State {
-        return when(state) {
+        return when (state) {
             SimplePipeline.Status.SUCCESS -> CiExecution.State.SUCCESS
             SimplePipeline.Status.FAILED -> CiExecution.State.FAILURE
             SimplePipeline.Status.CANCELED -> CiExecution.State.CANCELED

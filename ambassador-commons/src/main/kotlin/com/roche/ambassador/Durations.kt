@@ -8,7 +8,12 @@ object Durations {
 
     private const val SECONDS_PER_DAY = 60 * 60 * 24
 
-    fun between(start: LocalDateTime, end: LocalDateTime, includeWeekends: Boolean = true, workingTimeCoefficient: Double = 1.0): Duration {
+    fun between(
+        start: LocalDateTime,
+        end: LocalDateTime,
+        includeWeekends: Boolean = true,
+        workingTimeCoefficient: Double = 1.0
+    ): Duration {
         if (includeWeekends) {
             return Duration.between(start, end)
         }

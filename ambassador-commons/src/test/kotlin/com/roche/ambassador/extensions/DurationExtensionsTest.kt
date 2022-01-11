@@ -34,7 +34,6 @@ class DurationExtensionsTest {
         // expect
         assertThat(Durations.between(start, end, includeWeekends = false))
             .isEqualTo(Duration.ofHours(2 + 10 + 24 + 24))
-
     }
 
     @Test
@@ -58,5 +57,4 @@ class DurationExtensionsTest {
         assertThat(Durations.between(start, end))
             .isEqualTo(Duration.ofHours(2))
     }
-
 }

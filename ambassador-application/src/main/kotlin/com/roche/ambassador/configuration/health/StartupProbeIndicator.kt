@@ -28,5 +28,4 @@ internal class StartupProbeIndicator : ReactiveHealthIndicator {
     }
 
     override fun health(): Mono<Health> = Mono.just(status.get())
-
 }

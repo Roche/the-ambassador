@@ -13,5 +13,4 @@ open class DurationPoint(val start: LocalDateTime, val end: LocalDateTime?) {
 
     @JsonProperty("duration")
     fun durationAsString(): String = duration().toHumanReadable()
-
 }

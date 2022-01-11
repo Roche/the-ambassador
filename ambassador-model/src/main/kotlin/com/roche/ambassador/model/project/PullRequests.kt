@@ -11,5 +11,4 @@ class PullRequests(data: List<PullRequest>) : DurationPointsContainer<PullReques
 
     @JsonProperty("averageTimeToMergeSeconds")
     fun averageTimeToMergeAsSeconds(): Long = averageDuration.seconds
-
 }

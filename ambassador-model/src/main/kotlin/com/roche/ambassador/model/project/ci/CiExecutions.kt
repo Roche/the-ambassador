@@ -14,5 +14,4 @@ class CiExecutions(
 
     @JsonProperty("averageDurationSeconds")
     fun averageDurationAsSeconds(): Long = averageDuration.seconds
-
 }
