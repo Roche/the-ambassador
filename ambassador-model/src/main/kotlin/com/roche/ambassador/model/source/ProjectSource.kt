@@ -5,6 +5,7 @@ import com.roche.ambassador.health.Pingable
 import com.roche.ambassador.model.Specification
 import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.project.*
+import com.roche.ambassador.model.project.ci.CiExecution
 import com.roche.ambassador.model.stats.Timeline
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -23,6 +24,7 @@ interface ProjectSource : Specification, GroupSource, OAuth2AuthenticationProvid
     suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch>
     suspend fun readMembers(projectId: String): List<Member>
     suspend fun readPullRequests(projectId: String): List<PullRequest>
+    suspend fun readCiExecutions(projectId: String, ref: String): List<CiExecution>
     suspend fun readComments(projectId: String): Timeline
 
     fun issues(): IssuesManager

@@ -8,6 +8,7 @@ import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
+import com.roche.ambassador.model.project.ci.CiExecution
 import com.roche.ambassador.model.source.GroupSource
 import com.roche.ambassador.model.source.IssuesManager
 import com.roche.ambassador.model.source.ProjectSource
@@ -134,6 +135,10 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
     }
 
     override suspend fun readPullRequests(projectId: String): List<PullRequest> {
+        return listOf()
+    }
+
+    override suspend fun readCiExecutions(projectId: String, ref: String): List<CiExecution> {
         return listOf()
     }
 

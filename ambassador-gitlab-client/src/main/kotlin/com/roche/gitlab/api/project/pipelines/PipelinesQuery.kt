@@ -4,7 +4,7 @@ import com.roche.gitlab.api.utils.QueryParam
 import java.time.LocalDateTime
 
 data class PipelinesQuery(
-    @QueryParam("scope") val type: SimplePipeline.Scope? = null,
+    @QueryParam("scope") val scope: SimplePipeline.Scope? = null,
     @QueryParam("status") val status: SimplePipeline.Status? = null,
     @QueryParam("source") val source: String? = null,
     @QueryParam("ref") val ref: String? = null,

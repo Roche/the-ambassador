@@ -5,10 +5,12 @@ import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.PullRequest
+import com.roche.ambassador.model.project.ci.CiExecution
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.gitlab.api.project.mergerequests.MergeRequest
 import com.roche.gitlab.api.project.model.FeatureAccessLevel
 import com.roche.gitlab.api.project.model.NamespaceKind
+import com.roche.gitlab.api.project.pipelines.SimplePipeline
 import java.util.*
 import com.roche.gitlab.api.groups.Group as GitLabGroup
 import com.roche.gitlab.api.groups.Statistics as GitLabStatistics
@@ -112,6 +114,20 @@ internal object GitLabMapper {
             MergeRequest.State.MERGED -> PullRequest.State.MERGED
             MergeRequest.State.CLOSED -> PullRequest.State.CLOSED
             else -> PullRequest.State.OPEN
+        }
+    }
+
+    fun fromGitLabState(state: SimplePipeline.Status): CiExecution.State {
+        return when(state) {
+            SimplePipeline.Status.SUCCESS -> CiExecution.State.SUCCESS
+            SimplePipeline.Status.FAILED -> CiExecution.State.FAILURE
+            SimplePipeline.Status.CANCELED -> CiExecution.State.CANCELED
+            SimplePipeline.Status.CREATED -> CiExecution.State.IN_PROGRESS
+            SimplePipeline.Status.PENDING -> CiExecution.State.IN_PROGRESS
+            SimplePipeline.Status.PREPARING -> CiExecution.State.IN_PROGRESS
+            SimplePipeline.Status.RUNNING -> CiExecution.State.IN_PROGRESS
+            SimplePipeline.Status.WAITING_FOR_RESOURCE -> CiExecution.State.IN_PROGRESS
+            else -> CiExecution.State.UNKNOWN
         }
     }
 }

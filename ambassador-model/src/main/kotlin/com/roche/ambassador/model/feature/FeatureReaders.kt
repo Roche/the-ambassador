@@ -23,7 +23,8 @@ object FeatureReaders {
         IssuesFeature.create(),
         MembersFeature.create(),
         CommentsFeature.create(),
-        PullRequestsFeature.create()
+        PullRequestsFeature.create(),
+        CiExecutionsFeature.create()
     )
 
     fun getProjectBasedReaders(): List<FeatureReader<*>> {

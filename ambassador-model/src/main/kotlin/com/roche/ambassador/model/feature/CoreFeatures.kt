@@ -8,6 +8,9 @@ import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.files.ExcerptFile
 import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.project.*
+import com.roche.ambassador.model.project.ci.CiExecutions
+import com.roche.ambassador.model.project.ci.CiStabilityConfiguration
+import com.roche.ambassador.model.project.ci.CiStabilityPolicy
 import com.roche.ambassador.model.stats.Timeline
 import java.time.LocalDate
 import java.util.*
@@ -191,6 +194,28 @@ class PullRequestsFeature(value: PullRequests) : AbstractFeature<PullRequests>(v
         override fun create(): FeatureReader<PullRequestsFeature> = FeatureReader.create { project, source ->
             val pullRequests = source.readPullRequests(project.id.toString()).sortedByDescending { it.end ?: it.start }
             PullRequestsFeature(PullRequests(pullRequests))
+        }
+    }
+}
+
+class CiExecutionsFeature(value: CiExecutions) : AbstractFeature<CiExecutions>(value) {
+    companion object : FeatureReaderFactory<CiExecutionsFeature> {
+
+        private val config = CiStabilityConfiguration()
+
+        override fun create(): FeatureReader<CiExecutionsFeature> = FeatureReader.create { project, source ->
+            val ciExecutions = if (project.defaultBranch != null) {
+                source.readCiExecutions(project.id.toString(), project.defaultBranch).sortedByDescending { it.end ?: it.start }
+            } else {
+                listOf()
+            }
+            val stability = if (ciExecutions.isNotEmpty()) {
+                CiStabilityPolicy.calculateStability(ciExecutions, config)
+            } else {
+                null
+            }
+            val wrapped = CiExecutions(ciExecutions, stability)
+            CiExecutionsFeature(wrapped)
         }
     }
 }

@@ -7,3 +7,10 @@ fun Double.round(decimals: Int): Double {
     repeat(decimals) { multiplier *= 10 }
     return (this * multiplier).roundToInt() / multiplier
 }
+
+fun Double.asPercentage(decimals: Int = 0): Double {
+    val x100 = this * 100
+    return x100.round(decimals)
+}
+
+fun Double.asPercentageString(decimals: Int = 0): String = "${asPercentage(decimals)}%"

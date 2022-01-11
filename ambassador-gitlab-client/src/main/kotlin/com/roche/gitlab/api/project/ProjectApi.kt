@@ -10,6 +10,7 @@ import com.roche.gitlab.api.project.members.MembersApi
 import com.roche.gitlab.api.project.mergerequests.MergeRequestsApi
 import com.roche.gitlab.api.project.model.Project
 import com.roche.gitlab.api.project.packages.PackagesApi
+import com.roche.gitlab.api.project.pipelines.PipelinesApi
 import com.roche.gitlab.api.project.releases.ReleasesApi
 import com.roche.gitlab.api.project.repository.RepositoryApi
 import java.util.*
@@ -45,4 +46,6 @@ class ProjectApi internal constructor(basePath: String, client: GitLabHttpClient
     fun events(): EventsApi = EventsApi("$basePath/events", client)
 
     fun issues(): IssuesApi = IssuesApi("$basePath/issues", client)
+
+    fun pipelines(): PipelinesApi = PipelinesApi("$basePath/pipelines", client)
 }

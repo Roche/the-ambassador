@@ -10,6 +10,7 @@ import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.group.GroupFilter
 import com.roche.ambassador.model.project.*
+import com.roche.ambassador.model.project.ci.CiExecution
 import com.roche.ambassador.model.source.GroupSource
 import com.roche.ambassador.model.source.IssuesManager
 import com.roche.ambassador.model.source.ProjectSource
@@ -32,7 +33,8 @@ import com.roche.gitlab.api.project.events.EventsListQuery
 import com.roche.gitlab.api.project.events.TargetType
 import com.roche.gitlab.api.project.mergerequests.MergeRequest
 import com.roche.gitlab.api.project.mergerequests.MergeRequestsQuery
-import com.roche.gitlab.api.project.mergerequests.SimpleMergeRequest
+import com.roche.gitlab.api.project.pipelines.PipelinesQuery
+import com.roche.gitlab.api.project.pipelines.SimplePipeline
 import com.roche.gitlab.api.utils.Pager
 import com.roche.gitlab.api.utils.Pagination
 import com.roche.gitlab.api.utils.Sort
@@ -233,7 +235,7 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
     }
 
     override suspend fun readPullRequests(projectId: String): List<PullRequest> {
-        log.info("Reading project {} pull requests timeline")
+        log.info("Reading project {} pull requests", projectId)
         val query = MergeRequestsQuery(
             state = MergeRequest.State.MERGED.name.lowercase(),
             updatedAfter = LocalDateTime.now().minusDays(LOOKBACK_DAYS)
@@ -244,13 +246,32 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
             .mergeRequests()
             .paging(query, fromPagination = Pagination(itemsPerPage = 100))
             .forEach { mergeRequests += it }
-        log.info("Finished reading project {} pull requests timeline", projectId)
+        log.info("Finished reading project {} pull requests", projectId)
         return mergeRequests
             .map { PullRequest(it.createdAt, it.mergedAt ?: it.closedAt, GitLabMapper.fromGitLabState(it.state)) }
     }
 
+    override suspend fun readCiExecutions(projectId: String, ref: String): List<CiExecution> {
+        log.info("Reading project {} pipelines", projectId)
+        val query = PipelinesQuery(
+            scope = SimplePipeline.Scope.FINISHED,
+            ref = ref,
+            includeWithYamlErrors = false,
+            updatedAfter = LocalDateTime.now().minusDays(LOOKBACK_DAYS)
+        )
+        val pipelines = mutableListOf<SimplePipeline>()
+        gitlab.projects()
+            .withId(projectId.toLong())
+            .pipelines()
+            .paging(query, fromPagination = Pagination(itemsPerPage = 100))
+            .forEach { pipelines += it }
+        log.info("Finished reading project {} pipelines", projectId)
+        return pipelines
+            .map { CiExecution(it.createdAt, it.updatedAt, GitLabMapper.fromGitLabState(it.status)) }
+    }
+
     override suspend fun readComments(projectId: String): Timeline {
-        log.info("Reading project {} comments", projectId)
+        log.info("Reading project {} issue comments", projectId)
         val query = EventsListQuery(action = "commented", target = "note", after = LocalDate.now().minusDays(LOOKBACK_DAYS))
         val timeline = Timeline()
         gitlab.projects()
@@ -263,7 +284,7 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
                     timeline.increment(note.createdAt)
                 }
             }
-        log.info("Finished reading project {} pull requests timeline", projectId)
+        log.info("Finished reading project {} issue comments timeline", projectId)
         return timeline
     }
 
