@@ -92,11 +92,14 @@ internal class IndexingService(
             val indexer = createIndexer(sourceName)
             idx = indexingRepository.save(idx)
             indexersInUse[idx.getId()!!] = indexer
+            val lastActivityAfter = indexingRepository.findTopBySourceAndStatusOrderByStartedDateDesc(sourceName, IndexingStatus.FINISHED)
+                .map { it.finishedDate ?: it.startedDate }
+                .orElseGet { criteriaProperties.projects.lastActivityAfter }
             val filter = ProjectFilter.Builder()
                 .archived(!criteriaProperties.projects.excludeArchived)
                 .groups(*criteriaProperties.projects.groups.toTypedArray())
                 .visibility(criteriaProperties.projects.maxVisibility)
-                .lastActivityAfter(criteriaProperties.projects.lastActivityAfter)
+                .lastActivityAfter(lastActivityAfter)
                 .build()
             val stats = Statistics()
             indexer.indexAll(

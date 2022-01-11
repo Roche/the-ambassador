@@ -18,4 +18,6 @@ interface IndexingRepository : CrudRepository<Indexing, UUID> {
     fun findFirstByTargetAndStatusOrderByStartedDateDesc(target: String, status: IndexingStatus): Optional<Indexing>
 
     override fun findAll(): List<Indexing>
+
+    fun findTopBySourceAndStatusOrderByStartedDateDesc(source: String, status: IndexingStatus): Optional<Indexing>
 }
