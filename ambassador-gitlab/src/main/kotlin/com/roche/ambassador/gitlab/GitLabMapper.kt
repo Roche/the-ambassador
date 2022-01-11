@@ -4,7 +4,9 @@ import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.model.project.PullRequest
 import com.roche.ambassador.model.stats.Statistics
+import com.roche.gitlab.api.project.mergerequests.MergeRequest
 import com.roche.gitlab.api.project.model.FeatureAccessLevel
 import com.roche.gitlab.api.project.model.NamespaceKind
 import java.util.*
@@ -103,5 +105,13 @@ internal object GitLabMapper {
         val refPart = "/$ref/"
         val toCut = url.indexOf(refPart)
         return url.substring(toCut + refPart.length)
+    }
+
+    fun fromGitLabState(state: MergeRequest.State): PullRequest.State {
+        return when(state) {
+            MergeRequest.State.MERGED -> PullRequest.State.MERGED
+            MergeRequest.State.CLOSED -> PullRequest.State.CLOSED
+            else -> PullRequest.State.OPEN
+        }
     }
 }

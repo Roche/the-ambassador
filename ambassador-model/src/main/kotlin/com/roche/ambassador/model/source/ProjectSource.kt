@@ -22,7 +22,7 @@ interface ProjectSource : Specification, GroupSource, OAuth2AuthenticationProvid
     suspend fun readReleases(projectId: String): Timeline
     suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch>
     suspend fun readMembers(projectId: String): List<Member>
-    suspend fun readPullRequests(projectId: String): Timeline
+    suspend fun readPullRequests(projectId: String): List<PullRequest>
     suspend fun readComments(projectId: String): Timeline
 
     fun issues(): IssuesManager

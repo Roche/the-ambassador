@@ -7,10 +7,7 @@ import com.roche.ambassador.model.Importance
 import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.files.ExcerptFile
 import com.roche.ambassador.model.files.RawFile
-import com.roche.ambassador.model.project.AccessLevel
-import com.roche.ambassador.model.project.Contributor
-import com.roche.ambassador.model.project.Issues
-import com.roche.ambassador.model.project.ProtectedBranch
+import com.roche.ambassador.model.project.*
 import com.roche.ambassador.model.stats.Timeline
 import java.time.LocalDate
 import java.util.*
@@ -189,12 +186,11 @@ class MembersFeature(value: Map<AccessLevel, Int>) : AbstractFeature<Map<AccessL
     }
 }
 
-@Deprecated(message = "Not used in any score")
-class PullRequestsFeature(value: Timeline) : TimelineFeature(value) {
+class PullRequestsFeature(value: PullRequests) : AbstractFeature<PullRequests>(value) {
     companion object : FeatureReaderFactory<PullRequestsFeature> {
         override fun create(): FeatureReader<PullRequestsFeature> = FeatureReader.create { project, source ->
-            val pullRequests = source.readPullRequests(project.id.toString())
-            PullRequestsFeature(pullRequests)
+            val pullRequests = source.readPullRequests(project.id.toString()).sortedByDescending { it.end ?: it.start }
+            PullRequestsFeature(PullRequests(pullRequests))
         }
     }
 }

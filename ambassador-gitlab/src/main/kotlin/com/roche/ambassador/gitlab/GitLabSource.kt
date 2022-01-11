@@ -32,6 +32,7 @@ import com.roche.gitlab.api.project.events.EventsListQuery
 import com.roche.gitlab.api.project.events.TargetType
 import com.roche.gitlab.api.project.mergerequests.MergeRequest
 import com.roche.gitlab.api.project.mergerequests.MergeRequestsQuery
+import com.roche.gitlab.api.project.mergerequests.SimpleMergeRequest
 import com.roche.gitlab.api.utils.Pager
 import com.roche.gitlab.api.utils.Pagination
 import com.roche.gitlab.api.utils.Sort
@@ -231,20 +232,21 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
         return members.toList()
     }
 
-    override suspend fun readPullRequests(projectId: String): Timeline {
+    override suspend fun readPullRequests(projectId: String): List<PullRequest> {
         log.info("Reading project {} pull requests timeline")
-        val timeline = Timeline()
         val query = MergeRequestsQuery(
-            state = MergeRequest.State.MERGED.name.toLowerCase(),
+            state = MergeRequest.State.MERGED.name.lowercase(),
             updatedAfter = LocalDateTime.now().minusDays(LOOKBACK_DAYS)
         )
+        val mergeRequests = mutableListOf<MergeRequest>()
         gitlab.projects()
             .withId(projectId.toLong())
             .mergeRequests()
-            .simplePaging(query, fromPagination = Pagination(itemsPerPage = 100))
-            .forEach { timeline.increment(it.updatedAt) }
+            .paging(query, fromPagination = Pagination(itemsPerPage = 100))
+            .forEach { mergeRequests += it }
         log.info("Finished reading project {} pull requests timeline", projectId)
-        return timeline
+        return mergeRequests
+            .map { PullRequest(it.createdAt, it.mergedAt ?: it.closedAt, GitLabMapper.fromGitLabState(it.state)) }
     }
 
     override suspend fun readComments(projectId: String): Timeline {

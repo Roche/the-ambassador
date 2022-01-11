@@ -26,7 +26,7 @@ data class MergeRequest(
     val closedBy: String? = null,
     @JsonProperty("created_at")
     @JsonFormat(pattern = Dates.ISO_DATE_TIME_FORMAT)
-    val createdAt: LocalDateTime? = null,
+    val createdAt: LocalDateTime,
     @JsonProperty("description")
     val description: String? = null,
     @JsonProperty("discussion_locked")
@@ -77,7 +77,7 @@ data class MergeRequest(
     @JsonProperty("squash_commit_sha")
     val squashCommitSha: String? = null,
     @JsonProperty("state")
-    val state: State? = null,
+    val state: State,
     @JsonProperty("target_branch")
     val targetBranch: String? = null,
     @JsonProperty("target_project_id")

@@ -133,8 +133,8 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
         return fakeDataProvider.generate(max = 20, generator = fakeDataProvider::member)
     }
 
-    override suspend fun readPullRequests(projectId: String): Timeline {
-        return createWeeklyTimelineByMeanWithEmptyChance(5)
+    override suspend fun readPullRequests(projectId: String): List<PullRequest> {
+        return listOf()
     }
 
     override suspend fun readComments(projectId: String): Timeline {
