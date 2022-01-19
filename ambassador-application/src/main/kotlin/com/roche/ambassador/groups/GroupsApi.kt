@@ -1,6 +1,7 @@
 package com.roche.ambassador.groups
 
 import com.roche.ambassador.commons.api.Paged
+import io.github.filipowm.api.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -9,12 +10,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 import javax.validation.constraints.Min
 
-@RestController
-@RequestMapping("/groups")
+@Api("/groups")
 @Tag(name = "Groups API", description = "API to read or search indexed groups")
 internal open class GroupsApi(private val groupsService: GroupsService) {
 

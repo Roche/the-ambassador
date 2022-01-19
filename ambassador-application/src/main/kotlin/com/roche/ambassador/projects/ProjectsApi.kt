@@ -3,6 +3,7 @@ package com.roche.ambassador.projects
 import com.roche.ambassador.commons.api.Paged
 import com.roche.ambassador.model.files.DocumentType
 import com.roche.ambassador.model.project.Project
+import io.github.filipowm.api.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -12,12 +13,9 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 import javax.validation.constraints.Min
 
-@RestController
-@RequestMapping("/projects")
+@Api("/projects")
 @Tag(name = "Projects API", description = "API to read or search indexed projects")
 internal open class ProjectsApi(private val projectService: ProjectsService) {
 

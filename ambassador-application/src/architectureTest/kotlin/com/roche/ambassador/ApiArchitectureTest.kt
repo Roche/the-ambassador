@@ -7,6 +7,7 @@ import com.tngtech.archunit.junit.ArchIgnore
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*
 import com.tngtech.archunit.lang.syntax.elements.ClassesThat
+import io.github.filipowm.api.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 class ApiArchitectureTest {
 
     @ArchTest
-    private val `controller classes should be described using OpenAPI` = controllers()
+    private val `controller classes should be described using OpenAPI` = api()
         .should().beTopLevelClasses()
         .andShould().beAnnotatedWith(Tag::class.java)
 
@@ -40,7 +41,7 @@ class ApiArchitectureTest {
         .should().notDeclareThrowableOfType(assignableTo(Throwable::class.java))
 
     @ArchTest
-    private val `transactions should no start in controllers` = controllers()
+    private val `transactions should no start in controllers` = api()
         .should()
         .notBeAnnotatedWith(Transactional::class.java)
 
@@ -50,17 +51,24 @@ class ApiArchitectureTest {
         .notBeAnnotatedWith(Transactional::class.java)
 
     @ArchTest
+    private val `@RestController annotation should not be used` = noClasses()
+        .should()
+        .beAnnotatedWith(RestController::class.java)
+        .because("@Api should be used instead, because it simplifies API management")
+
+    @ArchTest
     private val `controllers should not access repositories directly` = fields()
-        .that().areDeclaredInClassesThat().areControllers()
+        .that().areDeclaredInClassesThat().areApiHandlers()
         .should().notHaveRawType(assignableTo(Repository::class.java))
         .andShould().notHaveRawType(annotatedWith(org.springframework.stereotype.Repository::class.java))
 
-    private fun <T> ClassesThat<T>.areControllers() = areAnnotatedWith(RestController::class.java)
 
-    private fun controllers() = classes().that().areControllers()
+    private fun <T> ClassesThat<T>.areApiHandlers() = areAnnotatedWith(Api::class.java)
+
+    private fun api() = classes().that().areApiHandlers()
 
     private fun endpoints() = methods().that()
-        .areDeclaredInClassesThat().areControllers()
+        .areDeclaredInClassesThat().areApiHandlers()
         .and().areAnnotatedWith(RequestMapping::class.java)
         .or().areAnnotatedWith(GetMapping::class.java)
         .or().areAnnotatedWith(PatchMapping::class.java)

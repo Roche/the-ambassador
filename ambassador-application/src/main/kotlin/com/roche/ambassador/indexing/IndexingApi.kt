@@ -2,6 +2,7 @@ package com.roche.ambassador.indexing
 
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.security.HasAdminPermission
+import io.github.filipowm.api.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -12,8 +13,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.constraints.Min
 
-@RestController
-@RequestMapping("/indexing")
+@Api("/indexing")
 @Tag(name = "Indexing API", description = "API handle indexing")
 @HasAdminPermission
 internal class IndexingApi(private val service: IndexingService) {
