@@ -36,7 +36,7 @@ internal class IndexingApi(private val service: IndexingService) {
         ApiResponse(responseCode = "403", description = "Insufficient privileges, admin needed"),
         ApiResponse(responseCode = "404", description = "Project not found in source")
     )
-    @GetMapping("/project/{id}")
+    @RequestMapping(value = ["/project/{id}"], method = [RequestMethod.GET, RequestMethod.POST])
     suspend fun reindexOne(@PathVariable @Min(1) id: Long): Project? {
         return service.reindex(id)
     }

@@ -10,5 +10,7 @@ data class IssueAdvice(val projectName: String) : AdviceData, BuildableAdvice {
         problems.add(message)
     }
 
+    override fun getMessages(): List<AdviceMessage> = getProblems()
+
     fun getProblems(): List<AdviceMessage> = problems.toList().sortedBy { it.severity.level }
 }

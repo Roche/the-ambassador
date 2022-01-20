@@ -3,6 +3,7 @@ package com.roche.ambassador.advisor
 import com.roche.ambassador.advisor.common.AdvisorException
 import com.roche.ambassador.advisor.configuration.AdvisorProperties
 import com.roche.ambassador.advisor.dsl.Dsl
+import com.roche.ambassador.advisor.messages.AdviceMessage
 import com.roche.ambassador.advisor.model.Advice
 import com.roche.ambassador.advisor.model.IssueAdvice
 import com.roche.ambassador.exceptions.AmbassadorException
@@ -22,7 +23,7 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
         private val log by LoggerDelegate()
     }
 
-    override suspend fun advise(context: AdvisorContext) {
+    private fun prepareIssueAdvice(context: AdvisorContext): IssueAdvice {
         val issueAdvice = IssueAdvice(context.project.name)
         Dsl.advise(issueAdvice, context) {
             // @formatter:off
@@ -36,6 +37,16 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
             hasNot { permissions?.canEveryoneCreatePullRequest ?: false } then "pullrequest.disabled"
             // @formatter:on
         }
+        return issueAdvice
+    }
+
+    override suspend fun getAdvices(context: AdvisorContext): List<AdviceMessage> {
+        val issueAdvice = prepareIssueAdvice(context)
+        return issueAdvice.getProblems()
+    }
+
+    override suspend fun advise(context: AdvisorContext) {
+        val issueAdvice = prepareIssueAdvice(context)
         issueAdviceGiver.giveAdvise(context, issueAdvice)
     }
 
