@@ -15,6 +15,7 @@ spring:
     include:
       - secrets
       - advisor
+      - scores
   flyway:
     placeholders:
       language: ${ambassador.language}

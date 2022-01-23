@@ -4,9 +4,13 @@ import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.model.project.ProtectedBranch
 import com.roche.ambassador.model.project.PullRequest
 import com.roche.ambassador.model.project.ci.CiExecution
 import com.roche.ambassador.model.stats.Statistics
+import com.roche.gitlab.api.model.AccessLevel
+import com.roche.gitlab.api.model.AccessLevelName
+import com.roche.gitlab.api.project.branches.ProtectedBranch as GitLabProtectedBranch
 import com.roche.gitlab.api.project.mergerequests.MergeRequest
 import com.roche.gitlab.api.project.model.FeatureAccessLevel
 import com.roche.gitlab.api.project.model.NamespaceKind
@@ -129,5 +133,31 @@ internal object GitLabMapper {
             SimplePipeline.Status.WAITING_FOR_RESOURCE -> CiExecution.State.IN_PROGRESS
             else -> CiExecution.State.UNKNOWN
         }
+    }
+
+    fun from(protectedBranch: GitLabProtectedBranch): ProtectedBranch {
+        val canDeveloperPush = protectedBranch.pushAccessLevels.hasDevAccess()
+        val canAdminPush = protectedBranch.pushAccessLevels.hasAdminAccess()
+        val canDeveloperMerge = protectedBranch.mergeAccessLevels.hasDevAccess()
+        val canSomeoneMerge = protectedBranch.mergeAccessLevels.checkHasAnyoneBranchAccess()
+        return ProtectedBranch(protectedBranch.name, canDeveloperMerge,
+                               canSomeoneMerge, canDeveloperPush, canAdminPush,
+                               protectedBranch.allowForcePush, protectedBranch.codeOwnerApprovalRequired ?: false)
+    }
+
+    private fun List<AccessLevel>.hasDevAccess(): Boolean {
+        return checkHasBranchAccess(AccessLevelName.DEVELOPER, AccessLevelName.REPORTER)
+    }
+
+    private fun List<AccessLevel>.hasAdminAccess(): Boolean {
+        return checkHasBranchAccess(AccessLevelName.OWNER, AccessLevelName.MAINTAINER, AccessLevelName.MASTER, AccessLevelName.ADMIN)
+    }
+
+    private fun List<AccessLevel>.checkHasBranchAccess(vararg expectedAccessLevels: AccessLevelName): Boolean {
+        return this.any { expectedAccessLevels.contains(it.accessLevel) }
+    }
+
+    private fun List<AccessLevel>.checkHasAnyoneBranchAccess(): Boolean {
+        return this.all { it.accessLevel != AccessLevelName.NONE }
     }
 }

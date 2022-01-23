@@ -1,6 +1,7 @@
 package com.roche.ambassador.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.roche.ambassador.model.feature.Features
@@ -90,6 +91,7 @@ interface Score : Specification, Explainable {
 }
 
 @JsonPropertyOrder("name", "value")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 internal data class CompositeScore(
     val name: String,
     val value: Double,
@@ -100,6 +102,7 @@ internal data class CompositeScore(
 }
 
 @JsonPropertyOrder("name", "value")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 internal data class FinalScore(
     val name: String,
     val value: Double,
@@ -114,6 +117,7 @@ internal data class FinalScore(
     override fun value(): Double = value
 }
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 abstract class AbstractScore(
     private val name: String,
     @JsonIgnore

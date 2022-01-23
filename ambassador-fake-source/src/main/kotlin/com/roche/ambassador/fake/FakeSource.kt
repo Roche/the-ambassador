@@ -126,7 +126,7 @@ class FakeSource(val spec: GenerationSpec) : ProjectSource, GroupSource {
         return (0..fakeDataProvider.nextInt(max = 3))
             .map { fakeDataProvider.branch() }
             .toSet()
-            .map { ProtectedBranch(it, fakeDataProvider.bool(), fakeDataProvider.bool()) }
+            .map { ProtectedBranch(it, fakeDataProvider.bool(), fakeDataProvider.bool(), fakeDataProvider.bool(), fakeDataProvider.bool(), fakeDataProvider.bool(), fakeDataProvider.bool()) }
             .toList()
     }
 

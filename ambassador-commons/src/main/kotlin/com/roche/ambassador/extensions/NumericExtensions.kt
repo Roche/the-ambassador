@@ -8,6 +8,8 @@ fun Double.round(decimals: Int): Double {
     return (this * multiplier).roundToInt() / multiplier
 }
 
+fun Double.roundToHalf(): Double = kotlin.math.round(this * 2) / 2.0
+
 fun Double.asPercentage(decimals: Int = 0): Double {
     val x100 = this * 100
     return x100.round(decimals)

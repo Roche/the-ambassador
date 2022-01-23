@@ -121,6 +121,12 @@ fun StringJoiner.addIfNotNullOrEmpty(newElement: CharSequence?): StringJoiner {
     return this
 }
 
+fun StringBuilder.appendPoint(str: String) {
+    append("  - ")
+    append(str)
+    append("\n")
+}
+
 private fun toDelimiterSet(delimiters: CharArray): Set<Int> {
     val delimiterHashSet: MutableSet<Int> = HashSet()
     delimiterHashSet.add(Character.codePointAt(charArrayOf(' '), 0))

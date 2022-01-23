@@ -208,15 +208,14 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
 
     override suspend fun readProtectedBranches(projectId: String): List<ProtectedBranch> {
         log.info("Reading project {} protected branches setup", projectId)
-        val data = gitlab.projects().withId(projectId.toLong()).protectedBranches().stream()
-            .map { ProtectedBranch(it.name, checkHasNoAccess(it.mergeAccessLevels), checkHasNoAccess(it.pushAccessLevels)) }
+        val data = gitlab.projects()
+            .withId(projectId.toLong())
+            .protectedBranches()
+            .stream()
+            .map { GitLabMapper.from(it) }
             .toList()
         log.info("Finished reading project {} protected branches", projectId)
         return data
-    }
-
-    private fun checkHasNoAccess(accessLevels: List<BranchingAccessLevel>): Boolean {
-        return accessLevels.none { it.accessLevel == NONE }
     }
 
     override suspend fun readMembers(projectId: String): List<Member> {
