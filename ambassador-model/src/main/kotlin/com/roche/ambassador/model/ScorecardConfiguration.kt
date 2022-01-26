@@ -1,10 +1,12 @@
 package com.roche.ambassador.model
 
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.quality.CheckMetadata
 import com.roche.ambassador.model.score.quality.checks.Check
 import com.roche.ambassador.model.score.quality.checks.ChecksRegistry
 
 data class ScorecardConfiguration(
+    val requireVisibility: List<Visibility>,
     val activity: ActivityPolicyConfiguration = ActivityPolicyConfiguration(),
     val criticality: CriticalityPolicyConfiguration = CriticalityPolicyConfiguration(),
     val quality: QualityPolicyConfiguration
@@ -36,4 +38,7 @@ data class ScorecardConfiguration(
 
     data class CriticalityPolicyConfiguration(val enabled: Boolean = true)
 
+    fun shouldCalculateScoring(project: Project): Boolean {
+        return project.visibility in requireVisibility
+    }
 }

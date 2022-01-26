@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @Order(5)
-internal class CalculateScoringStep(scorecardConfiguration: ScorecardConfiguration) : IndexingStep {
+internal class CalculateScoringStep(private val scorecardConfiguration: ScorecardConfiguration) : IndexingStep {
 
     companion object {
         private val log by LoggerDelegate()
@@ -18,9 +18,12 @@ internal class CalculateScoringStep(scorecardConfiguration: ScorecardConfigurati
     private val calculator: ScorecardCalculator = ScorecardCalculator(scorecardConfiguration)
 
     override suspend fun handle(context: IndexingContext) {
-
-        log.debug("Calculating scoring for project '{}' (id={})", context.project.name, context.project.id)
-        val scorecard = calculator.calculateFor(context.project)
-        context.project.scorecard = scorecard
+        if (scorecardConfiguration.shouldCalculateScoring(context.project)) {
+            log.debug("Calculating scoring for project '{}' (id={})", context.project.name, context.project.id)
+            val scorecard = calculator.calculateFor(context.project)
+            context.project.scorecard = scorecard
+        } else {
+            log.debug("Scoring will not be calculated for project '{}' (id={})", context.project.name, context.project.id)
+        }
     }
 }

@@ -1,5 +1,8 @@
 ambassador:
   scorecard:
+    requireVisibility:
+      - public
+      - internal
     quality:
       enabled: true
       experimental: true
