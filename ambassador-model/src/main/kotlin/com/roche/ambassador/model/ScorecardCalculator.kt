@@ -1,5 +1,6 @@
 package com.roche.ambassador.model
 
+import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.ActivityScorePolicy
 import com.roche.ambassador.model.score.CriticalityScorePolicy
@@ -40,6 +41,6 @@ class ScorecardCalculator(configuration: ScorecardConfiguration) {
             .filterNot { it.isExperimental() }
             .map { it.value() }
             .reduce { one, two -> one * two }
-        return Scorecard.of(project, score, scores)
+        return Scorecard.of(project, score.round(2), scores)
     }
 }
