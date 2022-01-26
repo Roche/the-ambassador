@@ -6,6 +6,7 @@ import com.roche.ambassador.storage.project.ProjectEntity
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 @Component
@@ -16,7 +17,7 @@ internal class SaveProjectStep(private val projectEntityRepository: ProjectEntit
         private val log by LoggerDelegate()
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     override suspend fun handle(context: IndexingContext) {
         val currentEntity = context.entity
         val toSave: ProjectEntity = if (currentEntity != null) {

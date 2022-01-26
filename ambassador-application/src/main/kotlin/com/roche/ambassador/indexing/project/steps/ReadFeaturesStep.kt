@@ -20,15 +20,19 @@ internal class ReadFeaturesStep : IndexingStep {
     override suspend fun handle(context: IndexingContext) {
         val entity = context.entity
         val currentProject = context.project
+        if (context.project.visibility !in context.config.features.requireVisibility) {
+            log.info("Features will not be read for project '{}' (id={}), because it is disabled for project's visibility", context.project.fullName, context.project.id)
+            return
+        }
         if (entity != null && !entity.wasIndexedBefore(currentProject.lastActivityDate!!)) {
             log.info(
                 "Project '{}' (id={}) did not change since last indexing, re-using existing features",
-                context.project.name, context.project.id
+                context.project.fullName, context.project.id
             )
             context.project.features.addAll(entity.project.features)
             readFeatures(FeatureReaders.getProjectBasedReaders(), context)
         } else {
-            log.debug("Reading features for project '{}' (id={})", context.project.name, context.project.id)
+            log.debug("Reading features for project '{}' (id={})", context.project.fullName, context.project.id)
             readFeatures(FeatureReaders.all(), context)
         }
     }

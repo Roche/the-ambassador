@@ -30,7 +30,7 @@ class ProjectIndexer internal constructor(
     private val projectToIndexCount = AtomicInteger(0)
     private val finished = AtomicBoolean(false)
     private val sourceFinishedProducing = AtomicBoolean(false)
-    private val chain = IndexingChain(steps, source, consumerScope)
+    private val chain = IndexingChain(steps, source, consumerScope, indexerProperties)
 
     companion object {
         private val log by LoggerDelegate()

@@ -1,5 +1,6 @@
 package com.roche.ambassador.indexing.project
 
+import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.indexing.project.steps.IndexingStep
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.source.ProjectSource
@@ -13,4 +14,5 @@ data class IndexingContext(
     val coroutineScope: CoroutineScope,
     val currentStep: KClass<out IndexingStep>,
     var entity: ProjectEntity? = null,
+    val config: IndexerProperties
 )

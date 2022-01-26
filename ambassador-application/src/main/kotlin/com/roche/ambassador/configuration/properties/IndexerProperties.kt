@@ -29,7 +29,11 @@ data class IndexerProperties(
 
     @NestedConfigurationProperty
     @Valid
-    val criteria: IndexingCriteriaProperties = IndexingCriteriaProperties()
+    val criteria: IndexingCriteriaProperties = IndexingCriteriaProperties(),
+
+    @NestedConfigurationProperty
+    @Valid
+    val features: FeaturesReadingProperties = FeaturesReadingProperties()
 
 )
 

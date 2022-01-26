@@ -54,6 +54,10 @@ ambassador:
   security:
     enabled: true
   indexer:
+    features:
+      requireVisibility:
+        - public
+        - internal
     concurrency:
       producerThreadPrefix: indxr-
       consumerThreadPrefix: prj-indxr-
