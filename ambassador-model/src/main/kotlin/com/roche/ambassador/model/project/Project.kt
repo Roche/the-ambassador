@@ -21,7 +21,7 @@ data class Project(
     val name: String,
     val fullName: String,
     val description: String?,
-    val tags: List<String>,
+    val topics: List<String>,
     val visibility: Visibility,
     val defaultBranch: String?,
     val archived: Boolean,

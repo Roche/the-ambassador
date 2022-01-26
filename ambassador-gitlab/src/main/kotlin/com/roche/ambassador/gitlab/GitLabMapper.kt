@@ -87,7 +87,7 @@ internal object GitLabMapper {
             description = gitlabProject.description,
             visibility = visibility,
             stats = stats,
-            tags = Optional.ofNullable(gitlabProject.tagList).orElseGet { listOf() },
+            topics = Optional.ofNullable(gitlabProject.tagList).orElseGet { listOf() },
             createdDate = gitlabProject.createdAt!!.toLocalDate(),
             lastActivityDate = gitlabProject.lastActivityAt!!.toLocalDate(),
             defaultBranch = gitlabProject.defaultBranch,

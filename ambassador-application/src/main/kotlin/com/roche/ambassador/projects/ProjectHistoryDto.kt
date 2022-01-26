@@ -26,7 +26,7 @@ data class ProjectHistoryDto(
             val project = projectHistoryEntity.project
             return ProjectHistoryDto(
                 project.url, project.name,
-                project.description, project.tags, project.visibility,
+                project.description, project.topics, project.visibility,
                 project.lastActivityDate, project.getMainLanguage(),
                 project.getScores().criticality, project.getScores().activity,
                 project.stats.stars ?: 0, project.getScores().total, projectHistoryEntity.indexedDate

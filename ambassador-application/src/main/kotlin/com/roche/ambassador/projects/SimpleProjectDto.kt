@@ -31,7 +31,7 @@ data class SimpleProjectDto(
                 avatarUrl = project.avatarUrl,
                 name = project.name,
                 description = project.description,
-                tags = project.tags,
+                tags = project.topics,
                 visibility = project.visibility,
                 createdDate = project.createdDate,
                 lastUpdatedDate = project.lastActivityDate,
