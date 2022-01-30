@@ -7,5 +7,5 @@ ALTER TABLE project
         GENERATED ALWAYS AS (
                 setweight(to_tsvector('${language}', coalesce(name, '')), 'A') ||
                 setweight(to_tsvector('${language}', coalesce(project->>'description', '')), 'B') ||
-                setweight(to_tsvector('${language}', coalesce(project->>'tags', '')), 'C')
+                setweight(to_tsvector('${language}', coalesce(project->>'topics', '')), 'C')
             ) STORED;

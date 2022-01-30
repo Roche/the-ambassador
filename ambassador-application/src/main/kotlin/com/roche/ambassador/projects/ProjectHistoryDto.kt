@@ -11,7 +11,7 @@ data class ProjectHistoryDto(
     val url: String?,
     val name: String,
     val description: String?,
-    val tags: List<String>?,
+    val topics: List<String>?,
     val visibility: Visibility,
     val lastUpdatedDate: LocalDate?,
     val mainLanguage: String?,

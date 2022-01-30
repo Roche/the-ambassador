@@ -5,14 +5,14 @@ import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.project.Project
 import java.time.LocalDate
 
-@JsonPropertyOrder("id", "name", "description", "url", "tags", "score")
+@JsonPropertyOrder("id", "name", "description", "url", "topics", "score")
 data class SimpleProjectDto(
     val id: Long,
     val url: String,
     val avatarUrl: String?,
     val name: String,
     val description: String?,
-    val tags: List<String>?,
+    val topics: List<String>?,
     val visibility: Visibility,
     val createdDate: LocalDate?,
     val lastUpdatedDate: LocalDate?,
@@ -31,7 +31,7 @@ data class SimpleProjectDto(
                 avatarUrl = project.avatarUrl,
                 name = project.name,
                 description = project.description,
-                tags = project.topics,
+                topics = project.topics,
                 visibility = project.visibility,
                 createdDate = project.createdDate,
                 lastUpdatedDate = project.lastActivityDate,

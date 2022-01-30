@@ -100,9 +100,9 @@ class GitignoreFeature(value: RawFile?) : FileFeature<RawFile>(value) {
     }
 }
 
-class TagsFeature(value: List<String>?) : NotIndexableFeature<List<String>>(value) {
-    companion object : FeatureReaderFactory<TagsFeature> {
-        override fun create(): FeatureReader<TagsFeature> = FeatureReader.createForProject { TagsFeature(it.topics) }
+class TopicsFeature(value: List<String>?) : NotIndexableFeature<List<String>>(value) {
+    companion object : FeatureReaderFactory<TopicsFeature> {
+        override fun create(): FeatureReader<TopicsFeature> = FeatureReader.createForProject { TopicsFeature(it.topics) }
     }
 }
 

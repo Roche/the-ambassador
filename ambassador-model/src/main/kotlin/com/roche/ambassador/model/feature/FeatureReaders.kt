@@ -9,7 +9,7 @@ object FeatureReaders {
         ForksFeature.create(),
         LanguagesFeature.create(),
         ContributorsFeature.create(),
-        TagsFeature.create(),
+        TopicsFeature.create(),
         VisibilityFeature.create(),
         CommitsFeature.create(),
         ReleasesFeature.create(),

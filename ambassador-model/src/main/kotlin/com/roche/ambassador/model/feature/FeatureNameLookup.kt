@@ -22,7 +22,7 @@ object FeatureNameLookup {
             "ciDefinition" to CiDefinitionFeature::class,
             "changelog" to ChangelogFeature::class,
             "gitignore" to GitignoreFeature::class,
-            "tags" to TagsFeature::class,
+            "topics" to TopicsFeature::class,
             "visibility" to VisibilityFeature::class,
             "createdDate" to CreatedDateFeature::class,
             "lastActivityDate" to LastActivityDateFeature::class,

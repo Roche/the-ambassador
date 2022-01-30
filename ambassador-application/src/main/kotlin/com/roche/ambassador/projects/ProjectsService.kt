@@ -46,7 +46,7 @@ open class ProjectsService(
             query.query,
             query.visibility.orElse(Visibility.INTERNAL),
             query.language.orElse(null),
-            query.tags
+            query.topics
         )
         val result = projectSearchRepository.search(q, pageable)
             .map { SimpleProjectDto.from(it.project) }

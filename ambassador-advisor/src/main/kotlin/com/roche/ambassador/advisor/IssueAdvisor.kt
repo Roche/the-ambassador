@@ -32,7 +32,7 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
                 has { description.isNullOrBlank() } then "description.missing"
                 has { description!!.length < 30 } then "description.short"
             }
-            has { topics.isEmpty() } then "tags.empty"
+            has { topics.isEmpty() } then "topics.empty"
             hasNot { permissions?.canEveryoneFork ?: false } then "forking.disabled"
             hasNot { permissions?.canEveryoneCreatePullRequest ?: false } then "pullrequest.disabled"
             // @formatter:on
