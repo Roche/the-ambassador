@@ -31,3 +31,5 @@ data class Paged<T>(val data: List<T>, val pageInfo: PageInfo) {
         }
     }
 }
+
+fun <T> Page<T>.toPaged() = Paged.from(this)

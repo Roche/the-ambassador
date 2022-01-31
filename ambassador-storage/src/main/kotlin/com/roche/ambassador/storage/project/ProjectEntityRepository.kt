@@ -1,5 +1,6 @@
 package com.roche.ambassador.storage.project
 
+import com.roche.ambassador.storage.Lookup
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -32,6 +33,18 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
         nativeQuery = true
     )
     fun getProjectsAggregatedByGroup(): List<ProjectGroupProjection>
+
+    @Query(
+        value = """
+            SELECT topics as name, COUNT(*) AS count
+            FROM project,
+                 jsonb_array_elements_text(project.project -> 'topics') AS topics
+            WHERE length(topics) > 0
+            GROUP BY topics;
+            """,
+        nativeQuery = true
+    )
+    fun findAllTopics(): List<Lookup>
 
     @Query(
         value = """
