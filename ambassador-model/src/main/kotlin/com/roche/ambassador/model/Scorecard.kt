@@ -1,7 +1,6 @@
 package com.roche.ambassador.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.roche.ambassador.model.project.Project
 
@@ -9,7 +8,7 @@ import com.roche.ambassador.model.project.Project
 data class Scorecard(
     val value: Double = 0.0,
     val subScores: Set<Score> = setOf()
-) : AbstractScore("Scorecard", setOf(), subScores) {
+) : AbstractScore("Scorecard", setOf(), subScores, false, Explanation.empty()) {
 
     @JsonIgnore
     var project: Project? = null
@@ -17,6 +16,7 @@ data class Scorecard(
     @JsonIgnore
     fun project() = project
 
+    @JsonIgnore
     fun isCalculated() = subScores.isNotEmpty() || value > 0.0
 
     override fun value(): Double = value
@@ -25,11 +25,6 @@ data class Scorecard(
     override fun features(): Set<Feature<Any>> = setOf()
 
     override fun subScores(): Set<Score> = subScores
-
-    @JsonProperty("explanation")
-    override fun explain(): Explanation {
-        return Explanation.no("None")
-    }
 
     companion object {
         fun notCalculated(project: Project): Scorecard = of(project, 0.0, setOf())

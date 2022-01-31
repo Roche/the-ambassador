@@ -1,6 +1,6 @@
 package com.roche.ambassador.model
 
-interface Feature<T> : Specification, Explainable, Weighted {
+interface Feature<T> : Specification, Weighted {
 
     fun importance(): Importance
     fun value(): Value<T>

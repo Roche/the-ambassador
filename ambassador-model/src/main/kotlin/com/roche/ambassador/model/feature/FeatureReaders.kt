@@ -5,6 +5,7 @@ import com.roche.ambassador.model.FeatureReader
 object FeatureReaders {
 
     private val readers: List<FeatureReader<*>> = listOf(
+        DefaultBranchFeature.create(),
         StarsFeature.create(),
         ForksFeature.create(),
         LanguagesFeature.create(),

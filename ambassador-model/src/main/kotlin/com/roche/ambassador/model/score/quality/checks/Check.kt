@@ -1,6 +1,6 @@
 package com.roche.ambassador.model.score.quality.checks
 
-import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.score.quality.PartialCheckResult
 
 interface Check {
@@ -12,6 +12,6 @@ interface Check {
     }
 
     fun name(): String
-    fun check(project: Project): PartialCheckResult
+    fun check(features: Features): PartialCheckResult
 
 }

@@ -1,9 +1,10 @@
 package com.roche.ambassador.model.score.quality.checks
 
-import com.roche.ambassador.extensions.appendPoint
 import com.roche.ambassador.extensions.round
+import com.roche.ambassador.model.Explanation
+import com.roche.ambassador.model.feature.DefaultBranchFeature
+import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.ProtectedBranchesFeature
-import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProtectedBranch
 import com.roche.ambassador.model.score.quality.PartialCheckResult
 
@@ -14,68 +15,83 @@ internal object BranchProtectionCheck : Check {
 
     override fun name(): String = Check.BRANCH_PROTECTION
 
-    override fun check(project: Project): PartialCheckResult {
-        return project.features.find(ProtectedBranchesFeature::class)
+    override fun check(features: Features): PartialCheckResult {
+        val defaultBranchOptional = features.find(DefaultBranchFeature::class)
+            .filter { it.exists() }
+        if (defaultBranchOptional.isEmpty) {
+            return PartialCheckResult.empty(name())
+        }
+        val defaultBranch = defaultBranchOptional.get().value().get()
+        return features.find(ProtectedBranchesFeature::class)
             .filter { it.value().exists() }
             .map { it.value().get() }
             .filter { it.isNotEmpty() }
-            .map { check(it, project.defaultBranch) }
-            .orElseGet { PartialCheckResult.noResult(name(), "") }
+            .map { check(it, defaultBranch) }
+            .orElseGet { PartialCheckResult.empty(name()) }
     }
 
-    private fun check(branches: List<ProtectedBranch>, defaultBranch: String?): PartialCheckResult {
-        val branchesToVerify = mutableMapOf("release" to EXPECTED_RELEASE_BRANCH)
-        if (defaultBranch != null) {
-            branchesToVerify[DEVELOP_BRANCH_NAME] = defaultBranch
-        }
+    private fun check(branches: List<ProtectedBranch>, defaultBranch: String): PartialCheckResult {
+        val branchesToVerify = mapOf(
+            "release" to EXPECTED_RELEASE_BRANCH,
+            DEVELOP_BRANCH_NAME to defaultBranch
+        )
         val expected = branches.getExpected(branchesToVerify)
         val missing = branchesToVerify.keys - expected.map { it.key }.toSet()
-        val reasonBuilder = StringBuilder()
+        val explanationBuilder = Explanation.Builder()
+            .description("Branch protection configuration")
         missing.forEach {
-            reasonBuilder.appendLine("$it branch is missing branch protection")
+            explanationBuilder.addDetails("$it branch is missing branch protection")
         }
         val rated = expected
-            .map { it.key to rateBranch(it.value, reasonBuilder) }
-            .map { it.first to it.second.second }
-        val reason = rated.map { it.first }.joinToString("\n")
-        val total = rated.sumOf { it.second }
+            .map { rateBranch(it.value, explanationBuilder) }
+        val total = rated.sumOf { it }
         val finalValue = total.toDouble() / branchesToVerify.size
-        return PartialCheckResult.certain(name(), finalValue.round(0), reason)
+        return PartialCheckResult.builder(name())
+            .certain()
+            .score(finalValue.round(0))
+            .explanation(explanationBuilder)
+            .build()
     }
 
-    private fun rateBranch(protections: List<ProtectedBranch>, reason: StringBuilder): Pair<String, Int> {
+    private fun rateBranch(protections: List<ProtectedBranch>, explanationBuilder: Explanation.Builder): Int {
         val first = protections[0]
-        reason.appendLine("Branch: " + first.name)
-        if (first.canForcePush) {
-            reason.appendPoint("force push is enabled, thus history rewrite is possible")
-        }
-        if (!first.canSomeoneMerge) {
-            reason.appendPoint("no user can merge code into this branch")
-        }
-        if (first.canDeveloperPush) {
-            reason.appendPoint("developers should not be allowed to push without merge request")
-        }
-        if (!first.canDeveloperMerge) {
-            reason.appendPoint("developers should be allowed to merge code into this branch")
-        }
-        if (!first.codeReviewRequired) {
-            reason.appendPoint("code review should be required")
-        }
-        if (first.canAdminPush) {
-            reason.appendPoint("admins should not be allowed to push without code review")
-        }
-
         val tier1 = !first.canForcePush && first.canSomeoneMerge
         val tier2 = tier1 && first.canDeveloperMerge && !first.canDeveloperPush
         val tier3 = tier2 && first.codeReviewRequired
         val tier4 = tier3 && !first.canAdminPush
-        return Pair(reason.toString(), when {
+        val score = when {
             tier4 -> 10
             tier3 -> 9
             tier2 -> 6
             tier1 -> 3
             else -> 0
-        })
+        }
+        if (!tier4) {
+            explanationBuilder.addChild {
+                it.maxValue(10.0.round(0))
+                    .value(score.toDouble().round(0))
+                    .description("Branch ${first.name} is misconfigured")
+                if (first.canForcePush) {
+                    it.addDetails("force push is enabled, thus history rewrite is possible")
+                }
+                if (!first.canSomeoneMerge) {
+                    it.addDetails("no user can merge code into this branch")
+                }
+                if (first.canDeveloperPush) {
+                    it.addDetails("developers should not be allowed to push without merge request")
+                }
+                if (!first.canDeveloperMerge) {
+                    it.addDetails("developers should be allowed to merge code into this branch")
+                }
+                if (!first.codeReviewRequired) {
+                    it.addDetails("code review should be required")
+                }
+                if (first.canAdminPush) {
+                    it.addDetails("admins should not be allowed to push without code review")
+                }
+            }
+        }
+        return score
     }
 
     private fun List<ProtectedBranch>.getExpected(expectedBranches: Map<String, String>): Map<String, List<ProtectedBranch>> {

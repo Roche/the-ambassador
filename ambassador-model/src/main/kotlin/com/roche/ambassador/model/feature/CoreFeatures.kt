@@ -43,7 +43,7 @@ class LanguagesFeature(value: Map<String, Float>?) : AbstractFeature<Map<String,
 
 class StarsFeature(value: Int?) : NotIndexableFeature<Int>(value) {
     companion object : FeatureReaderFactory<StarsFeature> {
-        override fun create(): FeatureReader<StarsFeature> = FeatureReader.createForProject { StarsFeature(it.stats.forks) }
+        override fun create(): FeatureReader<StarsFeature> = FeatureReader.createForProject { StarsFeature(it.stats.stars) }
     }
 }
 
@@ -126,6 +126,12 @@ class LastActivityDateFeature(value: LocalDate?) : DateFeature(value) {
     }
 
     override fun isIndexable(): Boolean = false
+}
+
+class DefaultBranchFeature(value: String?) : NotIndexableFeature<String>(value) {
+    companion object : FeatureReaderFactory<DefaultBranchFeature> {
+        override fun create(): FeatureReader<DefaultBranchFeature> = FeatureReader.createForProject { DefaultBranchFeature(it.defaultBranch) }
+    }
 }
 
 class DescriptionFeature(value: String?) : NotIndexableFeature<String>(value) {

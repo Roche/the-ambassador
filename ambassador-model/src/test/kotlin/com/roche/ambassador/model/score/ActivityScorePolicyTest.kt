@@ -50,7 +50,7 @@ class ActivityScorePolicyTest {
         val result = SimpleActivityScoreCalculator.calculate(data)
 
         // then result is based on manual calculation based on algorithm defined above
-        assertThat(result).isEqualTo(1511.0)
+        assertThat(result).isEqualTo(1509.0)
 
         // when calculate activity score using policy
         val activity = ActivityScorePolicy.calculateScoreOf(data.toFeatures())

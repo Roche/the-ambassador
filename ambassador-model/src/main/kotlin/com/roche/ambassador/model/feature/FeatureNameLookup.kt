@@ -33,7 +33,8 @@ object FeatureNameLookup {
             "members" to MembersFeature::class,
             "pullRequests" to PullRequestsFeature::class,
             "issuesComments" to CommentsFeature::class,
-            "ci" to CiExecutionsFeature::class
+            "ci" to CiExecutionsFeature::class,
+            "defaultBranch" to DefaultBranchFeature::class,
         )
     )
 

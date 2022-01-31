@@ -1,5 +1,6 @@
 package com.roche.ambassador.model.score
 
+import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.Feature
 import com.roche.ambassador.model.Score
@@ -21,6 +22,7 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     protected val expectedFeatures: MutableSet<KClass<*>> = mutableSetOf()
     protected val subScores: MutableSet<Score> = mutableSetOf()
     protected val explanations: MutableList<Explanation> = mutableListOf()
+    protected val reasons: MutableList<String> = mutableListOf()
     protected var score: Double = initialScore
     protected val normalizers = mutableListOf<ScoreNormalizer>()
 
@@ -29,6 +31,21 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
         expectedFeatures.add(featureType)
         val feature = features.find(featureType)
         return FeatureScoreBuilder(feature.orElse(null), this as SELF)
+    }
+
+    fun addExplanations(vararg reasons: Explanation): SELF {
+        this.explanations += reasons
+        return this as SELF
+    }
+
+    fun addReasons(vararg reasons: String): SELF {
+        this.reasons += reasons
+        return this as SELF
+    }
+
+    fun addExplanations(reasons: List<Explanation>): SELF {
+        this.explanations += reasons
+        return this as SELF
     }
 
     fun addNormalizer(normalizer: ScoreNormalizer): SELF {
@@ -40,7 +57,12 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
         normalizers.forEach {
             score = it.invoke(score)
         }
-        return Score.final(name, score, usedFeatures, subScores, experimental)
+        val explanation = if (explanations.isNotEmpty() || reasons.isNotEmpty()) {
+            Explanation(children = explanations, details = reasons)
+        } else {
+            null
+        }
+        return Score.final(name, score, usedFeatures, subScores, experimental, explanation)
     }
 
     fun withSubScore(name: String, initialScore: Double = 0.0, experimental: Boolean = false): SubScoreBuilder {
@@ -63,14 +85,69 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
             return this
         }
 
-        fun calculate(calculator: (V, Double) -> Double): U {
+        fun sum(partialCalculator: (V) -> Double, explainer: Explainer<V>? = null): U {
+            apply(partialCalculator, { partial, agg -> agg + partial}, explainer)
+            return scoreBuilder
+        }
+
+        fun multiply(partialCalculator: (V) -> Double, explainer: Explainer<V>? = null): U {
+            apply(partialCalculator, { partial, agg -> agg * partial}, explainer)
+            return scoreBuilder
+        }
+
+        fun sum(partialCalculator: (V) -> Double): U {
+            return sum(partialCalculator, null)
+        }
+
+        fun multiply(partialCalculator: (V) -> Double): U {
+            return multiply(partialCalculator, null)
+        }
+
+        private fun apply(
+            part: Double?,
+            aggregator: (Double, Double) -> Double,
+            explainer: Explainer<V>? = null
+        ) {
+            if (part != null) {
+                val aggregated = aggregator(part, scoreBuilder.score)
+                scoreBuilder.usedFeatures.add(feature!!)
+                scoreBuilder.score = aggregated
+                if (explainer != null) {
+                    scoreBuilder.addReasons(explainer(feature.value().get(), part.round(2)))
+                }
+            }
+        }
+
+        private fun apply(
+            partialCalculator: (V) -> Double,
+            aggregator: (Double, Double) -> Double,
+            explainer: Explainer<V>? = null
+        ) {
+            val part = calcPartial(partialCalculator)
+            return apply(part, aggregator, explainer)
+        }
+
+        private fun calcPartial(partialCalculator: (V) -> Double): Double? {
+            return if (feature != null && feature.exists() && filters.stream().allMatch { it.test(feature.value().get()) }) {
+                partialCalculator(feature.value().get())
+            } else {
+                null
+            }
+        }
+
+        fun calculate(calculator: (V, Double) -> Double,
+                      explainer: Explainer<V>? = null): U {
             if (feature != null && feature.exists() && filters.stream().allMatch { it.test(feature.value().get()) }) {
-                scoreBuilder.usedFeatures.add(feature)
                 val partialScore = calculator(feature.value().get(), scoreBuilder.score)
-                scoreBuilder.score = partialScore
+                apply(partialScore, { _, _ -> partialScore }, explainer)
             }
             return scoreBuilder
         }
+
+        fun calculate(calculator: (V, Double) -> Double): U {
+            return calculate(calculator, null)
+        }
+
     }
 
     class ParentScoreBuilder internal constructor(
@@ -88,6 +165,13 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
         experimental: Boolean,
     ) : ScoreBuilder<SubScoreBuilder>(name, features, initialScore, experimental) {
 
+        private var reasonProvider: ((Double, Double) -> String)? = null
+
+        fun withReason(reasonProvider: (Double, Double) -> String): SubScoreBuilder {
+            this.reasonProvider = reasonProvider
+            return this
+        }
+
         fun reduce(reducer: (Double, Double) -> Double): ScoreBuilder<*> {
             val reduced = if (this.score.isNaN() || this.score.isInfinite()) {
                 scoreBuilder.score
@@ -97,6 +181,10 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
                 reducer.invoke(scoreBuilder.score, this.score)
             }
             scoreBuilder.score = reduced
+            if (reasonProvider != null) {
+                val reason = reasonProvider!!.invoke(this.score, reduced.round(2))
+                scoreBuilder.addReasons(reason)
+            }
             return scoreBuilder
         }
     }
@@ -106,7 +194,17 @@ fun <V : File, T : FileFeature<V>> ScoreBuilder.FeatureScoreBuilder<V, T, ScoreB
     minimumSize: Long,
     boost: Int
 ): ScoreBuilder.ParentScoreBuilder {
+    return forFile(minimumSize, boost, null)
+}
+
+fun <V : File, T : FileFeature<V>> ScoreBuilder.FeatureScoreBuilder<V, T, ScoreBuilder.ParentScoreBuilder>.forFile(
+    minimumSize: Long,
+    boost: Int,
+    explainer: Explainer<V>?
+): ScoreBuilder.ParentScoreBuilder {
     return this
         .filter { it.hasSizeAtLeast(minimumSize) }
-        .calculate { _, score -> score + boost }
+        .sum({ boost.toDouble() }, explainer)
 }
+
+typealias Explainer<V> = (V, Double) -> String

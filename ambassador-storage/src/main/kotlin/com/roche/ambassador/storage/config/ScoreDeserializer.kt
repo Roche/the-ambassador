@@ -4,22 +4,23 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.Score
 import java.util.*
 
 internal object ScoreDeserializer : StdDeserializer<Score>(Score::class.java) {
-    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Score? {
-        if (p == null) {
-            return null
-        }
-        val tree: JsonNode = p.codec.readTree(p)
+    override fun deserialize(parser: JsonParser, ctxt: DeserializationContext?): Score? {
+        val objectMapper = parser.codec as ObjectMapper
+        val tree: JsonNode = objectMapper.readTree(parser)
         val name = tree.tryGet("name").map { it.asText() }.orElse("__invalid__")
         val score = tree.tryGet("value").map { it.doubleValue() }.orElse(0.0)
-        val features = tree.readNestedValue<Set<String>>("features", p).orElseGet { setOf() }
-        val scores = tree.readNestedValue<Set<Score>>("subScores", p).orElseGet { setOf() }
+        val features = tree.readNestedValue<Set<String>>("features", parser).orElseGet { setOf() }
+        val scores = tree.readNestedValue<Set<Score>>("subScores", parser).orElseGet { setOf() }
         val experimental = tree.tryGet("experimental").map { it.booleanValue() }.orElse(false)
-        return Score.finalWithNames(name, score, setOf(), features, scores, experimental)
+        val explanation = tree.readNestedValue<Explanation>("explanation", parser).orElse(null)
+        return Score.finalWithNames(name, score, setOf(), features, scores, experimental, explanation)
     }
 }
 

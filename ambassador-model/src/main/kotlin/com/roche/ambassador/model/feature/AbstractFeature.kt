@@ -1,11 +1,9 @@
 package com.roche.ambassador.model.feature
 
-import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.Feature
 import com.roche.ambassador.model.Importance
 import com.roche.ambassador.model.Value
 import com.roche.ambassador.model.utils.Range
-import java.lang.IllegalArgumentException
 
 abstract class AbstractFeature<T>(
     value: T?,
@@ -19,14 +17,6 @@ abstract class AbstractFeature<T>(
 
     companion object {
         private val WEIGHT_RANGE = Range.bound(0.0, 1.0)
-    }
-
-    override fun explain(): Explanation {
-        if (!value.exists()) {
-            return Explanation.no(name)
-        }
-        return Explanation.no(name)
-//        return Explanation.single("Feature $name has value $value")
     }
 
     override fun weight(): Double = weight

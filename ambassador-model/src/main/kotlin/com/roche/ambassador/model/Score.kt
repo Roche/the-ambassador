@@ -51,9 +51,11 @@ interface Score : Specification, Explainable {
 
     companion object {
 
-        fun zip(name: String, first: Score, second: Score, zipper: (Double, Double) -> Double): Score {
-            val value = zipper.invoke(first.value(), second.value())
-            return composite(name, value, mutableSetOf(first, second), first.isExperimental() || second.isExperimental())
+        fun zip(name: String, first: Score, second: Score, zipper: (Double, Double, Explanation.Builder) -> Double): Score {
+            val explanationBuilder = Explanation.builder()
+            val value = zipper.invoke(first.value(), second.value(), explanationBuilder)
+            val explanation = explanationBuilder.build()
+            return composite(name, value, mutableSetOf(first, second), first.isExperimental() || second.isExperimental(), explanation)
         }
 
         fun builder(name: String, features: Features, experimental: Boolean = false, initialScore: Double = 0.0): ScoreBuilder.ParentScoreBuilder {
@@ -64,9 +66,10 @@ interface Score : Specification, Explainable {
             name: String,
             value: Double,
             subScores: MutableSet<Score>,
-            experimental: Boolean
+            experimental: Boolean,
+            explanation: Explanation? = null
         ): Score {
-            return CompositeScore(name, value, subScores, experimental)
+            return CompositeScore(name, value, subScores, experimental, explanation)
         }
 
         fun final(
@@ -74,8 +77,9 @@ interface Score : Specification, Explainable {
             value: Double,
             features: Set<Feature<*>>,
             subScores: Set<Score>,
-            experimental: Boolean
-        ): Score = finalWithNames(name, value, features, features.map { it.name() }.toSet(), subScores, experimental)
+            experimental: Boolean,
+            explanation: Explanation? = null
+        ): Score = finalWithNames(name, value, features, features.map { it.name() }.toSet(), subScores, experimental, explanation)
 
         fun finalWithNames(
             name: String,
@@ -83,9 +87,10 @@ interface Score : Specification, Explainable {
             features: Set<Feature<*>>,
             featureNames: Set<String>,
             subScores: Set<Score>,
-            experimental: Boolean
+            experimental: Boolean,
+            explanation: Explanation? = null
         ): Score {
-            return FinalScore(name, value, features.toSet(), featureNames, subScores, experimental)
+            return FinalScore(name, value, features.toSet(), featureNames, subScores, experimental, explanation)
         }
     }
 }
@@ -96,8 +101,9 @@ internal data class CompositeScore(
     val name: String,
     val value: Double,
     val subScores: MutableSet<Score>,
-    val experimental: Boolean = false
-) : AbstractScore(name, setOf(), subScores, experimental) {
+    val experimental: Boolean = false,
+    val explanation: Explanation? = null
+) : AbstractScore(name, setOf(), subScores, experimental, explanation) {
     override fun value(): Double = value
 }
 
@@ -112,7 +118,8 @@ internal data class FinalScore(
     val featureNames: Set<String>,
     val subScores: Set<Score>,
     val experimental: Boolean = false,
-) : AbstractScore(name, features, subScores, experimental) {
+    val explanation: Explanation? = null
+) : AbstractScore(name, features, subScores, experimental, explanation) {
 
     override fun value(): Double = value
 }
@@ -121,9 +128,10 @@ internal data class FinalScore(
 abstract class AbstractScore(
     private val name: String,
     @JsonIgnore
-    private val features: Set<Feature<*>> = mutableSetOf(),
-    private val subScores: Set<Score> = mutableSetOf(),
-    private val experimental: Boolean = false
+    private val features: Set<Feature<*>> = setOf(),
+    private val subScores: Set<Score> = setOf(),
+    private val experimental: Boolean = false,
+    private val explanation: Explanation ? = null
 ) : Score {
 
     @JsonIgnore
@@ -132,6 +140,8 @@ abstract class AbstractScore(
     override fun subScores() = subScores
 
     override fun name() = name
+
+    override fun explain(): Explanation = explanation ?: Explanation.empty()
 
     override fun isExperimental(): Boolean = experimental
 
@@ -143,10 +153,5 @@ abstract class AbstractScore(
         return getSubScoreByName(name)
             .map { it.value() }
             .orElseGet { 0.0 }
-    }
-
-    @JsonIgnore
-    override fun explain(): Explanation {
-        TODO("Not yet implemented")
     }
 }
