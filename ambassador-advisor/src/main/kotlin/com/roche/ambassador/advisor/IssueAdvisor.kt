@@ -138,16 +138,20 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
 
         object DryRunIssueGiver : IssueAdviceGiver {
             override suspend fun giveAdvise(context: AdvisorContext, issueAdvice: IssueAdvice) {
-                val sb = StringBuilder("Issue with following messages would be created or updated in project '${issueAdvice.projectName}':\n")
-                issueAdvice.getProblems()
-                    .forEach {
-                        sb += "  - "
-                        sb += it.name
-                        sb += " -> "
-                        sb += it.reason
-                        sb += "\n"
-                    }
-                log.info(sb.toString())
+               if (issueAdvice.getProblems().isEmpty()) {
+                   log.info("No issue advice is available for project '${issueAdvice.projectName}'")
+               } else {
+                   val sb = StringBuilder("Issue with following messages would be created or updated in project '${issueAdvice.projectName}':\n")
+                   issueAdvice.getProblems()
+                       .forEach {
+                           sb += "  - "
+                           sb += it.name
+                           sb += " -> "
+                           sb += it.reason
+                           sb += "\n"
+                       }
+                   log.info(sb.toString())
+               }
             }
 
             private operator fun StringBuilder.plusAssign(str: String) {
