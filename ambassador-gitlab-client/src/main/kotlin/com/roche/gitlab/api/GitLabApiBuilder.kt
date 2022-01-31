@@ -51,6 +51,7 @@ class GitLabApiBuilder internal constructor() {
             Exceptions.ServerErrorException::class.java,
             CallNotPermittedException::class.java
         )
+        .retryOnException { it.message?.lowercase()?.contains("reset by peer") ?: false }
 
     fun url(url: String): GitLabApiBuilder {
         this.url = url
