@@ -29,6 +29,7 @@ tasks.getByName<BootRun>("bootRun") {
 val jacksonVersion: String by extra
 val postgresqlDriverVersion: String by extra
 val testcontainersVersion: String by extra
+val jooqVersion: String by extra
 
 dependencies {
 
@@ -40,8 +41,9 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
+    implementation("org.jooq:jooq:$jooqVersion")
     api("com.vladmihalcea:hibernate-types-52:2.14.0")
-    implementation("org.jooq:jooq-meta-extensions-hibernate:3.15.5") {
+    implementation("org.jooq:jooq-meta-extensions-hibernate:$jooqVersion") {
         exclude("com.h2database", "h2")
     }
     runtimeOnly("org.postgresql:postgresql:$postgresqlDriverVersion")
