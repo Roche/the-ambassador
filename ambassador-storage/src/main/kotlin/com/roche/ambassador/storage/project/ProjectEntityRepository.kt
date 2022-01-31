@@ -48,6 +48,17 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
 
     @Query(
         value = """
+            SELECT languages AS name, COUNT(*) AS count
+            FROM project,
+                 jsonb_object_keys(project -> 'features' -> 'languages') AS languages
+            GROUP BY languages;
+            """,
+        nativeQuery = true
+    )
+    fun findAllLanguages(): List<Lookup>
+
+    @Query(
+        value = """
             SELECT *
             FROM project
             WHERE cast(project->'parent'->>'id' AS bigint) = :id
