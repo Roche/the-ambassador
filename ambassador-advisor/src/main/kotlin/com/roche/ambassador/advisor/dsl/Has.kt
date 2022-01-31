@@ -2,6 +2,7 @@ package com.roche.ambassador.advisor.dsl
 
 import com.roche.ambassador.advisor.AdvisorContext
 import com.roche.ambassador.advisor.model.BuildableAdvice
+import com.roche.ambassador.model.project.Project
 
 class Has<A : BuildableAdvice, T> internal constructor(
     private val predicate: T.() -> Boolean,
@@ -16,8 +17,15 @@ class Has<A : BuildableAdvice, T> internal constructor(
     infix fun or(orPredicate: T.() -> Boolean): Has<A, T> = Has({ predicate(this) || orPredicate(this) }, testValue, adviceBuilder)
 
     infix fun then(adviceKey: String) {
+        thenProvided {
+            AdviceKey(adviceKey)
+        }
+    }
+
+    infix fun thenProvided(keyProvider: Project.() -> AdviceKey) {
         then {
-            val config = it.getAdviceConfig(adviceKey)
+            val key = keyProvider(it.project)
+            val config = it.getAdviceConfig(key)
             adviceBuilder.buildableAdvice.apply(config)
         }
     }

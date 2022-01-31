@@ -1,6 +1,7 @@
 package com.roche.ambassador.advisor
 
 import com.roche.ambassador.advisor.common.AdvisorException
+import com.roche.ambassador.advisor.dsl.AdviceKey
 import com.roche.ambassador.advisor.messages.AdviceMessage
 import com.roche.ambassador.advisor.messages.AdviceMessageLookup
 import com.roche.ambassador.advisor.model.Advice
@@ -38,7 +39,7 @@ class AdvisorContext(
         return advice
     }
 
-    fun getAdviceConfig(key: String): AdviceMessage = adviceMessageLookup.get(key)
+    fun getAdviceConfig(key: AdviceKey): AdviceMessage = adviceMessageLookup.get(key)
 
     fun markGiven(
         advice: Advice<*>,

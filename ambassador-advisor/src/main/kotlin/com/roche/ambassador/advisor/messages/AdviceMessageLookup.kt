@@ -2,9 +2,9 @@ package com.roche.ambassador.advisor.messages
 
 import com.roche.ambassador.advisor.badges.Badge
 import com.roche.ambassador.advisor.badges.BadgeProvider
+import com.roche.ambassador.advisor.dsl.AdviceKey
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.extensions.addIfNotNullOrEmpty
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.MessageSource
 import org.springframework.context.NoSuchMessageException
 import org.springframework.stereotype.Component
@@ -29,7 +29,7 @@ class AdviceMessageLookup(
 
     fun readRaw(key: String): Optional<String> {
         return try {
-            Optional.of(messageSource.getAdviceMessagePart(key))
+            Optional.of(messageSource.getAdviceMessagePart(AdviceKey(key)))
         } catch (e: AdviceMessageNotFoundException) {
             log.warn("Missing advice message under {} key", key)
             Optional.empty()
@@ -43,8 +43,7 @@ class AdviceMessageLookup(
             .map { it.trim() }
     }
 
-    @Cacheable("advice-messages")
-    fun get(key: String): AdviceMessage {
+    fun get(key: AdviceKey): AdviceMessage {
         val name = messageSource.getAdviceMessagePart(key, NAME_KEY)
         val reason = messageSource.getAdviceMessagePart(key, REASON_KEY)
         val details = messageSource.getAdviceMessagePart(key, DETAILS_KEY)
@@ -61,13 +60,14 @@ class AdviceMessageLookup(
         )
     }
 
-    private fun MessageSource.getAdviceMessagePart(vararg parts: String): String {
+    private fun MessageSource.getAdviceMessagePart(adviceKey: AdviceKey, vararg parts: String): String {
         val sj = StringJoiner(".")
         sj.add(KEY_PREFIX)
+        sj.addIfNotNullOrEmpty(adviceKey.key)
         parts.forEach { sj.addIfNotNullOrEmpty(it) }
         val fullKey = sj.toString()
         return try {
-            getMessage(fullKey, null, Locale.getDefault())
+            getMessage(fullKey, adviceKey.params.toTypedArray(), Locale.getDefault())
         } catch (e: NoSuchMessageException) {
             log.warn("Missing advice configuration under {} key", fullKey)
             throw AdviceMessageNotFoundException(fullKey, "Missing advice configuration", e)
