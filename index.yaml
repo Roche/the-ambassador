@@ -143,6 +143,34 @@ entries:
     version: 0.2.0-SNAPSHOT
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2022-01-31T13:02:48.83620209Z"
+    dependencies:
+    - name: indexer
+      repository: ""
+      version: 0.2.0-SNAPSHOT
+    - condition: postgresql.install
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 10.16.2
+    description: A Helm chart for Kubernetes
+    digest: 46e47ca3765a3214730cfbaad568e9c6a815eec1695c0e91d69d9c3abfe461ea
+    home: https://github.com/Roche/the-ambassador
+    keywords:
+    - ambassador
+    - inner-source
+    - open-source
+    maintainers:
+    - email: mateusz.filipowicz@roche.com
+      name: filipowm
+    name: ambassador
+    sources:
+    - https://github.com/Roche/the-ambassador
+    type: application
+    urls:
+    - https://github.com/Roche/the-ambassador/releases/download/ambassador-0.2.0-SNAPSHOT/ambassador-0.2.0-SNAPSHOT.tgz
+    version: 0.2.0-SNAPSHOT
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2022-01-04T12:17:13.773432083Z"
     dependencies:
     - name: indexer
@@ -169,4 +197,4 @@ entries:
     urls:
     - https://github.com/Roche/the-ambassador/releases/download/ambassador-0.1.0/ambassador-0.1.0.tgz
     version: 0.1.0
-generated: "2022-01-10T13:47:47.24690806Z"
+generated: "2022-01-31T13:02:48.836250191Z"
