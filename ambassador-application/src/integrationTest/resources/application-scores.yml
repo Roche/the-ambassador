@@ -1,0 +1,16 @@
+ambassador:
+  scorecard:
+    requireVisibility:
+      - public
+      - internal
+    quality:
+      enabled: true
+      experimental: true
+      checks:
+        branch-protection:
+          enabled: true
+          description: Branch protection <tbd>
+          importance: high
+          attributes:
+            security: 1
+            compliance: 0.5

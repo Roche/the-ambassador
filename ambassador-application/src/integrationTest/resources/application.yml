@@ -15,6 +15,7 @@ spring:
     include:
       - fake-source
       - open-api
+      - scores
 
 ambassador:
   language: english

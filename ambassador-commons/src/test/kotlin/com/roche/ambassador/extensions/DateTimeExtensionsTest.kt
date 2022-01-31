@@ -15,7 +15,7 @@ class DateTimeExtensionsTest {
     }
 
     @ParameterizedTest
-    @ValueSource(longs = [-1, 0, 1, 12, 200])
+    @ValueSource(longs = [0, 1, 12, 200])
     fun `should calculate months until now`(diff: Long) {
         // expect
         assertThat(LocalDate.now().minusMonths(diff).monthsUntilNow()).isEqualTo(diff)
