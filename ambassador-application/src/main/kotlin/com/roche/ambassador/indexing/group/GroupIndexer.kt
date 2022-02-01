@@ -11,23 +11,24 @@ import com.roche.ambassador.model.source.GroupSource
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.ambassador.storage.group.GroupEntity
 import com.roche.ambassador.storage.group.GroupEntityRepository
+import com.roche.ambassador.storage.indexing.IndexingStatus
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import com.roche.ambassador.storage.project.ProjectGroupProjection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
+import java.util.concurrent.atomic.AtomicReference
 
 internal class GroupIndexer(
     private val source: GroupSource,
     private val projectEntityRepository: ProjectEntityRepository,
     private val groupEntityRepository: GroupEntityRepository,
     private val coroutineScope: CoroutineScope,
-    private val indexerProperties: IndexerProperties
+    private val indexerProperties: IndexerProperties,
 ) : Indexer<Group, Long, GroupFilter> {
+
+    private var status: AtomicReference<IndexingStatus> = AtomicReference(IndexingStatus.IN_PROGRESS)
 
     companion object {
         private val log by LoggerDelegate()
@@ -99,7 +100,12 @@ internal class GroupIndexer(
     }
 
     override fun forciblyStop(terminateImmediately: Boolean) {
-        val cause = IndexingForciblyStoppedException("Indexing forcibly stopped on demand")
-        coroutineScope.cancel("Forcibly terminated all indexing in progress", cause)
+        if (coroutineScope.isActive) {
+            status.set(IndexingStatus.CANCELLED)
+            val cause = IndexingForciblyStoppedException("Indexing forcibly stopped on demand")
+            coroutineScope.cancel("Forcibly terminated all indexing in progress", cause)
+        }
     }
+
+    override fun getStatus(): IndexingStatus = status.get()
 }

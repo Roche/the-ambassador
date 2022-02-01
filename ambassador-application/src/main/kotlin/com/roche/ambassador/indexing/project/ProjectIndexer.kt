@@ -9,12 +9,14 @@ import com.roche.ambassador.indexing.project.steps.IndexingStep
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
 import com.roche.ambassador.model.source.ProjectSource
+import com.roche.ambassador.storage.indexing.IndexingStatus
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 
 class ProjectIndexer internal constructor(
     private val source: ProjectSource,
@@ -22,9 +24,10 @@ class ProjectIndexer internal constructor(
     concurrencyProvider: ConcurrencyProvider,
     private val indexerProperties: IndexerProperties,
     private val indexingCriteria: IndexingCriteria,
-    steps: List<IndexingStep>
+    steps: List<IndexingStep>,
 ) : Indexer<Project, Long, ProjectFilter> {
 
+    private val status: AtomicReference<IndexingStatus> = AtomicReference(IndexingStatus.IN_PROGRESS)
     private val producerScope = CoroutineScope(concurrencyProvider.getSourceProjectProducerDispatcher())
     private val consumerScope = CoroutineScope(concurrencyProvider.getIndexingConsumerDispatcher() + SupervisorJob())
     private val projectToIndexCount = AtomicInteger(0)
@@ -74,6 +77,7 @@ class ProjectIndexer internal constructor(
                         tryFinish(onFinished)
                     }
                     .catch {
+                        status.set(IndexingStatus.FAILED)
                         log.error("Failed processing projects", it)
                         sourceFinishedProducing.set(true)
                         onError(it)
@@ -117,6 +121,7 @@ class ProjectIndexer internal constructor(
     }
 
     override fun forciblyStop(terminateImmediately: Boolean) {
+        status.set(IndexingStatus.CANCELLED)
         val cause = IndexingForciblyStoppedException("Indexing forcibly stopped on demand")
         producerScope.cancel("Forcibly cancelled reading from source", cause)
         if (terminateImmediately) {
@@ -146,4 +151,6 @@ class ProjectIndexer internal constructor(
         }
         return shouldBeIndexed
     }
+
+    override fun getStatus(): IndexingStatus = status.get()
 }

@@ -35,18 +35,16 @@ data class Indexing internal constructor(
         this.id = id
     }
 
-    fun finish(stats: IndexingStatistics? = null): Indexing {
-        this.status = IndexingStatus.FINISHED
+    fun finish(status: IndexingStatus, stats: IndexingStatistics? = null): Indexing {
+        this.status = status
         this.finishedDate = LocalDateTime.now()
         this.stats = stats
         return this
     }
 
-    fun fail(): Indexing {
-        this.status = IndexingStatus.FAILED
-        this.finishedDate = LocalDateTime.now()
-        return this
-    }
+    fun fail(): Indexing = finish(IndexingStatus.FAILED)
+
+    fun cancel(stats: IndexingStatistics? = null): Indexing = finish(IndexingStatus.CANCELLED, stats)
 
     fun isLocked(): Boolean = lock?.getId() != null
 

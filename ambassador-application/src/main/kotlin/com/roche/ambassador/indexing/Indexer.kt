@@ -1,5 +1,7 @@
 package com.roche.ambassador.indexing
 
+import com.roche.ambassador.storage.indexing.IndexingStatus
+
 interface Indexer<T, ID, F> {
 
     suspend fun indexOne(id: ID): T
@@ -15,6 +17,7 @@ interface Indexer<T, ID, F> {
     )
 
     fun forciblyStop(terminateImmediately: Boolean)
+    fun getStatus(): IndexingStatus
 }
 
 typealias IndexingStartedCallback = () -> Unit

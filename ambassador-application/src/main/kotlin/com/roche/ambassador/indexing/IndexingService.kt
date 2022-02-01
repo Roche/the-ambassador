@@ -69,7 +69,7 @@ internal class IndexingService(
         val failedCriteriaString = failedCriteria.joinToString(", ") { it.name }
         log.warn(
             "Project '{}' (id={}) is excluded from indexing because not meet criteria: {}",
-            project.name,
+            project.fullName,
             project.id,
             failedCriteriaString
         )
@@ -111,14 +111,14 @@ internal class IndexingService(
                 onObjectExcludedByCriteria = { criteria, project -> handleExcludedProject(stats, criteria, project) },
                 onFinished = {
                     stats.stopTiming()
-                    idx.finish(stats.asIndexingStatistics())
+                    idx.finish(indexer.getStatus(), stats.asIndexingStatistics())
                     indexingRepository.save(idx)
                     indexersInUse.remove(idx.getId())
                     indexingLock.unlock(idx.getId()!!)
                     log.info("Projects indexing has finished")
                     log.info("Report:\n{}", stats.getReport())
                     eventPublisher.publishEvent(IndexingFinishedEvent(idx))
-                }
+                },
             )
             return IndexingDto.from(idx)
         } else {
