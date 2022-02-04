@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -41,7 +42,9 @@ class ProjectEntity(
     )
     @BatchSize(size = 25)
     @OrderBy("indexedDate")
-    var history: MutableList<ProjectHistoryEntity> = mutableListOf()
+    var history: MutableList<ProjectHistoryEntity> = mutableListOf(),
+    @Column(name = "last_indexing_id")
+    var lastIndexingId: UUID? = null // mapping is not needed here yet, thus not adding it
 ) {
 
     fun wasIndexedBefore(otherDate: LocalDateTime): Boolean = lastIndexedDate.isBefore(otherDate)
@@ -102,7 +105,7 @@ class ProjectEntity(
                 project.getScores().criticality,
                 project.getScores().activity,
                 project.getScores().total,
-                LocalDateTime.now()
+                LocalDateTime.now(),
             )
         }
     }

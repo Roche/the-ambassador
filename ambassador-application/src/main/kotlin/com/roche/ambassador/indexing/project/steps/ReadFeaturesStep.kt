@@ -1,6 +1,7 @@
 package com.roche.ambassador.indexing.project.steps
 
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.project.IndexingChain
 import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.feature.FeatureReaders
@@ -10,14 +11,13 @@ import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
-@Order(4)
 internal class ReadFeaturesStep : IndexingStep {
 
     companion object {
         private val log by LoggerDelegate()
     }
 
-    override suspend fun handle(context: IndexingContext) {
+    override suspend fun handle(context: IndexingContext, chain: IndexingChain) {
         val entity = context.entity
         val currentProject = context.project
         if (context.project.visibility !in context.config.features.requireVisibility) {
@@ -35,7 +35,10 @@ internal class ReadFeaturesStep : IndexingStep {
             log.debug("Reading features for project '{}' (id={})", context.project.fullName, context.project.id)
             readFeatures(FeatureReaders.all(), context)
         }
+        chain.accept(context)
     }
+
+    override fun getOrder(): Int = 1
 
     private suspend fun readFeatures(readers: List<FeatureReader<*>>, context: IndexingContext) {
         readers.map {

@@ -19,8 +19,7 @@ private class DelegatingExceptionHandler(private val handlers: Map<Int, Exceptio
 
     object WrappingExceptionHandler : ExceptionHandler {
         override suspend fun handle(exception: ResponseException) {
-            Exceptions.getExceptionForResponse(exception).ifPresent { throw it }
-            throw exception
+            throw Exceptions.getExceptionForResponse(exception)
         }
     }
 }

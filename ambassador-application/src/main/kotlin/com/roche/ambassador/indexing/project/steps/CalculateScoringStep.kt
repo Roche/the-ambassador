@@ -1,6 +1,7 @@
 package com.roche.ambassador.indexing.project.steps
 
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.project.IndexingChain
 import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.model.ScorecardCalculator
 import com.roche.ambassador.model.ScorecardConfiguration
@@ -8,7 +9,6 @@ import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
-@Order(5)
 internal class CalculateScoringStep(private val scorecardConfiguration: ScorecardConfiguration) : IndexingStep {
 
     companion object {
@@ -17,7 +17,7 @@ internal class CalculateScoringStep(private val scorecardConfiguration: Scorecar
 
     private val calculator: ScorecardCalculator = ScorecardCalculator(scorecardConfiguration)
 
-    override suspend fun handle(context: IndexingContext) {
+    override suspend fun handle(context: IndexingContext, chain: IndexingChain) {
         if (scorecardConfiguration.shouldCalculateScoring(context.project)) {
             log.debug("Calculating scoring for project '{}' (id={})", context.project.name, context.project.id)
             val scorecard = calculator.calculateFor(context.project)
@@ -25,5 +25,8 @@ internal class CalculateScoringStep(private val scorecardConfiguration: Scorecar
         } else {
             log.debug("Scoring will not be calculated for project '{}' (id={})", context.project.name, context.project.id)
         }
+        chain.accept(context)
     }
+
+    override fun getOrder(): Int = 5
 }

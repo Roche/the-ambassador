@@ -9,6 +9,7 @@ import com.roche.ambassador.indexing.project.steps.IndexingStep
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
 import com.roche.ambassador.model.source.ProjectSource
+import com.roche.ambassador.storage.indexing.Indexing
 import com.roche.ambassador.storage.indexing.IndexingStatus
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.*
@@ -24,6 +25,8 @@ class ProjectIndexer internal constructor(
     concurrencyProvider: ConcurrencyProvider,
     private val indexerProperties: IndexerProperties,
     private val indexingCriteria: IndexingCriteria,
+    private val indexing: Indexing,
+    private val continuation: Continuation,
     steps: List<IndexingStep>,
 ) : Indexer<Project, Long, ProjectFilter> {
 
@@ -33,17 +36,23 @@ class ProjectIndexer internal constructor(
     private val projectToIndexCount = AtomicInteger(0)
     private val finished = AtomicBoolean(false)
     private val sourceFinishedProducing = AtomicBoolean(false)
-    private val chain = IndexingChain(steps, source, consumerScope, indexerProperties)
+    private val chain = IndexingChain(steps)
 
     companion object {
         private val log by LoggerDelegate()
+    }
+
+    private suspend fun processWithChain(project: Project): IndexingContext {
+        val context = IndexingContext(project, source, consumerScope, null, null, indexerProperties, indexing, continuation)
+        chain.accept(context)
+        return context
     }
 
     override suspend fun indexOne(id: Long): Project {
         log.info("Indexing project $id regardless of criteria")
         val project = source.getById(id.toString())
         if (project.isPresent) {
-            val processed = chain.accept(project.get())
+            val processed = processWithChain(project.get())
             return processed.project
         }
         throw Exceptions.NotFoundException("Project $id not found")
@@ -97,10 +106,10 @@ class ProjectIndexer internal constructor(
         consumerScope.launch {
             try {
                 log.info("Indexing project '{}' (id={})", project.name, project.id)
-                chain.accept(project)
+                processWithChain(project)
                 onProjectIndexingFinished(project)
             } catch (e: Throwable) {
-                log.error("Failed while indexing project '{}' (id={}): {}", project.name, project.id, e.message)
+                log.error("Failed while indexing project '{}' (id={}): {}", project.name, project.id, e.message, e)
                 onProjectIndexingError(e, project)
             } finally {
                 projectToIndexCount.decrementAndGet()
@@ -136,6 +145,7 @@ class ProjectIndexer internal constructor(
             sourceFinishedProducing.get() &&
             finished.compareAndSet(false, true)
         ) {
+            status.set(IndexingStatus.FINISHED)
             onFinished()
             log.info("Indexing of projects has finished")
         }
@@ -147,7 +157,7 @@ class ProjectIndexer internal constructor(
             .filter { !it.wasIndexedBefore(LocalDateTime.now().minus(indexerProperties.gracePeriod)) }
             .isEmpty
         if (!shouldBeIndexed) {
-            log.info("Project '{}' (id={}) was indexed recently and does not need to be reindex now. Skipping...", name, id)
+            log.info("Project '{}' (id={}) was indexed recently and is within grace period. Skipping...", name, id)
         }
         return shouldBeIndexed
     }

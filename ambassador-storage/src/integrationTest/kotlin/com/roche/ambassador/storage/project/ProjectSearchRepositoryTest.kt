@@ -11,14 +11,12 @@ import com.roche.ambassador.storage.utils.hasSuccessful
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.test.context.jdbc.Sql
 import java.time.LocalDate
-import java.util.concurrent.TimeUnit
 
 /**
  * !!!!! READ ME !!!!!
@@ -114,7 +112,7 @@ class ProjectSearchRepositoryTest(
         // given
         val name = "beautiful pangolier"
         val project = createProject(name)
-        val projectEntity = ProjectEntity(project.id,  name, project)
+        val projectEntity = ProjectEntity(project.id, name, project)
         val created = entityRepository.save(projectEntity)
 
         // when

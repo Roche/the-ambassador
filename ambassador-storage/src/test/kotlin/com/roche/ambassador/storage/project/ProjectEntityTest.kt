@@ -23,7 +23,7 @@ class ProjectEntityTest {
 
     @Test
     fun `should create new history entry when creating a snapshot`() {
-        val project = ProjectEntity(lastIndexedDate = LocalDateTime.now(), project = createProject())
+        val project = ProjectEntity(project = createProject(), lastIndexedDate = LocalDateTime.now(),)
 
         val history = project.snapshot()
 
@@ -37,7 +37,7 @@ class ProjectEntityTest {
     @Test
     fun `should remove old history when trying to match history size limit`() {
         // given project with 3 history items
-        val project = ProjectEntity(lastIndexedDate = LocalDateTime.now().minusDays(7), project = createProject())
+        val project = ProjectEntity(project = createProject(), lastIndexedDate = LocalDateTime.now().minusDays(7),)
         val history1 = project.snapshot()
         project.lastIndexedDate = LocalDateTime.now().minusDays(5)
         val history2 = project.snapshot()

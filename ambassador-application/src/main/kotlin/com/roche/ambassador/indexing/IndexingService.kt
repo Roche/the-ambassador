@@ -3,6 +3,7 @@ package com.roche.ambassador.indexing
 import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.indexing.project.IndexingCriteria
 import com.roche.ambassador.indexing.project.ProjectIndexer
 import com.roche.ambassador.indexing.project.Statistics
 import com.roche.ambassador.model.project.Project
@@ -77,31 +78,37 @@ internal class IndexingService(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun createIndexer(sourceName: String): ProjectIndexer {
+    private fun createIndexer(sourceName: String, indexing: Indexing, continuation: Continuation): ProjectIndexer {
         // FIXME don't get fixed source
         val source = sources.get(sourceName).get()
-        return indexerFactory.create(source)
+        return indexerFactory.create(source, indexing, continuation)
+    }
+
+    private suspend fun resolveUser() = AuthenticationContext.currentUserNameOrElse("unknown")
+
+    private fun resolveContinuationPoint(sourceName: String): Continuation {
+        val history = indexingRepository.findLastFinishedAndAllFollowingWithinLastDayForSource(sourceName)
+        return Continuation(history, criteriaProperties)
     }
 
     // FIXME don't hardcode source name!
     suspend fun reindex(sourceName: String = "gitlab"): IndexingDto {
-        val user = AuthenticationContext.currentUserNameOrElse("unknown")
-        log.info("Indexing of all projects within source repository started by {}", user)
+        val user = resolveUser()
+        log.info("Indexing of all projects within source repository {} started by {}", sourceName, user)
         var idx = Indexing.startAll(startedBy = user, source = sourceName)
         if (indexingLock.tryLock(idx)) {
-            val indexer = createIndexer(sourceName)
+            val continuation = resolveContinuationPoint(sourceName)
+            logContinuationPoint(continuation)
             idx = indexingRepository.save(idx)
-            indexersInUse[idx.getId()!!] = indexer
-            val lastActivityAfter = indexingRepository.findTopBySourceAndStatusOrderByStartedDateDesc(sourceName, IndexingStatus.FINISHED)
-                .map { it.finishedDate ?: it.startedDate }
-                .orElseGet { criteriaProperties.projects.lastActivityAfter }
             val filter = ProjectFilter.Builder()
                 .archived(!criteriaProperties.projects.excludeArchived)
                 .groups(*criteriaProperties.projects.groups.toTypedArray())
                 .visibility(criteriaProperties.projects.maxVisibility)
-                .lastActivityAfter(lastActivityAfter)
+                .lastActivityAfter(continuation.lastActivityAfter)
                 .build()
             val stats = Statistics()
+            val indexer = createIndexer(sourceName, idx, continuation)
+            indexersInUse[idx.getId()!!] = indexer
             indexer.indexAll(
                 filter = filter,
                 onStarted = { stats.startTiming() },
@@ -118,7 +125,7 @@ internal class IndexingService(
                     log.info("Projects indexing has finished")
                     log.info("Report:\n{}", stats.getReport())
                     eventPublisher.publishEvent(IndexingFinishedEvent(idx))
-                },
+                }
             )
             return IndexingDto.from(idx)
         } else {
@@ -131,9 +138,32 @@ internal class IndexingService(
         }
     }
 
+    private fun logContinuationPoint(continuation: Continuation) {
+        if (continuation.full) {
+            log.info("Full indexing will be executed for all project after {}", continuation.lastActivityAfter)
+        } else if (continuation.resumed) {
+            log.info("Indexing will be resumed with continuation: {}", continuation)
+        } else if (continuation.incrementalOnly) {
+            log.info("Incremental indexing will be executed for all projects after {}", continuation.lastActivityAfter)
+        } else {
+            log.warn("Indexing will run with unknown continuation status: {}", continuation)
+        }
+    }
+
     // FIXME don't hardcode source name!
     suspend fun reindex(id: Long, sourceName: String = "gitlab"): Project {
-        val indexer = createIndexer(sourceName)
-        return indexer.indexOne(id)
+        val user = resolveUser()
+        log.info("Indexing of {} project within source repository {} started by {}", id, sourceName, user)
+        var idx = Indexing.start(startedBy = user, source = sourceName, target = id.toString())
+        idx = indexingRepository.save(idx)
+        val indexer = createIndexer(sourceName, idx, Continuation.none())
+        try {
+            val result = indexer.indexOne(id)
+            indexingRepository.save(idx.finish(indexer.getStatus()))
+            return result
+        } catch(e: Throwable) {
+            indexingRepository.save(idx.fail())
+            throw e
+        }
     }
 }

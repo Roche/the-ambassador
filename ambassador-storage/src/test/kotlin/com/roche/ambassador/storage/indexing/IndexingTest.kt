@@ -23,7 +23,7 @@ class IndexingTest {
         val stats = IndexingStatistics(10, 10, 10, 10)
 
         // when
-        indexing.finish(stats)
+        indexing.finish(stats = stats)
 
         // then
         assertThat(indexing)

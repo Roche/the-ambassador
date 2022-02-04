@@ -118,7 +118,7 @@ internal class IndexingRepositoryTest(@Autowired private val indexingRepository:
 
             // when
             saved.finish(
-                IndexingStatistics(
+                stats = IndexingStatistics(
                     17, 17, 17, 17,
                     mapOf("exclusion 1 " to 2, "exclusion 2" to 3),
                     mapOf("error 1 " to 1, "error 2" to 2)

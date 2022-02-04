@@ -19,5 +19,21 @@ interface IndexingRepository : CrudRepository<Indexing, UUID> {
 
     override fun findAll(): List<Indexing>
 
-    fun findTopBySourceAndStatusOrderByStartedDateDesc(source: String, status: IndexingStatus): Optional<Indexing>
+    @Query(
+        """
+              SELECT indexing.*
+              FROM indexing
+                      LEFT JOIN (SELECT *
+                                 FROM indexing
+                                 WHERE status = 'FINISHED'
+                                 AND source = :source
+                                 ORDER BY finished_date DESC
+                                 LIMIT 1) finished ON TRUE
+              WHERE NOT EXISTS(SELECT * FROM indexing WHERE status = 'FINISHED' AND source = :source)
+                OR (
+                    ((indexing.finished_date > finished.finished_date AND indexing.finished_date >= now() - INTERVAL '1 DAY') OR indexing.id = finished.id)
+                    AND indexing.source = finished.source 
+                )
+    """, nativeQuery = true)
+    fun findLastFinishedAndAllFollowingWithinLastDayForSource(source: String): List<Indexing>
 }

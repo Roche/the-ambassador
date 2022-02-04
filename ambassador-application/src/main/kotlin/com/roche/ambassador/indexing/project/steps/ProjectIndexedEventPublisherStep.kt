@@ -1,5 +1,6 @@
 package com.roche.ambassador.indexing.project.steps
 
+import com.roche.ambassador.indexing.project.IndexingChain
 import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.model.events.ProjectIndexingFinishedEvent
 import org.springframework.context.ApplicationEventPublisher
@@ -9,8 +10,11 @@ import org.springframework.stereotype.Component
 @Component
 @Order(7)
 internal class ProjectIndexedEventPublisherStep(private val eventPublisher: ApplicationEventPublisher) : IndexingStep {
-    override suspend fun handle(context: IndexingContext) {
+    override suspend fun handle(context: IndexingContext, chain: IndexingChain) {
         val event = ProjectIndexingFinishedEvent(context.project)
         eventPublisher.publishEvent(event)
+        chain.accept(context)
     }
+
+    override fun getOrder(): Int = 7
 }

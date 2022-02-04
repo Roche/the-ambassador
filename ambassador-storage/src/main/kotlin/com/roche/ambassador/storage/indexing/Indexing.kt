@@ -35,7 +35,7 @@ data class Indexing internal constructor(
         this.id = id
     }
 
-    fun finish(status: IndexingStatus, stats: IndexingStatistics? = null): Indexing {
+    fun finish(status: IndexingStatus = IndexingStatus.FINISHED, stats: IndexingStatistics? = null): Indexing {
         this.status = status
         this.finishedDate = LocalDateTime.now()
         this.stats = stats
@@ -65,13 +65,16 @@ data class Indexing internal constructor(
 
     fun isIndexingAll(): Boolean = target == ALL_TARGET
 
+    fun isSuccessful(): Boolean = status == IndexingStatus.FINISHED
+
     companion object {
         const val ALL_TARGET = "__ALL__"
 
         fun start(startedBy: String = "unknown", source: String, target: String = ALL_TARGET): Indexing = Indexing(
             startedBy = startedBy,
             target = target,
-            source = source
+            source = source,
+            status = IndexingStatus.IN_PROGRESS
         )
 
         fun startAll(startedBy: String = "unknown", source: String): Indexing = start(startedBy, source)
