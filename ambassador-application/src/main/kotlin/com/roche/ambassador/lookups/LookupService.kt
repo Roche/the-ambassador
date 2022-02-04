@@ -14,6 +14,6 @@ internal sealed class LookupService<T : Lookup, R : PagingAndSortingRepository<T
             .toPaged()
     }
 
-    abstract fun synchronizeLookup()
+    abstract fun refreshLookup()
 
 }

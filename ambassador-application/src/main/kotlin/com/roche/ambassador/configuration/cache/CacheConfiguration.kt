@@ -11,10 +11,10 @@ import java.time.Duration
 
 @Configuration
 @EnableCaching
-internal open class CacheConfiguration {
+internal class CacheConfiguration {
 
     @Bean
-    open fun cacheManager(): CacheManager {
+    fun cacheManager(): CacheManager {
         // TODO configure cache properties
         val caffeine = Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(10))

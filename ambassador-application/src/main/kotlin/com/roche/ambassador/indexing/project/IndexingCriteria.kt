@@ -45,7 +45,7 @@ class IndexingCriteria(vararg criteria: IndexingCriterion) {
         }
     }
 
-    open fun evaluate(input: Project): CriteriaEvaluationResult<Project> {
+    open fun evaluate(input: Project): CriteriaEvaluationResult {
         val failedCriteria = mutableListOf<IndexingCriterion>()
         for (criterion in criteria) {
             if (!criterion.test(input)) {
@@ -57,7 +57,7 @@ class IndexingCriteria(vararg criteria: IndexingCriterion) {
 
     fun getAllCriteriaNames() = criteria.joinToString(",") { it.name }
 
-    data class CriteriaEvaluationResult<T> internal constructor(
+    data class CriteriaEvaluationResult internal constructor(
         val failedCriteria: List<IndexingCriterion> = listOf()
     ) {
         val success = failedCriteria.isEmpty()

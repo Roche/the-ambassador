@@ -34,7 +34,7 @@ internal class FakeExternalDatastore<ID, T : Identifiable<ID>> private construct
         return value
     }
 
-    fun read(id: ID): Optional<T> = Optional.ofNullable(data.get(id))
+    fun read(id: ID): Optional<T> = Optional.ofNullable(data[id])
 
     fun update(value: T): T {
         val id = value.getId() ?: throw IllegalArgumentException("Value should have ID set")

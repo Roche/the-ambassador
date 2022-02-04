@@ -9,12 +9,6 @@ interface Feature<T> : Specification, Weighted {
 
     fun isIndexable(): Boolean = true
 
-    fun ifExists(handler: (Feature<T>) -> Unit) {
-        if (exists()) {
-            handler(this)
-        }
-    }
-
     fun withValue(handler: (T) -> Unit) {
         if (exists()) {
             handler(this.value().get())

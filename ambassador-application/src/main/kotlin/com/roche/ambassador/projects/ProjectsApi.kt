@@ -17,7 +17,7 @@ import javax.validation.constraints.Min
 
 @Api("/projects")
 @Tag(name = "Projects API", description = "API to read or search indexed projects")
-internal open class ProjectsApi(private val projectService: ProjectsService) {
+internal class ProjectsApi(private val projectService: ProjectsService) {
 
     @Operation(summary = "Get indexed project by ID", tags = ["project"])
     @ApiResponses(
@@ -25,7 +25,7 @@ internal open class ProjectsApi(private val projectService: ProjectsService) {
         ApiResponse(responseCode = "404", description = "Project not found")
     )
     @GetMapping("{id}")
-    open suspend fun get(@PathVariable @Min(1) id: Long): Project? {
+    suspend fun get(@PathVariable @Min(1) id: Long): Project? {
         return projectService.getProject(id)
     }
 
@@ -35,7 +35,7 @@ internal open class ProjectsApi(private val projectService: ProjectsService) {
         ApiResponse(responseCode = "404", description = "Project not found")
     )
     @GetMapping("{id}/history")
-    open suspend fun history(
+    suspend fun history(
         @PathVariable @Min(1) id: Long,
         @PageableDefault(size = 25, sort = ["indexedDate"], direction = Sort.Direction.DESC)
         pageable: Pageable
@@ -49,7 +49,7 @@ internal open class ProjectsApi(private val projectService: ProjectsService) {
         ApiResponse(responseCode = "404", description = "Readme not found")
     )
     @GetMapping("{id}/readme")
-    open suspend fun readme(@PathVariable @Min(1) id: Long): DocumentDto {
+    suspend fun readme(@PathVariable @Min(1) id: Long): DocumentDto {
         return projectService.getDocument(id, DocumentType.README)
     }
 
@@ -59,7 +59,7 @@ internal open class ProjectsApi(private val projectService: ProjectsService) {
         ApiResponse(responseCode = "404", description = "License not found")
     )
     @GetMapping("{id}/license")
-    open suspend fun license(@PathVariable @Min(1) id: Long): DocumentDto {
+    suspend fun license(@PathVariable @Min(1) id: Long): DocumentDto {
         return projectService.getDocument(id, DocumentType.LICENSE)
     }
 
@@ -69,7 +69,7 @@ internal open class ProjectsApi(private val projectService: ProjectsService) {
         ApiResponse(responseCode = "404", description = "Contribution guide not found")
     )
     @GetMapping("{id}/contribution-guide")
-    open suspend fun contributionGuide(@PathVariable @Min(1) id: Long): DocumentDto {
+    suspend fun contributionGuide(@PathVariable @Min(1) id: Long): DocumentDto {
         return projectService.getDocument(id, DocumentType.CONTRIBUTION_GUIDE)
     }
 
@@ -78,7 +78,7 @@ internal open class ProjectsApi(private val projectService: ProjectsService) {
         ApiResponse(responseCode = "200", description = "List of indexed project matching provided query")
     )
     @GetMapping
-    open suspend fun search(
+    suspend fun search(
         query: ListProjectsQuery,
         @PageableDefault(size = 25)
         pageable: Pageable

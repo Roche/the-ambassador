@@ -5,7 +5,6 @@ import com.roche.ambassador.indexing.project.IndexingChain
 import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.model.ScorecardCalculator
 import com.roche.ambassador.model.ScorecardConfiguration
-import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component

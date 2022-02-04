@@ -19,7 +19,7 @@ class JooqConfiguration {
     private val log = LoggerFactory.getLogger(JooqConfiguration::class.java)
 
     @Bean
-    open fun dsl(dataSource: DataSource): DefaultDSLContext {
+    fun dsl(dataSource: DataSource): DefaultDSLContext {
         log.info("Setting up jooq")
         val connectionProvider = DataSourceConnectionProvider(TransactionAwareDataSourceProxy(dataSource))
         val jooqConfiguration = DefaultConfiguration()

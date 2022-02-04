@@ -6,6 +6,7 @@ import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.TableField
 import org.springframework.data.domain.Sort
+import java.util.*
 
 object Sorting {
 
@@ -35,7 +36,7 @@ object Sorting {
         private fun getTableField(table: Table<*>, sortFieldName: String): TableField<*, *> {
             return try {
                 table.javaClass
-                    .getField(sortFieldName.toUpperCase())
+                    .getField(sortFieldName.uppercase(Locale.getDefault()))
                     .get(table) as TableField<*, *>
             } catch (ex: NoSuchFieldException) {
                 throw InvalidSortFieldException(sortFieldName, "Unable to sort by non existent field", ex)

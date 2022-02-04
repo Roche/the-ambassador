@@ -11,7 +11,7 @@ internal class LanguagesService(
     languageRepository: LanguageRepository
 ) : LookupService<Language, LanguageRepository>(languageRepository) {
 
-    override fun synchronizeLookup() {
+    override fun refreshLookup() {
         lookupRepository.deleteAll()
         val languages = projectEntityRepository.findAllLanguages()
             .map { Language(name = it.getName(), count = it.getCount()) }

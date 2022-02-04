@@ -10,8 +10,8 @@ import com.roche.ambassador.model.score.quality.PartialCheckResult
 
 internal object BranchProtectionCheck : Check {
 
-    private val EXPECTED_RELEASE_BRANCH = "release/"
-    private val DEVELOP_BRANCH_NAME = "development"
+    private const val EXPECTED_RELEASE_BRANCH = "release/"
+    private const val DEVELOP_BRANCH_NAME = "development"
 
     override fun name(): String = Check.BRANCH_PROTECTION
 

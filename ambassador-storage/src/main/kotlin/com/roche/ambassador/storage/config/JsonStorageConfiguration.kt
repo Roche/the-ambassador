@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration
 class JsonStorageConfiguration : ObjectMapperSupplier {
 
     companion object {
-        val OBJECT_MAPPER = ObjectMapper()
+        val OBJECT_MAPPER: ObjectMapper = ObjectMapper()
             .registerModules(KotlinModule.Builder().build(), Jdk8Module(), JavaTimeModule(), AmbassadorModule())
             .setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PUBLIC_ONLY)

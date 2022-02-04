@@ -22,7 +22,7 @@ fun String.capitalize(vararg delimiters: Char): String {
     val delimSet = toDelimiterSet(delimiters)
     for (i in buffer.indices) {
         val ch = buffer[i]
-        if (delimSet.contains(ch.toInt())) {
+        if (delimSet.contains(ch.code)) {
             capitalizeNext = true
         } else if (capitalizeNext) {
             buffer[i] = Character.toTitleCase(ch)
@@ -40,7 +40,7 @@ fun String.capitalizeFully(vararg delimiters: Char): String {
     if (this.isBlank() || delimiters.isEmpty()) {
         return this
     }
-    return this.toLowerCase().capitalize(*delimiters)
+    return this.lowercase(Locale.getDefault()).capitalize(*delimiters)
 }
 
 fun String.toCamelCase(capitalizeFirstLetter: Boolean = false, vararg delimiters: Char = " _-".toCharArray()): String {
@@ -48,7 +48,7 @@ fun String.toCamelCase(capitalizeFirstLetter: Boolean = false, vararg delimiters
     if (str.isEmpty()) {
         return str
     }
-    str = str.toLowerCase()
+    str = str.lowercase(Locale.getDefault())
     val strLen = str.length
     val newCodePoints = IntArray(strLen)
     var outOffset = 0

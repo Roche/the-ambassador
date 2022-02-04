@@ -3,7 +3,6 @@ package com.roche.ambassador.indexing
 import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.configuration.properties.IndexingCriteriaProperties
 import com.roche.ambassador.extensions.LoggerDelegate
-import com.roche.ambassador.indexing.project.IndexingCriteria
 import com.roche.ambassador.indexing.project.ProjectIndexer
 import com.roche.ambassador.indexing.project.Statistics
 import com.roche.ambassador.model.project.Project
@@ -139,14 +138,11 @@ internal class IndexingService(
     }
 
     private fun logContinuationPoint(continuation: Continuation) {
-        if (continuation.full) {
-            log.info("Full indexing will be executed for all project after {}", continuation.lastActivityAfter)
-        } else if (continuation.resumed) {
-            log.info("Indexing will be resumed with continuation: {}", continuation)
-        } else if (continuation.incrementalOnly) {
-            log.info("Incremental indexing will be executed for all projects after {}", continuation.lastActivityAfter)
-        } else {
-            log.warn("Indexing will run with unknown continuation status: {}", continuation)
+        when {
+            continuation.full -> log.info("Full indexing will be executed for all project after {}", continuation.lastActivityAfter)
+            continuation.resumed -> log.info("Indexing will be resumed with continuation: {}", continuation)
+            continuation.incrementalOnly -> log.info("Incremental indexing will be executed for all projects after {}", continuation.lastActivityAfter)
+            else -> log.warn("Indexing will run with unknown continuation status: {}", continuation)
         }
     }
 

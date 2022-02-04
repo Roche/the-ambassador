@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-internal open class TemplateEngineConfiguration {
+internal class TemplateEngineConfiguration {
 
     companion object {
         private const val CACHE_NAME = "advisor-templates-cache"

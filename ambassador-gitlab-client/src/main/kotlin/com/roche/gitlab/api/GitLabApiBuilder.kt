@@ -83,7 +83,7 @@ class GitLabApiBuilder internal constructor() {
 
     class LoggingBuilder internal constructor(private val httpClientBuilder: HttpClientBuilder) {
 
-        fun logLevel(logLevel: LogLevel): HttpClientBuilder {
+        private fun logLevel(logLevel: LogLevel): HttpClientBuilder {
             httpClientBuilder.logLevel = logLevel
             return httpClientBuilder
         }

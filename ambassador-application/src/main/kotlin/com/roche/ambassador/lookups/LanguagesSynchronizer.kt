@@ -24,7 +24,7 @@ internal class LanguagesSynchronizer(private val languagesService: LanguagesServ
         log.info("Synchronizing languages after indexing {} on {} has finished", indexingFinishedEvent.data.getId(), indexingFinishedEvent.data.source)
         if (lock.tryLock()) {
             try {
-                languagesService.synchronizeLookup()
+                languagesService.refreshLookup()
             } finally {
                 lock.unlock()
             }

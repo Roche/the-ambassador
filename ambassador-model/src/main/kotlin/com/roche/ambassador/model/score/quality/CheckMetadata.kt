@@ -4,5 +4,4 @@ data class CheckMetadata(
     val enabled: Boolean,
     val description: String,
     val importance: Importance,
-    val attributes: Map<QualityAttribute, Double>) {
-}
+    val attributes: Map<QualityAttribute, Double>)

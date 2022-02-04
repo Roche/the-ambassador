@@ -7,7 +7,6 @@ import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.feature.FeatureReaders
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component

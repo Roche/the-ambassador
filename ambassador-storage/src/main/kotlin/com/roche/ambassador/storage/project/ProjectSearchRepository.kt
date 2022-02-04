@@ -63,7 +63,7 @@ class ProjectSearchRepository(
             ProjectEntity(
                 it.get(idColumn()),
                 it.get(nameColumn()),
-                objectMapper.readValue(it.get(PROJECT.PROJECT_).data(), Project::class.java),
+                objectMapper.readValue(it.get(PROJECT.PROJECT_).data(), Project::class.java)
             )
         }
     }

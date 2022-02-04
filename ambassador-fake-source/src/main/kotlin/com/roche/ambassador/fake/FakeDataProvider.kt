@@ -144,7 +144,7 @@ class FakeDataProvider {
 
     fun branch(): String {
         fun randomBranch(): String {
-            val type = branchTypeDice.rollForData().name.toLowerCase()
+            val type = branchTypeDice.rollForData().name.lowercase(Locale.getDefault())
             return "$type/${faker.ancient().god()}-${faker.ancient().hero()}-${faker.ancient().primordial()}"
         }
         return withBinaryChance(90, { "main" }, { randomBranch() })!!

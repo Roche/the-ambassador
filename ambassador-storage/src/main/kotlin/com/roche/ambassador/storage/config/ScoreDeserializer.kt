@@ -11,7 +11,7 @@ import com.roche.ambassador.model.Score
 import java.util.*
 
 internal object ScoreDeserializer : StdDeserializer<Score>(Score::class.java) {
-    override fun deserialize(parser: JsonParser, ctxt: DeserializationContext?): Score? {
+    override fun deserialize(parser: JsonParser, ctxt: DeserializationContext?): Score {
         val objectMapper = parser.codec as ObjectMapper
         val tree: JsonNode = objectMapper.readTree(parser)
         val name = tree.tryGet("name").map { it.asText() }.orElse("__invalid__")

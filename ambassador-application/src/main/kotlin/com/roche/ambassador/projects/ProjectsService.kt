@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @CacheConfig(cacheNames = ["projects"])
 @Transactional(readOnly = true)
-open class ProjectsService(
+class ProjectsService(
     private val projectEntityRepository: ProjectEntityRepository,
     private val projectSearchRepository: ProjectSearchRepository,
     private val projectHistoryRepository: ProjectHistoryRepository,

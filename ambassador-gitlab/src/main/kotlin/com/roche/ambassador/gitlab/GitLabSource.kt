@@ -47,7 +47,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.streams.toList
-import com.roche.gitlab.api.model.AccessLevel as BranchingAccessLevel
 
 @ExperimentalCoroutinesApi
 class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource, GroupSource {

@@ -93,7 +93,7 @@ suspend inline fun <reified T> GitLabHttpClient.getList(
 }
 
 @SuppressWarnings("SwallowedException")
-suspend inline fun <reified T> GitLabHttpClient.optionally(action: GitLabHttpClient.() -> T): Optional<T> {
+suspend inline fun <reified T> GitLabHttpClient.optionally(action: suspend GitLabHttpClient.() -> T): Optional<T> {
     return try {
         Optional.ofNullable(action.invoke(this))
     } catch (ex: ClientRequestException) {

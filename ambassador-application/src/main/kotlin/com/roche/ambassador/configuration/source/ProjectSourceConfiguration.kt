@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Configuration
 import java.time.Duration
 
 @Configuration
-open class ProjectSourceConfiguration {
+class ProjectSourceConfiguration {
 
     @Bean
-    open fun sources(
+    fun sources(
         projectSourcesProperties: ProjectSourcesProperties,
     ): ProjectSources {
         val source = when (projectSourcesProperties.system) {
@@ -27,7 +27,7 @@ open class ProjectSourceConfiguration {
     }
 
     private fun configureFake(): FakeSource {
-        val spec = GenerationSpec(5000, true)
+        val spec = GenerationSpec(5000)
         return FakeSource(spec)
     }
 

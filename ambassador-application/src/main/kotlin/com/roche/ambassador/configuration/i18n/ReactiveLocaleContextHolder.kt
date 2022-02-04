@@ -29,7 +29,7 @@ object ReactiveLocaleContextHolder {
         return context.hasKey(LOCALE_CONTEXT_KEY)
     }
 
-    private fun getLocaleContext(context: Context): Mono<LocaleContext?>? {
+    private fun getLocaleContext(context: Context): Mono<LocaleContext?> {
         return context.get<Mono<LocaleContext?>>(LOCALE_CONTEXT_KEY)
     }
 

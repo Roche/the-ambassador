@@ -3,6 +3,7 @@ package com.roche.ambassador.configuration.web
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.converter.ConverterFactory
 import java.lang.Enum.valueOf
+import java.util.*
 
 internal object StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
     override fun <T : Enum<*>?> getConverter(targetType: Class<T>): Converter<String, T> {
@@ -15,7 +16,7 @@ internal object StringToEnumConverter : ConverterFactory<String, Enum<*>?> {
             return if (source.isEmpty()) {
                 // It's an empty enum identifier: reset the enum value to null.
                 null
-            } else valueOf(enumType, source.trim { it <= ' ' }.toUpperCase()) as T
+            } else valueOf(enumType, source.trim { it <= ' ' }.uppercase(Locale.getDefault())) as T
         }
     }
 

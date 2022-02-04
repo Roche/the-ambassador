@@ -7,7 +7,7 @@ import org.springframework.boot.runApplication
 
 @SpringBootApplication(exclude = [ReactiveUserDetailsServiceAutoConfiguration::class])
 @EnableConfigurationProperties
-open class TheAmbassadorApplication
+class TheAmbassadorApplication
 
 fun main(args: Array<String>) {
     runApplication<TheAmbassadorApplication>(*args)

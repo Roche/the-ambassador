@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 
 object ProjectCreator {
 
-    private val source: FakeSource = FakeSource(GenerationSpec(1, false))
+    private val source: FakeSource = FakeSource(GenerationSpec(1))
 
     private val config: ScorecardConfiguration = ScorecardConfiguration(
         Visibility.values().toList(),

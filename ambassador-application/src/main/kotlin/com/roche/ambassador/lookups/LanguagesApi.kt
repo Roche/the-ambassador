@@ -42,6 +42,6 @@ internal class LanguagesApi(private val languagesService: LanguagesService) {
         ApiResponse(responseCode = "204", description = "Programming languages synchronized")
     )
     suspend fun sync() {
-        languagesService.synchronizeLookup()
+        languagesService.refreshLookup()
     }
 }

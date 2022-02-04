@@ -42,6 +42,6 @@ internal class TopicsApi(private val topicsService: TopicsService) {
         ApiResponse(responseCode = "204", description = "Topics synchronized")
     )
     suspend fun sync() {
-        topicsService.synchronizeLookup()
+        topicsService.refreshLookup()
     }
 }

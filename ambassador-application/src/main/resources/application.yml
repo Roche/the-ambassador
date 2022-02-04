@@ -68,6 +68,8 @@ ambassador:
     gracePeriod: 7d
     criteria:
       projects:
+        excludeGroups:
+          - 1745
         excludeArchived: true
         excludeForks: true
         maxVisibility: internal

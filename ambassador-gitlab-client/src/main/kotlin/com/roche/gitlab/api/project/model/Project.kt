@@ -184,13 +184,5 @@ data class Project(
             return Project(name = name, path = path, description = description, namespace = namespace, visibility = Visibility.PUBLIC)
         }
 
-        fun forCreate(
-            name: String,
-            pathNamingStrategy: PathNamingStrategy = PathNamingStrategy.default(),
-            namespaceId: Long? = null,
-            description: String? = null
-        ): Project {
-            return forCreate(name = name, path = pathNamingStrategy.getPathFor(name), description = description, namespaceId = namespaceId)
-        }
     }
 }

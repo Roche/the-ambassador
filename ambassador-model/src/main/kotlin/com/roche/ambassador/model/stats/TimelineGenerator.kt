@@ -47,10 +47,10 @@ object TimelineGenerator {
         while (currentEventsCount < count) {
             timeline.add(nextDate, 1)
             currentEventsCount++
-            if (nextDate.isAfter(endDate)) {
-                nextDate = inclusiveStartDate
+            nextDate = if (nextDate.isAfter(endDate)) {
+                inclusiveStartDate
             } else {
-                nextDate = nextDate.plusDays(skipEach)
+                nextDate.plusDays(skipEach)
             }
         }
 

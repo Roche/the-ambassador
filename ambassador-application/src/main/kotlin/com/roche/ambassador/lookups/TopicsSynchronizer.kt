@@ -24,7 +24,7 @@ internal class TopicsSynchronizer(private val topicsService: TopicsService) {
         log.info("Synchronizing topics after indexing {} on {} has finished", indexingFinishedEvent.data.getId(), indexingFinishedEvent.data.source)
         if (lock.tryLock()) {
             try {
-                topicsService.synchronizeLookup()
+                topicsService.refreshLookup()
             } finally {
                 lock.unlock()
             }

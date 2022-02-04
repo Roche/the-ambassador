@@ -23,8 +23,6 @@ abstract class AbstractBiMap<K : Any, V : Any> protected constructor(
     override val values: MutableSet<V>
         get() = inverse.keys
 
-    constructor() : this(HashMap(), HashMap())
-
     override fun forcePut(key: K, value: V): V? {
         val oldValue = direct.put(key, value)
         oldValue?.let { reverse.remove(it) }

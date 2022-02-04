@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 
 @Api("/me")
 @Tag(name = "Me API", description = "Current user API")
-internal open class MeApi {
+internal class MeApi {
 
     @Operation(summary = "Get current user details")
     @ApiResponse(responseCode = "200", description = "Details of currently logged in user")

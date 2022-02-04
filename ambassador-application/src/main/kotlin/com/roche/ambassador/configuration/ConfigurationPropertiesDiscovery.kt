@@ -14,4 +14,4 @@ import org.springframework.stereotype.Component
     IndexerProperties::class,
     OpenApiProperties::class
 )
-internal open class ConfigurationPropertiesDiscovery
+internal class ConfigurationPropertiesDiscovery

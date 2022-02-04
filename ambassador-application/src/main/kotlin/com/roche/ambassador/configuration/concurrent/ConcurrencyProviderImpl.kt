@@ -1,3 +1,9 @@
+@file:Suppress("SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection",
+               "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection",
+               "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection",
+               "SpringJavaInjectionPointsAutowiringInspection"
+)
+
 package com.roche.ambassador.configuration.concurrent
 
 import com.roche.ambassador.ConcurrencyProvider

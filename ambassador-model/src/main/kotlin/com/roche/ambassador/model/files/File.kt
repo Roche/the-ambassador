@@ -11,9 +11,6 @@ open class File(
     val url: String?
 ) {
     companion object {
-        fun notExistent(): File {
-            return File(false, null, null, null, null)
-        }
     }
 
     fun hasSizeAtLeast(minimumSize: Long): Boolean = contentLength != null && contentLength >= minimumSize

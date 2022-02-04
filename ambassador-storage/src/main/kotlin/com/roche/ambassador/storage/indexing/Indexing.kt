@@ -1,6 +1,7 @@
 package com.roche.ambassador.storage.indexing
 
 import com.roche.ambassador.Identifiable
+import org.hibernate.Hibernate
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
@@ -63,8 +64,6 @@ data class Indexing internal constructor(
         return this
     }
 
-    fun isIndexingAll(): Boolean = target == ALL_TARGET
-
     fun isSuccessful(): Boolean = status == IndexingStatus.FINISHED
 
     companion object {
@@ -78,5 +77,20 @@ data class Indexing internal constructor(
         )
 
         fun startAll(startedBy: String = "unknown", source: String): Indexing = start(startedBy, source)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        other as Indexing
+
+        return id != null && id == other.id
+    }
+
+    override fun hashCode(): Int = 343013132
+
+    @Override
+    override fun toString(): String {
+        return this::class.simpleName + "(id = $id )"
     }
 }
