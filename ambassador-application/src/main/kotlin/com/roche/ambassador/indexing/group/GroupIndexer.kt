@@ -18,6 +18,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 internal class GroupIndexer(
@@ -34,8 +35,8 @@ internal class GroupIndexer(
         private val log by LoggerDelegate()
     }
 
-    fun indexAll() {
-        val projectGroups = projectEntityRepository.getProjectsAggregatedByGroup()
+    fun indexByIndexingId(id: UUID) {
+        val projectGroups = projectEntityRepository.getProjectsAggregatedByGroupForIndexing(id)
             .map { it.getGroupId() to it }
             .toMap()
 

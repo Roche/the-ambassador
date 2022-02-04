@@ -26,13 +26,14 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
                    round(cast(sum(activity_score)/count(*) AS numeric), 0) AS activity,
                    sum(stars) AS stars,
                    sum(cast(project->'stats'->>'forks' AS bigint)) as forks
-            FROM project 
+            FROM project
+            WHERE project.last_indexing_id = :indexingId
             GROUP BY groupId , type
             ORDER BY groupId
             """,
         nativeQuery = true
     )
-    fun getProjectsAggregatedByGroup(): List<ProjectGroupProjection>
+    fun getProjectsAggregatedByGroupForIndexing(indexingId: UUID): List<ProjectGroupProjection>
 
     @Query(
         value = """

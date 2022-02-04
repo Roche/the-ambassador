@@ -2,7 +2,9 @@ package com.roche.ambassador.indexing.group
 
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.indexing.IndexingFinishedEvent
+import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.source.ProjectSources
+import com.roche.ambassador.storage.indexing.Indexing
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
@@ -21,11 +23,18 @@ internal class GroupIndexingInitializer(
     fun handle(indexingFinishedEvent: IndexingFinishedEvent) {
         log.info("Indexing groups after indexing {} on {} has finished", indexingFinishedEvent.data.getId(), indexingFinishedEvent.data.source)
         projectSources.get(indexingFinishedEvent.data.source)
-            .ifPresentOrElse({ groupIndexerFactory.create(it).indexAll() }) {
+            .ifPresentOrElse( { triggerIndexing(indexingFinishedEvent.data, it) } ) {
                 log.warn(
                     "Source with name {} was not found. Unable to index groups after {} indexing",
                     indexingFinishedEvent.data.target, indexingFinishedEvent.data.getId()
                 )
             }
+    }
+
+    private fun triggerIndexing(indexing: Indexing, source: ProjectSource) {
+        if (indexing.getId() == null) {
+            throw IllegalStateException("Indexing ID should not be null")
+        }
+        groupIndexerFactory.create(source).indexByIndexingId(indexing.getId()!!)
     }
 }
