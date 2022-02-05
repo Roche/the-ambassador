@@ -1,13 +1,23 @@
 package com.roche.ambassador.storage.project
 
 import com.roche.ambassador.storage.Lookup
+import org.hibernate.jpa.QueryHints.HINT_CACHEABLE
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.jpa.repository.QueryHints
 import org.springframework.data.repository.PagingAndSortingRepository
 import java.util.*
+import java.util.stream.Stream
+import javax.persistence.QueryHint
 
 interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Long> {
+
+    @QueryHints(value = [
+        QueryHint(name = HINT_CACHEABLE, value = "false")
+    ])
+    @Query("SELECT p FROM ProjectEntity p")
+    fun streamAllForAnalysis(): Stream<ProjectEntity>
 
     @Query("DELETE FROM project", nativeQuery = true)
     @Modifying

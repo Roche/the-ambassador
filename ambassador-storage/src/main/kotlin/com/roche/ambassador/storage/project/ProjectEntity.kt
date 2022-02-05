@@ -34,6 +34,8 @@ class ProjectEntity(
     var score: Double? = 0.0,
     @Column(name = "last_indexed_date")
     var lastIndexedDate: LocalDateTime = LocalDateTime.now(),
+    @Column(name = "last_analysis_date")
+    var lastAnalysisDate: LocalDateTime? = null,
     @OneToMany(
         mappedBy = "parent",
         cascade = [CascadeType.ALL],
@@ -43,8 +45,10 @@ class ProjectEntity(
     @BatchSize(size = 25)
     @OrderBy("indexedDate")
     var history: MutableList<ProjectHistoryEntity> = mutableListOf(),
+    var source: String? = null,
     @Column(name = "last_indexing_id")
     var lastIndexingId: UUID? = null // mapping is not needed here yet, thus not adding it
+
 ) {
 
     fun wasIndexedBefore(otherDate: LocalDateTime): Boolean = lastIndexedDate.isBefore(otherDate)
@@ -70,11 +74,15 @@ class ProjectEntity(
         this.name = project.name
         this.project = project
         this.stars = project.stats.stars ?: 0
+        this.lastIndexedDate = LocalDateTime.now()
+        this.language = project.getMainLanguage()
+    }
+
+    fun updateScore(project: Project) {
         this.criticalityScore = project.getScores().criticality
         this.activityScore = project.getScores().activity
         this.score = project.getScores().total
-        this.lastIndexedDate = LocalDateTime.now()
-        this.language = project.getMainLanguage()
+        this.lastAnalysisDate = LocalDateTime.now()
     }
 
     override fun equals(other: Any?): Boolean {
