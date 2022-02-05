@@ -91,3 +91,8 @@ ambassador:
     license:
       name: Apache-2.0
       url: https://www.apache.org/licenses/LICENSE-2.0.txt
+
+logging:
+  level:
+    root: warn
+    com.roche: info
