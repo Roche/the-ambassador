@@ -17,20 +17,20 @@ class QualityScorePolicy(
     override fun calculateScoreOf(features: Features): Score {
         val scores = checks.map { it.check(features) }
             .map { resolveFinalResult(it) }
-        val scoresPerQualityAttribute = QualityAttribute.values().map { it to 1.0 }.toMap().toMutableMap()
+        val scoresPerQualityAttribute = QualityAttribute.values().map { it to ScoreValueHolder() }.toMap().toMutableMap()
         val explanations: MutableList<Explanation> = mutableListOf()
         for (score in scores) {
             score.attributes
-                .map { it.key to it.value * score.score }
                 .forEach {
-                    scoresPerQualityAttribute[it.first] = scoresPerQualityAttribute[it.first]!! + it.second
+                    scoresPerQualityAttribute[it.key]!!.add(score.score, it.value)
                 }
             explanations += score.explanation
         }
         val builder = Score.builder("Quality", features, experimental, 0.0)
             .addExplanations(explanations)
+            .addNormalizer { (it / scoresPerQualityAttribute.size).roundToHalf() }
         for (qualityAttributeScore in scoresPerQualityAttribute) {
-            builder.withSubScore(qualityAttributeScore.key.toPrettyString(), qualityAttributeScore.value.roundToHalf() - 1, experimental)
+            builder.withSubScore(qualityAttributeScore.key.toPrettyString(), qualityAttributeScore.value.get(), experimental)
                 .reduce { total, attribute -> total + attribute }
         }
         return builder.build()
@@ -39,5 +39,18 @@ class QualityScorePolicy(
     private fun resolveFinalResult(partialResult: PartialCheckResult): CheckResult {
         val metadata = metadata[partialResult.checkName]!!
         return partialResult.applyMetadata(metadata)
+    }
+
+    private class ScoreValueHolder {
+        private var partialsCount: Int = 0
+        private var score: Double = 0.0
+        private var weights: Double = 0.0
+        fun add(score: Int, weight: Double) {
+            this.score += (score * weight)
+            this.weights += weight
+            partialsCount++
+        }
+
+        fun get(): Double = (score / weights).roundToHalf()
     }
 }

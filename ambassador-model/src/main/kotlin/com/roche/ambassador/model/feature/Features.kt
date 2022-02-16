@@ -17,5 +17,16 @@ data class Features(private val holder: MutableSet<Feature<*>> = mutableSetOf())
         return Optional.ofNullable(feature)
     }
 
+    fun <T : Feature<*>> findWithValue(featureType: KClass<T>): Optional<T> {
+        return find(featureType)
+            .filter { it.exists() && it.value().exists() }
+    }
+
+    fun <T, U : Feature<T>> findValue(featureType: KClass<U>): Optional<T> {
+        return findWithValue(featureType)
+            .map { it.value() }
+            .map { it.get() }
+    }
+
     fun <T : Feature<*>> find(featureType: KClass<T>): Optional<T> = find(featureType.java)
 }

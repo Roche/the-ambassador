@@ -234,3 +234,9 @@ class CommentsFeature(value: Timeline) : TimelineFeature(value) {
         }
     }
 }
+
+class PermissionsFeature(value: Permissions?) : NotIndexableFeature<Permissions>(value) {
+    companion object : FeatureReaderFactory<PermissionsFeature> {
+        override fun create(): FeatureReader<PermissionsFeature> = FeatureReader.createForProject { PermissionsFeature(it.permissions) }
+    }
+}

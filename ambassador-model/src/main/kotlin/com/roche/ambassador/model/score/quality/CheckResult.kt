@@ -5,7 +5,7 @@ import com.roche.ambassador.model.Explanation
 data class CheckResult(
     val checkName: String,
     val checkDescription: String,
-    val score: Double,
+    val score: Int,
     val confidence: Int,
     val importance: Importance,
     val attributes: Map<QualityAttribute, Double>,

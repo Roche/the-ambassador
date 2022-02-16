@@ -2,21 +2,32 @@ package com.roche.ambassador.model.score.quality
 
 import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.score.quality.checks.Check
+import com.roche.ambassador.model.score.quality.checks.Check.Companion.MAX_SCORE
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class PartialCheckResult(
     val checkName: String,
-    val score: Double,
+    val score: Int,
     val confidence: Int,
     val explanation: Explanation
 ) {
     companion object {
+
         fun builder(checkName: String): Builder {
             return Builder(checkName)
         }
 
         fun empty(checkName: String): PartialCheckResult {
             return builder(checkName).build()
+        }
+
+        fun proportional(success: Double, total: Double): Double {
+            return min(MAX_SCORE * success / total, MAX_SCORE)
+        }
+
+        fun proportional(success: Int, total: Int): Double {
+            return proportional(success.toDouble(), total.toDouble())
         }
     }
 
@@ -31,14 +42,11 @@ class PartialCheckResult(
     class Builder(val checkName: String) {
         private var score: Double = 0.0
         private var confidence = Check.MAX_CONFIDENCE
-        private var explanation = Explanation.simple("$checkName has value $score with confidence $confidence")
-
-        fun proportional(success: Double, total: Double, max: Double): Builder {
-            return score(min(max * success / total, max))
-        }
+        private var explanationBuilder = Explanation.builder()
+            .description("$checkName has value $score with confidence $confidence")
 
         fun score(score: Double): Builder {
-            this.score = score
+            this.score = min(score, MAX_SCORE)
             return this
         }
 
@@ -56,19 +64,18 @@ class PartialCheckResult(
         }
 
         fun explanation(builder: (Explanation.Builder) -> Unit): Builder {
-            val expBuilder = Explanation.builder()
-            builder(expBuilder)
-            this.explanation = expBuilder.build()
+            builder(explanationBuilder)
             return this
         }
 
         fun explanation(builder: Explanation.Builder): Builder {
-            this.explanation = builder.build()
+            this.explanationBuilder = builder
             return this
         }
 
         fun build(): PartialCheckResult {
-            return PartialCheckResult(checkName, score, confidence, explanation)
+            this.explanationBuilder.value(score)
+            return PartialCheckResult(checkName, score.roundToInt(), confidence, explanationBuilder.build())
         }
     }
 }

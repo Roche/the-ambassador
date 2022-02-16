@@ -14,3 +14,113 @@ ambassador:
           attributes:
             security: 1
             compliance: 0.5
+        can-create-pr:
+          enabled: true
+          description: Can create pull request
+          importance: high
+          attributes:
+            time-to-contribute: 1
+            activity: 0.5
+        ci-performance:
+          enabled: true
+          description: CI performance
+          importance: medium
+          attributes:
+            reproducibility: 1
+            durability: 0.5
+        ci-stability:
+          enabled: true
+          description: CI stability
+          importance: high
+          attributes:
+            reproducibility: 1
+            durability: 0.5
+        contribution-guide:
+          enabled: true
+          description: Contribution guide
+          importance: low
+          attributes:
+            time-to-contribute: 1
+            learnability: 0.5
+#        contributors:
+#          enabled: true
+#          description: Contributors
+#          importance: high
+#          attributes:
+#            activity: 1
+#            criticality: 0.5
+        created-date:
+          enabled: true
+          description: Time since the project was created
+          importance: high
+          attributes:
+            activity: 1
+            criticality: 0.5
+        description:
+          enabled: true
+          description: Description
+          importance: high
+          attributes:
+            findability: 1
+        forkable:
+          enabled: true
+          description: Forkable
+          importance: high
+          attributes:
+            time-to-contribute: 1
+            activity: 0.5
+        ownership-bus-factor:
+          enabled: true
+          description: Ownership Bus Factor
+          importance: high
+          attributes:
+            durability: 1
+            criticality: 0.5
+        forks:
+          enabled: true
+          description: Forks
+          importance: high
+          attributes:
+            popularity: 1
+            activity: 0.5
+        pr-resolution-speed:
+          enabled: true
+          description: Pull request resolution speed
+          importance: high
+          attributes:
+            time-to-contribute: 1
+            durability: 0.5
+        readme:
+          enabled: true
+          description: Readme
+          importance: high
+          attributes:
+            learnability: 1
+            findability: 0.5
+            time-to-contribute: 0.25
+        topics:
+          enabled: true
+          description: Topics
+          importance: high
+          attributes:
+            findability: 1
+        stars:
+          enabled: true
+          description: Stars
+          importance: high
+          attributes:
+            popularity: 1
+            activity: 0.5
+        updated-date:
+          enabled: true
+          description: Time since the project was last updated
+          importance: high
+          attributes:
+            activity: 1
+            criticality: 0.5
+        visibility:
+          enabled: true
+          description: Visibility
+          importance: high
+          attributes:
+            findability: 1

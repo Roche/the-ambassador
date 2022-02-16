@@ -35,6 +35,7 @@ object FeatureNameLookup {
             "issuesComments" to CommentsFeature::class,
             "ci" to CiExecutionsFeature::class,
             "defaultBranch" to DefaultBranchFeature::class,
+            "permissions" to PermissionsFeature::class,
         )
     )
 

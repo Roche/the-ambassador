@@ -12,6 +12,7 @@ data class CiStability(
         STABLE,
         OCCASIONALLY_FAILING,
         UNSTABLE,
-        CRITICALLY_UNSTABLE
+        CRITICALLY_UNSTABLE,
+        NONE
     }
 }

@@ -16,6 +16,7 @@ fun ZonedDateTime.toDate(): Date = Date.from(this.toInstant())
 
 fun Temporal.daysUntilNow(): Long = unitsUntilNow(ChronoUnit.DAYS)
 fun Temporal.monthsUntilNow(): Long = unitsUntilNow(ChronoUnit.MONTHS)
+fun Temporal.weeksUntilNow(): Long = unitsUntilNow(ChronoUnit.WEEKS)
 fun Temporal.unitsUntilNow(chronoUnit: ChronoUnit): Long = chronoUnit.between(this, LocalDate.now())
 
 fun LocalDate.isWeekend(): Boolean = dayOfWeek in listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)

@@ -8,7 +8,7 @@ import com.roche.ambassador.model.feature.ProtectedBranchesFeature
 import com.roche.ambassador.model.project.ProtectedBranch
 import com.roche.ambassador.model.score.quality.PartialCheckResult
 
-internal object BranchProtectionCheck : Check {
+internal object BranchProtection : Check {
 
     private const val EXPECTED_RELEASE_BRANCH = "release/"
     private const val DEVELOP_BRANCH_NAME = "development"
@@ -16,15 +16,12 @@ internal object BranchProtectionCheck : Check {
     override fun name(): String = Check.BRANCH_PROTECTION
 
     override fun check(features: Features): PartialCheckResult {
-        val defaultBranchOptional = features.find(DefaultBranchFeature::class)
-            .filter { it.exists() }
+        val defaultBranchOptional = features.findValue(DefaultBranchFeature::class)
         if (defaultBranchOptional.isEmpty) {
             return PartialCheckResult.empty(name())
         }
-        val defaultBranch = defaultBranchOptional.get().value().get()
-        return features.find(ProtectedBranchesFeature::class)
-            .filter { it.value().exists() }
-            .map { it.value().get() }
+        val defaultBranch = defaultBranchOptional.get()
+        return features.findValue(ProtectedBranchesFeature::class)
             .filter { it.isNotEmpty() }
             .map { check(it, defaultBranch) }
             .orElseGet { PartialCheckResult.empty(name()) }
@@ -72,7 +69,7 @@ internal object BranchProtectionCheck : Check {
                     .value(score.toDouble().round(0))
                     .description("Branch ${first.name} is misconfigured")
                 if (first.canForcePush) {
-                    it.addDetails("force push is enabled, thus history rewrite is possible")
+                    it.addDetails("force push is allowed, thus history rewrite is possible")
                 }
                 if (!first.canSomeoneMerge) {
                     it.addDetails("no user can merge code into this branch")
