@@ -25,6 +25,7 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
 
     private fun prepareIssueAdvice(context: AdvisorContext): IssueAdvice {
         val issueAdvice = IssueAdvice(context.project.name)
+        // FIXME rules should be part of model, but temporarily for simplicity are kept here
         Dsl.advise(issueAdvice, context) {
             // @formatter:off
             has { visibility == Visibility.PRIVATE } then "visibility.private"
