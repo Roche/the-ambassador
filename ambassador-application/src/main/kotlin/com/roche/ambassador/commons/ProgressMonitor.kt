@@ -1,7 +1,9 @@
 package com.roche.ambassador.commons
 
-import com.roche.ambassador.extensions.LoggerDelegate
+import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.math.max
+import kotlin.reflect.KClass
 
 sealed interface ProgressMonitor {
 
@@ -9,15 +11,19 @@ sealed interface ProgressMonitor {
     fun failure()
 }
 
-class LoggingProgressMonitor(private val total: Long,
-                                      private val resolution: Int = 5,
-                                      private val messageProvider: ProgressMessageProvider = defaultProgressMessageProvider) : ProgressMonitor {
+class LoggingProgressMonitor(
+    private val total: Long,
+    resolution: Long = 5,
+    loggingClass: KClass<*>,
+    private val messageProvider: ProgressMessageProvider = defaultProgressMessageProvider
+) : ProgressMonitor {
 
     private val success: AtomicLong = AtomicLong(0)
     private val failure: AtomicLong = AtomicLong(0)
+    private val width = max(total * resolution / 100, resolution)
+    private val log = LoggerFactory.getLogger(loggingClass.java)
 
     companion object {
-        private val log by LoggerDelegate()
         private val defaultProgressMessageProvider: ProgressMessageProvider = { successes, failures, total ->
             val percentage = (successes + failures) * 100 / total
             "Progress: $percentage% (successes: $successes; failures: $failures; total: $total)"
@@ -37,7 +43,6 @@ class LoggingProgressMonitor(private val total: Long,
     }
 
     private fun tryLog(success: Long, failure: Long) {
-        val width = total * resolution / 100
         val progress = success + failure
         if (progress % width == 0L) {
             val msg = messageProvider(success, failure, total)
