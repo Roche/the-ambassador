@@ -21,8 +21,12 @@ class Continuation(history: List<Indexing>, props: IndexingCriteriaProperties) {
             .filter { it.status == IndexingStatus.FINISHED || it.finishedDate?.toLocalDate()?.isEqual(LocalDate.now()) ?: false }
             .sortedByDescending { it.finishedDate }
 
-        val last = sortedHistory.last() // assume last should be finished
-        this.lastActivityAfter = if (last.isSuccessful()) {
+        val last = if (sortedHistory.isNotEmpty()) {
+            sortedHistory.last() // assume last should be finished
+        } else {
+            null
+        }
+        this.lastActivityAfter = if (last != null && last.isSuccessful()) {
             last.finishedDate ?: last.startedDate
         } else {
             props.projects.lastActivityAfter

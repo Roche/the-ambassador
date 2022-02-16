@@ -156,6 +156,7 @@ internal class IndexingService(
         try {
             val result = indexer.indexOne(id)
             indexingRepository.save(idx.finish(indexer.getStatus()))
+            eventPublisher.publishEvent(SingleProjectIndexingFinishedEvent(result, idx))
             return result
         } catch(e: Throwable) {
             indexingRepository.save(idx.fail())

@@ -6,7 +6,9 @@ import com.roche.ambassador.commons.ProgressMonitor
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.ScorecardCalculator
 import com.roche.ambassador.model.ScorecardConfiguration
+import com.roche.ambassador.model.feature.FeatureReaders
 import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.model.source.ProjectSources
 import com.roche.ambassador.storage.project.ProjectEntity
 import com.roche.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 internal class AnalysisService(
     private val scorecardConfiguration: ScorecardConfiguration,
     private val projectEntityRepository: ProjectEntityRepository,
+    private val projectSources: ProjectSources,
     concurrencyProvider: ConcurrencyProvider
 ) {
 
@@ -31,9 +34,21 @@ internal class AnalysisService(
 
     suspend fun analyze(project: Project): Project {
         log.debug("Calculating scoring for project '{}' (id={})", project.name, project.id)
+        val source = projectSources.get("gitlab").orElseThrow()
+        FeatureReaders.getProjectBasedReaders().forEach {
+            project.readFeature(it, source)
+        }
         val scorecard = calculator.calculateFor(project)
         project.scorecard = scorecard
         return project
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun analyzeOne(id: String) {
+        val entity = projectEntityRepository.findById(id.toLong())
+            .orElseThrow { IllegalStateException("Project does not exist!") }
+        val progressMonitor: ProgressMonitor = LoggingProgressMonitor(1, 1, AnalysisService::class)
+        analyze(entity, progressMonitor)
     }
 
     private fun analyze(entity: ProjectEntity, progressMonitor: ProgressMonitor) {
@@ -54,7 +69,7 @@ internal class AnalysisService(
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun analyzeAll() {
         val total = projectEntityRepository.count()
-        val progressMonitor: ProgressMonitor = LoggingProgressMonitor(total, 2)
+        val progressMonitor: ProgressMonitor = LoggingProgressMonitor(total, 2, AnalysisService::class)
         projectEntityRepository.streamAllForAnalysis().use { stream ->
             stream
                 .filter { scorecardConfiguration.shouldCalculateScoring(it.project) }

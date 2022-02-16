@@ -15,7 +15,11 @@ internal class PostIndexingAnalysisInitializer(private val analysisService: Anal
     @EventListener
     fun handleIndexingFinished(event: IndexingFinishedEvent) {
         log.info("Initializing indexed projects analysis & scoring.")
-        analysisService.analyzeAll()
+        if (event.data.isIndexingAll()) {
+            analysisService.analyzeAll()
+        } else {
+            analysisService.analyzeOne(event.data.target)
+        }
         log.info("Indexed projects were analyzed.")
     }
 }

@@ -66,6 +66,8 @@ data class Indexing internal constructor(
 
     fun isSuccessful(): Boolean = status == IndexingStatus.FINISHED
 
+    fun isIndexingAll(): Boolean = target == ALL_TARGET
+
     companion object {
         const val ALL_TARGET = "__ALL__"
 
