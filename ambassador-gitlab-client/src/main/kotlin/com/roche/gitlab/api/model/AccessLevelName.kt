@@ -12,9 +12,9 @@ enum class AccessLevelName(val value: Int) {
     REPORTER(20),
     DEVELOPER(30),
 
-    @Deprecated("deprecated")
-    MASTER(40),
     MAINTAINER(40),
+    @Deprecated("deprecated")
+    MASTER(999),
     OWNER(50),
     ADMIN(60);
 
