@@ -7,6 +7,8 @@ data class Member(
     val id: Long,
     val name: String,
     val email: String?,
+    val avatarUrl: String?,
+    val webUrl: String?,
     val username: String,
     val accessLevel: AccessLevel
 )

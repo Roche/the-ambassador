@@ -226,7 +226,7 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
             .paging(fromPagination = Pagination(itemsPerPage = 100))
             .forEach {
                 if (it.state == UserState.ACTIVE && !isBotUser(projectId, it.username)) {
-                    members.add(Member(it.id, it.name, it.email, it.username, mapAccessLevel(it.accessLevel)))
+                    members.add(Member(it.id, it.name, it.email, it.avatarUrl, it.webUrl, it.username, mapAccessLevel(it.accessLevel)))
                 }
             }
         return members.toList()

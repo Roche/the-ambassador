@@ -109,6 +109,8 @@ class FakeDataProvider {
             nextLong(1, 15000),
             faker.name().fullName(),
             faker.internet().emailAddress(),
+            faker.internet().avatar(),
+            faker.internet().url(),
             nameDice.rollForData(),
             accessLevelDice.rollForData()
         )
