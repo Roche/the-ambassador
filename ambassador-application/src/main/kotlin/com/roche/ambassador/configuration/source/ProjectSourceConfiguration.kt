@@ -8,6 +8,8 @@ import com.roche.ambassador.gitlab.GitLabSource
 import com.roche.ambassador.model.source.ProjectSources
 import com.roche.gitlab.api.GitLab
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.Duration
@@ -18,12 +20,16 @@ class ProjectSourceConfiguration {
     @Bean
     fun sources(
         projectSourcesProperties: ProjectSourcesProperties,
+        @Qualifier("projectSourceCacheManager")
+        cacheManager: CacheManager
     ): ProjectSources {
         val source = when (projectSourcesProperties.system) {
             GITLAB -> configureGitLab(projectSourcesProperties)
             FAKE -> configureFake()
         }
-        return ProjectSources(mapOf(projectSourcesProperties.name to source))
+        val cache = cacheManager.getCache(source.name())!!
+        val cached = CachedProjectSource(source, cache)
+        return ProjectSources(mapOf(projectSourcesProperties.name to cached))
     }
 
     private fun configureFake(): FakeSource {
