@@ -225,11 +225,15 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
             .members()
             .paging(fromPagination = Pagination(itemsPerPage = 100))
             .forEach {
-                if (it.state == UserState.ACTIVE) {
+                if (it.state == UserState.ACTIVE && !isBotUser(projectId, it.username)) {
                     members.add(Member(it.id, it.name, it.email, it.username, mapAccessLevel(it.accessLevel)))
                 }
             }
         return members.toList()
+    }
+
+    private fun isBotUser(projectId: String, username: String): Boolean {
+        return username.contains("project_${projectId}_bot")
     }
 
     override suspend fun readPullRequests(projectId: String): List<PullRequest> {
@@ -309,7 +313,7 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
     private fun mapAccessLevel(gitlabAccessLevelName: AccessLevelName?): AccessLevel {
         return when (gitlabAccessLevelName) {
             ADMIN, MAINTAINER, OWNER -> AccessLevel.ADMIN
-            DEVELOPER, MASTER -> AccessLevel.WRITE
+            DEVELOPER -> AccessLevel.WRITE
             REPORTER, GUEST -> AccessLevel.READ
             else -> AccessLevel.NONE
         }
