@@ -6,6 +6,8 @@ import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.indexing.*
 import com.roche.ambassador.indexing.project.steps.IndexingStep
+import com.roche.ambassador.model.project.AccessLevel
+import com.roche.ambassador.model.project.Contact
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProjectFilter
 import com.roche.ambassador.model.source.ProjectSource
@@ -52,6 +54,7 @@ class ProjectIndexer internal constructor(
         log.info("Indexing project $id regardless of criteria")
         val project = source.getById(id.toString())
         if (project.isPresent) {
+            enhance(project.get())
             val processed = processWithChain(project.get())
             return processed.project
         }
@@ -92,9 +95,19 @@ class ProjectIndexer internal constructor(
                         onError(it)
                         tryFinish(onFinished)
                     }
+                    .onEach { enhance(it) }
                     .collect { index(it, onObjectIndexingFinished, onObjectIndexingError, onFinished) }
             }
         }
+    }
+
+    private suspend fun enhance(project: Project) {
+        source.readMembers(project.id.toString())
+            .filter { it.accessLevel == AccessLevel.ADMIN }
+            .filter { it.email != null || it.webUrl != null }
+            .sortedBy { it.name }
+            .map { Contact(it.name, it.email, it.webUrl, it.avatarUrl) }
+            .forEach(project.contacts::add)
     }
 
     private suspend fun index(

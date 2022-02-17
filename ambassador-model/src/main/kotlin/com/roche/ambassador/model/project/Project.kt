@@ -31,6 +31,7 @@ data class Project(
     val createdDate: LocalDate,
     val lastActivityDate: LocalDate?,
     val permissions: Permissions?,
+    val contacts: MutableSet<Contact> = mutableSetOf(),
     val features: Features = Features(),
     var scorecard: Scorecard? = null,
     val parent: Group? = null,

@@ -34,6 +34,7 @@ internal class CacheConfiguration {
             .expireAfterWrite(Duration.ofSeconds(30))
             .initialCapacity(500)
             .scheduler(Scheduler.systemScheduler())
+            .recordStats()
         val manager = CaffeineCacheManager()
         manager.setCaffeine(caffeine)
         return manager

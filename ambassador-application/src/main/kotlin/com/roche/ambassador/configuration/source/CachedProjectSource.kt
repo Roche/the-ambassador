@@ -25,12 +25,12 @@ open class CachedProjectSource(
     // @Cacheable is not used because it does not work with suspend, cause it adds Continuation as last arg and each exec is treated as unique call
     private suspend fun <T : Any> withCache(key: String, type: KClass<T>, dataReader: suspend () -> T): T {
         val cached = cache.get(key, type.java)
-        if (cached == null) {
+        return if (cached == null) {
             val freshData = dataReader()
             cache.put(key, freshData)
-            return freshData
+            freshData
         } else {
-            return cached
+            cached
         }
     }
 }
