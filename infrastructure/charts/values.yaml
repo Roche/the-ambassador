@@ -2,13 +2,10 @@ global:
   postgresql:
     postgresqlDatabase: ambassador-db
     postgresqlUsername: ambassador
-    postgresqlPassword: ambassador
-#    existingSecret: 'postgres-secrets'
+    postgresqlPassword: ""
+    existingSecret: ""
     host: ""
     port: 5432
-
-ambassador:
-
 
 ## Installation & configuration of stable/prostgresql
 ## See requirements.yaml for current version
@@ -31,7 +28,7 @@ postgresql:
 ## values for indexer subchart
 indexer:
   replicaCount: 1
-  
+  sourcesSecret: ""
   appConfig:
     ambassador: # ambassador-specific configuration as defined in application.yml
       security:

@@ -1,5 +1,7 @@
 replicaCount: 1
 
+sourcesSecret: ""
+
 appConfig:
   ambassador: # ambassador-specific configuration as defined in application.yml
     security:

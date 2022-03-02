@@ -27,12 +27,20 @@ spec:
         - name: config
           configMap:
             name: {{ include "indexer.fullname" . }}
-        - name: secrets
+        - name: db-secrets
           secret:
-            secretName: {{ include "indexer.fullname" . }}
+            secretName: db-{{ include "indexer.fullname" . }}
             items:
-              - key: application-secrets.yml
-                path: application-secrets.yml
+              - key: application-database.yml
+                path: application-database.yml
+        {{- if .Values.sourcesSecret }}
+        - name: source-secrets
+          secret:
+            secretName: {{ .Values.sourcesSecret }}
+            items:
+              - key: source
+                path: application-source.yml
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
@@ -41,13 +49,22 @@ spec:
           env:
             - name: SPRING_CONFIG_ADDITIONAL_LOCATION
               value: file:///config/,file:///secrets/
+            - name: SPRING_PROFILES_ACTIVE
+              value: database,source
           volumeMounts:
             - mountPath: /config/
               name: config
               readOnly: true
-            - mountPath: /secrets/
-              name: secrets
+            - mountPath: /secrets/application-database.yml
+              subPath: application-database.yml
+              name: db-secrets
               readOnly: true
+            {{- if .Values.sourcesSecret }}
+            - mountPath: /secrets/application-source.yml
+              subPath: application-source.yml
+              name: source-secrets
+              readOnly: true
+            {{- end }}
           ports:
             - name: http
               containerPort: 8080
