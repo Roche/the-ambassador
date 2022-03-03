@@ -22,7 +22,7 @@ maintainers:
     email: mateusz.filipowicz@roche.com
 dependencies:
   - name: indexer
-    version: 0.2.0-SNAPSHOT
+    version: 0.2.0
   - name: postgresql
     version: 10.16.2
     repository: https://charts.bitnami.com/bitnami
