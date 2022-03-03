@@ -41,6 +41,11 @@ spec:
               - key: source
                 path: application-source.yml
         {{- end }}
+        {{- if .Values.global.postgresql.tlsSecret }}
+        - name: postgresql-tls
+          secret:
+            secretName: {{ .Values.global.postgresql.tlsSecret }}
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
@@ -63,6 +68,20 @@ spec:
             - mountPath: /secrets/application-source.yml
               subPath: application-source.yml
               name: source-secrets
+              readOnly: true
+            {{- end }}
+            {{- if .Values.global.postgresql.tlsSecret }}
+            - mountPath: /cnb/.postgresql/postgresql.pk8
+              subPath: privateKey
+              name: postgresql-tls
+              readOnly: true
+            - mountPath: /cnb/.postgresql/postgresql.crt
+              subPath: cert
+              name: postgresql-tls
+              readOnly: true
+            - mountPath: /cnb/.postgresql/root.crt
+              subPath: serverCACert
+              name: postgresql-tls
               readOnly: true
             {{- end }}
           ports:

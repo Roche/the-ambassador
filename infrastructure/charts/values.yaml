@@ -4,10 +4,11 @@ global:
     postgresqlUsername: ambassador
     postgresqlPassword: ""
     existingSecret: ""
+    tlsSecret: ""
     host: ""
     port: 5432
 
-## Installation & configuration of stable/prostgresql
+## Installation & configuration of stable/postgresql
 ## See requirements.yaml for current version
 postgresql:
   install: true
@@ -30,7 +31,8 @@ indexer:
   replicaCount: 1
   sourcesSecret: ""
   appConfig:
-    ambassador: # ambassador-specific configuration as defined in application.yml
+    # ambassador-specific configuration as defined in application.yml
+    ambassador:
       security:
         enabled: false
       source:
@@ -38,16 +40,16 @@ indexer:
         url: https://fake
         token: fake
         system: fake
-  
+
   image:
     repository: ghcr.io/roche/ambassador-indexer
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
-  
+
   nameOverride: ""
   fullnameOverride: ""
-  
+
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
@@ -56,13 +58,13 @@ indexer:
     # The name of the service account to use.
     # If not set and create is true, a name is generated using the fullname template
     name: ""
-  
+
   podAnnotations: {}
-  
+
   podSecurityContext:
     runAsNonRoot: true
     fsGroup: 2000
-  
+
   securityContext:
     capabilities:
       drop:
@@ -72,11 +74,11 @@ indexer:
     runAsUser: 1000
     privileged: false
     runAsNonRoot: true
-  
+
   service:
     type: ClusterIP
     port: 8080
-  
+
   ingress:
     enabled: true
     className: ""
@@ -92,7 +94,7 @@ indexer:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
-  
+
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
@@ -104,20 +106,20 @@ indexer:
     # requests:
     #   cpu: 100m
   #   memory: 128Mi
-  
+
   pdb:
     minAvailable: 1
   #  maxUnavailable:
-  
+
   autoscaling:
     enabled: false
     minReplicas: 1
-    maxReplicas: 1 # not supported yet
+    maxReplicas: 1  # not supported yet
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
-  
+
   nodeSelector: {}
-  
+
   tolerations: []
-  
+
   affinity: {}

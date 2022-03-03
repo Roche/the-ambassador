@@ -3,7 +3,8 @@ replicaCount: 1
 sourcesSecret: ""
 
 appConfig:
-  ambassador: # ambassador-specific configuration as defined in application.yml
+  # ambassador-specific configuration as defined in application.yml
+  ambassador:
     security:
       enabled: false
     source:
@@ -85,7 +86,7 @@ pdb:
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 1 # not supported yet
+  maxReplicas: 1  # not supported yet
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 

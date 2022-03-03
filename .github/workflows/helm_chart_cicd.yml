@@ -59,14 +59,14 @@ jobs:
           fi
 
       - name: Run chart-testing (lint)
-        run: ct lint --chart-dirs infrastructure/
+        run: ct lint --chart-dirs infrastructure/ --all
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.2.0
         if: steps.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
-        run: ct install --chart-dirs infrastructure/
+        run: ct install --chart-dirs infrastructure/ --config infrastructure/charts/ci-values.yml --debug
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.1
