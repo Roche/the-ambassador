@@ -19,10 +19,18 @@ Returns the contents of the `ambassador.database.yml` blob for pods
 {{- end }}
 {{- end }}
 
+{{- define "spring.datasource.url" }}
+{{- if .Values.global.postgresql.tlsSecret -}}
+jdbc:postgresql://{{ include "ambassador.database.url" . | trim }}/{{ .Values.global.postgresql.postgresqlDatabase }}?ssl=true&sslmode=verify-full
+{{- else -}}
+jdbc:postgresql://{{ include "ambassador.database.url" . | trim }}/{{ .Values.global.postgresql.postgresqlDatabase }}
+{{- end }}
+{{- end }}
+
 {{- define "ambassador.database.yml" -}}
 spring:
   datasource:
-    url: jdbc:postgresql://{{ include "ambassador.database.url" . | trim }}/{{ .Values.global.postgresql.postgresqlDatabase }}
+    url: {{ include "spring.datasource.url" . }}
     username: {{ .Values.global.postgresql.postgresqlUsername }}
-    password: {{ include "postgres.password" . }}
+    password: "{{ include "postgres.password" . }}"
 {{- end -}}
