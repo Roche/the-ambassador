@@ -71,6 +71,7 @@ internal class SecurityConfiguration {
             .httpBasic().disable()
             .formLogin().disable()
             .authorizeExchange()
+            .pathMatchers("/actuator/health/**").permitAll()
             .anyExchange().authenticated().and()
             .oauth2Login()
             .authenticationSuccessHandler(buildSuccessHandler(sessionProperties))
