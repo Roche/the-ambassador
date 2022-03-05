@@ -29,15 +29,19 @@ internal class ClientRegistrationRegistrar(private val projectSourcesProperties:
         if (clientRegistrations.isEmpty()) {
             throw IllegalStateException("No valid client registration")
         }
-        log.info("Registered OAuth2 clients: {}", clientRegistrations.joinToString { it.clientName })
+        log.info("Registered OAuth2 clients: {}", clientRegistrations.joinToString { it.asHumanReadable() })
         return InMemoryReactiveClientRegistrationRepository(clientRegistrations)
+    }
+
+    private fun ClientRegistration.asHumanReadable(): String {
+        return "$clientName (redirect-uri=${redirectUri},scopes=(${scopes.joinToString(", ")}))"
     }
 
     private fun completeRegistration(partialRegistration: ClientRegistration): ClientRegistration {
         return ClientRegistration.withClientRegistration(partialRegistration)
             .clientSecret(projectSourcesProperties.clientSecret)
             .clientId(projectSourcesProperties.clientId)
-            .redirectUri("http://localhost:8080/login/oauth2/code/gitlab")
+            .redirectUri("{baseUrl}/login/oauth2/code/${partialRegistration.registrationId}")
             .authorizationGrantType(partialRegistration.authorizationGrantType ?: DEFAULT_AUTHORIZATION_GRANT_TYPE)
             .build()
     }
