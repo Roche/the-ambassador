@@ -22,7 +22,6 @@ spec:
       imagePullSecrets: {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "indexer.serviceAccountName" . }}
-      securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
         - name: config
           configMap:
@@ -42,10 +41,32 @@ spec:
                 path: application-source.yml
         {{- end }}
         {{- if .Values.global.postgresql.tlsSecret }}
+        - name: postgres-tls-volume
+          emptyDir:
+            sizeLimit: "20k"
         - name: postgresql-tls
           secret:
             secretName: {{ .Values.global.postgresql.tlsSecret }}
+            defaultMode: 0400
         {{- end }}
+      initContainers:
+      {{- if .Values.global.postgresql.tlsSecret }}
+        - name: postgres-tls-ownership
+          image: alpine:3.6
+          command: ["sh", "-c", "cp /root/.postgresql/* /home/cnb/.postgresql && chmod 0400 /home/cnb/.postgresql/* && chown -R 1000:1000 /home/cnb/.postgresql"]
+          volumeMounts:
+            - mountPath: /home/cnb/.postgresql
+              name: postgres-tls-volume
+            - mountPath: /root/.postgresql/postgresql.pk8
+              subPath: privateKey
+              name: postgresql-tls
+            - mountPath: /root/.postgresql/postgresql.crt
+              subPath: cert
+              name: postgresql-tls
+            - mountPath: /root/.postgresql/root.crt
+              subPath: serverCACert
+              name: postgresql-tls
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
@@ -71,18 +92,8 @@ spec:
               readOnly: true
             {{- end }}
             {{- if .Values.global.postgresql.tlsSecret }}
-            - mountPath: /home/cnb/.postgresql/postgresql.pk8
-              subPath: privateKey
-              name: postgresql-tls
-              mode: 600
-            - mountPath: /home/cnb/.postgresql/postgresql.crt
-              subPath: cert
-              name: postgresql-tls
-              mode: 600
-            - mountPath: /home/cnb/.postgresql/root.crt
-              subPath: serverCACert
-              name: postgresql-tls
-              mode: 600
+            - mountPath: /home/cnb/.postgresql
+              name: postgres-tls-volume
             {{- end }}
           ports:
             - name: http
