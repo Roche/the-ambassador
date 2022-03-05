@@ -74,15 +74,15 @@ spec:
             - mountPath: /home/cnb/.postgresql/postgresql.pk8
               subPath: privateKey
               name: postgresql-tls
-              readOnly: true
+              mode: 600
             - mountPath: /home/cnb/.postgresql/postgresql.crt
               subPath: cert
               name: postgresql-tls
-              readOnly: true
+              mode: 600
             - mountPath: /home/cnb/.postgresql/root.crt
               subPath: serverCACert
               name: postgresql-tls
-              readOnly: true
+              mode: 600
             {{- end }}
           ports:
             - name: http
