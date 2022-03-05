@@ -1,3 +1,0 @@
-global:
-  postgresql:
-    postgresqlPassword: ambassador

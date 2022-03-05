@@ -71,15 +71,15 @@ spec:
               readOnly: true
             {{- end }}
             {{- if .Values.global.postgresql.tlsSecret }}
-            - mountPath: /cnb/.postgresql/postgresql.pk8
+            - mountPath: /home/cnb/.postgresql/postgresql.pk8
               subPath: privateKey
               name: postgresql-tls
               readOnly: true
-            - mountPath: /cnb/.postgresql/postgresql.crt
+            - mountPath: /home/cnb/.postgresql/postgresql.crt
               subPath: cert
               name: postgresql-tls
               readOnly: true
-            - mountPath: /cnb/.postgresql/root.crt
+            - mountPath: /home/cnb/.postgresql/root.crt
               subPath: serverCACert
               name: postgresql-tls
               readOnly: true
