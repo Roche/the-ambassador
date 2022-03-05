@@ -68,6 +68,7 @@ spec:
               name: postgresql-tls
       {{- end }}
       containers:
+        {{- include "ambassador.extraContainers" $ | nindent 8 }}
         - name: {{ .Chart.Name }}
           securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

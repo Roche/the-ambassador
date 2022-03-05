@@ -112,3 +112,5 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+extraContainers: {}
