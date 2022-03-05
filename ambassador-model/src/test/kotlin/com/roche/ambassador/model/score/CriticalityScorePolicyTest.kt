@@ -197,10 +197,10 @@ class CriticalityScorePolicyTest {
         fun dates(): Stream<Arguments> {
             return Stream.of(
                 Arguments.of(LocalDate.now().minusYears(10), .1818),
-                Arguments.of(LocalDate.now().minusDays(121), .0526),
-                Arguments.of(LocalDate.now().minusDays(120), .0526),
+                Arguments.of(LocalDate.now().minusDays(121), .061),
+                Arguments.of(LocalDate.now().minusDays(120), .061),
                 Arguments.of(LocalDate.now().minusDays(119), .0526),
-                Arguments.of(LocalDate.now().minusDays(60), .0263),
+                Arguments.of(LocalDate.now().minusDays(60), .0417),
                 Arguments.of(LocalDate.now().minusMonths(1).plusDays(1), .0),
                 Arguments.of(LocalDate.now().minusDays(5), .0),
                 Arguments.of(LocalDate.now(), .0)
