@@ -98,7 +98,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.12.2")
     testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
     testImplementation("org.assertj:assertj-core:3.22.0")
-    testImplementation("com.devskiller:jfairy:0.6.4")
+    testImplementation("com.devskiller:jfairy:0.6.5")
     integrationTestImplementation("org.testcontainers:postgresql:$testcontainersVersion")
     architectureTestImplementation("com.tngtech.archunit:archunit-junit5:0.22.0")
 }
