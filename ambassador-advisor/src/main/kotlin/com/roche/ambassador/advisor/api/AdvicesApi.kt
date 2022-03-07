@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import javax.validation.constraints.Min
 
-@Api("/projects/{projectId}/advices")
+@Api("/projects/{id}/advices")
 @Tag(name = "Projects API", description = "API to read or search indexed projects")
 class AdvicesApi(private val advisorService: AdvisorService) {
 
@@ -16,6 +16,6 @@ class AdvicesApi(private val advisorService: AdvisorService) {
     @Operation(summary = "Get advices for the project")
     @ApiResponse(responseCode = "200", description = "List of advices")
     @GetMapping
-    suspend fun readAdvices(@PathVariable @Min(1) projectId: Long): List<AdviceDto> = advisorService.readAdvices(projectId)
+    suspend fun readAdvices(@PathVariable @Min(1) id: Long): List<AdviceDto> = advisorService.readAdvices(id)
 
 }

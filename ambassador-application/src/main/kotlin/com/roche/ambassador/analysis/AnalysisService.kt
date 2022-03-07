@@ -32,37 +32,12 @@ internal class AnalysisService(
         private val log by LoggerDelegate()
     }
 
-    suspend fun analyze(project: Project): Project {
-        log.debug("Calculating scoring for project '{}' (id={})", project.name, project.id)
-        val source = projectSources.get("gitlab").orElseThrow()
-        FeatureReaders.getProjectBasedReaders().forEach {
-            project.readFeature(it, source)
-        }
-        val scorecard = calculator.calculateFor(project)
-        project.scorecard = scorecard
-        return project
-    }
-
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun analyzeOne(id: String) {
         val entity = projectEntityRepository.findById(id.toLong())
             .orElseThrow { IllegalStateException("Project does not exist!") }
         val progressMonitor: ProgressMonitor = LoggingProgressMonitor(1, 1, AnalysisService::class)
         analyze(entity, progressMonitor)
-    }
-
-    private fun analyze(entity: ProjectEntity, progressMonitor: ProgressMonitor) {
-        analysisScope.launch {
-            try {
-                entity.project = analyze(entity.project)
-                entity.updateScore(entity.project)
-                projectEntityRepository.save(entity)
-                progressMonitor.success()
-            } catch (e: Throwable) {
-                log.error("Failed to analyze project '{}' (id={}).", entity.project.fullName, entity.project.id, e)
-                progressMonitor.failure()
-            }
-        }
     }
 
     // TODO run async
@@ -75,5 +50,31 @@ internal class AnalysisService(
                 .filter { scorecardConfiguration.shouldCalculateScoring(it.project) }
                 .forEach { analyze(it, progressMonitor) }
         }
+    }
+
+    private fun analyze(entity: ProjectEntity, progressMonitor: ProgressMonitor) {
+        analysisScope.launch {
+            try {
+                entity.project = analyze(entity.project)
+                entity.updateScore(entity.project)
+                entity.recordStatistics()
+                projectEntityRepository.save(entity)
+                progressMonitor.success()
+            } catch (e: Throwable) {
+                log.error("Failed to analyze project '{}' (id={}).", entity.project.fullName, entity.project.id, e)
+                progressMonitor.failure()
+            }
+        }
+    }
+
+    private suspend fun analyze(project: Project): Project {
+        log.debug("Calculating scoring for project '{}' (id={})", project.name, project.id)
+        val source = projectSources.get("gitlab").orElseThrow()
+        FeatureReaders.getProjectBasedReaders().forEach {
+            project.readFeature(it, source)
+        }
+        val scorecard = calculator.calculateFor(project)
+        project.scorecard = scorecard
+        return project
     }
 }

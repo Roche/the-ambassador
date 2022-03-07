@@ -16,7 +16,7 @@ import javax.validation.constraints.Min
 @Tag(name = "Groups API", description = "API to read or search indexed groups")
 internal class GroupsApi(private val groupsService: GroupsService) {
 
-    @Operation(summary = "Get indexed group by ID", tags = ["group"])
+    @Operation(summary = "Get indexed group by ID")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Single indexed group"),
         ApiResponse(responseCode = "404", description = "Group not found")
@@ -26,7 +26,7 @@ internal class GroupsApi(private val groupsService: GroupsService) {
         return groupsService.getGroup(id)
     }
 
-    @Operation(summary = "Search for indexed groups", tags = ["group"])
+    @Operation(summary = "Search for indexed groups")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "List of indexed groups matching provided query")
     )

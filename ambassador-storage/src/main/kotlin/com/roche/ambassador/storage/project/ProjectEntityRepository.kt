@@ -23,7 +23,7 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
     @Modifying
     override fun deleteAll()
 
-    @EntityGraph(value = "Project.history")
+    @EntityGraph(value = "Project.statsHistory")
     override fun findById(id: Long): Optional<ProjectEntity>
 
     @Query(

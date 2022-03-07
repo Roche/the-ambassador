@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,7 +18,7 @@ import javax.validation.constraints.Min
 @Tag(name = "Projects API", description = "API to read or search indexed projects")
 internal class ProjectsApi(private val projectService: ProjectsService) {
 
-    @Operation(summary = "Get indexed project by ID", tags = ["project"])
+    @Operation(summary = "Get indexed project by ID")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Single indexed project"),
         ApiResponse(responseCode = "404", description = "Project not found")
@@ -29,21 +28,17 @@ internal class ProjectsApi(private val projectService: ProjectsService) {
         return projectService.getProject(id)
     }
 
-    @Operation(summary = "Get project history", description = "See how project changed over time", tags = ["project"])
+    @Operation(summary = "Get project statistics history", description = "See how project changed over time")
     @ApiResponses(
-        ApiResponse(responseCode = "200", description = "History of indexed project"),
+        ApiResponse(responseCode = "200", description = "Statistics history of indexed project"),
         ApiResponse(responseCode = "404", description = "Project not found")
     )
-    @GetMapping("{id}/history")
-    suspend fun history(
-        @PathVariable @Min(1) id: Long,
-        @PageableDefault(size = 25, sort = ["indexedDate"], direction = Sort.Direction.DESC)
-        pageable: Pageable
-    ): Paged<ProjectHistoryDto> {
-        return projectService.getProjectHistory(id, pageable)
+    @GetMapping("{id}/stats")
+    suspend fun stats(@PathVariable @Min(1) id: Long, query: ProjectStatsHistoryQuery): ProjectStatsHistoryDto {
+        return projectService.getProjectStatsHistory(id, query)
     }
 
-    @Operation(summary = "Get readme", description = "Read actual project readme if it exists", tags = ["project"])
+    @Operation(summary = "Get readme", description = "Read actual project readme if it exists")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Project readme retrieved"),
         ApiResponse(responseCode = "404", description = "Readme not found")
@@ -53,7 +48,7 @@ internal class ProjectsApi(private val projectService: ProjectsService) {
         return projectService.getDocument(id, DocumentType.README)
     }
 
-    @Operation(summary = "Get license", description = "Read actual license if it exists", tags = ["project"])
+    @Operation(summary = "Get license", description = "Read actual license if it exists")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Project license retrieved"),
         ApiResponse(responseCode = "404", description = "License not found")
@@ -63,7 +58,7 @@ internal class ProjectsApi(private val projectService: ProjectsService) {
         return projectService.getDocument(id, DocumentType.LICENSE)
     }
 
-    @Operation(summary = "Get contribution guide", description = "Read actual contribution guide if it exists", tags = ["project"])
+    @Operation(summary = "Get contribution guide", description = "Read actual contribution guide if it exists")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Project contribution guide retrieved"),
         ApiResponse(responseCode = "404", description = "Contribution guide not found")
@@ -73,7 +68,7 @@ internal class ProjectsApi(private val projectService: ProjectsService) {
         return projectService.getDocument(id, DocumentType.CONTRIBUTION_GUIDE)
     }
 
-    @Operation(summary = "Search for indexed projects", description = "", tags = ["project"])
+    @Operation(summary = "Search for indexed projects", description = "")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "List of indexed project matching provided query")
     )

@@ -20,8 +20,6 @@ internal class SaveProjectStep(private val projectEntityRepository: ProjectEntit
     override suspend fun handle(context: IndexingContext, chain: IndexingChain) {
         val currentEntity = context.entity
         val toSave: ProjectEntity = if (currentEntity != null) {
-            currentEntity.removeHistoryToMatchLimit(5) // )
-            currentEntity.snapshot()
             currentEntity.updateIndex(context.project)
             currentEntity
         } else {

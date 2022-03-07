@@ -9,22 +9,25 @@ import com.roche.ambassador.model.files.RawFile
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.source.ProjectSources
 import com.roche.ambassador.storage.project.ProjectEntityRepository
-import com.roche.ambassador.storage.project.ProjectHistoryRepository
 import com.roche.ambassador.storage.project.ProjectSearchQuery
 import com.roche.ambassador.storage.project.ProjectSearchRepository
+import com.roche.ambassador.storage.project.ProjectStatisticsHistoryRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 @CacheConfig(cacheNames = ["projects"])
 @Transactional(readOnly = true)
-class ProjectsService(
+internal class ProjectsService(
     private val projectEntityRepository: ProjectEntityRepository,
     private val projectSearchRepository: ProjectSearchRepository,
-    private val projectHistoryRepository: ProjectHistoryRepository,
+    private val projectStatisticsHistoryRepository: ProjectStatisticsHistoryRepository,
     private val projectSources: ProjectSources
 ) {
 
@@ -53,10 +56,23 @@ class ProjectsService(
         return Paged.from(result)
     }
 
-    suspend fun getProjectHistory(id: Long, pageable: Pageable): Paged<ProjectHistoryDto> {
-        val history = projectHistoryRepository.findByProjectId(id, pageable)
-            .map { ProjectHistoryDto.from(it) }
-        return Paged.from(history)
+    suspend fun getProjectStatsHistory(id: Long, query: ProjectStatsHistoryQuery): ProjectStatsHistoryDto {
+        log.info("Reading project statistics history for project $id (query=$query)")
+        val before = query.getBeforeAsLocalDateTime()
+        val after = query.getAfterAsLocalDateTime()
+        val history = withContext(Dispatchers.IO) {
+            if (after.isPresent && before.isPresent) {
+                projectStatisticsHistoryRepository.findByProjectIdAndDateBetween(id, after.get(), before.get())
+            } else if (after.isPresent) {
+                projectStatisticsHistoryRepository.findByProjectIdAndDateGreaterThanEqual(id, after.get())
+            } else if (before.isPresent) {
+                projectStatisticsHistoryRepository.findByProjectIdAndDateLessThan(id, before.get())
+            } else {
+                // by default read history from latest year
+                projectStatisticsHistoryRepository.findByProjectIdAndDateGreaterThanEqual(id, LocalDateTime.now().minusYears(1))
+            }
+        }
+        return ProjectStatsHistoryDto.from(id, history)
     }
 
     suspend fun getDocument(id: Long, documentType: DocumentType): DocumentDto {

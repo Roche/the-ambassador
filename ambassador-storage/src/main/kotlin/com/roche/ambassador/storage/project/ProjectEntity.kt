@@ -14,8 +14,8 @@ import javax.persistence.*
 @Table(name = "project")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
 @NamedEntityGraph(
-    name = "Project.history",
-    attributeNodes = [NamedAttributeNode("history")]
+    name = "Project.statsHistory",
+    attributeNodes = [NamedAttributeNode("statsHistory")]
 )
 class ProjectEntity(
     @Id var id: Long? = null,
@@ -37,14 +37,14 @@ class ProjectEntity(
     @Column(name = "last_analysis_date")
     var lastAnalysisDate: LocalDateTime? = null,
     @OneToMany(
-        mappedBy = "parent",
+        mappedBy = "project",
         cascade = [CascadeType.ALL],
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
     @BatchSize(size = 25)
-    @OrderBy("indexedDate")
-    var history: MutableList<ProjectHistoryEntity> = mutableListOf(),
+    @OrderBy("date")
+    var statsHistory: MutableList<ProjectStatisticsHistory> = mutableListOf(),
     var source: String? = null,
     @Column(name = "last_indexing_id")
     var lastIndexingId: UUID? = null // mapping is not needed here yet, thus not adding it
@@ -55,19 +55,10 @@ class ProjectEntity(
 
     fun wasIndexedBefore(otherDate: LocalDate): Boolean = lastIndexedDate.isBefore(otherDate.atStartOfDay())
 
-    fun snapshot(): ProjectHistoryEntity {
-        val historyEntry = ProjectHistoryEntity.from(this)
-        history.add(historyEntry)
+    fun recordStatistics(): ProjectStatisticsHistory {
+        val historyEntry = ProjectStatisticsHistory.from(this)
+        statsHistory.add(historyEntry)
         return historyEntry
-    }
-
-    fun removeHistoryToMatchLimit(limit: Int) {
-        val newHistory = history
-            .sortedByDescending { it.indexedDate }
-            .take(limit)
-            .toMutableList()
-        history.clear()
-        history.addAll(newHistory)
     }
 
     fun updateIndex(project: Project) {
