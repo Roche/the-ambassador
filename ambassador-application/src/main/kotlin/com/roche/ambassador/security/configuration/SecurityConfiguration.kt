@@ -99,7 +99,7 @@ internal class SecurityConfiguration {
                 is OAuth2AuthenticationException -> "OAuth2 authentication failure caused by: ${exception.error?.description ?: exception.message}"
                 else -> "Authentication failed due to: ${exception.message ?: "unknown reason"}"
             }
-            log.warn(message)
+            log.warn(message, exception)
             return super.onAuthenticationFailure(webFilterExchange, exception)
         }
     }

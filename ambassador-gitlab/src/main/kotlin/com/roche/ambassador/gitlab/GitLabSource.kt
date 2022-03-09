@@ -326,10 +326,12 @@ class GitLabSource(val name: String, private val gitlab: GitLab) : ProjectSource
 
         override fun getEmail(): String = attributes["email"] as String
 
-        override fun getAvatarUrl(): String = attributes["avatar_url"] as String
+        override fun getAvatarUrl(): String? = attributes["avatar_url"] as String?
 
-        override fun getWebUrl(): String = attributes["web_url"] as String
+        override fun getWebUrl(): String? = attributes["web_url"] as String?
 
-        override fun isAdmin(): Boolean = attributes["is_admin"] as Boolean
+        override fun isAdmin(): Boolean = Optional.ofNullable(attributes["is_admin"])
+            .map { it as Boolean }
+            .orElse(false)
     }
 }

@@ -20,7 +20,7 @@ internal class AmbassadorUserService(private val oAuth2ProvidersHolder: OAuth2Pr
 
     private fun toAmbassadorUser(pair: Pair<OAuth2User, UserDetailsProvider?>): AmbassadorUser {
         if (pair.second == null) {
-            throw IllegalStateException("")
+            throw IllegalArgumentException("User details provider is not available for user ${pair.first.name}")
         }
         val userDetailsProvider = pair.second!!
         return AmbassadorUser(
