@@ -10,6 +10,8 @@ data class Features(private val holder: MutableMap<Class<out Feature<*>>, Featur
         addAll(features)
     }
 
+    fun size(): Int = holder.size
+
     fun isEmpty(): Boolean = holder.isEmpty()
 
     fun isNotEmpty(): Boolean = holder.isNotEmpty()
