@@ -1,4 +1,8 @@
 spring:
+  datasource:
+    hikari:
+      max-lifetime: 600000
+      maximum-pool-size: 50
   session:
     timeout: 8h
   main:
