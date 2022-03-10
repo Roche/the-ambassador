@@ -31,7 +31,7 @@ class ProjectRepositoryTest(@Autowired private val projectEntityRepository: Proj
         // then
         assertThat(saved).isNotNull
         assertThat(saved.id).isEqualTo(id)
-        assertThat(saved.project.features.size).isGreaterThanOrEqualTo(5)
+        assertThat(saved.project.features.size()).isGreaterThanOrEqualTo(5)
         assertThat(saved.project.scorecard!!.value).isGreaterThan(0.1)
         assertQueryCount()
             .hasInserted(1)
