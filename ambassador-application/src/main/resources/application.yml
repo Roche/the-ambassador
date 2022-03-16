@@ -31,6 +31,7 @@ springdoc:
       enabled: true
 
 management:
+
   health:
     livenessstate:
       enabled: true
@@ -38,7 +39,6 @@ management:
       enabled: true
     diskspace:
       threshold: 30MB
-
   endpoint:
     health:
       show-components: when_authorized
@@ -51,6 +51,20 @@ management:
           include: startupState
       roles:
         - ROLE_ADMIN
+    metrics:
+      export:
+        prometheus:
+          enabled: true
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          # TODO enable prometheus endpoint when IP-based security is enabled
+#          - prometheus
 
 ---
 ambassador:
@@ -58,6 +72,9 @@ ambassador:
   security:
     enabled: true
   indexer:
+    subscription:
+      unsubscribe:
+        topic: unsubscribe
     features:
       requireVisibility:
         - public
