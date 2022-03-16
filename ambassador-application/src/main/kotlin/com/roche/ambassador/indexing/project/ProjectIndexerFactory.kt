@@ -4,7 +4,6 @@ import com.roche.ambassador.ConcurrencyProvider
 import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.indexing.Continuation
 import com.roche.ambassador.indexing.IndexerFactory
-import com.roche.ambassador.indexing.project.steps.IndexingStep
 import com.roche.ambassador.model.source.IndexingCriteriaProvider
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.storage.indexing.Indexing
@@ -20,7 +19,7 @@ internal class ProjectIndexerFactory(
 ) : IndexerFactory {
     override fun create(source: ProjectSource, indexing: Indexing, continuation: Continuation): ProjectIndexer {
         val criteria = IndexingCriteria.forProvider(IndexingCriteriaProvider, indexerProperties.criteria)
-        return ProjectIndexer(
+        return CoreProjectIndexer(
             source,
             projectEntityRepository,
             concurrencyProvider,
@@ -30,5 +29,6 @@ internal class ProjectIndexerFactory(
             continuation,
             chain,
         )
+
     }
 }

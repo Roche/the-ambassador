@@ -18,6 +18,8 @@ interface Indexer<T, ID, F> {
 
     fun forciblyStop(terminateImmediately: Boolean)
     fun getStatus(): IndexingStatus
+    fun isRunning(): Boolean = getStatus() == IndexingStatus.IN_PROGRESS
+
 }
 
 typealias IndexingStartedCallback = () -> Unit

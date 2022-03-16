@@ -18,6 +18,7 @@ class IndexingChainConfiguration(private val properties: IndexerProperties) {
             if (isUnsubscriptionEnabled()) {
                 then(SubscriptionVerificationStep::class)
             }
+            then(ProvideContactsStep::class)
             then(ReadFeaturesStep::class)
             then(SaveProjectStep::class)
             then(ProjectIndexedEventPublisherStep::class)
