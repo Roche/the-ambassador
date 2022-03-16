@@ -50,6 +50,8 @@ securityContext:
 service:
   type: ClusterIP
   port: 8080
+  # Annotations to add to the service
+  annotations: {}
 
 ingress:
   enabled: true
