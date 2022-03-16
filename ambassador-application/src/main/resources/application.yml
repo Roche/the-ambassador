@@ -29,6 +29,15 @@ springdoc:
   api-docs:
     groups:
       enabled: true
+    path: /api/docs
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /api/docs/ui
+    urls:
+      - url: "/api/docs"
+        name: "Indexer"
+  webjars:
+    prefix: /ui
 
 management:
 
