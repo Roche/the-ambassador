@@ -18,5 +18,6 @@ data class IndexingContext(
     var entity: ProjectEntity? = null,
     val config: IndexerProperties,
     val indexing: Indexing,
-    val continuation: Continuation
+    val continuation: Continuation,
+    var subscribed: Boolean = true
 )

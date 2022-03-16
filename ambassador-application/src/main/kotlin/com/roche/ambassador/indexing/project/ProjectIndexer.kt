@@ -5,7 +5,6 @@ import com.roche.ambassador.configuration.properties.IndexerProperties
 import com.roche.ambassador.exceptions.Exceptions
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.indexing.*
-import com.roche.ambassador.indexing.project.steps.IndexingStep
 import com.roche.ambassador.model.project.AccessLevel
 import com.roche.ambassador.model.project.Contact
 import com.roche.ambassador.model.project.Project
@@ -29,7 +28,7 @@ class ProjectIndexer internal constructor(
     private val indexingCriteria: IndexingCriteria,
     private val indexing: Indexing,
     private val continuation: Continuation,
-    steps: List<IndexingStep>,
+    private val chain: IndexingChain,
 ) : Indexer<Project, Long, ProjectFilter> {
 
     private val status: AtomicReference<IndexingStatus> = AtomicReference(IndexingStatus.IN_PROGRESS)
@@ -38,7 +37,6 @@ class ProjectIndexer internal constructor(
     private val projectToIndexCount = AtomicInteger(0)
     private val finished = AtomicBoolean(false)
     private val sourceFinishedProducing = AtomicBoolean(false)
-    private val chain = IndexingChain(steps)
 
     companion object {
         private val log by LoggerDelegate()

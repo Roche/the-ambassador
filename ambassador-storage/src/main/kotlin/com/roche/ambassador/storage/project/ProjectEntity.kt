@@ -47,9 +47,18 @@ class ProjectEntity(
     var statsHistory: MutableList<ProjectStatisticsHistory> = mutableListOf(),
     var source: String? = null,
     @Column(name = "last_indexing_id")
-    var lastIndexingId: UUID? = null // mapping is not needed here yet, thus not adding it
-
+    var lastIndexingId: UUID? = null,  // mapping is not needed here yet, thus not adding it
+    @Column(name = "subscribed")
+    var subscribed: Boolean = true
 ) {
+
+    fun unsubscribe() {
+        this.subscribed = false
+    }
+
+    fun subscribe() {
+        this.subscribed = true
+    }
 
     fun wasIndexedBefore(otherDate: LocalDateTime): Boolean = lastIndexedDate.isBefore(otherDate)
 

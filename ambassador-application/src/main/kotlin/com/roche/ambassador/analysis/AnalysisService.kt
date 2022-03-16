@@ -36,6 +36,10 @@ internal class AnalysisService(
     fun analyzeOne(id: String) {
         val entity = projectEntityRepository.findById(id.toLong())
             .orElseThrow { IllegalStateException("Project does not exist!") }
+        if (!entity.subscribed) {
+            log.warn("Trying to analyze unsubscribed project. Skipping...")
+            return
+        }
         val progressMonitor: ProgressMonitor = LoggingProgressMonitor(1, 1, AnalysisService::class)
         analyze(entity, progressMonitor)
     }
@@ -43,7 +47,7 @@ internal class AnalysisService(
     // TODO run async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun analyzeAll() {
-        val total = projectEntityRepository.count()
+        val total = projectEntityRepository.countAllBySubscribed(true)
         val progressMonitor: ProgressMonitor = LoggingProgressMonitor(total, 2, AnalysisService::class)
         projectEntityRepository.streamAllForAnalysis().use { stream ->
             stream

@@ -33,7 +33,11 @@ data class IndexerProperties(
 
     @NestedConfigurationProperty
     @Valid
-    val features: FeaturesReadingProperties = FeaturesReadingProperties()
+    val features: FeaturesReadingProperties = FeaturesReadingProperties(),
+
+    @NestedConfigurationProperty
+    @Valid
+    val subscription: SubscriptionProperties = SubscriptionProperties()
 
 )
 

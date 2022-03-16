@@ -23,6 +23,7 @@ class ProjectSearchRepository(
 
     override fun additionalSearchCriteria(whereBuilder: SelectConditionStep<*>, searchQuery: ProjectSearchQuery) {
         whereBuilder.and(byVisibility(searchQuery.visibility))
+            .and(PROJECT.SUBSCRIBED.eq(true))
         if (searchQuery.topics.isNotEmpty()) {
             whereBuilder.and(byTopics(searchQuery.topics))
         }

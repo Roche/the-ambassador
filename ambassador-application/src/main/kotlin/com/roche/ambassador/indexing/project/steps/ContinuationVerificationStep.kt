@@ -3,7 +3,6 @@ package com.roche.ambassador.indexing.project.steps
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.indexing.project.IndexingChain
 import com.roche.ambassador.indexing.project.IndexingContext
-import org.springframework.core.Ordered
 import org.springframework.stereotype.Component
 
 @Component
@@ -20,6 +19,4 @@ internal class ContinuationVerificationStep : IndexingStep {
             chain.accept(context)
         }
     }
-
-    override fun getOrder(): Int = Ordered.HIGHEST_PRECEDENCE + 1
 }

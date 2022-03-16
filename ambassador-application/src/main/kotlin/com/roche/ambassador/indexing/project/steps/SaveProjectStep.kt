@@ -25,6 +25,7 @@ internal class SaveProjectStep(private val projectEntityRepository: ProjectEntit
         } else {
             ProjectEntity.from(context.project)
         }
+        toSave.subscribed = context.subscribed
         toSave.lastIndexingId = context.indexing.getId()
         val result = projectEntityRepository.save(toSave)
         log.info("Indexed project '{}' (id={})", context.project.fullName, context.project.id)
@@ -32,5 +33,4 @@ internal class SaveProjectStep(private val projectEntityRepository: ProjectEntit
         chain.accept(context)
     }
 
-    override fun getOrder(): Int = 6
 }

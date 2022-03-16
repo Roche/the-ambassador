@@ -16,7 +16,7 @@ internal class ProjectIndexerFactory(
     private val projectEntityRepository: ProjectEntityRepository,
     private val concurrencyProvider: ConcurrencyProvider,
     private val indexerProperties: IndexerProperties,
-    private val steps: List<IndexingStep>
+    private val chain: IndexingChain
 ) : IndexerFactory {
     override fun create(source: ProjectSource, indexing: Indexing, continuation: Continuation): ProjectIndexer {
         val criteria = IndexingCriteria.forProvider(IndexingCriteriaProvider, indexerProperties.criteria)
@@ -28,7 +28,7 @@ internal class ProjectIndexerFactory(
             criteria,
             indexing,
             continuation,
-            steps,
+            chain,
         )
     }
 }

@@ -16,7 +16,7 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
     @QueryHints(value = [
         QueryHint(name = HINT_CACHEABLE, value = "false")
     ])
-    @Query("SELECT p FROM ProjectEntity p")
+    @Query("SELECT p FROM ProjectEntity p WHERE p.subscribed = true")
     fun streamAllForAnalysis(): Stream<ProjectEntity>
 
     @Query("DELETE FROM project", nativeQuery = true)
@@ -25,6 +25,8 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
 
     @EntityGraph(value = "Project.statsHistory")
     override fun findById(id: Long): Optional<ProjectEntity>
+
+    fun countAllBySubscribed(subscribed: Boolean): Long
 
     @Query(
         value = """
@@ -37,7 +39,7 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
                    sum(stars) AS stars,
                    sum(cast(project->'stats'->>'forks' AS bigint)) as forks
             FROM project
-            WHERE project.last_indexing_id = :indexingId
+            WHERE project.last_indexing_id = :indexingId AND project.subscribed = true
             GROUP BY groupId , type
             ORDER BY groupId
             """,
@@ -50,7 +52,7 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
             SELECT topics as name, COUNT(*) AS count
             FROM project,
                  jsonb_array_elements_text(project.project -> 'topics') AS topics
-            WHERE length(topics) > 0
+            WHERE length(topics) > 0 AND subscribed = true
             GROUP BY topics;
             """,
         nativeQuery = true
@@ -62,6 +64,7 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
             SELECT languages AS name, COUNT(*) AS count
             FROM project,
                  jsonb_object_keys(project -> 'features' -> 'languages') AS languages
+            WHERE subscribed = true
             GROUP BY languages;
             """,
         nativeQuery = true
@@ -72,7 +75,7 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
         value = """
             SELECT *
             FROM project
-            WHERE cast(project->'parent'->>'id' AS bigint) = :id
+            WHERE cast(project->'parent'->>'id' AS bigint) = :id AND subscribed = true
             """,
         nativeQuery = true
     )

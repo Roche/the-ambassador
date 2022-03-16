@@ -13,6 +13,4 @@ internal class ProjectIndexedEventPublisherStep(private val eventPublisher: Appl
         eventPublisher.publishEvent(event)
         chain.accept(context)
     }
-
-    override fun getOrder(): Int = 7
 }

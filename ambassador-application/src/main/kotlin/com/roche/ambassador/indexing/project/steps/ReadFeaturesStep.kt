@@ -5,6 +5,8 @@ import com.roche.ambassador.indexing.project.IndexingChain
 import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.feature.FeatureReaders
+import com.roche.ambassador.model.project.Project
+import com.roche.ambassador.storage.project.ProjectEntity
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import org.springframework.stereotype.Component
@@ -17,12 +19,17 @@ internal class ReadFeaturesStep : IndexingStep {
     }
 
     override suspend fun handle(context: IndexingContext, chain: IndexingChain) {
-        val entity = context.entity
-        val currentProject = context.project
         if (context.project.visibility !in context.config.features.requireVisibility) {
             log.info("Features will not be read for project '{}' (id={}), because it is disabled for project's visibility", context.project.fullName, context.project.id)
-            return
+        } else if (context.subscribed) {
+            readFeatures(context)
         }
+        chain.accept(context)
+    }
+
+    private suspend fun readFeatures(context: IndexingContext) {
+        val entity = context.entity
+        val currentProject = context.project
         if (entity != null && !entity.wasIndexedBefore(currentProject.lastActivityDate!!)) {
             log.info(
                 "Project '{}' (id={}) did not change since last indexing, re-using existing features",
@@ -34,10 +41,7 @@ internal class ReadFeaturesStep : IndexingStep {
             log.debug("Reading features for project '{}' (id={})", context.project.fullName, context.project.id)
             readFeatures(FeatureReaders.all(), context)
         }
-        chain.accept(context)
     }
-
-    override fun getOrder(): Int = 1
 
     private suspend fun readFeatures(readers: List<FeatureReader<*>>, context: IndexingContext) {
         readers.map {

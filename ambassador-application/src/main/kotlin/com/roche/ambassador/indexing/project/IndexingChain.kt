@@ -2,7 +2,9 @@ package com.roche.ambassador.indexing.project
 
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.indexing.project.steps.IndexingStep
+import java.util.*
 import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 class IndexingChain(private val steps: List<IndexingStep>) {
 
@@ -36,5 +38,23 @@ class IndexingChain(private val steps: List<IndexingStep>) {
             context.currentStep = nextStep::class
             nextStep.handle(context, this)
         }
+    }
+
+    class Builder(private val availableSteps: List<IndexingStep>) {
+
+        private var steps: MutableList<IndexingStep> = mutableListOf()
+
+        infix fun then(stepType: KClass<out IndexingStep>): Builder {
+            availableSteps.findByType(stepType)
+                .filter { it !in steps }
+                .ifPresent { steps += it }
+            return this
+        }
+
+        private fun List<IndexingStep>.findByType(stepType: KClass<out IndexingStep>): Optional<IndexingStep> {
+            return Optional.ofNullable(firstOrNull { it::class.isSubclassOf(stepType) })
+        }
+
+        fun build(): IndexingChain = IndexingChain(steps.toList())
     }
 }
