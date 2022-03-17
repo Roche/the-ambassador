@@ -62,7 +62,7 @@ ingress:
   hosts:
     - host: kubernetes.docker.internal
       paths:
-        - path: /
+        - path: /api
           pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
