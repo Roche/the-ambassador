@@ -40,7 +40,6 @@ springdoc:
     prefix: /ui
 
 management:
-
   health:
     livenessstate:
       enabled: true
@@ -72,18 +71,12 @@ management:
       exposure:
         include:
           - health
-          # TODO enable prometheus endpoint when IP-based security is enabled
-#          - prometheus
 
----
 ambassador:
   language: english
   security:
     enabled: true
   indexer:
-    subscription:
-      unsubscribe:
-        topic: unsubscribe
     features:
       requireVisibility:
         - public
@@ -94,12 +87,10 @@ ambassador:
       supportingThreadPrefix: spprt-
       concurrencyLevel: 30
     lock-type: in_memory
-    historySize: 10
     gracePeriod: 7d
     criteria:
       projects:
-        excludeGroups:
-          - 1745
+        excludeGroups: []
         excludeArchived: true
         excludeForks: true
         maxVisibility: internal
@@ -126,3 +117,17 @@ logging:
   level:
     root: warn
     com.roche: info
+
+---
+spring:
+  config:
+    activate:
+      on-cloud-platform: kubernetes
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - prometheus
