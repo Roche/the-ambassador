@@ -15,5 +15,6 @@ class ProvideContactsStep : IndexingStep {
             .sortedBy { it.name }
             .map { Contact(it.name, it.email, it.webUrl, it.avatarUrl) }
             .forEach(context.project.contacts::add)
+        chain.accept(context)
     }
 }
