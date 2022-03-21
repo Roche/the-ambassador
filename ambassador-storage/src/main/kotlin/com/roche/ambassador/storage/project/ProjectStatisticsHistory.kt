@@ -26,7 +26,7 @@ class ProjectStatisticsHistory(
         fun from(projectEntity: ProjectEntity): ProjectStatisticsHistory {
             val stats = ProjectStatistics.from(projectEntity.project)
             return ProjectStatisticsHistory(
-                null, projectEntity.id!!, stats, projectEntity.lastIndexedDate
+                null, projectEntity.id!!, stats, projectEntity.lastAnalysisDate ?: LocalDateTime.now()
             )
         }
     }
