@@ -1,5 +1,6 @@
 package com.roche.ambassador.configuration.source
 
+import com.roche.ambassador.ConcurrencyProvider
 import com.roche.ambassador.GenerationSpec
 import com.roche.ambassador.configuration.source.ProjectSourcesProperties.System.FAKE
 import com.roche.ambassador.configuration.source.ProjectSourcesProperties.System.GITLAB
@@ -21,10 +22,11 @@ class ProjectSourceConfiguration {
     fun sources(
         projectSourcesProperties: ProjectSourcesProperties,
         @Qualifier("projectSourceCacheManager")
-        cacheManager: CacheManager
+        cacheManager: CacheManager,
+        concurrencyProvider: ConcurrencyProvider
     ): ProjectSources {
         val source = when (projectSourcesProperties.system) {
-            GITLAB -> configureGitLab(projectSourcesProperties)
+            GITLAB -> configureGitLab(projectSourcesProperties, concurrencyProvider)
             FAKE -> configureFake()
         }
         val cache = cacheManager.getCache(source.name())!!
@@ -39,7 +41,8 @@ class ProjectSourceConfiguration {
 
     @ExperimentalCoroutinesApi
     private fun configureGitLab(
-        projectSourcesProperties: ProjectSourcesProperties
+        projectSourcesProperties: ProjectSourcesProperties,
+        concurrencyProvider: ConcurrencyProvider
     ): GitLabSource {
 
         // @formatter:off
@@ -49,6 +52,7 @@ class ProjectSourceConfiguration {
             .exponentialBackoff(2.0, Duration.ofMinutes(5))
             .build()
             .httpClient()
+            .clientThreadsCount(concurrencyProvider.getSourceClientThreadsCount())
             .logging().nothing().and()
             .authenticated().withPersonalAccessToken(projectSourcesProperties.token)
             .url(projectSourcesProperties.url)

@@ -1,9 +1,3 @@
-@file:Suppress("SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection",
-               "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection",
-               "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection",
-               "SpringJavaInjectionPointsAutowiringInspection"
-)
-
 package com.roche.ambassador.configuration.concurrent
 
 import com.roche.ambassador.ConcurrencyProvider
@@ -24,19 +18,27 @@ internal class ConcurrencyProviderImpl(indexerProperties: IndexerProperties) : C
     private val producerExecutor: ExecutorService
     private val consumerExecutor: ExecutorService
     private val supportingExecutor: ExecutorService
+    private val sourceClientThreadsCount: Int
 
     init {
-        val properties = indexerProperties.concurrency
-        val consumerThreadFactory = CustomizableThreadFactory(properties.consumerThreadPrefix)
-        val producerThreadFactory = CustomizableThreadFactory(properties.producerThreadPrefix)
-        val supportingThreadFactory = CustomizableThreadFactory(properties.supportingThreadPrefix)
-        val supportingExecutorThreads = max(1, ceil(properties.concurrencyLevel * 0.15).roundToInt())
-        val producerExecutorThreads = max(1, ceil(properties.concurrencyLevel * 0.1).roundToInt())
-        val consumerExecutorThreads = max(1, properties.concurrencyLevel - producerExecutorThreads - supportingExecutorThreads)
-        producerExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(producerExecutorThreads, producerThreadFactory)
-        consumerExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(consumerExecutorThreads, consumerThreadFactory)
-        supportingExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(supportingExecutorThreads, supportingThreadFactory)
+        val calculateThreadsCount: (Int, Double) -> Int = { concurrencyLevel, threadsFactor ->
+            max(1, ceil(concurrencyLevel * threadsFactor).roundToInt())
+        }
+        with(indexerProperties.concurrency) {
+            val consumerThreadFactory = CustomizableThreadFactory(consumerThreadPrefix)
+            val producerThreadFactory = CustomizableThreadFactory(producerThreadPrefix)
+            val supportingThreadFactory = CustomizableThreadFactory(supportingThreadPrefix)
+            val supportingExecutorThreads = calculateThreadsCount(concurrencyLevel, 0.15)
+            val producerExecutorThreads = calculateThreadsCount(concurrencyLevel, 0.15)
+            sourceClientThreadsCount = calculateThreadsCount(concurrencyLevel, 0.35)
+            val consumerExecutorThreads = max(2, concurrencyLevel - sourceClientThreadsCount - producerExecutorThreads - supportingExecutorThreads)
+            producerExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(producerExecutorThreads, producerThreadFactory)
+            consumerExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(consumerExecutorThreads, consumerThreadFactory)
+            supportingExecutor = MdcThreadPoolExecutor.newWithInheritedMdcFixedThreadPool(supportingExecutorThreads, supportingThreadFactory)
+        }
     }
+
+    override fun getSourceClientThreadsCount(): Int = sourceClientThreadsCount
 
     override fun getSourceProjectProducerDispatcher(): CoroutineDispatcher = producerExecutor.asCoroutineDispatcher()
 
