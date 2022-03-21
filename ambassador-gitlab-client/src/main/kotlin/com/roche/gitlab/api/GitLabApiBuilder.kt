@@ -213,6 +213,12 @@ class GitLabApiBuilder internal constructor() {
             return HttpClient(CIO) {
                 engine {
                     this.threadsCount = clientThreadsCount
+                    this.maxConnectionsCount = 1500
+                    endpoint {
+                        keepAliveTime = 10000
+                        maxConnectionsPerRoute = 200
+                        pipelineMaxSize = 25
+                    }
                 }
                 defaultRequest {
                     this.url.takeFrom(

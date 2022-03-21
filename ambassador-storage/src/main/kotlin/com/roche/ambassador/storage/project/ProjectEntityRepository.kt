@@ -15,7 +15,7 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
 
     @QueryHints(value = [
         QueryHint(name = HINT_CACHEABLE, value = "false"),
-        QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE),
+        QueryHint(name = HINT_FETCH_SIZE, value = "100"),
     ])
     @Query("SELECT p FROM ProjectEntity p WHERE p.subscribed = true")
     fun streamAllForAnalysis(): Stream<ProjectEntity>
