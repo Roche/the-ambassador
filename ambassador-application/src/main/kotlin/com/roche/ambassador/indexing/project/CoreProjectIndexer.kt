@@ -10,17 +10,14 @@ import com.roche.ambassador.model.project.ProjectFilter
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.storage.indexing.Indexing
 import com.roche.ambassador.storage.indexing.IndexingStatus
-import com.roche.ambassador.storage.project.ProjectEntityRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 internal class CoreProjectIndexer internal constructor(
     private val source: ProjectSource,
-    private val projectEntityRepository: ProjectEntityRepository,
     concurrencyProvider: ConcurrencyProvider,
     private val indexerProperties: IndexerProperties,
     private val indexingCriteria: IndexingCriteria,
@@ -74,7 +71,6 @@ internal class CoreProjectIndexer internal constructor(
                 onStarted()
                 source.flow(filter)
                     .buffer(1000)
-                    .filter { it.isProjectWithinGracePeriod() }
                     .onEach { onObjectIndexingStarted(it) }
                     .filter { filterByCriteria(it, onObjectExcludedByCriteria) }
                     .onEach { projectToIndexCount.incrementAndGet() }
@@ -147,17 +143,6 @@ internal class CoreProjectIndexer internal constructor(
             onFinished()
             log.info("Indexing of projects has finished")
         }
-    }
-
-    private fun Project.isProjectWithinGracePeriod(): Boolean {
-        // TODO make this calculation directly in db to improve performance
-        val shouldBeIndexed = projectEntityRepository.findById(id)
-            .filter { !it.wasIndexedBefore(LocalDateTime.now().minus(indexerProperties.gracePeriod)) }
-            .isEmpty
-        if (!shouldBeIndexed) {
-            log.info("Project '{}' (id={}) was indexed recently and is within grace period. Skipping...", name, id)
-        }
-        return shouldBeIndexed
     }
 
     override fun getStatus(): IndexingStatus = status.get()

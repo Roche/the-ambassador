@@ -14,6 +14,7 @@ class IndexingChainConfiguration(private val properties: IndexerProperties) {
     fun chain(steps: List<IndexingStep>): IndexingChain {
         return steps.asChain {
             then(LoadExistingProjectStep::class)
+            then(GracePeriodVerificationStep::class)
             then(ContinuationVerificationStep::class)
             if (isUnsubscriptionEnabled()) {
                 then(SubscriptionVerificationStep::class)

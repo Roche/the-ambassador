@@ -20,4 +20,7 @@ data class IndexingContext(
     val indexing: Indexing,
     val continuation: Continuation,
     var subscribed: Boolean = true
-)
+) {
+    val projectName = project.fullName
+    val projectId = project.id
+}
