@@ -2,6 +2,7 @@ package com.roche.ambassador.storage.project
 
 import com.roche.ambassador.storage.Lookup
 import org.hibernate.jpa.QueryHints.HINT_CACHEABLE
+import org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.jpa.repository.QueryHints
@@ -13,7 +14,8 @@ import javax.persistence.QueryHint
 interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Long> {
 
     @QueryHints(value = [
-        QueryHint(name = HINT_CACHEABLE, value = "false")
+        QueryHint(name = HINT_CACHEABLE, value = "false"),
+        QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE),
     ])
     @Query("SELECT p FROM ProjectEntity p WHERE p.subscribed = true")
     fun streamAllForAnalysis(): Stream<ProjectEntity>
