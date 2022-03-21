@@ -21,6 +21,8 @@ import org.springframework.security.web.server.authentication.DelegatingServerAu
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import reactor.core.publisher.Mono
 
 @Configuration
@@ -68,6 +70,7 @@ internal class SecurityConfiguration {
         // @formatter:off
         return http
             .csrf().disable()
+            .cors().configure()
             .httpBasic().disable()
             .formLogin().disable()
             .authorizeExchange()
@@ -88,6 +91,19 @@ internal class SecurityConfiguration {
             LoggingAuthenticationSuccessHandler,
             RedirectServerAuthenticationSuccessHandler() // keep this one always, otherwise redirect from OAuth login would not work
         )
+    }
+
+    private fun ServerHttpSecurity.CorsSpec.configure(): ServerHttpSecurity {
+        val corsConfig = UrlBasedCorsConfigurationSource()
+        val cors = with(CorsConfiguration()) {
+            allowedOrigins = listOf("*")
+            allowedMethods = listOf("*")
+            allowedHeaders = listOf("*")
+            allowCredentials = true
+            this
+        }
+        corsConfig.registerCorsConfiguration("/**", cors)
+        return configurationSource(corsConfig).and()
     }
 
     private class AmbassadorAuthenticationFailureHandler : RedirectServerAuthenticationFailureHandler("/login?error") {

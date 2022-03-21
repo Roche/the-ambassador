@@ -51,9 +51,4 @@ internal class WebConfiguration : WebFluxConfigurer {
         registrar.setFormatter(DateFormatter("yyyy-MM-dd"))
         registrar.registerFormatters(this)
     }
-
-    // FIXME disable CORS until made configurable
-    override fun addCorsMappings(corsRegistry: CorsRegistry) {
-        corsRegistry.addMapping("/**").allowedOrigins("*").allowedMethods("*").maxAge(3600)
-    }
 }
