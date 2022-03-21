@@ -2,7 +2,6 @@ package com.roche.ambassador.storage.project
 
 import com.roche.ambassador.model.project.Project
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType
-import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDate
@@ -13,10 +12,6 @@ import javax.persistence.*
 @Entity
 @Table(name = "project")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
-@NamedEntityGraph(
-    name = "Project.statsHistory",
-    attributeNodes = [NamedAttributeNode("statsHistory")]
-)
 class ProjectEntity(
     @Id var id: Long? = null,
     var name: String? = null,
@@ -36,15 +31,6 @@ class ProjectEntity(
     var lastIndexedDate: LocalDateTime = LocalDateTime.now(),
     @Column(name = "last_analysis_date")
     var lastAnalysisDate: LocalDateTime? = null,
-    @OneToMany(
-        mappedBy = "project",
-        cascade = [CascadeType.ALL],
-        fetch = FetchType.LAZY,
-        orphanRemoval = true
-    )
-    @BatchSize(size = 25)
-    @OrderBy("date")
-    var statsHistory: MutableList<ProjectStatisticsHistory> = mutableListOf(),
     var source: String? = null,
     @Column(name = "last_indexing_id")
     var lastIndexingId: UUID? = null,  // mapping is not needed here yet, thus not adding it
@@ -63,12 +49,6 @@ class ProjectEntity(
     fun wasIndexedBefore(otherDate: LocalDateTime): Boolean = lastIndexedDate.isBefore(otherDate)
 
     fun wasIndexedBefore(otherDate: LocalDate): Boolean = lastIndexedDate.isBefore(otherDate.atStartOfDay())
-
-    fun recordStatistics(): ProjectStatisticsHistory {
-        val historyEntry = ProjectStatisticsHistory.from(this)
-        statsHistory.add(historyEntry)
-        return historyEntry
-    }
 
     fun updateIndex(project: Project) {
         this.name = project.name

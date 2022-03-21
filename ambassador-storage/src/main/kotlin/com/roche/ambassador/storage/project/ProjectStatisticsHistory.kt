@@ -12,9 +12,8 @@ import javax.persistence.*
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType::class)
 class ProjectStatisticsHistory(
     @Id @GeneratedValue var id: UUID? = null,
-    @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false, updatable = false)
-    var project: ProjectEntity,
+    @Column(name = "project_id", nullable = false, updatable = false)
+    var projectId: Long,
     @Type(type = "jsonb")
     @Column(name = "stats", columnDefinition = "jsonb", updatable = false)
     @Basic(fetch = FetchType.EAGER)
@@ -27,7 +26,7 @@ class ProjectStatisticsHistory(
         fun from(projectEntity: ProjectEntity): ProjectStatisticsHistory {
             val stats = ProjectStatistics.from(projectEntity.project)
             return ProjectStatisticsHistory(
-                null, projectEntity, stats, projectEntity.lastIndexedDate
+                null, projectEntity.id!!, stats, projectEntity.lastIndexedDate
             )
         }
     }

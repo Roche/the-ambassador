@@ -2,7 +2,6 @@ package com.roche.ambassador.storage.project
 
 import com.roche.ambassador.storage.Lookup
 import org.hibernate.jpa.QueryHints.HINT_CACHEABLE
-import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.jpa.repository.QueryHints
@@ -23,7 +22,6 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
     @Modifying
     override fun deleteAll()
 
-    @EntityGraph(value = "Project.statsHistory")
     override fun findById(id: Long): Optional<ProjectEntity>
 
     fun countAllBySubscribed(subscribed: Boolean): Long

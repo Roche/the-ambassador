@@ -4,10 +4,7 @@ import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.stats.Statistics
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class ProjectEntityTest {
 
@@ -21,16 +18,16 @@ class ProjectEntityTest {
         Permissions(true, true)
     )
 
-    @Test
-    fun `should create new stats history entry when recording stats`() {
-        val project = ProjectEntity(project = createProject(), lastIndexedDate = LocalDateTime.now(),)
-
-        val history = project.recordStatistics()
-
-        assertThat(project.statsHistory).hasSize(1)
-            .containsExactly(history)
-        assertThat(history)
-            .extracting(ProjectStatisticsHistory::date, ProjectStatisticsHistory::project)
-            .containsExactly(project.lastIndexedDate, project)
-    }
+//    @Test
+//    fun `should create new stats history entry when recording stats`() {
+//        val project = ProjectEntity(project = createProject(), lastIndexedDate = LocalDateTime.now(),)
+//
+//        val history = project.recordStatistics()
+//
+//        assertThat(project.statsHistory).hasSize(1)
+//            .containsExactly(history)
+//        assertThat(history)
+//            .extracting(ProjectStatisticsHistory::date, ProjectStatisticsHistory::project)
+//            .containsExactly(project.lastIndexedDate, project)
+//    }
 }
