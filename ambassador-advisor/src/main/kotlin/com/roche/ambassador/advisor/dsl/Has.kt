@@ -1,42 +1,28 @@
 package com.roche.ambassador.advisor.dsl
 
-import com.roche.ambassador.advisor.AdvisorContext
 import com.roche.ambassador.advisor.model.BuildableAdvice
-import com.roche.ambassador.model.project.Project
 
 class Has<A : BuildableAdvice, T> internal constructor(
     private val predicate: T.() -> Boolean,
     private val testValue: T?,
-    private val adviceBuilder: ConditionsBuilder<A>
-) : Invokable {
+    private val rulesBuilder: RulesBuilder<A>
+) : Invokable, ThenSupport<A> {
 
-    private var action: (AdvisorContext) -> Unit = {}
+    private var action: Invokable? = null
 
-    infix fun and(andPredicate: T.() -> Boolean): Has<A, T> = Has({ predicate(this) && andPredicate(this) }, testValue, adviceBuilder)
+    infix fun and(andPredicate: T.() -> Boolean): Has<A, T> = Has({ predicate(this) && andPredicate(this) }, testValue, rulesBuilder)
 
-    infix fun or(orPredicate: T.() -> Boolean): Has<A, T> = Has({ predicate(this) || orPredicate(this) }, testValue, adviceBuilder)
+    infix fun or(orPredicate: T.() -> Boolean): Has<A, T> = Has({ predicate(this) || orPredicate(this) }, testValue, rulesBuilder)
 
-    infix fun then(adviceKey: String) {
-        thenProvided {
-            AdviceKey(adviceKey)
-        }
-    }
-
-    infix fun thenProvided(keyProvider: Project.() -> AdviceKey) {
-        then {
-            val key = keyProvider(it.project)
-            val config = it.getAdviceConfig(key)
-            adviceBuilder.buildableAdvice.apply(config)
-        }
-    }
-
-    infix fun then(action: (AdvisorContext) -> Unit) {
-        this.action = action
+    override infix fun then(adviceKey: String): Then<A> {
+        val then = Then(adviceKey, rulesBuilder)
+        this.action = then
+        return then
     }
 
     override operator fun invoke(): Boolean {
-        if (testValue != null && predicate(testValue)) {
-            action(adviceBuilder.context)
+        if (testValue != null && action != null && predicate(testValue)) {
+            action!!()
             return true
         }
         return false

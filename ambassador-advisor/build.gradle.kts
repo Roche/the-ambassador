@@ -28,6 +28,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation(project(":ambassador-fake-source"))
 
 //    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 //    kapt("org.springframework.boot:spring-boot-configuration-processor")
