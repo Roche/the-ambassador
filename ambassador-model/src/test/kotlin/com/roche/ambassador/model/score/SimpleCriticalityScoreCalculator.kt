@@ -3,6 +3,7 @@ package com.roche.ambassador.model.score
 import com.roche.ambassador.extensions.monthsUntilNow
 import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.dataproviders.ContributorGenerator
+import com.roche.ambassador.model.dataproviders.nowDate
 import com.roche.ambassador.model.feature.*
 import com.roche.ambassador.model.project.Issues
 import com.roche.ambassador.model.score.CriticalityScorePolicy.CriticalityCheck.Companion.weightsTotal
@@ -32,8 +33,8 @@ data class CriticalityData(
     val updatedIssuesIn90Days: Int = 0,
     val closedIssuesIn90Days: Int = 0,
     val contributorsCount: Int = 0,
-    val createdDate: LocalDate = LocalDate.now(),
-    val lastActivityDate: LocalDate = LocalDate.now(),
+    val createdDate: LocalDate = nowDate(),
+    val lastActivityDate: LocalDate = nowDate(),
     val commits: Timeline = Timeline(),
     val releases: Timeline = Timeline(),
     val issueComments: Timeline = Timeline(),

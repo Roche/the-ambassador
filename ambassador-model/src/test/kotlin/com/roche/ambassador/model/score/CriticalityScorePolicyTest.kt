@@ -1,6 +1,7 @@
 package com.roche.ambassador.model.score
 
 import com.roche.ambassador.model.Score
+import com.roche.ambassador.model.dataproviders.nowDate
 import com.roche.ambassador.model.extensions.*
 import com.roche.ambassador.model.feature.*
 import com.roche.ambassador.model.stats.Timeline
@@ -37,10 +38,10 @@ class CriticalityScorePolicyTest {
         // given
         val data = CriticalityData(
             50, 42, 224,
-            LocalDate.now().minusMonths(127), LocalDate.now(),
+            nowDate().minusMonths(127), nowDate(),
             TimelineGenerator.withWeekAverage(20.0, 52),
-            TimelineGenerator.withTotalEvents(15, startDate = LocalDate.now().minusMonths(11)),
-            TimelineGenerator.withTotalEvents(50, startDate = LocalDate.now().minusMonths(2)),
+            TimelineGenerator.withTotalEvents(15, startDate = nowDate().minusMonths(11)),
+            TimelineGenerator.withTotalEvents(50, startDate = nowDate().minusMonths(2)),
         )
 
         // when
@@ -183,27 +184,27 @@ class CriticalityScorePolicyTest {
         @JvmStatic
         fun releaseTimelines(): Stream<Arguments> {
             return Stream.of(
-                Arguments.of(TimelineGenerator.withTotalEvents(0, startDate = LocalDate.now().minusYears(0)), 0.0),
-                Arguments.of(TimelineGenerator.withTotalEvents(24, startDate = LocalDate.now().minusYears(2)), .0707),
-                Arguments.of(TimelineGenerator.withTotalEvents(12, startDate = LocalDate.now().minusYears(1)), .0707),
-                Arguments.of(TimelineGenerator.withTotalEvents(26, startDate = LocalDate.now().minusYears(1)), .0909),
-                Arguments.of(TimelineGenerator.withTotalEvents(26, startDate = LocalDate.now().minusMonths(6)), .0909),
-                Arguments.of(TimelineGenerator.withTotalEvents(27, startDate = LocalDate.now().minusYears(1)), .0909),
-                Arguments.of(TimelineGenerator.withTotalEvents(50, startDate = LocalDate.now().minusYears(1)), .0909),
+                Arguments.of(TimelineGenerator.withTotalEvents(0, startDate = nowDate().minusYears(0)), 0.0),
+                Arguments.of(TimelineGenerator.withTotalEvents(24, startDate = nowDate().minusYears(2)), .0707),
+                Arguments.of(TimelineGenerator.withTotalEvents(12, startDate = nowDate().minusYears(1)), .0707),
+                Arguments.of(TimelineGenerator.withTotalEvents(26, startDate = nowDate().minusYears(1)), .0909),
+                Arguments.of(TimelineGenerator.withTotalEvents(26, startDate = nowDate().minusMonths(6)), .0909),
+                Arguments.of(TimelineGenerator.withTotalEvents(27, startDate = nowDate().minusYears(1)), .0909),
+                Arguments.of(TimelineGenerator.withTotalEvents(50, startDate = nowDate().minusYears(1)), .0909),
             )
         }
 
         @JvmStatic
         fun dates(): Stream<Arguments> {
             return Stream.of(
-                Arguments.of(LocalDate.now().minusYears(10), .1818),
-                Arguments.of(LocalDate.now().minusDays(121), .061),
-                Arguments.of(LocalDate.now().minusDays(120), .061),
-                Arguments.of(LocalDate.now().minusDays(119), .0526),
-                Arguments.of(LocalDate.now().minusDays(60), .0417),
-                Arguments.of(LocalDate.now().minusMonths(1).plusDays(1), .0),
-                Arguments.of(LocalDate.now().minusDays(5), .0),
-                Arguments.of(LocalDate.now(), .0)
+                Arguments.of(nowDate().minusYears(10), .1818),
+                Arguments.of(nowDate().minusDays(121), .061),
+                Arguments.of(nowDate().minusDays(120), .0526),
+                Arguments.of(nowDate().minusDays(119), .0526),
+                Arguments.of(nowDate().minusDays(60), .0417),
+                Arguments.of(nowDate().minusMonths(1).plusDays(1), .0),
+                Arguments.of(nowDate().minusDays(5), .0),
+                Arguments.of(nowDate(), .0)
             )
         }
     }

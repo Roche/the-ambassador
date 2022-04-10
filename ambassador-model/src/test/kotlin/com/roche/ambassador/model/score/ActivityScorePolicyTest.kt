@@ -1,6 +1,7 @@
 package com.roche.ambassador.model.score
 
 import com.roche.ambassador.model.Score
+import com.roche.ambassador.model.dataproviders.nowDate
 import com.roche.ambassador.model.extensions.*
 import com.roche.ambassador.model.feature.*
 import com.roche.ambassador.model.files.Documentation
@@ -42,7 +43,7 @@ class ActivityScorePolicyTest {
         val documentation = Documentation.create(true, 200)
         val commitsTimeline = TimelineGenerator.withWeekAverage(50.0, 12)
         val data = ActivityData(
-            10, 10, 10, LocalDate.now().minusDays(2), LocalDate.now().minusMonths(2),
+            10, 10, 10, nowDate().minusDays(2), nowDate().minusMonths(2),
             false, documentation, documentation, documentation, fairy.textProducer().word(30), commitsTimeline
         )
 
@@ -240,11 +241,11 @@ class ActivityScorePolicyTest {
         @JvmStatic
         fun lastActivityDates(): Stream<Arguments> {
             return Stream.of(
-                Arguments.of(LocalDate.now()),
-                Arguments.of(LocalDate.now().minusYears(10)),
-                Arguments.of(LocalDate.now().minusDays(50)),
-                Arguments.of(LocalDate.now().minusDays(100)),
-                Arguments.of(LocalDate.now().minusDays(101)),
+                Arguments.of(nowDate()),
+                Arguments.of(nowDate().minusYears(10)),
+                Arguments.of(nowDate().minusDays(50)),
+                Arguments.of(nowDate().minusDays(100)),
+                Arguments.of(nowDate().minusDays(101)),
             )
         }
 
@@ -262,17 +263,17 @@ class ActivityScorePolicyTest {
         @JvmStatic
         fun lastActivityAndCreatedDates(): Stream<Arguments> {
             return Stream.of(
-                Arguments.of(LocalDate.now().minusYears(10), LocalDate.now().minusYears(9)),
-                Arguments.of(LocalDate.now().minusDays(365), LocalDate.now().minusDays(365)),
-                Arguments.of(LocalDate.now().minusDays(365), LocalDate.now().minusDays(360)),
-                Arguments.of(LocalDate.now().minusDays(180), LocalDate.now().minusDays(180)),
-                Arguments.of(LocalDate.now().minusDays(180), LocalDate.now().minusDays(170)),
-                Arguments.of(LocalDate.now().minusDays(180), LocalDate.now().minusDays(2)),
-                Arguments.of(LocalDate.now().minusDays(180), LocalDate.now()),
-                Arguments.of(LocalDate.now().minusDays(15), LocalDate.now().minusDays(15)),
-                Arguments.of(LocalDate.now().minusDays(15), LocalDate.now().minusDays(2)),
-                Arguments.of(LocalDate.now().minusDays(15), LocalDate.now().minusDays(0)),
-                Arguments.of(LocalDate.now().minusDays(0), LocalDate.now())
+                Arguments.of(nowDate().minusYears(10), nowDate().minusYears(9)),
+                Arguments.of(nowDate().minusDays(365), nowDate().minusDays(365)),
+                Arguments.of(nowDate().minusDays(365), nowDate().minusDays(360)),
+                Arguments.of(nowDate().minusDays(180), nowDate().minusDays(180)),
+                Arguments.of(nowDate().minusDays(180), nowDate().minusDays(170)),
+                Arguments.of(nowDate().minusDays(180), nowDate().minusDays(2)),
+                Arguments.of(nowDate().minusDays(180), nowDate()),
+                Arguments.of(nowDate().minusDays(15), nowDate().minusDays(15)),
+                Arguments.of(nowDate().minusDays(15), nowDate().minusDays(2)),
+                Arguments.of(nowDate().minusDays(15), nowDate().minusDays(0)),
+                Arguments.of(nowDate().minusDays(0), nowDate())
             )
         }
     }

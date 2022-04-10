@@ -2,6 +2,7 @@ package com.roche.ambassador.model.score
 
 import com.roche.ambassador.extensions.daysUntilNow
 import com.roche.ambassador.model.Visibility
+import com.roche.ambassador.model.dataproviders.nowDate
 import com.roche.ambassador.model.extensions.toExcerptFile
 import com.roche.ambassador.model.extensions.toRawFile
 import com.roche.ambassador.model.feature.*
@@ -67,8 +68,8 @@ data class ActivityData(
     val forks: Int = 0,
     val stars: Int = 0,
     val openIssues: Int = 0,
-    val lastActivityDate: LocalDate = LocalDate.now().minusYears(5),
-    val createdDate: LocalDate = LocalDate.now().minusYears(6),
+    val lastActivityDate: LocalDate = nowDate().minusYears(5),
+    val createdDate: LocalDate = nowDate().minusYears(6),
     val private: Boolean = false,
     val readme: Documentation = Documentation.notExistent(),
     val contributionGuide: Documentation = Documentation.notExistent(),
