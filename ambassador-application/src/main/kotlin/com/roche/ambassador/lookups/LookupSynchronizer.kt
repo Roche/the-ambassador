@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 
 @Component
-internal class LanguagesSynchronizer(private val languagesService: LanguagesService) {
+internal class LookupSynchronizer(private val lookupServices: List<LookupService<*, *>>) {
 
     private val lock: Lock = ReentrantLock()
 
@@ -19,17 +19,16 @@ internal class LanguagesSynchronizer(private val languagesService: LanguagesServ
     }
 
     @EventListener
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun handle(indexingFinishedEvent: IndexingFinishedEvent) {
-        log.info("Synchronizing languages after indexing {} on {} has finished", indexingFinishedEvent.data.getId(), indexingFinishedEvent.data.source)
+        log.info("Synchronizing lookups after indexing {} on {} has finished", indexingFinishedEvent.data.getId(), indexingFinishedEvent.data.source)
         if (lock.tryLock()) {
             try {
-                languagesService.refreshLookup()
+                lookupServices.forEach { it.refreshLookup() }
             } finally {
                 lock.unlock()
             }
         } else {
-            log.warn("Another topics synchronization is in progress. Skipping..")
+            log.warn("Another lookups synchronization is in progress. Skipping..")
         }
     }
 }

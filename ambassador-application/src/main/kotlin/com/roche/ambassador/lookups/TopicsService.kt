@@ -11,11 +11,9 @@ internal class TopicsService(
     topicRepository: TopicRepository
 ) : LookupService<Topic, TopicRepository>(topicRepository) {
 
-    override fun refreshLookup() {
-        lookupRepository.deleteAll()
-        val topics = projectEntityRepository.findAllTopics()
+    override fun retrieveLookups(): List<Topic> {
+        return projectEntityRepository.findAllTopics()
             .map { Topic(name = it.getName(), count = it.getCount()) }
-        lookupRepository.saveAll(topics)
     }
 
 }
