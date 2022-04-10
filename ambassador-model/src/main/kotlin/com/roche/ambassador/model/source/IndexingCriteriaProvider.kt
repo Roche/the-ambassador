@@ -8,4 +8,4 @@ object IndexingCriteriaProvider {
     fun getPersonalProjectCriteria(): PersonalProjectCriteria = PersonalProjectCriteria
 }
 
-typealias CriterionVerifier = (Project) -> Boolean
+typealias CriterionVerifier = Project.() -> Boolean

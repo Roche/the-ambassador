@@ -6,40 +6,25 @@ import java.time.LocalDate
 
 object InvalidProjectCriteria {
 
-    fun hasDefaultBranch(): CriterionVerifier = {
-        it.defaultBranch != null
-    }
+    fun hasDefaultBranch(): CriterionVerifier = { defaultBranch != null }
 
-    fun isRepositoryNotEmpty(): CriterionVerifier = {
-        !it.empty
-    }
+    fun isRepositoryNotEmpty(): CriterionVerifier = { !empty }
 
-    fun canCreateMergeRequest(): CriterionVerifier = {
-        it.permissions.pullRequests.canEveryoneAccess()
-    }
+    fun canCreateMergeRequest(): CriterionVerifier = { permissions.pullRequests.canEveryoneAccess() }
 
-    fun canForkProject(): CriterionVerifier = {
-        it.permissions.forks.canEveryoneAccess()
-    }
+    fun canForkProject(): CriterionVerifier = { permissions.forks.canEveryoneAccess() }
 
-    fun hasVisibilityAtMost(visibility: Visibility): CriterionVerifier = {
-        visibility.isMoreStrictThan(it.visibility)
-    }
+    fun hasVisibilityAtMost(visibility: Visibility): CriterionVerifier = { this.visibility.isMoreStrictThan(visibility) }
 
-    fun excludeArchived(): CriterionVerifier = {
-        !it.archived
-    }
+    fun excludeArchived(): CriterionVerifier = { !archived }
 
     fun hasActivityAfter(date: LocalDate): CriterionVerifier = {
-        it.lastActivityDate != null && it.lastActivityDate.isAfter(date)
+        lastActivityDate != null && lastActivityDate.isAfter(date)
     }
 
-    fun excludeForked(): CriterionVerifier = {
-        !it.forked
-    }
+    fun excludeForked(): CriterionVerifier = { !forked }
 
     fun excludeGroups(groups: List<String>): CriterionVerifier = {
-        val parent = it.parent
         if (parent != null) {
             groups.none { group -> isExcludedGroup(parent, group) }
         } else {
