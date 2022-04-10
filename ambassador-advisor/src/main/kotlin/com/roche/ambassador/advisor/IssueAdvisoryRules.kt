@@ -1,0 +1,36 @@
+package com.roche.ambassador.advisor
+
+import com.roche.ambassador.advisor.dsl.Dsl
+import com.roche.ambassador.advisor.dsl.RulesBuilder
+import com.roche.ambassador.advisor.model.IssueAdvice
+import com.roche.ambassador.model.Visibility
+import com.roche.ambassador.model.project.Permissions
+
+object IssueAdvisoryRules {
+
+    fun verify(context: AdvisorContext): IssueAdvice {
+        val issueAdvice = IssueAdvice(context.project.name)
+        // FIXME rules should be part of model, but temporarily for simplicity are kept here
+        Dsl.advise(issueAdvice, context) {
+            // @formatter:off
+            has { visibility == Visibility.PRIVATE } then "visibility.private"
+            matchFirst({ description }) {
+                that { isNullOrBlank() } then "description.missing"
+                that { this!!.length < 30 } then "description.short"
+            }
+            has { topics.isEmpty() } then "topics.empty"
+            createPermissionRule("forking") { forks }
+            createPermissionRule("pullrequest") { pullRequests }
+            // @formatter:on
+        }
+        return issueAdvice
+    }
+
+    private fun RulesBuilder<IssueAdvice>.createPermissionRule(name: String, permissionExtractor: Permissions.() -> Permissions.Permission) {
+        matchFirst({ permissionExtractor(permissions) }) {
+            that { isDisabled() } then "$name.disabled"
+            that { canEveryoneAccess() } then "$name.private"
+        }
+    }
+
+}

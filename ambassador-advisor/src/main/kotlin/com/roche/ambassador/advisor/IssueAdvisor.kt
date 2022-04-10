@@ -25,39 +25,13 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
         private val log by LoggerDelegate()
     }
 
-    private fun RulesBuilder<IssueAdvice>.createPermissionRule(name: String, permissionExtractor: Permissions.() -> Permissions.Permission) {
-        matchFirst({ permissionExtractor(permissions) }) {
-            that { isUnknown() } then "$name.unknown"
-            that { isDisabled() } then "$name.disabled"
-            that { canEveryoneAccess() } then "$name.private"
-        }
-    }
-
-    private fun prepareIssueAdvice(context: AdvisorContext): IssueAdvice {
-        val issueAdvice = IssueAdvice(context.project.name)
-        // FIXME rules should be part of model, but temporarily for simplicity are kept here
-        Dsl.advise(issueAdvice, context) {
-            // @formatter:off
-            has { visibility == Visibility.PRIVATE } then "visibility.private"
-            matchFirst({ description }) {
-                that { isNullOrBlank() } then "description.missing"
-                that { this!!.length < 30 } then "description.short"
-            }
-            has { topics.isEmpty() } then "topics.empty"
-            createPermissionRule("forking") { forks }
-            createPermissionRule("pullrequest") { pullRequests }
-            // @formatter:on
-        }
-        return issueAdvice
-    }
-
     override suspend fun getAdvices(context: AdvisorContext): List<AdviceMessage> {
-        val issueAdvice = prepareIssueAdvice(context)
+        val issueAdvice = IssueAdvisoryRules.verify(context)
         return issueAdvice.getProblems()
     }
 
     override suspend fun advise(context: AdvisorContext) {
-        val issueAdvice = prepareIssueAdvice(context)
+        val issueAdvice = IssueAdvisoryRules.verify(context)
         issueAdviceGiver.giveAdvise(context, issueAdvice)
     }
 
