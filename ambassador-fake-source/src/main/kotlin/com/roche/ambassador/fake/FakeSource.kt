@@ -64,6 +64,14 @@ class FakeSource(private val spec: GenerationSpec) : ProjectSource, GroupSource 
         )
         val createdDate = fakeDataProvider.date(from = LocalDate.now().minusYears(5))
         val group = generateGroup(fakeDataProvider.nextLong(1, 1500), GroupFilter())
+        val permissions = Permissions(
+            fakeDataProvider.permission(),
+            fakeDataProvider.permission(),
+            fakeDataProvider.permission(),
+            fakeDataProvider.permission(),
+            fakeDataProvider.permission(),
+            fakeDataProvider.permission(),
+        )
         return FakeProject(
             id.toLong(),
             name,
@@ -77,6 +85,7 @@ class FakeSource(private val spec: GenerationSpec) : ProjectSource, GroupSource 
             fakeDataProvider.defaultBranch(),
             stats,
             fakeDataProvider.date(from = createdDate),
+            permissions = permissions,
             group = group
         )
     }

@@ -10,7 +10,6 @@ import com.roche.ambassador.model.project.ci.CiExecution
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.gitlab.api.model.AccessLevel
 import com.roche.gitlab.api.model.AccessLevelName
-import com.roche.gitlab.api.project.branches.ProtectedBranch as GitLabProtectedBranch
 import com.roche.gitlab.api.project.mergerequests.MergeRequest
 import com.roche.gitlab.api.project.model.FeatureAccessLevel
 import com.roche.gitlab.api.project.model.NamespaceKind
@@ -18,6 +17,7 @@ import com.roche.gitlab.api.project.pipelines.SimplePipeline
 import java.util.*
 import com.roche.gitlab.api.groups.Group as GitLabGroup
 import com.roche.gitlab.api.groups.Statistics as GitLabStatistics
+import com.roche.gitlab.api.project.branches.ProtectedBranch as GitLabProtectedBranch
 import com.roche.gitlab.api.project.model.Project as GitLabProject
 
 internal object GitLabMapper {
@@ -46,6 +46,7 @@ internal object GitLabMapper {
     }
 
     fun fromGitLabProject(gitlabProject: GitLabProject): Project {
+
         log.debug("Mapping project {} to Ambassador project", gitlabProject.name)
         val visibility = VisibilityMapper.fromGitLab(gitlabProject.visibility)
         val stats = if (gitlabProject.statistics != null) {
@@ -96,10 +97,35 @@ internal object GitLabMapper {
             archived = gitlabProject.archived ?: false,
             empty = gitlabProject.emptyRepo ?: false,
             forked = gitlabProject.isForked(),
-            permissions = Permissions(canEveryoneAccess(gitlabProject.forkingAccessLevel), canEveryoneAccess(gitlabProject.mergeRequestsAccessLevel)),
+            permissions = createPermissions(gitlabProject),
             fullName = gitlabProject.pathWithNamespace ?: gitlabProject.path,
             parent = group,
         )
+    }
+
+    private fun createPermissions(gitlabProject: GitLabProject): Permissions {
+        return with(gitlabProject) {
+            val ci = buildsAccessLevel.toPermission(jobsEnabled)
+            val containerRegistry = containerRegistryAccessLevel.toPermission(containerRegistryEnabled)
+            val forks = forkingAccessLevel.toPermission()
+            val issues = issuesAccessLevel.toPermission(issuesEnabled)
+            val pullRequests = mergeRequestsAccessLevel.toPermission(mergeRequestsEnabled)
+            val repository = repositoryAccessLevel.toPermission()
+            Permissions(ci, containerRegistry, forks, issues, pullRequests, repository)
+        }
+    }
+
+    private fun FeatureAccessLevel?.toPermission(featureEnabled: Boolean? = null): Permissions.Permission {
+        return if (featureEnabled != false) {
+            when (this) {
+                FeatureAccessLevel.PRIVATE -> Permissions.Permission.PRIVATE
+                FeatureAccessLevel.ENABLED -> Permissions.Permission.PUBLIC
+                FeatureAccessLevel.DISABLED -> Permissions.Permission.DISABLED
+                else -> Permissions.Permission.DISABLED
+            }
+        } else {
+            Permissions.Permission.DISABLED
+        }
     }
 
     private fun canEveryoneAccess(featureAccessLevel: FeatureAccessLevel?): Boolean = featureAccessLevel?.canEveryoneAccess() ?: false
@@ -140,9 +166,11 @@ internal object GitLabMapper {
         val canAdminPush = protectedBranch.pushAccessLevels.hasAdminAccess()
         val canDeveloperMerge = protectedBranch.mergeAccessLevels.hasDevAccess()
         val canSomeoneMerge = protectedBranch.mergeAccessLevels.checkHasAnyoneBranchAccess()
-        return ProtectedBranch(protectedBranch.name, canDeveloperMerge,
-                               canSomeoneMerge, canDeveloperPush, canAdminPush,
-                               protectedBranch.allowForcePush, protectedBranch.codeOwnerApprovalRequired ?: false)
+        return ProtectedBranch(
+            protectedBranch.name, canDeveloperMerge,
+            canSomeoneMerge, canDeveloperPush, canAdminPush,
+            protectedBranch.allowForcePush, protectedBranch.codeOwnerApprovalRequired ?: false
+        )
     }
 
     private fun List<AccessLevel>.hasDevAccess(): Boolean {

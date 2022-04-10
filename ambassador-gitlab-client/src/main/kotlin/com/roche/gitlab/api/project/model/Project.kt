@@ -10,6 +10,8 @@ import java.time.LocalDateTime
 data class Project(
     @JsonProperty("allow_merge_on_skipped_pipeline")
     val allowMergeOnSkippedPipeline: Boolean? = null,
+    @JsonProperty("analytics_access_level")
+    val analyticsAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("approvals_before_merge")
     val approvalsBeforeMerge: Int? = null,
     @JsonProperty("archived")
@@ -22,6 +24,8 @@ data class Project(
     val autocloseReferencedIssues: Boolean? = null,
     @JsonProperty("avatar_url")
     override val avatarUrl: String? = null,
+    @JsonProperty("builds_access_level")
+    val buildsAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("can_create_merge_request_in")
     val canCreateMergeRequestIn: Boolean? = null,
     @JsonProperty("ci_default_git_depth")
@@ -33,7 +37,7 @@ data class Project(
     @JsonProperty("container_expiration_policy")
     val containerExpirationPolicy: ContainerExpirationPolicy? = null,
     @JsonProperty("container_registry_access_level")
-    val containerRegistryAccessLevel: String? = null,
+    val containerRegistryAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("container_registry_enabled")
     val containerRegistryEnabled: Boolean? = null,
     @JsonProperty("container_registry_image_prefix")
@@ -65,6 +69,8 @@ data class Project(
     val importStatus: String? = null,
     @JsonProperty("issues_enabled")
     val issuesEnabled: Boolean? = null,
+    @JsonProperty("issues_access_level")
+    val issuesAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("jobs_enabled")
     val jobsEnabled: Boolean? = null,
     @JsonProperty("lfs_enabled")
@@ -109,10 +115,14 @@ data class Project(
     val onlyMirrorProtectedBranches: Boolean? = null,
     @JsonProperty("open_issues_count")
     val openIssuesCount: Int? = null,
+    @JsonProperty("operations_access_level")
+    val operationsAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("owner")
     val owner: Owner? = null,
     @JsonProperty("packages_enabled")
     val packagesEnabled: Boolean? = null,
+    @JsonProperty("pages_access_level")
+    val pagesAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("path")
     override val path: String,
     @JsonProperty("path_with_namespace")
@@ -127,6 +137,8 @@ data class Project(
     override val readmeUrl: String? = null,
     @JsonProperty("remove_source_branch_after_merge")
     val removeSourceBranchAfterMerge: Boolean? = null,
+    @JsonProperty("repository_access_level")
+    val repositoryAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("repository_storage")
     val repositoryStorage: String? = null,
     @JsonProperty("request_access_enabled")
@@ -147,6 +159,8 @@ data class Project(
     val sharedWithGroups: List<SharedWithGroup>? = null,
     @JsonProperty("snippets_enabled")
     val snippetsEnabled: Boolean? = null,
+    @JsonProperty("snippets_access_level")
+    val snippetsAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("squash_option")
     val squashOption: String? = null,
     @JsonProperty("ssh_url_to_repo")
@@ -167,6 +181,8 @@ data class Project(
     override val webUrl: String? = null,
     @JsonProperty("wiki_enabled")
     val wikiEnabled: Boolean? = null,
+    @JsonProperty("wiki_access_level")
+    val wikiAccessLevel: FeatureAccessLevel? = null,
     @JsonProperty("forked_from_project")
     val forkedFrom: SimpleProject? = null,
 

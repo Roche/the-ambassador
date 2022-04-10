@@ -8,7 +8,7 @@ internal object CanCreatePr : BooleanCheck() {
 
     override fun readValue(features: Features): Boolean {
         return features.findValue(PermissionsFeature::class)
-            .map { it.canEveryoneCreatePullRequest }
+            .map { it.pullRequests.canEveryoneAccess() }
             .orElse(false)
     }
 

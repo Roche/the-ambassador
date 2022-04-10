@@ -1,6 +1,7 @@
 package com.roche.ambassador.storage.project
 
 import com.roche.ambassador.model.Visibility
+import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.stats.Statistics
 import com.roche.ambassador.storage.PersistenceTest
@@ -139,11 +140,22 @@ class ProjectSearchRepositoryTest(
         assertThat(resultUpdatedNewName.content).hasSize(1)
     }
 
+    private fun createPermissions(): Permissions {
+        return Permissions(
+            Permissions.Permission.PUBLIC,
+            Permissions.Permission.DISABLED,
+            Permissions.Permission.UNKNOWN,
+            Permissions.Permission.PRIVATE,
+            Permissions.Permission.PUBLIC,
+            Permissions.Permission.DISABLED,
+        )
+    }
+
     private fun createProject(name: String) : Project {
         return Project(
             999999, "http://somerandomurlthatnoonehopefullywillverify.com", "http://yetanotherrandomurlthatnoonehopefullywillverify.com",
             name, "test/$name", null, listOf(), Visibility.INTERNAL, "main",
-            false, false, false, Statistics(), LocalDate.now(), LocalDate.now(), null
+            false, false, false, Statistics(), LocalDate.now(), LocalDate.now(), createPermissions()
         )
     }
 

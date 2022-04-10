@@ -22,8 +22,7 @@ class FakeProject(
     var lastUpdatedDate: LocalDate? = null,
     var forked: Boolean = false,
     var emptyRepository: Boolean = false,
-    var canFork: Boolean = true,
-    var canCreatePullRequest: Boolean = true,
+    var permissions: Permissions,
     var group: Group
 ) {
 
@@ -31,7 +30,7 @@ class FakeProject(
         id, url, avatarUrl, name, fullName,
         description, tags, visibility, defaultBranch,
         false, emptyRepository, forked, stats,
-        createdDate, lastUpdatedDate, Permissions(canFork, canCreatePullRequest),
+        createdDate, lastUpdatedDate, permissions,
         parent = group
     )
 }

@@ -11,6 +11,7 @@ import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.project.AccessLevel
 import com.roche.ambassador.model.project.Contributor
 import com.roche.ambassador.model.project.Member
+import com.roche.ambassador.model.project.Permissions
 import java.time.LocalDate
 import java.util.*
 import java.util.function.Supplier
@@ -39,6 +40,7 @@ class FakeDataProvider {
     private val accessLevelDice = Dice.ofEnum<AccessLevel>()
     private val branchTypeDice = Dice.ofEnum<BranchType>()
     private val groupTypeDice = Dice.ofEnum<Group.Type>()
+    private val permissionDice = Dice.ofEnum<Permissions.Permission>()
 
     fun name(): String = nameDice.rollForData()
 
@@ -121,6 +123,8 @@ class FakeDataProvider {
     }
 
     fun groupType(): Group.Type = groupTypeDice.rollForData()
+
+    fun permission(): Permissions.Permission = permissionDice.rollForData()
 
     private fun generateDoubles(count: Int, maxDecimals: Int, total: Double): List<Double> {
         var subtotal = total

@@ -3,12 +3,14 @@ package com.roche.ambassador.advisor
 import com.roche.ambassador.advisor.common.AdvisorException
 import com.roche.ambassador.advisor.configuration.AdvisorProperties
 import com.roche.ambassador.advisor.dsl.Dsl
+import com.roche.ambassador.advisor.dsl.RulesBuilder
 import com.roche.ambassador.advisor.messages.AdviceMessage
 import com.roche.ambassador.advisor.model.Advice
 import com.roche.ambassador.advisor.model.IssueAdvice
 import com.roche.ambassador.exceptions.AmbassadorException
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.Visibility
+import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.source.Issue
 import com.roche.ambassador.storage.advisor.AdvisoryMessageEntity
 import org.springframework.stereotype.Component
@@ -23,19 +25,27 @@ internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
         private val log by LoggerDelegate()
     }
 
+    private fun RulesBuilder<IssueAdvice>.createPermissionRule(name: String, permissionExtractor: Permissions.() -> Permissions.Permission) {
+        matchFirst({ permissionExtractor(permissions) }) {
+            that { isUnknown() } then "$name.unknown"
+            that { isDisabled() } then "$name.disabled"
+            that { canEveryoneAccess() } then "$name.private"
+        }
+    }
+
     private fun prepareIssueAdvice(context: AdvisorContext): IssueAdvice {
         val issueAdvice = IssueAdvice(context.project.name)
         // FIXME rules should be part of model, but temporarily for simplicity are kept here
         Dsl.advise(issueAdvice, context) {
             // @formatter:off
             has { visibility == Visibility.PRIVATE } then "visibility.private"
-            matchFirst {
-                has { description.isNullOrBlank() } then "description.missing"
-                has { description!!.length < 30 } then "description.short"
+            matchFirst({ description }) {
+                that { isNullOrBlank() } then "description.missing"
+                that { this!!.length < 30 } then "description.short"
             }
             has { topics.isEmpty() } then "topics.empty"
-            hasNot { permissions?.canEveryoneFork ?: false } then "forking.disabled"
-            hasNot { permissions?.canEveryoneCreatePullRequest ?: false } then "pullrequest.disabled"
+            createPermissionRule("forking") { forks }
+            createPermissionRule("pullrequest") { pullRequests }
             // @formatter:on
         }
         return issueAdvice

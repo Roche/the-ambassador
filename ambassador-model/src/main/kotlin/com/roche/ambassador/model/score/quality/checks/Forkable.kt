@@ -8,7 +8,7 @@ internal object Forkable : BooleanCheck() {
 
     override fun readValue(features: Features): Boolean {
         return features.findValue(PermissionsFeature::class)
-            .map { it.canEveryoneFork }
+            .map { it.forks.canEveryoneAccess() }
             .orElse(false)
     }
 

@@ -8,15 +8,6 @@ import java.time.LocalDate
 
 class ProjectEntityTest {
 
-    private fun createProject(): Project = Project(
-        1, "x",
-        "x", "x",
-        "x", "description", listOf(),
-        Visibility.PRIVATE, "x",
-        false, false, false,
-        Statistics(), LocalDate.now(), LocalDate.now(),
-        Permissions(true, true)
-    )
 
 //    @Test
 //    fun `should create new stats history entry when recording stats`() {

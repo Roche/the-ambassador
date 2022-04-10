@@ -15,11 +15,11 @@ object InvalidProjectCriteria {
     }
 
     fun canCreateMergeRequest(): CriterionVerifier = {
-        it.permissions?.canEveryoneCreatePullRequest ?: false
+        it.permissions.pullRequests.canEveryoneAccess()
     }
 
     fun canForkProject(): CriterionVerifier = {
-        it.permissions?.canEveryoneFork ?: false
+        it.permissions.forks.canEveryoneAccess()
     }
 
     fun hasVisibilityAtMost(visibility: Visibility): CriterionVerifier = {
