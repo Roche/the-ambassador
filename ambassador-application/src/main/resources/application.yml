@@ -97,8 +97,8 @@ ambassador:
         lastActivityWithin: 365d
         mustHaveDefaultBranch: true
         mustHaveNotEmptyRepo: true
-        mustBeAbleToCreateMergeRequest: true
-        mustBeAbleToFork: true
+        mustBeAbleToCreateMergeRequest: false
+        mustBeAbleToFork: false
   events:
     async:
       thread-name-prefix: events-
