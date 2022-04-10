@@ -9,62 +9,64 @@ import org.assertj.core.api.InstanceOfAssertFactories
 import org.assertj.core.api.ObjectAssert
 import kotlin.reflect.KClass
 
-fun ObjectAssert<Score>.hasValue(expected: Double): ObjectAssert<Score> {
+typealias ScoreAssert = ObjectAssert<Score>
+
+fun ScoreAssert.hasValue(expected: Double): ScoreAssert {
     extracting { it.value() }.isEqualTo(expected)
     return this
 }
 
-fun ObjectAssert<Score>.hasValueRounded(expected: Double, decimals: Int): ObjectAssert<Score> {
+fun ScoreAssert.hasValueRounded(expected: Double, decimals: Int): ScoreAssert {
     extracting { it.value().round(decimals) }.isEqualTo(expected.round(decimals))
     return this
 }
 
-fun <T : Feature<*>> ObjectAssert<Score>.hasFeature(expectedFeatureType: KClass<T>): ObjectAssert<Score> {
+fun <T : Feature<*>> ScoreAssert.hasFeature(expectedFeatureType: KClass<T>): ScoreAssert {
     extracting { it.allFeatures().map { it::class }.toMutableList() }
         .asList()
         .contains(expectedFeatureType)
     return this
 }
 
-fun <T : Feature<*>> ObjectAssert<Score>.hasOnlyFeature(expectedFeatureType: KClass<T>): ObjectAssert<Score> {
+fun <T : Feature<*>> ScoreAssert.hasOnlyFeature(expectedFeatureType: KClass<T>): ScoreAssert {
     extracting { it.allFeatures().map { it::class }.toMutableList() }
         .asList()
         .containsExactly(expectedFeatureType)
     return this
 }
 
-fun ObjectAssert<Score>.hasFeatures(vararg expectedFeatureTypes: KClass<*>): ObjectAssert<Score> {
+fun ScoreAssert.hasFeatures(vararg expectedFeatureTypes: KClass<*>): ScoreAssert {
     extracting { it.allFeatures().map { it::class }.toMutableList() }
         .asList().containsExactlyInAnyOrder(*expectedFeatureTypes)
     return this
 }
 
-fun ObjectAssert<Score>.hasScoresSize(expected: Int): ObjectAssert<Score> {
+fun ScoreAssert.hasScoresSize(expected: Int): ScoreAssert {
     extracting { it.allSubScores().toMutableList() }.asList().hasSize(expected)
     return this
 }
 
-fun <T> ObjectAssert<Score>.hasCorrectValueBasedOnCalculator(data: T, calculator: TestCalculator<T>): ObjectAssert<Score> {
+fun <T> ScoreAssert.hasCorrectValueBasedOnCalculator(data: T, calculator: TestCalculator<T>): ScoreAssert {
     val expected = calculator.calculate(data)
     extracting { it.value() }.isEqualTo(expected)
     return this
 }
 
-fun ObjectAssert<Score>.isGreaterThan(value: Double): ObjectAssert<Score> {
+fun ScoreAssert.isGreaterThan(value: Double): ScoreAssert {
     withValue().isGreaterThan(value)
     return this
 }
 
-fun ObjectAssert<Score>.isLessThan(value: Double): ObjectAssert<Score> {
+fun ScoreAssert.isLessThan(value: Double): ScoreAssert {
     withValue().isLessThan(value)
     return this
 }
 
-fun ObjectAssert<Score>.isBetween(min: Double, max: Double): ObjectAssert<Score> {
+fun ScoreAssert.isBetween(min: Double, max: Double): ScoreAssert {
     withValue().isBetween(min, max)
     return this
 }
 
-private fun ObjectAssert<Score>.withValue(): AbstractDoubleAssert<*> {
+private fun ScoreAssert.withValue(): AbstractDoubleAssert<*> {
     return extracting { it.value() }.asInstanceOf(InstanceOfAssertFactories.DOUBLE)
 }
