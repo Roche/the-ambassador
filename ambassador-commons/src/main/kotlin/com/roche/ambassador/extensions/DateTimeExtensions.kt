@@ -1,5 +1,6 @@
 package com.roche.ambassador.extensions
 
+import com.roche.ambassador.ClockHolder
 import com.roche.ambassador.Durations
 import java.time.*
 import java.time.temporal.ChronoUnit
@@ -17,7 +18,7 @@ fun ZonedDateTime.toDate(): Date = Date.from(this.toInstant())
 fun Temporal.daysUntilNow(): Long = unitsUntilNow(ChronoUnit.DAYS)
 fun Temporal.monthsUntilNow(): Long = unitsUntilNow(ChronoUnit.MONTHS)
 fun Temporal.weeksUntilNow(): Long = unitsUntilNow(ChronoUnit.WEEKS)
-fun Temporal.unitsUntilNow(chronoUnit: ChronoUnit): Long = chronoUnit.between(this, LocalDate.now())
+fun Temporal.unitsUntilNow(chronoUnit: ChronoUnit): Long = chronoUnit.between(this, LocalDate.now(ClockHolder.clock))
 
 fun LocalDate.isWeekend(): Boolean = dayOfWeek in listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
 

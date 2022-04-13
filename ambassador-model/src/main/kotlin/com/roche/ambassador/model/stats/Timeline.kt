@@ -1,5 +1,6 @@
 package com.roche.ambassador.model.stats
 
+import com.roche.ambassador.ClockHolder
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -194,7 +195,7 @@ class Timeline(
         }
 
         private fun filtered(boundaryDateSupplier: (LocalDate, Long) -> LocalDate): Timeline {
-            val boundaryDate = boundaryDateSupplier(LocalDate.now(), last)
+            val boundaryDate = boundaryDateSupplier(LocalDate.now(ClockHolder.clock), last)
             val filteredseries = series.filterKeys { it.isAfter(boundaryDate) }
             return Timeline(filteredseries.toMutableMap())
         }

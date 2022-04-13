@@ -1,5 +1,6 @@
 package com.roche.ambassador.model.stats
 
+import com.roche.ambassador.ClockHolder
 import org.apache.commons.math3.distribution.PoissonDistribution
 import java.time.Duration
 import java.time.LocalDate
@@ -15,7 +16,7 @@ object TimelineGenerator {
         if (mean > 0.0 && weeks > 0) {
             val poisson = PoissonDistribution(mean, weeks)
             val data = poisson.sample(weeks)
-            var nextDate = LocalDate.now().minusWeeks(weeks.toLong())
+            var nextDate = LocalDate.now(ClockHolder.clock).minusWeeks(weeks.toLong())
 
             data.forEach {
                 timeline.add(nextDate, it)
@@ -27,8 +28,8 @@ object TimelineGenerator {
 
     fun withTotalEvents(
         count: Int,
-        startDate: LocalDate = LocalDate.now().minusDays(10),
-        endDate: LocalDate = LocalDate.now()
+        startDate: LocalDate = LocalDate.now(ClockHolder.clock).minusDays(10),
+        endDate: LocalDate = LocalDate.now(ClockHolder.clock)
     ): Timeline {
         val timeline = Timeline()
         val inclusiveStartDate = startDate.plusDays(1)
