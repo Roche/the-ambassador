@@ -13,14 +13,20 @@ object IssueAdvisoryRules {
         // FIXME rules should be part of model, but temporarily for simplicity are kept here
         Dsl.advise(issueAdvice, context) {
             // @formatter:off
-            has { visibility == Visibility.PRIVATE } then "visibility.private"
-            matchFirst({ description }) {
-                that { isNullOrBlank() } then "description.missing"
-                that { this!!.length < 30 } then "description.short"
+            has { config.visibility.enabled } and { visibility == Visibility.PRIVATE } then "visibility.private"
+            whenEnabled(config.description) {
+                matchFirst({ description }) {
+                    that { isNullOrBlank() } then "description.missing"
+                    that { this!!.length < config.description.shortLength } then "description.short"
+                }
             }
-            has { topics.isEmpty() } then "topics.empty"
-            createPermissionRule("forking") { forks }
-            createPermissionRule("pullrequest") { pullRequests }
+            has { config.topics.enabled } and { topics.isEmpty() } then "topics.empty"
+            whenEnabled(config.forking) {
+                createPermissionRule("forking") { forks }
+            }
+            whenEnabled(config.pullRequest) {
+                createPermissionRule("pullrequest") { pullRequests }
+            }
             // @formatter:on
         }
         return issueAdvice

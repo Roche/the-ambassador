@@ -27,8 +27,9 @@ interface ThatSupport<A : BuildableAdvice, T> {
     infix fun thatNot(predicate: T.() -> Boolean): Has<A, T> = that(not(predicate))
 }
 
-interface ThenSupport<A : BuildableAdvice> {
-    infix fun then(adviceKey: String): Then<A>
+interface ThenSupport {
+    infix fun then(adviceKey: String): Then
+    fun thenDoNothing(): Then
 }
 
 interface HasSupport<A : BuildableAdvice> {

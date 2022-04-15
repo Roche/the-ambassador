@@ -1,5 +1,6 @@
 package com.roche.ambassador.advisor
 
+import com.roche.ambassador.advisor.configuration.AdvisorProperties
 import com.roche.ambassador.advisor.messages.AdviceMessage
 import com.roche.ambassador.advisor.messages.AdviceMessageLookup
 import com.roche.ambassador.advisor.templates.TemplateEngine
@@ -15,7 +16,8 @@ class AdvisorManager(
     private val advisoryMessageRepository: AdvisoryMessageRepository,
     private val sources: ProjectSources,
     private val lookup: AdviceMessageLookup,
-    private val templateEngine: TemplateEngine
+    private val templateEngine: TemplateEngine,
+    private val properties: AdvisorProperties
 ) {
 
     companion object {
@@ -47,6 +49,6 @@ class AdvisorManager(
         } else {
             mapOf()
         }
-        return AdvisorContext(project, source, advisoryMessages, lookup, templateEngine)
+        return AdvisorContext(project, source, advisoryMessages, lookup, templateEngine, properties.rules)
     }
 }

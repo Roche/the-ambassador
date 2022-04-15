@@ -1,6 +1,7 @@
 package com.roche.ambassador.advisor
 
 import com.roche.ambassador.advisor.common.AdvisorException
+import com.roche.ambassador.advisor.configuration.RulesProperties
 import com.roche.ambassador.advisor.dsl.AdviceKey
 import com.roche.ambassador.advisor.messages.AdviceMessage
 import com.roche.ambassador.advisor.messages.AdviceMessageLookup
@@ -19,7 +20,8 @@ class AdvisorContext(
     val source: ProjectSource,
     private val givenAdvisoryMessages: Map<AdvisoryMessageEntity.Type, List<AdvisoryMessageEntity>>,
     private val adviceMessageLookup: AdviceMessageLookup,
-    private val templateEngine: TemplateEngine
+    private val templateEngine: TemplateEngine,
+    val rulesConfiguration: RulesProperties
 ) {
 
     companion object {

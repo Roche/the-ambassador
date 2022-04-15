@@ -1,6 +1,7 @@
 package com.roche.ambassador.advisor.dsl
 
 import com.roche.ambassador.advisor.AdvisorContext
+import com.roche.ambassador.advisor.configuration.RulesProperties
 import com.roche.ambassador.advisor.model.BuildableAdvice
 import com.roche.ambassador.model.Feature
 import com.roche.ambassador.model.project.Project
@@ -15,11 +16,19 @@ open class RulesBuilder<A : BuildableAdvice> constructor(
 
     fun <T, F : Feature<T>> readFeature(featureType: KClass<F>): Optional<T> = context.project.features.findValue(featureType)
 
+    val config = context.rulesConfiguration
+
     fun <T> alwaysFalse() = apply(alwaysFalse<A, T>(this))
 
     fun anyAlwaysFalse() = this.alwaysFalse<Any>()
 
     fun anyAlwaysTrue() = apply(alwaysTrue(Any(), this))
+
+    fun whenEnabled(rule: RulesProperties.Rule, handler: RulesBuilder<A>.() -> Unit) {
+        if (rule.enabled) {
+            handler(this)
+        }
+    }
 
     override fun <T> with(valueExtractor: Project.() -> T, with: With<A, T>.() -> Unit) {
         val handler = With(valueExtractor, this)

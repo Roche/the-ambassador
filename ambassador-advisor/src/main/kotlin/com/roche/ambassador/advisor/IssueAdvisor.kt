@@ -2,15 +2,11 @@ package com.roche.ambassador.advisor
 
 import com.roche.ambassador.advisor.common.AdvisorException
 import com.roche.ambassador.advisor.configuration.AdvisorProperties
-import com.roche.ambassador.advisor.dsl.Dsl
-import com.roche.ambassador.advisor.dsl.RulesBuilder
 import com.roche.ambassador.advisor.messages.AdviceMessage
 import com.roche.ambassador.advisor.model.Advice
 import com.roche.ambassador.advisor.model.IssueAdvice
 import com.roche.ambassador.exceptions.AmbassadorException
 import com.roche.ambassador.extensions.LoggerDelegate
-import com.roche.ambassador.model.Visibility
-import com.roche.ambassador.model.project.Permissions
 import com.roche.ambassador.model.source.Issue
 import com.roche.ambassador.storage.advisor.AdvisoryMessageEntity
 import org.springframework.stereotype.Component

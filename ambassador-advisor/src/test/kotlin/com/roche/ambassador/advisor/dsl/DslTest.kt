@@ -1,5 +1,6 @@
 package com.roche.ambassador.advisor.dsl
 
+import com.roche.ambassador.advisor.configuration.RulesProperties
 import com.roche.ambassador.model.feature.TopicsFeature
 import org.junit.jupiter.api.Test
 
@@ -23,6 +24,19 @@ class DslTest {
         }
         // then
         assertThat(advice).hasProblemsSize(0)
+    }
+
+    @Test
+    fun shouldVerifyMultipleRules() {
+        // when
+        val advice = testAdvise {
+            anyAlwaysTrue() and { false } then "test1"
+            anyAlwaysTrue() and { true } then "test2"
+            anyAlwaysTrue() and { true } and { false } then "test3"
+            anyAlwaysTrue() and { true } and { true } then "test4"
+        }
+        // then
+        assertThat(advice).problems().hasNames("test2", "test4")
     }
 
     @Test
@@ -67,6 +81,67 @@ class DslTest {
         }
         // then
         assertThat(advice).problems().has("test2")
+    }
+
+    @Test
+    fun shouldNotAddProblemWhenActionIsDoNothing() {
+        // when
+        val advice = testAdvise {
+            matchFirst {
+                anyAlwaysTrue().thenDoNothing()
+                anyAlwaysTrue() then "test2"
+            }
+        }
+        // then
+        assertThat(advice).hasProblemsSize(0)
+    }
+
+    @Test
+    fun shouldNotExecuteRulesWhenRuleIsDisabled() {
+        // when
+        val advice = testAdvise {
+            whenEnabled(RulesProperties.Rule(false)) {
+                anyAlwaysTrue() then "test1"
+                matchFirst {
+                    anyAlwaysTrue() then "test2"
+                }
+            }
+        }
+        // then
+        assertThat(advice).hasNoProblems()
+    }
+
+    @Test
+    fun shouldExecuteRuleWhenRuleIsEnabled() {
+        // when
+        val advice = testAdvise {
+            whenEnabled(RulesProperties.Rule(true)) {
+                anyAlwaysTrue() then "test1"
+                matchFirst {
+                    anyAlwaysTrue() then "test2"
+                }
+            }
+        }
+        // then
+        assertThat(advice).problems().hasNames("test1", "test2")
+    }
+
+    @Test
+    fun shouldCheckIfNestedRuleIsEnabled() {
+        // when
+        val advice = testAdvise {
+            whenEnabled(RulesProperties.Rule(true)) {
+                anyAlwaysTrue() then "test1"
+                whenEnabled(RulesProperties.Rule(false)) {
+                    anyAlwaysTrue() then "test2"
+                    whenEnabled(RulesProperties.Rule(true)) {
+                        anyAlwaysTrue() then "test3" // disabled cause nested
+                    }
+                }
+            }
+        }
+        // then
+        assertThat(advice).problems().hasNames("test1")
     }
 
     @Test

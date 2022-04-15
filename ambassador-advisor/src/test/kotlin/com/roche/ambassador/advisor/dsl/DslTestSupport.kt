@@ -2,6 +2,7 @@ package com.roche.ambassador.advisor.dsl
 
 import com.roche.ambassador.GenerationSpec
 import com.roche.ambassador.advisor.AdvisorContext
+import com.roche.ambassador.advisor.configuration.RulesProperties
 import com.roche.ambassador.advisor.messages.AdviceMessage
 import com.roche.ambassador.advisor.messages.AdviceMessageLookup
 import com.roche.ambassador.advisor.model.IssueAdvice
@@ -35,9 +36,13 @@ fun createProject(id: Long = source.createFakeId()): Project {
 fun Project.createIssueAdvice(): IssueAdvice = IssueAdvice(name)
 
 fun createContext(
-    project: Project, lookup: AdviceMessageLookup, templateEngine: TemplateEngine, givenAdvisoryMessages: Map<AdvisoryMessageEntity.Type, List<AdvisoryMessageEntity>> = mapOf()
+    project: Project,
+    lookup: AdviceMessageLookup,
+    templateEngine: TemplateEngine,
+    givenAdvisoryMessages: Map<AdvisoryMessageEntity.Type, List<AdvisoryMessageEntity>> = mapOf(),
+    configuration: RulesProperties
 ): AdvisorContext {
-    return AdvisorContext(project, source, givenAdvisoryMessages, lookup, templateEngine)
+    return AdvisorContext(project, source, givenAdvisoryMessages, lookup, templateEngine, configuration)
 }
 
 val defaultLookupAnswerProvider: LookupAnswerProvider = { project, key ->
@@ -52,7 +57,7 @@ fun testAdvise(lookupAnswerProvider: LookupAnswerProvider = defaultLookupAnswerP
         val key = args[0] as AdviceKey
         lookupAnswerProvider(project, key)
     }
-    val context = createContext(project, lookup, mockk(), mapOf())
+    val context = createContext(project, lookup, mockk(), mapOf(), RulesProperties())
     Dsl.advise(advice, context, builder)
     return TestAdviceResponse(advice, lookup, project, context)
 }
@@ -75,6 +80,9 @@ fun AdviceAssert.hasProblemsSize(size: Int): AdviceAssert {
     extracting { it.getProblems() }.asList().hasSize(size)
     return this
 }
+
+fun AdviceAssert.hasNoProblems(): AdviceAssert = hasProblemsSize(0)
+
 
 fun x(response: TestAdviceResponse): ProblemsAssert {
     return Assertions.assertThat(response.advice.getProblems())
