@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class DslTest {
 
     @Test
-    fun shouldAddProblemWhenHasClauseIsTrue() {
+    fun `should add problem when has clause is true`() {
         // when
         val advice = testAdvise {
             anyAlwaysTrue() then "topics.size"
@@ -17,7 +17,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldNotAddProblemWhenHasClauseIsFalse() {
+    fun `should not add problem when has clause is false`() {
         // when
         val advice = testAdvise {
             anyAlwaysFalse() then "test"
@@ -27,7 +27,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldVerifyMultipleRules() {
+    fun `should verify multiple rules`() {
         // when
         val advice = testAdvise {
             anyAlwaysTrue() and { false } then "test1"
@@ -40,7 +40,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldAddPlainArgumentToProblem() {
+    fun `should add plain argument to problem`() {
         // when
         val advice = testAdvise {
             anyAlwaysTrue() then "test" with "1"
@@ -50,7 +50,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldAddMultipleArgumentsToProblem() {
+    fun `should add multiple arguments to problem`() {
         // when
         val advice = testAdvise {
             anyAlwaysTrue() then "test" with listOf(1, 2)
@@ -60,7 +60,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldAddArgumentFromProjectToProblem() {
+    fun `should add argument from project to problem`() {
         // when
         val advice = testAdvise {
             anyAlwaysTrue() then "test" with { name }
@@ -70,7 +70,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchFirstRuleInMatchFirstClause() {
+    fun `should match first rule in match first clause`() {
         // when
         val advice = testAdvise {
             matchFirst {
@@ -84,7 +84,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldNotAddProblemWhenActionIsDoNothing() {
+    fun `should not add problem when action is do nothing`() {
         // when
         val advice = testAdvise {
             matchFirst {
@@ -97,7 +97,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldNotExecuteRulesWhenRuleIsDisabled() {
+    fun `should not execute rules when rule is disabled`() {
         // when
         val advice = testAdvise {
             whenEnabled(RulesProperties.Rule(false)) {
@@ -112,7 +112,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldExecuteRuleWhenRuleIsEnabled() {
+    fun `should execute rule when rule is enabled`() {
         // when
         val advice = testAdvise {
             whenEnabled(RulesProperties.Rule(true)) {
@@ -127,7 +127,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldCheckIfNestedRuleIsEnabled() {
+    fun `should check if nested rule is enabled`() {
         // when
         val advice = testAdvise {
             whenEnabled(RulesProperties.Rule(true)) {
@@ -145,7 +145,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchFirstRuleOutsideNestedMatchFirstClause() {
+    fun `should match first rule outside nested match first clause`() {
         // when
         val advice = testAdvise {
             matchFirst {
@@ -161,7 +161,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchFirstRuleInNestedMatchFirstClause() {
+    fun `should match first rule in nested match first clause`() {
         // when
         val advice = testAdvise {
             matchFirst {
@@ -178,7 +178,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchFirstInDeeplyNestedMatchFirstClause() {
+    fun `should match first in deeply nested match first clause`() {
         // when
         val advice = testAdvise {
             matchFirst {
@@ -203,7 +203,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchAllRules() {
+    fun `should match all rules`() {
         // when
         val advice = testAdvise {
             anyAlwaysTrue() then "test1"
@@ -220,7 +220,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldUseProjectPredicateInHas() {
+    fun `should use project predicate in has`() {
         // when
         val advice = testAdvise {
             has { topics.size > -1 } then "test"
@@ -230,7 +230,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldUseProjectPredicateInHasNot() {
+    fun `should use project predicate in has not`() {
         // when
         val advice = testAdvise {
             hasNot { topics.size < 0 } then "test"
@@ -240,7 +240,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldUseValuePredicateInThatMatchFirst() {
+    fun `should use value predicate in that match first`() {
         // when
         val advice = testAdvise {
             matchFirst( { topics } ) {
@@ -252,7 +252,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldUseValuePredicateInThatNotMatchFirst() {
+    fun `should use value predicate in that not match first`() {
         // when
         val advice = testAdvise {
             matchFirst( { topics } ) {
@@ -264,7 +264,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchFirstInNestedMatchFirstValue() {
+    fun `should match first in nested match first value`() {
         // when
         val advice = testAdvise {
             matchFirst( { topics } ) {
@@ -280,7 +280,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldUseFeatureInThat() {
+    fun `should use feature in that`() {
         // when
         val advice = testAdvise {
             has(TopicsFeature::class) that { size > 0 } then "test"
@@ -290,7 +290,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldUseFeatureInThatNot() {
+    fun `should use feature in that not`() {
         // when
         val advice = testAdvise {
             has(TopicsFeature::class) thatNot { size < 0 } then "test"
@@ -300,7 +300,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchFirstInMatchFirstFeature() {
+    fun `should match first in match first feature`() {
         // when
         val advice = testAdvise {
             matchFirst(TopicsFeature::class) {
@@ -314,7 +314,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchAllInWithFeature() {
+    fun `should match all in with feature`() {
         // when
         val advice = testAdvise {
             with(TopicsFeature::class) {
@@ -328,7 +328,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchFirstWithFeatureValue() {
+    fun `should match first with feature value`() {
         // when
         val advice = testAdvise {
             matchFirst(TopicsFeature::class, { size }) {
@@ -342,7 +342,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldMatchAllInOrInMatchFirst() {
+    fun `should match all in or in match first`() {
         // when
         val advice = testAdvise {
             matchFirst {
@@ -359,7 +359,7 @@ class DslTest {
 
 
     @Test
-    fun shouldMatchFirstInMatchFirstAndNotOr() {
+    fun `should match first in matchfirst and not or`() {
         // when
         val advice = testAdvise {
             matchFirst {
@@ -375,7 +375,7 @@ class DslTest {
     }
 
     @Test
-    fun shouldHandleComplexOrInMatchFirst() {
+    fun `should handle complex or in match first`() {
         // when
         val advice = testAdvise {
             matchFirst {
