@@ -41,6 +41,7 @@ interface MatchFirstSupport<A : BuildableAdvice> {
     infix fun matchFirst(matchFirst: MatchFirst<A>.() -> Unit)
     fun <T> matchFirst(valueExtractor: Project.() -> T, matchFirst: MatchFirstValue<A, T>.() -> Unit)
     fun <T, F : Feature<T>> matchFirst(featureType: KClass<F>, matchFirst: MatchFirstFeature<A, T, F>.() -> Unit)
+    fun <T, F : Feature<T>, U> matchFirst(featureType: KClass<F>, valueExtractor: T.() -> U, matchFirst: MatchFirstValue<A, U>.() -> Unit)
 }
 
 interface WithSupport<A : BuildableAdvice> {

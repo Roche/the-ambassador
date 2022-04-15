@@ -4,6 +4,7 @@ import com.roche.ambassador.advisor.AdvisorContext
 import com.roche.ambassador.advisor.model.BuildableAdvice
 import com.roche.ambassador.model.Feature
 import com.roche.ambassador.model.project.Project
+import java.util.*
 import kotlin.reflect.KClass
 
 open class RulesBuilder<A : BuildableAdvice> constructor(
@@ -11,6 +12,8 @@ open class RulesBuilder<A : BuildableAdvice> constructor(
 ) : ConditionsWrapper(), HasSupport<A>, MatchFirstSupport<A>, WithSupport<A> {
 
     constructor(parent: RulesBuilder<A>) : this(parent.buildableAdvice, parent.context)
+
+    fun <T, F : Feature<T>> readFeature(featureType: KClass<F>): Optional<T> = context.project.features.findValue(featureType)
 
     fun <T> alwaysFalse() = apply(alwaysFalse<A, T>(this))
 
@@ -54,6 +57,22 @@ open class RulesBuilder<A : BuildableAdvice> constructor(
 
     override fun <T, F : Feature<T>> matchFirst(featureType: KClass<F>, matchFirst: MatchFirstFeature<A, T, F>.() -> Unit) {
         val handler = MatchFirstFeature(featureType, this)
+        matchFirst(handler)
+        apply(handler)
+    }
+
+    override fun <T, F : Feature<T>, U> matchFirst(
+        featureType: KClass<F>,
+        valueExtractor: T.() -> U,
+        matchFirst: MatchFirstValue<A, U>.() -> Unit
+    ) {
+        val wrappedFeatureExtractor: Project.() -> U = {
+            val featureValue = readFeature(featureType)
+            featureValue
+                .map { valueExtractor(it) }
+                .orElse(null)
+        }
+        val handler = MatchFirstValue(wrappedFeatureExtractor, this)
         matchFirst(handler)
         apply(handler)
     }

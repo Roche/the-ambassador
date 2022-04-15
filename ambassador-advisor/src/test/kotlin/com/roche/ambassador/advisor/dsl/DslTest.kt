@@ -253,6 +253,20 @@ class DslTest {
     }
 
     @Test
+    fun shouldMatchFirstWithFeatureValue() {
+        // when
+        val advice = testAdvise {
+            matchFirst(TopicsFeature::class, { size }) {
+                that { this < 0 } then "test1"
+                that { this > 0 } then "test2"
+                that { this > -1 } then "test3"
+            }
+        }
+        // then
+        assertThat(advice).problems().hasNames("test2")
+    }
+
+    @Test
     fun shouldMatchAllInOrInMatchFirst() {
         // when
         val advice = testAdvise {

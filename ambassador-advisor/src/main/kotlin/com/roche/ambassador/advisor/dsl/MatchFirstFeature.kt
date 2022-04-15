@@ -10,8 +10,8 @@ class MatchFirstFeature<A : BuildableAdvice, T, F : Feature<T>>(
 ) : MatchFirst<A>(rulesBuilder), ThatSupport<A, T> {
 
     override infix fun that(predicate: T.() -> Boolean): Has<A, T> {
-        val delegate = rulesBuilder.context.project.features.find(featureType)
-            .map { Has(predicate, it.value().get(), rulesBuilder) }
+        val delegate = readFeature(featureType)
+            .map { Has(predicate, it, rulesBuilder) }
             .orElseGet { rulesBuilder.alwaysFalse() }
         apply(delegate)
         return delegate
