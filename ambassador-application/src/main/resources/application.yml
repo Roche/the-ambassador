@@ -77,6 +77,10 @@ ambassador:
   security:
     enabled: true
   indexer:
+    scheduler:
+      enabled: true
+      cron: "0 0 14 ? * SUN"
+      lockFor: 30m
     features:
       requireVisibility:
         - public

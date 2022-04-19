@@ -37,7 +37,11 @@ data class IndexerProperties(
 
     @NestedConfigurationProperty
     @Valid
-    val subscription: SubscriptionProperties = SubscriptionProperties()
+    val subscription: SubscriptionProperties = SubscriptionProperties(),
+
+    @NestedConfigurationProperty
+    @Valid
+    val scheduler: SchedulerProperties = SchedulerProperties(),
 
 )
 

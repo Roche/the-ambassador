@@ -12,6 +12,7 @@ plugins {
 val springdocVersion: String by extra
 val kotlinCoroutinesVersion: String by extra
 val springApiVersion: String by extra
+val shedlockVersion: String by extra
 
 dependencies {
     implementation(project(":ambassador-model"))
@@ -31,6 +32,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    implementation("net.javacrumbs.shedlock:shedlock-spring:$shedlockVersion")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
 
     implementation("io.github.filipowm:spring-api-starter:$springApiVersion")
 
