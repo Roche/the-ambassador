@@ -24,6 +24,6 @@ dependencies:
   - name: indexer
     version: 0.2.3
   - name: postgresql
-    version: 10.16.2
+    version: 11.1.22
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.install
