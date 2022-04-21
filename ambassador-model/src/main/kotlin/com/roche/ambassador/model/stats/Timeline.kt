@@ -21,19 +21,23 @@ class Timeline(
     }
 
     fun sum(): Long {
-        return series.values.fold(0) { acc, v -> acc + v }
+        return if (series.isEmpty()) {
+            0
+        } else {
+            series.values.fold(0) { acc, v -> acc + v }
+        }
     }
 
     fun average(): Double {
-        if (count() == 0) {
-            return 0.0
+        val count = count()
+        return if (count == 0) {
+            0.0
+        } else {
+            sum().toDouble() / count
         }
-        return sum().toDouble() / count()
     }
 
-    fun count(): Int {
-        return series.size
-    }
+    fun count(): Int = series.size
 
     fun add(date: Date, value: Int): Timeline {
         val key = Instant.ofEpochMilli(date.time)
