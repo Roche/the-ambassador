@@ -23,7 +23,7 @@ dependencies {
     implementation(kotlin("gradle-plugin"))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
     implementation("org.jetbrains.kotlin:kotlin-allopen")
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.6.3")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:2.6.6")
     implementation("org.jooq:jooq-codegen:3.15.5")
     implementation("org.flywaydb:flyway-core:8.5.8")
 
