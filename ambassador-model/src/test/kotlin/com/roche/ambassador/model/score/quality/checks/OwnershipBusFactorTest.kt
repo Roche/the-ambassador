@@ -1,6 +1,6 @@
 package com.roche.ambassador.model.score.quality.checks
 
-import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.dataproviders.ProjectGenerator
 import com.roche.ambassador.model.feature.MembersFeature
 import com.roche.ambassador.model.project.AccessLevel
 import org.assertj.core.api.Assertions.assertThat
@@ -30,10 +30,10 @@ class OwnershipBusFactorTest {
     )
     fun `should calculate score for ownership bus factor`(owners: Int, readers: Int, writers: Int, expectedScore: Int) {
         // given
-        val features = createMembers(owners, readers, writers)
+        val members = createMembers(owners, readers, writers)
 
         // when
-        val result = OwnershipBusFactor.check(features)
+        val result = OwnershipBusFactor.check(ProjectGenerator.generate(members))
 
         // then
         assertThat(result.checkName).isEqualTo(Check.OWNERSHIP_BUS_FACTOR)
@@ -42,13 +42,13 @@ class OwnershipBusFactorTest {
     }
 
     companion object {
-        fun createMembers(owners: Int = 1, readers: Int = 0, writers: Int = 0): Features {
+        fun createMembers(owners: Int = 1, readers: Int = 0, writers: Int = 0): MembersFeature {
             val members = mapOf(
                 AccessLevel.ADMIN to owners,
                 AccessLevel.READ to readers,
                 AccessLevel.WRITE to writers
             )
-            return Features(MembersFeature(members))
+            return MembersFeature(members)
         }
     }
 }

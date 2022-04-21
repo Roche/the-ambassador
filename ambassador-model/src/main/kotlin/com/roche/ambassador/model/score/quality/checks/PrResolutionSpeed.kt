@@ -2,8 +2,8 @@ package com.roche.ambassador.model.score.quality.checks
 
 import com.roche.ambassador.extensions.toHumanReadable
 import com.roche.ambassador.model.Explanation
-import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.PullRequestsFeature
+import com.roche.ambassador.model.project.Project
 import java.time.Duration
 
 internal object PrResolutionSpeed : DurationCheck() {
@@ -15,8 +15,8 @@ internal object PrResolutionSpeed : DurationCheck() {
 
     override fun maxTime(): Long = DAY_1
 
-    override fun readValue(features: Features): Duration {
-        return features.findValue(PullRequestsFeature::class)
+    override fun readValue(project: Project): Duration {
+        return project.features.findValue(PullRequestsFeature::class)
             .map { it.averageTimeToMergeAsSeconds() }
             .map { Duration.ofSeconds(it) }
             .orElseGet { Duration.ofSeconds(-1) }

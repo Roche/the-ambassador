@@ -54,7 +54,7 @@ class ActivityScorePolicyTest {
         assertThat(result).isEqualTo(1517.0)
 
         // when calculate activity score using policy
-        val activity = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val activity = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then all expected features and subscores are used
         assertThat(activity).hasScoresSize(3)
@@ -78,7 +78,7 @@ class ActivityScorePolicyTest {
         val data = ActivityData(stars = 10)
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasCorrectValue(data)
@@ -91,7 +91,7 @@ class ActivityScorePolicyTest {
         val data = ActivityData(forks = 10)
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasCorrectValue(data)
@@ -105,7 +105,7 @@ class ActivityScorePolicyTest {
         val data = ActivityData(lastActivityDate = date)
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasCorrectValue(data)
@@ -120,7 +120,7 @@ class ActivityScorePolicyTest {
         val data = ActivityData(commitsTimeline = timeline)
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasCorrectValue(data)
@@ -139,7 +139,7 @@ class ActivityScorePolicyTest {
         val data = ActivityData(createdDate = createdDate, lastActivityDate = lastActivityDate)
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasCorrectValue(data)
@@ -154,7 +154,7 @@ class ActivityScorePolicyTest {
         val expectedValue = round(3000 + ln(starsValue.toDouble()) * 100 - 50)
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasCorrectValue(data)
@@ -169,7 +169,7 @@ class ActivityScorePolicyTest {
         val expectedValue = (50 + stars * 2) * .3 - 50
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasCorrectValue(data)
@@ -183,7 +183,7 @@ class ActivityScorePolicyTest {
         val data = ActivityData(description = fairy.textProducer().randomString(30))
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual)
@@ -227,7 +227,7 @@ class ActivityScorePolicyTest {
         val data = dataProvider.invoke(Documentation.create(exists, length))
 
         // when
-        val actual = ActivityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = ActivityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasValue(expectedBoost)

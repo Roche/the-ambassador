@@ -5,14 +5,16 @@ import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.Score
 import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.feature.*
+import com.roche.ambassador.model.project.Project
 import kotlin.math.*
 
 object ActivityScorePolicy : ScorePolicy {
 
     private const val INITIAL_SCORE = 50.0
-    override fun calculateScoreOf(features: Features): Score {
-        val contributionScore = getContributionScore(features)
-        val documentationScore = getDocumentationScore(features)
+
+    override fun calculateScoreOf(project: Project): Score {
+        val contributionScore = getContributionScore(project)
+        val documentationScore = getDocumentationScore(project)
         return Score.zip("Activity", contributionScore, documentationScore) { s1, s2, explanationBuilder ->
             explanationBuilder.description("")
                 .addDetails("$s1 for contribution")
@@ -25,9 +27,9 @@ object ActivityScorePolicy : ScorePolicy {
         }
     }
 
-    private fun getDocumentationScore(features: Features): Score {
+    private fun getDocumentationScore(project: Project): Score {
         // @formatter:off
-        return Score.builder("Documentation", features)
+        return Score.builder("Documentation", project)
             .withFeature(ContributingGuideFeature::class).forFile(100, 100) { _, partial -> "$partial for existence of contributing guide file" }
             .withFeature(ReadmeFeature::class).forFile(100, 100) { _, partial -> "$partial for existence of README file" }
             .withFeature(DescriptionFeature::class)
@@ -37,9 +39,9 @@ object ActivityScorePolicy : ScorePolicy {
         // @formatter:on
     }
 
-    private fun getContributionScore(features: Features): Score {
+    private fun getContributionScore(project: Project): Score {
         // @formatter:off
-        return Score.builder("Contribution", features, false, INITIAL_SCORE)
+        return Score.builder("Contribution", project, false, INITIAL_SCORE)
             .addReasons("$INITIAL_SCORE for initial score")
             .withFeature(StarsFeature::class).sum({ stars -> stars.toDouble() * 2 }) { stars, partial -> "$partial for $stars stars" }
             .withFeature(ForksFeature::class).sum({ forks -> forks.toDouble() * 5 }) { forks, partial -> "$partial for $forks forks" }

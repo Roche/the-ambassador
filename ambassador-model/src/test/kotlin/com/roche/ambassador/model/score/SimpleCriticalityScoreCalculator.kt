@@ -38,9 +38,9 @@ data class CriticalityData(
     val commits: Timeline = Timeline(),
     val releases: Timeline = Timeline(),
     val issueComments: Timeline = Timeline(),
-) {
+) : ScoreDataWrapper() {
 
-    fun toFeatures(): Features = Features(
+    override fun features(): Features = Features(
         lastActivityFeature(), createdDateFeature(), commitsFeature(),
         issuesFeature(), releasesFeature(), contributorsFeature(), commentsFeature()
     )

@@ -3,8 +3,8 @@ package com.roche.ambassador.model.score.quality.checks
 import com.roche.ambassador.extensions.roundToHalf
 import com.roche.ambassador.extensions.weeksUntilNow
 import com.roche.ambassador.model.Explanation
-import com.roche.ambassador.model.feature.Features
-import com.roche.ambassador.model.feature.LastActivityDateFeature
+import com.roche.ambassador.model.project.Project
+import java.util.*
 import kotlin.math.max
 
 internal object UpdatedDate : BaseCheck<Long>() {
@@ -13,8 +13,8 @@ internal object UpdatedDate : BaseCheck<Long>() {
 
     override fun name(): String = Check.UPDATED_PENALTY
 
-    override fun readValue(features: Features): Long {
-        return features.findValue(LastActivityDateFeature::class)
+    override fun readValue(project: Project): Long {
+        return Optional.ofNullable(project.lastActivityDate)
             .map { it.weeksUntilNow() }
             .orElse(0L)
     }

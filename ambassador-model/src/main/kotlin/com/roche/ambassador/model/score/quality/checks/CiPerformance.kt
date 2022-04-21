@@ -3,7 +3,7 @@ package com.roche.ambassador.model.score.quality.checks
 import com.roche.ambassador.extensions.toHumanReadable
 import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.feature.CiExecutionsFeature
-import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.project.Project
 import java.time.Duration
 
 internal object CiPerformance : DurationCheck() {
@@ -14,8 +14,8 @@ internal object CiPerformance : DurationCheck() {
     override fun degradationTime(): Long = MINUTES_5
     override fun maxTime(): Long = MINUTES_5 * 2
 
-    override fun readValue(features: Features): Duration {
-        return features.findValue(CiExecutionsFeature::class)
+    override fun readValue(project: Project): Duration {
+        return project.features.findValue(CiExecutionsFeature::class)
             .map { it.averageDurationAsSeconds() }
             .map { Duration.ofSeconds(it) }
             .orElseGet { Duration.ofSeconds(-1) }

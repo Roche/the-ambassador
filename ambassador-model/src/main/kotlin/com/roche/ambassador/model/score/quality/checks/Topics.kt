@@ -1,8 +1,7 @@
 package com.roche.ambassador.model.score.quality.checks
 
 import com.roche.ambassador.model.Explanation
-import com.roche.ambassador.model.feature.Features
-import com.roche.ambassador.model.feature.TopicsFeature
+import com.roche.ambassador.model.project.Project
 import kotlin.math.min
 
 internal object Topics : BaseCheck<Int>() {
@@ -11,10 +10,8 @@ internal object Topics : BaseCheck<Int>() {
 
     override fun name(): String = Check.TOPICS
 
-    override fun readValue(features: Features): Int {
-        return features.findValue(TopicsFeature::class)
-            .map { it.size }
-            .orElse(0)
+    override fun readValue(project: Project): Int {
+        return project.topics.size
     }
 
     override fun calculateScore(featureValue: Int): Double {

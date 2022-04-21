@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.ScoreBuilder
 import java.util.*
 import java.util.stream.Collectors
@@ -58,8 +58,8 @@ interface Score : Specification, Explainable {
             return composite(name, value, mutableSetOf(first, second), first.isExperimental() || second.isExperimental(), explanation)
         }
 
-        fun builder(name: String, features: Features, experimental: Boolean = false, initialScore: Double = 0.0): ScoreBuilder.ParentScoreBuilder {
-            return ScoreBuilder.ParentScoreBuilder(name, features, initialScore, experimental)
+        fun builder(name: String, project: Project, experimental: Boolean = false, initialScore: Double = 0.0): ScoreBuilder.ParentScoreBuilder {
+            return ScoreBuilder.ParentScoreBuilder(name, project, initialScore, experimental)
         }
 
         internal fun composite(

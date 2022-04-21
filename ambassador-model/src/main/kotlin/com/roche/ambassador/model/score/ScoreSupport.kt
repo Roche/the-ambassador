@@ -4,9 +4,9 @@ import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.Feature
 import com.roche.ambassador.model.Score
-import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.FileFeature
 import com.roche.ambassador.model.files.File
+import com.roche.ambassador.model.project.Project
 import java.util.function.Predicate
 import kotlin.reflect.KClass
 
@@ -14,7 +14,7 @@ typealias ScoreNormalizer = (Double) -> Double
 
 open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     protected val name: String,
-    private val features: Features,
+    private val project: Project,
     initialScore: Double,
     private val experimental: Boolean = false,
 ) {
@@ -29,7 +29,7 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     @Suppress("UNCHECKED_CAST")
     fun <V, T : Feature<V>> withFeature(featureType: KClass<T>): FeatureScoreBuilder<V, T, SELF> {
         expectedFeatures.add(featureType)
-        val feature = features.find(featureType)
+        val feature = project.features.find(featureType)
         return FeatureScoreBuilder(feature.orElse(null), this as SELF)
     }
 
@@ -66,7 +66,7 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
     }
 
     fun withSubScore(name: String, initialScore: Double = 0.0, experimental: Boolean = false): SubScoreBuilder {
-        return SubScoreBuilder(name, this, features, initialScore, experimental)
+        return SubScoreBuilder(name, this, project, initialScore, experimental)
     }
 
     class FeatureScoreBuilder<V, T : Feature<V>, U : ScoreBuilder<U>> internal constructor(
@@ -153,18 +153,18 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
 
     class ParentScoreBuilder internal constructor(
         name: String,
-        features: Features,
+        project: Project,
         initialScore: Double = 0.0,
         experimental: Boolean = false,
-    ) : ScoreBuilder<ParentScoreBuilder>(name, features, initialScore, experimental)
+    ) : ScoreBuilder<ParentScoreBuilder>(name, project, initialScore, experimental)
 
     class SubScoreBuilder internal constructor(
         name: String,
         private val scoreBuilder: ScoreBuilder<*>,
-        features: Features,
+        project: Project,
         initialScore: Double = 0.0,
         experimental: Boolean,
-    ) : ScoreBuilder<SubScoreBuilder>(name, features, initialScore, experimental) {
+    ) : ScoreBuilder<SubScoreBuilder>(name, project, initialScore, experimental) {
 
         private var reasonProvider: ((Double, Double) -> String)? = null
 

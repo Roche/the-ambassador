@@ -76,9 +76,9 @@ data class ActivityData(
     val license: Documentation = Documentation.notExistent(),
     val description: String? = null,
     val commitsTimeline: Timeline? = Timeline()
-) {
+) : ScoreDataWrapper() {
 
-    fun toFeatures(): Features = Features(
+    override fun features(): Features = Features(
         forksFeature(), starsFeature(), lastActivityFeature(),
         createdDateFeature(), visibilityFeature(), readmeFeature(), contributionGuideFeature(),
         licenseFeature(), descriptionFeature(), commitsFeature(), issuesFeature()

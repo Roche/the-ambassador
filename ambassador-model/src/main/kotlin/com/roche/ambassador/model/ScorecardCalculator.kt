@@ -32,11 +32,9 @@ class ScorecardCalculator(configuration: ScorecardConfiguration) {
     fun calculateFor(project: Project): Scorecard {
         if (project.features.isEmpty()) {
             return Scorecard.notCalculated(project)
-        } else if (project.scorecard != null && project.scorecard!!.isCalculated()) {
-            return project.scorecard!!
         }
         // as of now calculate final score as a multiplication of all non-experimental scores
-        val scores = policies.map { it.calculateScoreOf(project.features) }.toSet()
+        val scores = policies.map { it.calculateScoreOf(project) }.toSet()
         val score = scores
             .filterNot { it.isExperimental() }
             .map { it.value() }

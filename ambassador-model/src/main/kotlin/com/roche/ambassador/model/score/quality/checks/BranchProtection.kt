@@ -2,11 +2,11 @@ package com.roche.ambassador.model.score.quality.checks
 
 import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.Explanation
-import com.roche.ambassador.model.feature.DefaultBranchFeature
-import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.ProtectedBranchesFeature
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.project.ProtectedBranch
 import com.roche.ambassador.model.score.quality.PartialCheckResult
+import java.util.*
 
 internal object BranchProtection : Check {
 
@@ -15,13 +15,9 @@ internal object BranchProtection : Check {
 
     override fun name(): String = Check.BRANCH_PROTECTION
 
-    override fun check(features: Features): PartialCheckResult {
-        val defaultBranchOptional = features.findValue(DefaultBranchFeature::class)
-        if (defaultBranchOptional.isEmpty) {
-            return PartialCheckResult.empty(name())
-        }
-        val defaultBranch = defaultBranchOptional.get()
-        return features.findValue(ProtectedBranchesFeature::class)
+    override fun check(project: Project): PartialCheckResult {
+        val defaultBranch = project.defaultBranch ?: return PartialCheckResult.empty(name())
+        return project.features.findValue(ProtectedBranchesFeature::class)
             .filter { it.isNotEmpty() }
             .map { check(it, defaultBranch) }
             .orElseGet { PartialCheckResult.empty(name()) }

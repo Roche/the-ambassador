@@ -1,15 +1,12 @@
 package com.roche.ambassador.model.score.quality.checks
 
 import com.roche.ambassador.model.Explanation
-import com.roche.ambassador.model.feature.Features
-import com.roche.ambassador.model.feature.PermissionsFeature
+import com.roche.ambassador.model.project.Project
 
 internal object Forkable : BooleanCheck() {
 
-    override fun readValue(features: Features): Boolean {
-        return features.findValue(PermissionsFeature::class)
-            .map { it.forks.canEveryoneAccess() }
-            .orElse(false)
+    override fun readValue(project: Project): Boolean {
+        return project.permissions.forks.canEveryoneAccess()
     }
 
     override fun buildExplanation(featureValue: Boolean, score: Double, builder: Explanation.Builder) {

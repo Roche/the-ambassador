@@ -4,6 +4,7 @@ import com.roche.ambassador.extensions.monthsUntilNow
 import com.roche.ambassador.extensions.round
 import com.roche.ambassador.model.Score
 import com.roche.ambassador.model.feature.*
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.CriticalityScorePolicy.CriticalityCheck.*
 import com.roche.ambassador.model.score.CriticalityScorePolicy.CriticalityCheck.Companion.weightsTotal
 import kotlin.math.log10
@@ -41,9 +42,9 @@ object CriticalityScorePolicy : ScorePolicy {
         }
     }
 
-    override fun calculateScoreOf(features: Features): Score {
+    override fun calculateScoreOf(project: Project): Score {
         // @formatter:off
-        return Score.builder("Criticality", features)
+        return Score.builder("Criticality", project)
             .withFeature(IssuesFeature::class).sum({ issues -> UPDATED_ISSUES_COUNT.calc(issues.allIn90Days) }) { issues, partial -> "$partial for ${issues.allIn90Days} updated issues within 90 days" }
             .withFeature(IssuesFeature::class).sum({ issues -> CLOSED_ISSUES_COUNT.calc(issues.closedIn90Days) }) { issues, partial -> "$partial for ${issues.closedIn90Days} closed issues within 90 days" }
             .withFeature(ContributorsFeature::class).sum({ contributors -> CONTRIBUTORS_COUNT.calc(contributors.size) }) { contributors, partial -> "$partial for ${contributors.size} contributors" }

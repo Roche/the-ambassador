@@ -52,7 +52,7 @@ class CriticalityScorePolicyTest {
         assertThat(result).isBetween(exact * 0.9, exact * 1.1)
 
         // when calculate criticality score using policy
-        val criticality = CriticalityScorePolicy.calculateScoreOf(data.toFeatures())
+        val criticality = CriticalityScorePolicy.calculateScoreOf(data.asProject())
 
         // then all expected features and subscores are used
         assertThat(criticality)
@@ -124,7 +124,7 @@ class CriticalityScorePolicyTest {
         val data = CriticalityData(commits = commits)
 
         // when
-        val actual = CriticalityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = CriticalityScorePolicy.calculateScoreOf(data.asProject())
 
         // then
         assertThat(actual).hasCorrectValue(data).isBetween(expected * .9, expected * 1.1)
@@ -162,7 +162,7 @@ class CriticalityScorePolicyTest {
 
     private fun assertWithData(/* given */data: CriticalityData, expected: Double) {
         // when
-        val actual = CriticalityScorePolicy.calculateScoreOf(data.toFeatures())
+        val actual = CriticalityScorePolicy.calculateScoreOf(data.asProject())
 
         // then doing double cross-check
         assertThat(actual).hasCorrectValue(data).hasValueRounded(expected, 4)

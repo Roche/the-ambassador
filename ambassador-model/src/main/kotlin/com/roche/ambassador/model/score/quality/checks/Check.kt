@@ -3,7 +3,7 @@ package com.roche.ambassador.model.score.quality.checks
 import com.roche.ambassador.extensions.round
 import com.roche.ambassador.extensions.roundToHalf
 import com.roche.ambassador.model.Explanation
-import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.quality.PartialCheckResult
 import java.time.Duration
 import java.util.*
@@ -45,7 +45,7 @@ sealed interface Check {
     }
 
     fun name(): String
-    fun check(features: Features): PartialCheckResult
+    fun check(project: Project): PartialCheckResult
 }
 
 object ChecksRegistry {
@@ -76,12 +76,12 @@ object ChecksRegistry {
 
 internal sealed class BaseCheck<T> : Check {
 
-    abstract fun readValue(features: Features): T
+    abstract fun readValue(project: Project): T
     abstract fun calculateScore(featureValue: T): Double
     abstract fun buildExplanation(featureValue: T, score: Double, builder: Explanation.Builder)
 
-    override fun check(features: Features): PartialCheckResult {
-        val featureValue = readValue(features)
+    override fun check(project: Project): PartialCheckResult {
+        val featureValue = readValue(project)
         val score = calculateScore(featureValue)
         val adjustedScore = min(score, Check.MAX_SCORE).roundToHalf()
         return PartialCheckResult.builder(name())
@@ -108,9 +108,9 @@ internal sealed class StringLengthCheck : BaseCheck<Int>() {
 
     abstract fun minLength(): Int
 
-    abstract fun readStringLength(features: Features): Optional<Int>
+    abstract fun readStringLength(project: Project): Optional<Int>
 
-    override fun readValue(features: Features): Int = readStringLength(features).orElse(0)
+    override fun readValue(project: Project): Int = readStringLength(project).orElse(0)
 
     override fun calculateScore(featureValue: Int): Double {
         return if (featureValue < minLength()) {

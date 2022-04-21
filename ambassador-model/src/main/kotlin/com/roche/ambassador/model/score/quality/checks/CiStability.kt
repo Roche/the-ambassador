@@ -2,15 +2,15 @@ package com.roche.ambassador.model.score.quality.checks
 
 import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.feature.CiExecutionsFeature
-import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.quality.PartialCheckResult
 import com.roche.ambassador.model.project.ci.CiStability as ProjectCiStability
 
 internal object CiStability : BaseCheck<ProjectCiStability>() {
     override fun name(): String = Check.CI_STABILITY
 
-    override fun readValue(features: Features): ProjectCiStability {
-        return features.findValue(CiExecutionsFeature::class)
+    override fun readValue(project: Project): ProjectCiStability {
+        return project.features.findValue(CiExecutionsFeature::class)
             .map { it.stability }
             .map { it!! }
             .orElseGet { ProjectCiStability(0.0, "0%", 0, 0, 0, ProjectCiStability.State.NONE) }

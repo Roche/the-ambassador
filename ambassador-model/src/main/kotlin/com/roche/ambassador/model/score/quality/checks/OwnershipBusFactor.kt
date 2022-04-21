@@ -1,9 +1,9 @@
 package com.roche.ambassador.model.score.quality.checks
 
 import com.roche.ambassador.extensions.round
-import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.MembersFeature
 import com.roche.ambassador.model.project.AccessLevel
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.quality.PartialCheckResult
 import java.lang.Math.pow
 import kotlin.math.floor
@@ -21,8 +21,8 @@ internal object OwnershipBusFactor : Check {
 
     override fun name(): String = Check.OWNERSHIP_BUS_FACTOR
 
-    override fun check(features: Features): PartialCheckResult {
-        val members = features.findValue(MembersFeature::class).orElseGet { mapOf() }
+    override fun check(project: Project): PartialCheckResult {
+        val members = project.features.findValue(MembersFeature::class).orElseGet { mapOf() }
         val owners = members.owners()
         val other = members.writers() + members.readers()
         val expected = calculateExpectedOwnersCount(owners, other)

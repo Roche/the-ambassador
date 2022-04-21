@@ -3,8 +3,7 @@ package com.roche.ambassador.model.score.quality.checks
 import com.roche.ambassador.extensions.monthsUntilNow
 import com.roche.ambassador.extensions.roundToHalf
 import com.roche.ambassador.model.Explanation
-import com.roche.ambassador.model.feature.CreatedDateFeature
-import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.project.Project
 import kotlin.math.min
 
 internal object CreatedDate : BaseCheck<Long>() {
@@ -13,10 +12,8 @@ internal object CreatedDate : BaseCheck<Long>() {
 
     override fun name(): String = Check.CREATED_BOOST
 
-    override fun readValue(features: Features): Long {
-        return features.findValue(CreatedDateFeature::class)
-            .map { it.monthsUntilNow() }
-            .orElse(0L)
+    override fun readValue(project: Project): Long {
+        return project.createdDate.monthsUntilNow()
     }
 
     override fun calculateScore(featureValue: Long): Double {

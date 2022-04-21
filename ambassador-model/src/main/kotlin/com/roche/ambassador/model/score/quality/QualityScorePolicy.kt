@@ -4,7 +4,7 @@ import com.roche.ambassador.extensions.roundToHalf
 import com.roche.ambassador.extensions.toPrettyString
 import com.roche.ambassador.model.Explanation
 import com.roche.ambassador.model.Score
-import com.roche.ambassador.model.feature.Features
+import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.ScorePolicy
 import com.roche.ambassador.model.score.quality.checks.Check
 
@@ -14,8 +14,8 @@ class QualityScorePolicy(
     private val experimental: Boolean
 ) : ScorePolicy {
 
-    override fun calculateScoreOf(features: Features): Score {
-        val scores = checks.map { it.check(features) }
+    override fun calculateScoreOf(project: Project): Score {
+        val scores = checks.map { it.check(project) }
             .map { resolveFinalResult(it) }
         val scoresPerQualityAttribute = QualityAttribute.values().map { it to ScoreValueHolder() }.toMap().toMutableMap()
         val explanations: MutableList<Explanation> = mutableListOf()
@@ -26,7 +26,7 @@ class QualityScorePolicy(
                 }
             explanations += score.explanation
         }
-        val builder = Score.builder("Quality", features, experimental, 0.0)
+        val builder = Score.builder("Quality", project, experimental, 0.0)
             .addExplanations(explanations)
             .addNormalizer { (it / scoresPerQualityAttribute.size).roundToHalf() }
         for (qualityAttributeScore in scoresPerQualityAttribute) {
