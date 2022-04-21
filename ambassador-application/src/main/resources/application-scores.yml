@@ -106,6 +106,14 @@ ambassador:
             learnability: 1
             findability: 0.5
             time-to-contribute: 0.25
+        repository-access:
+          enabled: true
+          description: Repository access
+          importance: high
+          attributes:
+            learnability: 1
+            time-to-contribute: 0.5
+            findability: 0.25
         topics:
           enabled: true
           description: Topics

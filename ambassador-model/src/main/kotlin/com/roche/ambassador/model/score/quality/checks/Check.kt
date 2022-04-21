@@ -41,6 +41,7 @@ sealed interface Check {
         const val PULL_REQUESTS_ACCESS = "pull-requests-access"
         const val README = "readme"
         const val RELEASES = "releases"
+        const val REPOSITORY_ACCESS = "repository-access"
         const val STARS = "stars"
         const val TOPICS = "topics"
         const val UPDATED_PENALTY = "updated-date"
@@ -67,6 +68,7 @@ object ChecksRegistry {
         Check.PR_RESOLUTION_SPEED to PrResolutionSpeed,
         Check.PULL_REQUESTS_ACCESS to PullRequestsAccess,
         Check.README to Readme,
+        Check.REPOSITORY_ACCESS to RepositoryAccess,
         Check.TOPICS to Topics,
         Check.STARS to Stars,
         Check.UPDATED_PENALTY to UpdatedDate,
