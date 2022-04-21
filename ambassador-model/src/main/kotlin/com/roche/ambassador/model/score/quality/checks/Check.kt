@@ -3,6 +3,8 @@ package com.roche.ambassador.model.score.quality.checks
 import com.roche.ambassador.extensions.round
 import com.roche.ambassador.extensions.roundToHalf
 import com.roche.ambassador.model.Explanation
+import com.roche.ambassador.model.project.Permissions
+import com.roche.ambassador.model.project.Permissions.Permission
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.quality.PartialCheckResult
 import java.time.Duration
@@ -20,15 +22,15 @@ sealed interface Check {
         const val MIN_CONFIDENCE = 0
         const val MAX_CONFIDENCE = 10
         const val BRANCH_PROTECTION = "branch-protection"
-        const val CAN_CREATE_PR = "can-create-pr"
         const val CI_PERFORMANCE = "ci-performance"
         const val CI_STABILITY = "ci-stability"
         const val CONTRIBUTION_GUIDE = "contribution-guide"
         const val CONTRIBUTORS = "contributors"
         const val CREATED_BOOST = "created-date"
         const val DESCRIPTION = "description"
-        const val FORKABLE = "forkable"
+        const val FORKS_ACCESS = "forks-access"
         const val FORKS = "forks"
+        const val ISSUES_ACCESS = "issues"
         const val ISSUES_CLOSED = "issues-closed"
         const val ISSUES_OPEN = "issues-open"
         const val ISSUES_UPDATED = "issues-updated"
@@ -36,6 +38,7 @@ sealed interface Check {
         const val MAINTAINED = "maintained"
         const val OWNERSHIP_BUS_FACTOR = "ownership-bus-factor"
         const val PR_RESOLUTION_SPEED = "pr-resolution-speed"
+        const val PULL_REQUESTS_ACCESS = "pull-requests-access"
         const val README = "readme"
         const val RELEASES = "releases"
         const val STARS = "stars"
@@ -52,16 +55,17 @@ object ChecksRegistry {
 
     private val checks: Map<String, Check> = mapOf(
         Check.BRANCH_PROTECTION to BranchProtection,
-        Check.CAN_CREATE_PR to CanCreatePr,
         Check.CI_PERFORMANCE to CiPerformance,
         Check.CI_STABILITY to CiStability,
         Check.CONTRIBUTION_GUIDE to ContributionGuide,
         Check.CREATED_BOOST to CreatedDate,
         Check.DESCRIPTION to Description,
-        Check.FORKABLE to Forkable,
+        Check.FORKS_ACCESS to ForksAccess,
         Check.FORKS to Forks,
+        Check.ISSUES_ACCESS to IssuesAccess,
         Check.OWNERSHIP_BUS_FACTOR to OwnershipBusFactor,
         Check.PR_RESOLUTION_SPEED to PrResolutionSpeed,
+        Check.PULL_REQUESTS_ACCESS to PullRequestsAccess,
         Check.README to Readme,
         Check.TOPICS to Topics,
         Check.STARS to Stars,
@@ -139,6 +143,38 @@ internal sealed class DurationCheck : BaseCheck<Duration>() {
                 Check.MAX_SCORE - min(floor(diff.toDouble() / degradationTime()), Check.MAX_SCORE)
             }
         }
+    }
+}
+
+internal sealed class PermissionCheck : BaseCheck<Permission>() {
+
+    override fun readValue(project: Project): Permission {
+        return readPermission(project.permissions)
+    }
+
+    override fun calculateScore(featureValue: Permission): Double {
+        return when (featureValue) {
+            Permission.PUBLIC -> 10
+            Permission.PRIVATE -> 3
+            Permission.DISABLED -> 0
+            else -> 0
+        }.toDouble()
+    }
+
+    abstract fun readPermission(permissions: Permissions): Permission
+    abstract fun description(): String
+    abstract fun targetDescription(): String
+
+    override fun buildExplanation(featureValue: Permission, score: Double, builder: Explanation.Builder) {
+        val auxiliary = when (featureValue) {
+            Permission.PUBLIC -> "everyone can access ${targetDescription()}"
+            Permission.PRIVATE -> "project members can access ${targetDescription()}"
+            Permission.DISABLED -> "${targetDescription()} are disabled or not supported by the source"
+            Permission.UNKNOWN -> "${targetDescription()} are not supported by the source or status is unknown"
+        }
+
+        builder.description(description())
+            .addDetails("$score because $auxiliary")
     }
 }
 

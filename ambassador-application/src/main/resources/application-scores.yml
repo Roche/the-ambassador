@@ -14,13 +14,6 @@ ambassador:
           attributes:
             security: 1
             compliance: 0.5
-        can-create-pr:
-          enabled: true
-          description: Can create pull request
-          importance: high
-          attributes:
-            time-to-contribute: 1
-            activity: 0.5
         ci-performance:
           enabled: true
           description: CI performance
@@ -62,20 +55,13 @@ ambassador:
           importance: high
           attributes:
             findability: 1
-        forkable:
+        forks-access:
           enabled: true
-          description: Forkable
+          description: Forks access
           importance: high
           attributes:
             time-to-contribute: 1
             activity: 0.5
-        ownership-bus-factor:
-          enabled: true
-          description: Ownership Bus Factor
-          importance: high
-          attributes:
-            durability: 1
-            criticality: 0.5
         forks:
           enabled: true
           description: Forks
@@ -83,6 +69,21 @@ ambassador:
           attributes:
             popularity: 1
             activity: 0.5
+        issues-access:
+          enabled: true
+          description: Issues access
+          importance: medium
+          attributes:
+            learnability: 1
+            compliance: 0.5
+            time-to-contribute: 0.25
+        ownership-bus-factor:
+          enabled: true
+          description: Ownership Bus Factor
+          importance: high
+          attributes:
+            durability: 1
+            criticality: 0.5
         pr-resolution-speed:
           enabled: true
           description: Pull request resolution speed
@@ -90,6 +91,13 @@ ambassador:
           attributes:
             time-to-contribute: 1
             durability: 0.5
+        pull-requests-access:
+          enabled: true
+          description: Pull requests access
+          importance: high
+          attributes:
+            time-to-contribute: 1
+            activity: 0.5
         readme:
           enabled: true
           description: Readme
