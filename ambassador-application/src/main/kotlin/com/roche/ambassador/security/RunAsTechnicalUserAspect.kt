@@ -24,7 +24,6 @@ internal open class RunAsTechnicalUserAspect {
         override fun getCredentials(): Any = "__none__"
 
         override fun getPrincipal(): AmbassadorUser = ambassadorUser
-
     }
 
     @Around("@annotation(com.roche.ambassador.security.RunAsTechnicalUser)")

@@ -34,6 +34,8 @@ interface IndexingRepository : CrudRepository<Indexing, UUID> {
                     ((indexing.finished_date > finished.finished_date AND indexing.finished_date >= now() - INTERVAL '1 DAY') OR indexing.id = finished.id)
                     AND indexing.source = finished.source 
                 )
-    """, nativeQuery = true)
+    """,
+        nativeQuery = true
+    )
     fun findLastFinishedAndAllFollowingWithinLastDayForSource(source: String): List<Indexing>
 }

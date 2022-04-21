@@ -23,5 +23,4 @@ internal object CanCreatePr : BooleanCheck() {
     }
 
     override fun name(): String = Check.CAN_CREATE_PR
-
 }

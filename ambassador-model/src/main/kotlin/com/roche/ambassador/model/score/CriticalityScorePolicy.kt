@@ -44,20 +44,20 @@ object CriticalityScorePolicy : ScorePolicy {
     override fun calculateScoreOf(features: Features): Score {
         // @formatter:off
         return Score.builder("Criticality", features)
-            .withFeature(IssuesFeature::class).sum({ issues -> UPDATED_ISSUES_COUNT.calc(issues.allIn90Days) }) { issues, partial -> "$partial for ${issues.allIn90Days} updated issues within 90 days"}
-            .withFeature(IssuesFeature::class).sum({ issues -> CLOSED_ISSUES_COUNT.calc(issues.closedIn90Days) }) { issues, partial -> "$partial for ${issues.closedIn90Days} closed issues within 90 days"}
+            .withFeature(IssuesFeature::class).sum({ issues -> UPDATED_ISSUES_COUNT.calc(issues.allIn90Days) }) { issues, partial -> "$partial for ${issues.allIn90Days} updated issues within 90 days" }
+            .withFeature(IssuesFeature::class).sum({ issues -> CLOSED_ISSUES_COUNT.calc(issues.closedIn90Days) }) { issues, partial -> "$partial for ${issues.closedIn90Days} closed issues within 90 days" }
             .withFeature(ContributorsFeature::class).sum({ contributors -> CONTRIBUTORS_COUNT.calc(contributors.size) }) { contributors, partial -> "$partial for ${contributors.size} contributors" }
-            .withFeature(LastActivityDateFeature::class).sum({ lastActivity -> LAST_UPDATED.calc(lastActivity.monthsUntilNow()) }) { lastActivity, partial -> "$partial for last activity at $lastActivity"}
-            .withFeature(CreatedDateFeature::class).sum({ createdDate -> CREATED_SINCE.calc(createdDate.monthsUntilNow()) }) { createdDate, partial -> "$partial for creation date on $createdDate"}
+            .withFeature(LastActivityDateFeature::class).sum({ lastActivity -> LAST_UPDATED.calc(lastActivity.monthsUntilNow()) }) { lastActivity, partial -> "$partial for last activity at $lastActivity" }
+            .withFeature(CreatedDateFeature::class).sum({ createdDate -> CREATED_SINCE.calc(createdDate.monthsUntilNow()) }) { createdDate, partial -> "$partial for creation date on $createdDate" }
 //            .withFeature(OrganizationsFeature::class).sum { feature -> CREATED_SINCE.calc(feature.monthsUntilNow().toDouble()) }
-            .withFeature(CommitsFeature::class).sum({ commitsTimeline -> COMMIT_FREQUENCY.calc(commitsTimeline.last(1).years().by().weeks().average()) }) { commits, partial -> "$partial for ${commits.last(1).years().by().weeks().average().round(2)} commits weekly average"}
-            .withFeature(ReleasesFeature::class).sum({ releasesTimeline -> RECENT_RELEASES_COUNT.calc(releasesTimeline.last(1).years().sum()) }) { releases, partial -> "$partial for ${releases.last(1).years().sum()} releases in last year"}
+            .withFeature(CommitsFeature::class).sum({ commitsTimeline -> COMMIT_FREQUENCY.calc(commitsTimeline.last(1).years().by().weeks().average()) }) { commits, partial -> "$partial for ${commits.last(1).years().by().weeks().average().round(2)} commits weekly average" }
+            .withFeature(ReleasesFeature::class).sum({ releasesTimeline -> RECENT_RELEASES_COUNT.calc(releasesTimeline.last(1).years().sum()) }) { releases, partial -> "$partial for ${releases.last(1).years().sum()} releases in last year" }
             .withSubScore("comments")
-                .withReason { partial, _ -> "$partial for comments frequency" }
-                .withFeature(CommentsFeature::class).calculate { feature, _ -> feature.sum().toDouble() }
-                .withFeature(IssuesFeature::class).calculate { feature, score -> COMMENT_FREQUENCY.calc(score / feature.allIn90Days) }
-                .addNormalizer { it.round(2) }
-                .reduce { aggScore, subScore -> aggScore + subScore }
+            .withReason { partial, _ -> "$partial for comments frequency" }
+            .withFeature(CommentsFeature::class).calculate { feature, _ -> feature.sum().toDouble() }
+            .withFeature(IssuesFeature::class).calculate { feature, score -> COMMENT_FREQUENCY.calc(score / feature.allIn90Days) }
+            .addNormalizer { it.round(2) }
+            .reduce { aggScore, subScore -> aggScore + subScore }
 //            .withFeature(DependentsFeature::class).sum { feature -> CREATED_SINCE.calc(feature.monthsUntilNow().toDouble()) }
             .addNormalizer { it / weightsTotal }
             .addNormalizer { it.round(4) }

@@ -4,5 +4,4 @@ interface Lookup {
 
     fun getName(): String
     fun getCount(): Long
-
 }

@@ -46,7 +46,6 @@ sealed interface Check {
 
     fun name(): String
     fun check(features: Features): PartialCheckResult
-
 }
 
 object ChecksRegistry {
@@ -73,7 +72,6 @@ object ChecksRegistry {
     operator fun get(name: String): Optional<Check> {
         return Optional.ofNullable(checks[name])
     }
-
 }
 
 internal sealed class BaseCheck<T> : Check {
@@ -161,5 +159,4 @@ internal sealed class NumericPowCheck : BaseCheck<Number>() {
         val floor = floor(pow)
         return min(floor, Check.MAX_SCORE)
     }
-
 }

@@ -15,5 +15,4 @@ internal class LanguagesService(
         return projectEntityRepository.findAllLanguages()
             .map { Language(name = it.getName(), count = it.getCount()) }
     }
-
 }

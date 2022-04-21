@@ -33,7 +33,7 @@ class ProjectEntity(
     var lastAnalysisDate: LocalDateTime? = null,
     var source: String? = null,
     @Column(name = "last_indexing_id")
-    var lastIndexingId: UUID? = null,  // mapping is not needed here yet, thus not adding it
+    var lastIndexingId: UUID? = null, // mapping is not needed here yet, thus not adding it
     @Column(name = "subscribed")
     var subscribed: Boolean = true
 ) {

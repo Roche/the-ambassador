@@ -52,5 +52,4 @@ internal open class ObsoleteProjectsCleaner(
         log.info("Cleaned up {} projects", cleanedUpCount)
         applicationEventPublisher.publishEvent(ObsoleteProjectsCleanedEvent())
     }
-
 }

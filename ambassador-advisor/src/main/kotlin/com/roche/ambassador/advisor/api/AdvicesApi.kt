@@ -12,10 +12,8 @@ import javax.validation.constraints.Min
 @Tag(name = "Projects API", description = "API to read or search indexed projects")
 class AdvicesApi(private val advisorService: AdvisorService) {
 
-
     @Operation(summary = "Get advices for the project")
     @ApiResponse(responseCode = "200", description = "List of advices")
     @GetMapping
     suspend fun readAdvices(@PathVariable @Min(1) id: Long): List<AdviceDto> = advisorService.readAdvices(id)
-
 }

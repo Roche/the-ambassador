@@ -18,5 +18,4 @@ internal object Description : StringLengthCheck() {
             .description("Project description")
             .addDetails("$score for description with $featureValue chars length.")
     }
-
 }

@@ -158,7 +158,7 @@ internal class IndexingService(
             indexingRepository.save(idx.finish(indexer.getStatus()))
             eventPublisher.publishEvent(SingleProjectIndexingFinishedEvent(result, idx))
             return result
-        } catch(e: Throwable) {
+        } catch (e: Throwable) {
             indexingRepository.save(idx.fail())
             throw e
         }

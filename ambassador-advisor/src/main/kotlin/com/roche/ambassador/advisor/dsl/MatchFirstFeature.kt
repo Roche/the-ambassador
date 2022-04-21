@@ -16,5 +16,4 @@ class MatchFirstFeature<A : BuildableAdvice, T, F : Feature<T>>(
         apply(delegate)
         return delegate
     }
-
 }

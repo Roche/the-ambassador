@@ -34,7 +34,7 @@ internal class ClientRegistrationRegistrar(private val projectSourcesProperties:
     }
 
     private fun ClientRegistration.asHumanReadable(): String {
-        return "$clientName (redirect-uri=${redirectUri},scopes=(${scopes.joinToString(", ")}))"
+        return "$clientName (redirect-uri=$redirectUri,scopes=(${scopes.joinToString(", ")}))"
     }
 
     private fun completeRegistration(partialRegistration: ClientRegistration): ClientRegistration {

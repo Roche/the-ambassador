@@ -7,7 +7,7 @@ import com.roche.ambassador.model.feature.StarsFeature
 internal object Stars : NumericPowCheck() {
     override fun name(): String = Check.STARS
 
-    override fun exponent(): Double = 1.toDouble()/3
+    override fun exponent(): Double = 1.toDouble() / 3
 
     override fun minValue(): Number = 5
 

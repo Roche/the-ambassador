@@ -14,7 +14,6 @@ import org.springframework.format.datetime.DateFormatter
 import org.springframework.format.datetime.DateFormatterRegistrar
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar
 import org.springframework.http.codec.ServerCodecConfigurer
-import org.springframework.web.reactive.config.CorsRegistry
 import org.springframework.web.reactive.config.WebFluxConfigurer
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer
 
@@ -25,7 +24,10 @@ internal class WebConfiguration : WebFluxConfigurer {
     @Order(-1)
     fun errorWebExceptionHandler(
         reactiveMessageSource: ReactiveMessageSource,
-        errorAttributes: ErrorAttributes, webProperties: WebProperties, serverCodecConfigurer: ServerCodecConfigurer, applicationContext: ApplicationContext
+        errorAttributes: ErrorAttributes,
+        webProperties: WebProperties,
+        serverCodecConfigurer: ServerCodecConfigurer,
+        applicationContext: ApplicationContext
     ): ErrorWebExceptionHandler {
         return GlobalErrorWebExceptionHandler(reactiveMessageSource, serverCodecConfigurer, errorAttributes, webProperties, applicationContext)
     }

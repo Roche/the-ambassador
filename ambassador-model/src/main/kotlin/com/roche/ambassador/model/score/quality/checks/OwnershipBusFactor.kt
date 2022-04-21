@@ -53,7 +53,6 @@ internal object OwnershipBusFactor : Check {
     private fun Members.readers(): Int = getForAccessLevel(AccessLevel.READ)
 
     private fun Members.getForAccessLevel(accessLevel: AccessLevel): Int = getOrDefault(accessLevel, 0)
-
 }
 
 internal typealias Members = Map<AccessLevel, Int>

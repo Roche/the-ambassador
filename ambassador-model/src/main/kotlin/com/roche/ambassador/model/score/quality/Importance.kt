@@ -5,5 +5,4 @@ enum class Importance {
     HIGH,
     MEDIUM,
     LOW
-
 }

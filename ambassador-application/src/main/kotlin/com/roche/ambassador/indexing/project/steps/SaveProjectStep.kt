@@ -33,5 +33,4 @@ internal class SaveProjectStep(private val projectEntityRepository: ProjectEntit
         context.entity = result
         chain.accept(context)
     }
-
 }

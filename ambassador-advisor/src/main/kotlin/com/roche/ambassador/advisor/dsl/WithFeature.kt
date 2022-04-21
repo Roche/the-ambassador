@@ -16,5 +16,4 @@ class WithFeature<A : BuildableAdvice, T, F : Feature<T>>(
         apply(delegate)
         return delegate
     }
-
 }

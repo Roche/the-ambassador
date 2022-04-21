@@ -27,5 +27,4 @@ internal class SubscriptionVerificationStep : IndexingStep {
         }
         chain.accept(context)
     }
-
 }

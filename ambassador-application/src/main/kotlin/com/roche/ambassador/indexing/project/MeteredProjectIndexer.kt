@@ -34,7 +34,9 @@ internal class MeteredProjectIndexer(
         )
     }
 
-    private fun ProjectMeter.wrapOnObjectIndexingFinished(onObjectIndexingFinished: ObjectIndexingFinishedCallback<Project>): ObjectIndexingFinishedCallback<Project> = {
+    private fun ProjectMeter.wrapOnObjectIndexingFinished(
+        onObjectIndexingFinished: ObjectIndexingFinishedCallback<Project>
+    ): ObjectIndexingFinishedCallback<Project> = {
         stop(it)
         onObjectIndexingFinished(it)
     }
@@ -45,13 +47,17 @@ internal class MeteredProjectIndexer(
         onObjectIndexingError(error, project)
     }
 
-    private fun ProjectMeter.wrapOnObjectExcludedByCriteria(onObjectExcludedByCriteria: ObjectExcludedByCriteriaCallback<Project>): ObjectExcludedByCriteriaCallback<Project> =
+    private fun ProjectMeter.wrapOnObjectExcludedByCriteria(
+        onObjectExcludedByCriteria: ObjectExcludedByCriteriaCallback<Project>
+    ): ObjectExcludedByCriteriaCallback<Project> =
         { criteria, project ->
             recordExclusion(criteria)
             onObjectExcludedByCriteria(criteria, project)
         }
 
-    private fun ProjectMeter.wrapOnObjectIndexingStarted(onObjectIndexingStarted: ObjectIndexingStartedCallback<Project>): ObjectIndexingStartedCallback<Project> = {
+    private fun ProjectMeter.wrapOnObjectIndexingStarted(
+        onObjectIndexingStarted: ObjectIndexingStartedCallback<Project>
+    ): ObjectIndexingStartedCallback<Project> = {
         start(it)
         onObjectIndexingStarted(it)
     }
@@ -113,5 +119,4 @@ internal class MeteredProjectIndexer(
             globalTimerSample?.stop()
         }
     }
-
 }

@@ -199,6 +199,5 @@ data class Project(
             val namespace = Namespace(id = namespaceId)
             return Project(name = name, path = path, description = description, namespace = namespace, visibility = Visibility.PUBLIC)
         }
-
     }
 }

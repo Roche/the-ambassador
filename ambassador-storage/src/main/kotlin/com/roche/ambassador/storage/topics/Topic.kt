@@ -25,5 +25,4 @@ class Topic constructor(
     override fun getName(): String = name
 
     override fun getCount(): Long = count
-
 }

@@ -14,6 +14,5 @@ class ScorecardPropertiesConfiguration {
         val binder = Binder.get(applicationContext.environment)
         return binder.bind("ambassador.scorecard", ScorecardConfiguration::class.java)
             .orElseThrow { IllegalStateException("Unable to bind scorecard configuration") }
-
     }
 }

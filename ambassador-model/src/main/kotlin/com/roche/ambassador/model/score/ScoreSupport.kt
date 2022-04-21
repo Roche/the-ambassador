@@ -86,12 +86,12 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
         }
 
         fun sum(partialCalculator: (V) -> Double, explainer: Explainer<V>? = null): U {
-            apply(partialCalculator, { partial, agg -> agg + partial}, explainer)
+            apply(partialCalculator, { partial, agg -> agg + partial }, explainer)
             return scoreBuilder
         }
 
         fun multiply(partialCalculator: (V) -> Double, explainer: Explainer<V>? = null): U {
-            apply(partialCalculator, { partial, agg -> agg * partial}, explainer)
+            apply(partialCalculator, { partial, agg -> agg * partial }, explainer)
             return scoreBuilder
         }
 
@@ -135,8 +135,10 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
             }
         }
 
-        fun calculate(calculator: (V, Double) -> Double,
-                      explainer: Explainer<V>? = null): U {
+        fun calculate(
+            calculator: (V, Double) -> Double,
+            explainer: Explainer<V>? = null
+        ): U {
             if (feature != null && feature.exists() && filters.stream().allMatch { it.test(feature.value().get()) }) {
                 val partialScore = calculator(feature.value().get(), scoreBuilder.score)
                 apply(partialScore, { _, _ -> partialScore }, explainer)
@@ -147,7 +149,6 @@ open class ScoreBuilder<SELF : ScoreBuilder<SELF>> internal constructor(
         fun calculate(calculator: (V, Double) -> Double): U {
             return calculate(calculator, null)
         }
-
     }
 
     class ParentScoreBuilder internal constructor(

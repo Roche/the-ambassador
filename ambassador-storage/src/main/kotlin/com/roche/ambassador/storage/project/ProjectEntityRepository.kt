@@ -14,10 +14,12 @@ import javax.persistence.QueryHint
 
 interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Long> {
 
-    @QueryHints(value = [
-        QueryHint(name = HINT_CACHEABLE, value = "false"),
-        QueryHint(name = HINT_FETCH_SIZE, value = "100"),
-    ])
+    @QueryHints(
+        value = [
+            QueryHint(name = HINT_CACHEABLE, value = "false"),
+            QueryHint(name = HINT_FETCH_SIZE, value = "100"),
+        ]
+    )
     @Query("SELECT p FROM ProjectEntity p WHERE p.subscribed = true")
     fun streamAllForAnalysis(): Stream<ProjectEntity>
 

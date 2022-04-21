@@ -30,5 +30,4 @@ class AdvisorService(
             adviceMessage.severity
         )
     }
-
 }

@@ -15,7 +15,7 @@ sealed interface Then : Invokable {
 
     companion object {
         fun nothing(): Then = ThenNothing
-        fun <A: BuildableAdvice> adviceMessage(adviceKey: String, rulesBuilder: RulesBuilder<A>): Then = ThenAdviceMessage(adviceKey, rulesBuilder)
+        fun <A : BuildableAdvice> adviceMessage(adviceKey: String, rulesBuilder: RulesBuilder<A>): Then = ThenAdviceMessage(adviceKey, rulesBuilder)
     }
 }
 

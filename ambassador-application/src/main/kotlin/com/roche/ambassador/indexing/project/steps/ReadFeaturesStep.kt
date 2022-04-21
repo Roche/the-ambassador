@@ -5,8 +5,6 @@ import com.roche.ambassador.indexing.project.IndexingChain
 import com.roche.ambassador.indexing.project.IndexingContext
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.feature.FeatureReaders
-import com.roche.ambassador.model.project.Project
-import com.roche.ambassador.storage.project.ProjectEntity
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import org.springframework.stereotype.Component

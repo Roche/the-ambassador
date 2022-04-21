@@ -49,7 +49,10 @@ val defaultLookupAnswerProvider: LookupAnswerProvider = { project, key ->
     AdviceMessage(key.key, key.params.joinToString { it.toString() }, "", "", AdviceMessage.AdviceSeverity.LOW, "")
 }
 
-fun testAdvise(lookupAnswerProvider: LookupAnswerProvider = defaultLookupAnswerProvider, builder: RulesBuilder<IssueAdvice>.() -> Unit): TestAdviceResponse {
+fun testAdvise(
+    lookupAnswerProvider: LookupAnswerProvider = defaultLookupAnswerProvider,
+    builder: RulesBuilder<IssueAdvice>.() -> Unit
+): TestAdviceResponse {
     val project = createProject()
     val advice = project.createIssueAdvice()
     val lookup: AdviceMessageLookup = mockk()
@@ -82,7 +85,6 @@ fun AdviceAssert.hasProblemsSize(size: Int): AdviceAssert {
 }
 
 fun AdviceAssert.hasNoProblems(): AdviceAssert = hasProblemsSize(0)
-
 
 fun x(response: TestAdviceResponse): ProblemsAssert {
     return Assertions.assertThat(response.advice.getProblems())

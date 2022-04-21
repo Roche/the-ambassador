@@ -38,7 +38,7 @@ class Has<A : BuildableAdvice, T> internal constructor(
         return false
     }
 
-    private class PredicateChain<T>(initial: Predicate<T>, val target: T?): Invokable {
+    private class PredicateChain<T>(initial: Predicate<T>, val target: T?) : Invokable {
 
         private val and: MutableList<Predicate<T>> = mutableListOf(initial)
 
@@ -49,6 +49,5 @@ class Has<A : BuildableAdvice, T> internal constructor(
         override fun invoke(): Boolean {
             return target != null && and.all { it(target) }
         }
-
     }
 }

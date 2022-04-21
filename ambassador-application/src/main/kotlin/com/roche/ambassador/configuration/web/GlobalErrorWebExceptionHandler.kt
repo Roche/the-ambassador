@@ -14,8 +14,11 @@ import org.springframework.web.reactive.function.server.*
 import reactor.core.publisher.Mono
 
 internal class GlobalErrorWebExceptionHandler(
-    private val messageSource: ReactiveMessageSource, serverCodecConfigurer: ServerCodecConfigurer,
-    errorAttributes: ErrorAttributes, resources: WebProperties, applicationContext: ApplicationContext
+    private val messageSource: ReactiveMessageSource,
+    serverCodecConfigurer: ServerCodecConfigurer,
+    errorAttributes: ErrorAttributes,
+    resources: WebProperties,
+    applicationContext: ApplicationContext
 ) : AbstractErrorWebExceptionHandler(errorAttributes, resources.resources, applicationContext) {
 
     init {

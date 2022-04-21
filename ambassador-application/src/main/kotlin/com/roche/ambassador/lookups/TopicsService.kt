@@ -15,5 +15,4 @@ internal class TopicsService(
         return projectEntityRepository.findAllTopics()
             .map { Topic(name = it.getName(), count = it.getCount()) }
     }
-
 }

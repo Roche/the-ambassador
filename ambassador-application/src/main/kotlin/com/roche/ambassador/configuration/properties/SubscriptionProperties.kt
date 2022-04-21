@@ -10,5 +10,4 @@ data class SubscriptionProperties(
         val topic: String? = null,
         val filename: String? = null
     )
-
 }

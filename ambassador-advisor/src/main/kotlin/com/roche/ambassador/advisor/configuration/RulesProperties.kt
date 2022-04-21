@@ -14,4 +14,3 @@ data class RulesProperties(
 
     class DescriptionRule(enabled: Boolean, val shortLength: Int) : Rule(enabled)
 }
-

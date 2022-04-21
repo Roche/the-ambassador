@@ -24,5 +24,4 @@ internal object Forkable : BooleanCheck() {
     }
 
     override fun name(): String = Check.FORKABLE
-
 }

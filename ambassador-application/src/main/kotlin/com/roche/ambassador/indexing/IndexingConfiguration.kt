@@ -54,8 +54,7 @@ internal class IndexingConfiguration(private val indexerProperties: IndexerPrope
 
         @Bean
         fun indexingScheduler(indexingService: IndexingService): ScheduledIndexingInitializer {
-           return ScheduledIndexingInitializer(indexingService)
+            return ScheduledIndexingInitializer(indexingService)
         }
     }
-
 }

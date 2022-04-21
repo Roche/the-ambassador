@@ -19,9 +19,17 @@ interface ProjectStatisticsHistoryRepository : CrudRepository<ProjectStatisticsH
     fun findByProjectIdAndDateLessThan(@Param("id") id: Long, @Param("endDate") endDate: LocalDateTime): List<ProjectStatisticsHistory>
 
     @Query(value = "FROM ProjectStatisticsHistory ph WHERE ph.projectId = :id AND ph.date BETWEEN :startDate AND :endDate ORDER BY ph.date DESC")
-    fun findByProjectIdAndDateBetween(@Param("id") id: Long, @Param("startDate") startDate: LocalDateTime, @Param("endDate") endDate: LocalDateTime): List<ProjectStatisticsHistory>
+    fun findByProjectIdAndDateBetween(
+        @Param("id") id: Long,
+        @Param("startDate") startDate: LocalDateTime,
+        @Param("endDate") endDate: LocalDateTime
+    ): List<ProjectStatisticsHistory>
 
     @Query("DELETE FROM ProjectStatisticsHistory ph WHERE ph.projectId = :projectId AND ph.date BETWEEN :startDate AND :endDate")
     @Modifying
-    fun deleteByProjectIdAndDateBetween(@Param("projectId") projectId: Long, @Param("startDate") startDate: LocalDateTime, @Param("endDate") endDate: LocalDateTime)
+    fun deleteByProjectIdAndDateBetween(
+        @Param("projectId") projectId: Long,
+        @Param("startDate") startDate: LocalDateTime,
+        @Param("endDate") endDate: LocalDateTime
+    )
 }

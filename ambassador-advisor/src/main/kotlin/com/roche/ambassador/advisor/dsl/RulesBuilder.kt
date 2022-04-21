@@ -9,7 +9,8 @@ import java.util.*
 import kotlin.reflect.KClass
 
 open class RulesBuilder<A : BuildableAdvice> constructor(
-    val buildableAdvice: A, val context: AdvisorContext
+    val buildableAdvice: A,
+    val context: AdvisorContext
 ) : ConditionsWrapper(), HasSupport<A>, MatchFirstSupport<A>, WithSupport<A> {
 
     constructor(parent: RulesBuilder<A>) : this(parent.buildableAdvice, parent.context)
@@ -64,7 +65,10 @@ open class RulesBuilder<A : BuildableAdvice> constructor(
         apply(handler)
     }
 
-    override fun <T, F : Feature<T>> matchFirst(featureType: KClass<F>, matchFirst: MatchFirstFeature<A, T, F>.() -> Unit) {
+    override fun <T, F : Feature<T>> matchFirst(
+        featureType: KClass<F>,
+        matchFirst: MatchFirstFeature<A, T, F>.() -> Unit
+    ) {
         val handler = MatchFirstFeature(featureType, this)
         matchFirst(handler)
         apply(handler)

@@ -25,5 +25,4 @@ class Language constructor(
     override fun getName(): String = name
 
     override fun getCount(): Long = count
-
 }

@@ -32,11 +32,13 @@ object IssueAdvisoryRules {
         return issueAdvice
     }
 
-    private fun RulesBuilder<IssueAdvice>.createPermissionRule(name: String, permissionExtractor: Permissions.() -> Permissions.Permission) {
+    private fun RulesBuilder<IssueAdvice>.createPermissionRule(
+        name: String,
+        permissionExtractor: Permissions.() -> Permissions.Permission
+    ) {
         matchFirst({ permissionExtractor(permissions) }) {
             that { isDisabled() } then "$name.disabled"
             that { canEveryoneAccess() } then "$name.private"
         }
     }
-
 }

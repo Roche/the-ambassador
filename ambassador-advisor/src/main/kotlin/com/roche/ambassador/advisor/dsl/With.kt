@@ -18,5 +18,4 @@ class With<A : BuildableAdvice, T>(
         apply(has)
         return has
     }
-
 }

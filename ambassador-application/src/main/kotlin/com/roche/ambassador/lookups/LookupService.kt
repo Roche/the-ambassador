@@ -32,5 +32,4 @@ internal sealed class LookupService<T : Lookup, R : PagingAndSortingRepository<T
     }
 
     abstract fun retrieveLookups(): List<T>
-
 }

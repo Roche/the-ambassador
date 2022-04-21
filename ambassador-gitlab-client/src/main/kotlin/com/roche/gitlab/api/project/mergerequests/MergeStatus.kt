@@ -7,5 +7,4 @@ enum class MergeStatus {
     UNCHECKED,
     CANNOT_BE_MERGED_RECHECK,
     CHECKING
-
 }

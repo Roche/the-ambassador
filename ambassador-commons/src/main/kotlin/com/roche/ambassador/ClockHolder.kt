@@ -6,5 +6,4 @@ import java.time.Clock
 object ClockHolder {
 
     var clock: Clock = Clock.systemDefaultZone()
-
 }

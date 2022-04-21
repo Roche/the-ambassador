@@ -243,7 +243,7 @@ class DslTest {
     fun `should use value predicate in that match first`() {
         // when
         val advice = testAdvise {
-            matchFirst( { topics } ) {
+            matchFirst({ topics }) {
                 that { size > -1 } then "test"
             }
         }
@@ -255,7 +255,7 @@ class DslTest {
     fun `should use value predicate in that not match first`() {
         // when
         val advice = testAdvise {
-            matchFirst( { topics } ) {
+            matchFirst({ topics }) {
                 thatNot { size < 0 } then "test"
             }
         }
@@ -267,7 +267,7 @@ class DslTest {
     fun `should match first in nested match first value`() {
         // when
         val advice = testAdvise {
-            matchFirst( { topics } ) {
+            matchFirst({ topics }) {
                 that { size < 0 } then "test1"
                 matchFirst {
                     anyAlwaysFalse() then "test2"
@@ -357,7 +357,6 @@ class DslTest {
         assertThat(advice).problems().hasNames("test2", "test3")
     }
 
-
     @Test
     fun `should match first in matchfirst and not or`() {
         // when
@@ -397,5 +396,4 @@ class DslTest {
         // then
         assertThat(advice).problems().hasNames("test2", "test4", "test5")
     }
-
 }

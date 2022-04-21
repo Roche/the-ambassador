@@ -49,7 +49,6 @@ class LoggingProgressMonitor(
             log.info(msg)
         }
     }
-
 }
 
 typealias ProgressMessageProvider = (Long, Long, Long) -> (String)
