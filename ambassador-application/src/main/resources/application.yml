@@ -77,6 +77,10 @@ ambassador:
   security:
     enabled: true
   indexer:
+    cleanup:
+      enabled: false
+      cleanupOlderThan: 12m
+      cron: "0 0 1 ? * WED,SAT"
     scheduler:
       enabled: true
       cron: "0 0 14 ? * SUN"

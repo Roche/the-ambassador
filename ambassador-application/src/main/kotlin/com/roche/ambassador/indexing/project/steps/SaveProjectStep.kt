@@ -27,6 +27,7 @@ internal class SaveProjectStep(private val projectEntityRepository: ProjectEntit
         }
         toSave.subscribed = context.subscribed
         toSave.lastIndexingId = context.indexing.getId()
+        toSave.source = context.source.name()
         val result = projectEntityRepository.save(toSave)
         log.info("Indexed project '{}' (id={})", context.project.fullName, context.project.id)
         context.entity = result

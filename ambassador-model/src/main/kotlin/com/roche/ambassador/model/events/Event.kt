@@ -7,3 +7,5 @@ abstract class Event<T>(
     val timestamp: Long = System.currentTimeMillis(),
     val data: T
 )
+
+abstract class EmptyEvent : Event<Unit>(data = Unit)

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.jpa.repository.QueryHints
 import org.springframework.data.repository.PagingAndSortingRepository
+import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Stream
 import javax.persistence.QueryHint
@@ -23,6 +24,9 @@ interface ProjectEntityRepository : PagingAndSortingRepository<ProjectEntity, Lo
     @Query("DELETE FROM project", nativeQuery = true)
     @Modifying
     override fun deleteAll()
+
+    @Modifying
+    fun deleteAllBySourceAndLastIndexedDateIsBefore(source: String, date: LocalDateTime): Int
 
     override fun findById(id: Long): Optional<ProjectEntity>
 

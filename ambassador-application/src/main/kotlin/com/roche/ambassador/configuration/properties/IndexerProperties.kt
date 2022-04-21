@@ -43,6 +43,10 @@ data class IndexerProperties(
     @Valid
     val scheduler: SchedulerProperties = SchedulerProperties(),
 
+    @NestedConfigurationProperty
+    @Valid
+    val cleanup: CleanupProperties = CleanupProperties(),
+
 )
 
 enum class IndexingLockType {

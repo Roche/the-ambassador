@@ -3,6 +3,8 @@ package com.roche.ambassador.extensions
 import com.roche.ambassador.ClockHolder
 import com.roche.ambassador.Durations
 import java.time.*
+import java.time.chrono.ChronoLocalDate
+import java.time.chrono.ChronoLocalDateTime
 import java.time.temporal.ChronoUnit
 import java.time.temporal.Temporal
 import java.util.*
@@ -31,3 +33,6 @@ fun LocalDateTime.between(other: LocalDateTime, includeWeekends: Boolean = true,
         Durations.between(this, other, includeWeekends = includeWeekends, workingTimeCoefficient = workingTimeCoefficient)
     }
 }
+
+fun <T : ChronoLocalDateTime<*>> Optional<T>.isBefore(other: T): Boolean = filter { it.isBefore(other) }.isPresent
+fun <T : ChronoLocalDate> Optional<T>.isBefore(other: T): Boolean = filter { it.isBefore(other) }.isPresent
