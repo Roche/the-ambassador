@@ -44,14 +44,13 @@ class AdviceMessageLookup(
     }
 
     fun get(key: AdviceKey): AdviceMessage {
-        val name = messageSource.getAdviceMessagePart(key, NAME_KEY)
         val reason = messageSource.getAdviceMessagePart(key, REASON_KEY)
         val details = messageSource.getAdviceMessagePart(key, DETAILS_KEY)
         val remediation = messageSource.getAdviceMessagePart(key, REMEDIATION_KEY)
         val severityStr = messageSource.getAdviceMessagePart(key, PRIORITY_KEY).uppercase()
         val severity = AdviceMessage.AdviceSeverity.valueOf(severityStr)
         return AdviceMessage(
-            name = name,
+            name = key.key,
             details = details,
             reason = reason,
             remediation = remediation,
