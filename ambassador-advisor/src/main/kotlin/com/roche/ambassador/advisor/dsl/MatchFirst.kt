@@ -1,16 +1,14 @@
 package com.roche.ambassador.advisor.dsl
 
-import com.roche.ambassador.advisor.model.BuildableAdvice
+open class MatchFirst internal constructor(parent: RulesBuilder) : RulesBuilder(parent) {
 
-open class MatchFirst<A : BuildableAdvice> internal constructor(parent: RulesBuilder<A>) : RulesBuilder<A>(parent) {
-
-    fun or(withBuilder: RulesBuilder<A>.() -> Unit) {
+    fun or(withBuilder: RulesBuilder.() -> Unit) {
         val builder = RulesBuilder(this)
         withBuilder(builder)
         apply(builder)
     }
 
-    open fun orMatchingFirst(withBuilder: MatchFirst<A>.() -> Unit) {
+    open fun orMatchingFirst(withBuilder: MatchFirst.() -> Unit) {
         val builder = MatchFirst(this)
         withBuilder(builder)
         apply(builder)

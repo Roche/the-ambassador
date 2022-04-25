@@ -51,7 +51,7 @@ val defaultLookupAnswerProvider: LookupAnswerProvider = { project, key ->
 
 fun testAdvise(
     lookupAnswerProvider: LookupAnswerProvider = defaultLookupAnswerProvider,
-    builder: RulesBuilder<IssueAdvice>.() -> Unit
+    builder: RulesBuilder.() -> Unit
 ): TestAdviceResponse {
     val project = createProject()
     val advice = project.createIssueAdvice()
@@ -65,7 +65,7 @@ fun testAdvise(
     return TestAdviceResponse(advice, lookup, project, context)
 }
 
-fun testAdvise(builder: RulesBuilder<IssueAdvice>.() -> Unit): TestAdviceResponse = testAdvise(defaultLookupAnswerProvider, builder)
+fun testAdvise(builder: RulesBuilder.() -> Unit): TestAdviceResponse = testAdvise(defaultLookupAnswerProvider, builder)
 
 class TestAdviceResponse(
     val advice: IssueAdvice,

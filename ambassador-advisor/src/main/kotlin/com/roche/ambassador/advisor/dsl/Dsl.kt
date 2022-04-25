@@ -11,7 +11,7 @@ object Dsl {
     fun <A : BuildableAdvice> advise(
         buildableAdvice: A,
         context: AdvisorContext,
-        withBuilder: RulesBuilder<A>.() -> Unit
+        withBuilder: RulesBuilder.() -> Unit
     ) {
         val builder = RulesBuilder(buildableAdvice, context)
         withBuilder(builder)
@@ -19,14 +19,14 @@ object Dsl {
     }
 }
 
-internal fun <A : BuildableAdvice, T> always(bool: Boolean, rulesBuilder: RulesBuilder<A>, value: T? = null) = Has({ bool }, value, rulesBuilder)
-fun <A : BuildableAdvice, T> alwaysFalse(rulesBuilder: RulesBuilder<A>) = always<A, T>(false, rulesBuilder, null)
-fun <A : BuildableAdvice, T> alwaysTrue(value: T, rulesBuilder: RulesBuilder<A>) = always(true, rulesBuilder, value)
+internal fun <T> always(bool: Boolean, rulesBuilder: RulesBuilder, value: T? = null) = Has({ bool }, value, rulesBuilder)
+fun <T> alwaysFalse(rulesBuilder: RulesBuilder) = always<T>(false, rulesBuilder, null)
+fun <T> alwaysTrue(value: T, rulesBuilder: RulesBuilder) = always(true, rulesBuilder, value)
 fun <T> not(predicate: T.() -> Boolean): T.() -> Boolean = { !predicate(this) }
 
-interface ThatSupport<A : BuildableAdvice, T> {
-    infix fun that(predicate: T.() -> Boolean): Has<A, T>
-    infix fun thatNot(predicate: T.() -> Boolean): Has<A, T> = that(not(predicate))
+interface ThatSupport<T> {
+    infix fun that(predicate: T.() -> Boolean): Has<T>
+    infix fun thatNot(predicate: T.() -> Boolean): Has<T> = that(not(predicate))
 }
 
 interface ThenSupport {
@@ -34,24 +34,24 @@ interface ThenSupport {
     fun thenDoNothing(): Then
 }
 
-interface HasSupport<A : BuildableAdvice> {
-    infix fun has(predicate: Project.() -> Boolean): Has<A, Project>
-    infix fun <T, F : Feature<T>> has(featureType: KClass<F>): HasFeature<A, T, F>
-    infix fun hasNot(predicate: Project.() -> Boolean): Has<A, Project> = has(not(predicate))
+interface HasSupport {
+    infix fun has(predicate: Project.() -> Boolean): Has<Project>
+    infix fun <T, F : Feature<T>> has(featureType: KClass<F>): HasFeature<T, F>
+    infix fun hasNot(predicate: Project.() -> Boolean): Has<Project> = has(not(predicate))
 }
 
-interface MatchFirstSupport<A : BuildableAdvice> {
-    infix fun matchFirst(matchFirst: MatchFirst<A>.() -> Unit)
-    fun <T> matchFirst(valueExtractor: Project.() -> T, matchFirst: MatchFirstValue<A, T>.() -> Unit)
-    fun <T, F : Feature<T>> matchFirst(featureType: KClass<F>, matchFirst: MatchFirstFeature<A, T, F>.() -> Unit)
+interface MatchFirstSupport {
+    infix fun matchFirst(matchFirst: MatchFirst.() -> Unit)
+    fun <T> matchFirst(valueExtractor: Project.() -> T, matchFirst: MatchFirstValue<T>.() -> Unit)
+    fun <T, F : Feature<T>> matchFirst(featureType: KClass<F>, matchFirst: MatchFirstFeature<T, F>.() -> Unit)
     fun <T, F : Feature<T>, U> matchFirst(
         featureType: KClass<F>,
         valueExtractor: T.() -> U,
-        matchFirst: MatchFirstValue<A, U>.() -> Unit
+        matchFirst: MatchFirstValue<U>.() -> Unit
     )
 }
 
-interface WithSupport<A : BuildableAdvice> {
-    fun <T> with(valueExtractor: Project.() -> T, with: With<A, T>.() -> Unit)
-    fun <T, F : Feature<T>> with(featureType: KClass<F>, with: WithFeature<A, T, F>.() -> Unit)
+interface WithSupport {
+    fun <T> with(valueExtractor: Project.() -> T, with: With<T>.() -> Unit)
+    fun <T, F : Feature<T>> with(featureType: KClass<F>, with: WithFeature<T, F>.() -> Unit)
 }

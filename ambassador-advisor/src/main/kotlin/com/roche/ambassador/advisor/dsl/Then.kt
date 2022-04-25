@@ -1,6 +1,5 @@
 package com.roche.ambassador.advisor.dsl
 
-import com.roche.ambassador.advisor.model.BuildableAdvice
 import com.roche.ambassador.model.project.Project
 
 sealed interface Then : Invokable {
@@ -15,7 +14,7 @@ sealed interface Then : Invokable {
 
     companion object {
         fun nothing(): Then = ThenNothing
-        fun <A : BuildableAdvice> adviceMessage(adviceKey: String, rulesBuilder: RulesBuilder<A>): Then = ThenAdviceMessage(adviceKey, rulesBuilder)
+        fun adviceMessage(adviceKey: String, rulesBuilder: RulesBuilder): Then = ThenAdviceMessage(adviceKey, rulesBuilder)
     }
 }
 
@@ -37,9 +36,9 @@ internal object ThenNothing : Then {
     }
 }
 
-internal class ThenAdviceMessage<A : BuildableAdvice>(
+internal class ThenAdviceMessage(
     val adviceKey: String,
-    val rulesBuilder: RulesBuilder<A>
+    val rulesBuilder: RulesBuilder
 ) : Then {
 
     private val args: MutableList<Any> = mutableListOf()

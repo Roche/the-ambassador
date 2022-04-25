@@ -4,16 +4,16 @@ import com.roche.ambassador.advisor.model.BuildableAdvice
 
 typealias Predicate<T> = T.() -> Boolean
 
-class Has<A : BuildableAdvice, T> internal constructor(
+class Has<T> internal constructor(
     predicate: Predicate<T>,
     private val testValue: T?,
-    private val rulesBuilder: RulesBuilder<A>
+    private val rulesBuilder: RulesBuilder
 ) : Invokable, ThenSupport {
 
     private val chainedPredicates: PredicateChain<T> = PredicateChain(predicate, testValue)
     private var action: Invokable? = null
 
-    infix fun and(andPredicate: Predicate<T>): Has<A, T> {
+    infix fun and(andPredicate: Predicate<T>): Has<T> {
         chainedPredicates.and(andPredicate)
         return this
     }
