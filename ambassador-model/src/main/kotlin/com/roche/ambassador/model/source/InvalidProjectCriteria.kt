@@ -34,7 +34,6 @@ object InvalidProjectCriteria {
 
     private fun isExcludedGroup(group: Group, groupId: String): Boolean {
         return groupId == group.id.toString() ||
-            groupId.equals(group.name, ignoreCase = true) ||
             groupId.equals(group.fullName, ignoreCase = true)
     }
 }
