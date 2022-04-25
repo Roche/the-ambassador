@@ -12,6 +12,12 @@ import javax.validation.Valid
 data class AdvisorProperties(
     val mode: Mode = Mode.NORMAL,
 
+    val enabledForPrivateProjects: Boolean = true,
+
+    val enabledForProjects: Set<String> = setOf(),
+
+    val enabledForGroups: Set<String> = setOf(),
+
     @NestedConfigurationProperty
     @Valid
     val rules: RulesProperties = RulesProperties(),

@@ -1,6 +1,7 @@
 ambassador:
   advisor:
     mode: dry_run # FIXME currently run by default only in dry-run mode until stable version released
+    enabledForPrivateProjects: true
 
   badges:
     provider: shields
