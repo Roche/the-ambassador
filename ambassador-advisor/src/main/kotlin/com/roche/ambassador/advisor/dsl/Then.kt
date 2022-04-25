@@ -52,7 +52,10 @@ internal class ThenAdviceMessage(
     }
 
     override infix fun with(arg: Any) {
-        this.args.add(arg)
+        when(arg) {
+            is Iterable<*> -> with(arg as Iterable<Any>)
+            else -> this.args.add(arg)
+        }
     }
 
     override infix fun with(argProvider: Project.() -> Any) {
