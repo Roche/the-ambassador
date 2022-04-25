@@ -32,7 +32,7 @@ object IssueAdvisoryRules {
         return issueAdvice
     }
 
-    private fun RulesBuilder<IssueAdvice>.createPermissionRule(
+    private fun RulesBuilder.createPermissionRule(
         name: String,
         permissionExtractor: Permissions.() -> Permissions.Permission
     ) {
