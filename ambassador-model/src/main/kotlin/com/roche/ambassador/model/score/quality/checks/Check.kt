@@ -30,7 +30,7 @@ sealed interface Check {
         const val DESCRIPTION = "description"
         const val FORKS_ACCESS = "forks-access"
         const val FORKS = "forks"
-        const val ISSUES_ACCESS = "issues"
+        const val ISSUES_ACCESS = "issues-access"
         const val ISSUES_CLOSED = "issues-closed"
         const val ISSUES_OPEN = "issues-open"
         const val ISSUES_UPDATED = "issues-updated"
