@@ -22,7 +22,7 @@ interface FeatureReader<T : Feature<*>> {
         fun <T : Feature<*>> createForFile(path: String, reader: suspend (RawFile) -> T?): FeatureReader<T> {
             return create { project, source ->
                 var rawFile: RawFile = RawFile.notExistent()
-                if (project.defaultBranch != null) {
+                if (project.defaultBranch != null && project.permissions.repository.isEnabled()) {
                     rawFile = source.readFile(project.id.toString(), path, project.defaultBranch)
                         .orElseGet { RawFile.notExistent() }
                 }
@@ -33,7 +33,7 @@ interface FeatureReader<T : Feature<*>> {
         fun <T : Feature<*>> createForFile(pathsProvider: (Project) -> Set<String>, reader: suspend (RawFile) -> T?): FeatureReader<T> {
             return create { project, source ->
                 var rawFile = Optional.empty<RawFile>()
-                if (project.defaultBranch != null) {
+                if (project.defaultBranch != null && project.permissions.repository.isEnabled()) {
                     for (path in pathsProvider.invoke(project)) {
                         rawFile = source.readFile(project.id.toString(), path, project.defaultBranch)
                         if (rawFile.isPresent) {

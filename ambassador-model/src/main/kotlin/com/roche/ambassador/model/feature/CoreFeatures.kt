@@ -18,11 +18,27 @@ import java.util.stream.Collectors
 
 val parser = MarkdownParser()
 
+internal suspend fun <T> verifyPermissionsAndRead(permission: Permissions.Permission, valueReader: suspend () -> T, emptyProvider: () -> T): T {
+    return if (permission.isEnabled()) {
+        valueReader()
+    } else {
+        emptyProvider()
+    }
+}
+
+internal suspend fun <T> verifyPermissionsAndReadList(permission: Permissions.Permission, valueReader: suspend () -> List<T>): List<T> {
+    return verifyPermissionsAndRead(permission, valueReader) { listOf() }
+}
+
+internal suspend fun verifyPermissionsAndReadTimeline(permission: Permissions.Permission, valueReader: suspend () -> Timeline): Timeline {
+    return verifyPermissionsAndRead(permission, valueReader) { Timeline() }
+}
+
 class ContributorsFeature(contributors: List<Contributor>?) : AbstractFeature<List<Contributor>>(contributors, importance = Importance.high()) {
     companion object : FeatureReaderFactory<ContributorsFeature> {
         override fun create(): FeatureReader<ContributorsFeature> {
             return FeatureReader.create { project, source ->
-                val contributors = source.readContributors(project.id.toString())
+                val contributors = verifyPermissionsAndReadList(project.permissions.repository) { source.readContributors(project.id.toString()) }
                 ContributorsFeature(contributors)
             }
         }
@@ -34,7 +50,7 @@ class LanguagesFeature(value: Map<String, Float>?) : AbstractFeature<Map<String,
     companion object : FeatureReaderFactory<LanguagesFeature> {
         override fun create(): FeatureReader<LanguagesFeature> {
             return FeatureReader.create { project, source ->
-                val languages = source.readLanguages(project.id.toString())
+                val languages = verifyPermissionsAndRead(project.permissions.repository, { source.readLanguages(project.id.toString()) }, { mapOf() })
                 LanguagesFeature(languages)
             }
         }
@@ -56,9 +72,7 @@ class ForksFeature(value: Int?) : NotIndexableFeature<Int>(value) {
 class ReadmeFeature(value: ExcerptFile?) : FileFeature<ExcerptFile>(value) {
     companion object : FeatureReaderFactory<ReadmeFeature> {
         override fun create(): FeatureReader<ReadmeFeature> = FeatureReader.createForFile({ setOf(it.potentialReadmePath ?: "README.md") }) {
-            val excerpt = Optional.ofNullable(it.content)
-                .flatMap { content -> parser.parseSilently(content, "readme") }
-                .map { doc -> doc.asText().substringWithFullWords(0, 3000) }
+            val excerpt = Optional.ofNullable(it.content).flatMap { content -> parser.parseSilently(content, "readme") }.map { doc -> doc.asText().substringWithFullWords(0, 3000) }
                 .orElse(null)
 
             val mef = ExcerptFile(it.exists, it.hash, it.language, it.contentLength, it.url, excerpt)
@@ -143,7 +157,9 @@ class DescriptionFeature(value: String?) : NotIndexableFeature<String>(value) {
 class ProtectedBranchesFeature(value: List<ProtectedBranch>?) : AbstractFeature<List<ProtectedBranch>>(value) {
     companion object : FeatureReaderFactory<ProtectedBranchesFeature> {
         override fun create(): FeatureReader<ProtectedBranchesFeature> = FeatureReader.create { project, source ->
-            val protectedBranches = source.readProtectedBranches(project.id.toString())
+            val protectedBranches = verifyPermissionsAndReadList(project.permissions.repository) {
+                source.readProtectedBranches(project.id.toString())
+            }
             ProtectedBranchesFeature(protectedBranches)
         }
     }
@@ -152,10 +168,10 @@ class ProtectedBranchesFeature(value: List<ProtectedBranch>?) : AbstractFeature<
 class CommitsFeature(value: Timeline?) : TimelineFeature(value) {
     companion object : FeatureReaderFactory<CommitsFeature> {
         override fun create(): FeatureReader<CommitsFeature> = FeatureReader.create { project, source ->
-            val commitsTimeline = if (project.defaultBranch == null) {
-                Timeline()
-            } else {
+            val commitsTimeline = if (project.defaultBranch != null && project.permissions.repository.isEnabled()) {
                 source.readCommits(project.id.toString(), project.defaultBranch)
+            } else {
+                Timeline()
             }
             CommitsFeature(commitsTimeline)
         }
@@ -165,7 +181,9 @@ class CommitsFeature(value: Timeline?) : TimelineFeature(value) {
 class ReleasesFeature(value: Timeline?) : TimelineFeature(value) {
     companion object : FeatureReaderFactory<ReleasesFeature> {
         override fun create(): FeatureReader<ReleasesFeature> = FeatureReader.create { project, source ->
-            val releases = source.readReleases(project.id.toString())
+            val releases = verifyPermissionsAndReadTimeline(project.permissions.repository) {
+                source.readReleases(project.id.toString())
+            }
             ReleasesFeature(releases)
         }
     }
@@ -174,7 +192,7 @@ class ReleasesFeature(value: Timeline?) : TimelineFeature(value) {
 class IssuesFeature(value: Issues) : AbstractFeature<Issues>(value) {
     companion object : FeatureReaderFactory<IssuesFeature> {
         override fun create(): FeatureReader<IssuesFeature> = FeatureReader.create { project, source ->
-            val issues = source.readIssues(project.id.toString())
+            val issues = verifyPermissionsAndRead(project.permissions.issues, { source.readIssues(project.id.toString()) }, { Issues.none() })
             IssuesFeature(issues)
         }
     }
@@ -184,12 +202,9 @@ class MembersFeature(value: Map<AccessLevel, Int>) : AbstractFeature<Map<AccessL
     companion object : FeatureReaderFactory<MembersFeature> {
         override fun create(): FeatureReader<MembersFeature> = FeatureReader.create { project, source ->
             val members = source.readMembers(project.id.toString())
-            val memberByLevel = members
-                .stream()
-                .map { it.accessLevel }
-                .collect(
-                    Collectors.groupingBy({ it }, Collectors.summingInt { 1 }),
-                )
+            val memberByLevel = members.stream().map { it.accessLevel }.collect(
+                Collectors.groupingBy({ it }, Collectors.summingInt { 1 }),
+            )
             MembersFeature(memberByLevel)
         }
     }
@@ -198,8 +213,11 @@ class MembersFeature(value: Map<AccessLevel, Int>) : AbstractFeature<Map<AccessL
 class PullRequestsFeature(value: PullRequests) : AbstractFeature<PullRequests>(value) {
     companion object : FeatureReaderFactory<PullRequestsFeature> {
         override fun create(): FeatureReader<PullRequestsFeature> = FeatureReader.create { project, source ->
-            val pullRequests = source.readPullRequests(project.id.toString()).sortedByDescending { it.end ?: it.start }
+            val pullRequests = verifyPermissionsAndReadList(project.permissions.pullRequests) {
+                source.readPullRequests(project.id.toString()).sortedByDescending { it.end ?: it.start }
+            }
             PullRequestsFeature(PullRequests(pullRequests))
+
         }
     }
 }
@@ -210,7 +228,7 @@ class CiExecutionsFeature(value: CiExecutions) : AbstractFeature<CiExecutions>(v
         private val config = CiStabilityConfiguration()
 
         override fun create(): FeatureReader<CiExecutionsFeature> = FeatureReader.create { project, source ->
-            val ciExecutions = if (project.defaultBranch != null) {
+            val ciExecutions = if (project.defaultBranch != null && project.permissions.ci.isEnabled()) {
                 source.readCiExecutions(project.id.toString(), project.defaultBranch).sortedByDescending { it.end ?: it.start }
             } else {
                 listOf()
@@ -229,7 +247,7 @@ class CiExecutionsFeature(value: CiExecutions) : AbstractFeature<CiExecutions>(v
 class CommentsFeature(value: Timeline) : TimelineFeature(value) {
     companion object : FeatureReaderFactory<CommentsFeature> {
         override fun create(): FeatureReader<CommentsFeature> = FeatureReader.create { project, source ->
-            val comments = source.readComments(project.id.toString())
+            val comments = verifyPermissionsAndReadTimeline(project.permissions.issues) { source.readComments(project.id.toString()) }
             CommentsFeature(comments)
         }
     }

@@ -7,4 +7,8 @@ data class Issues(
     val allIn90Days: Int,
     val closedIn90Days: Int,
     val openedIn90Days: Int
-)
+) {
+    companion object {
+        fun none(): Issues = Issues(0, 0, 0, 0, 0, 0)
+    }
+}
