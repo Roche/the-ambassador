@@ -1,0 +1,15 @@
+- [ ] handle INFO advices
+- [ ] track comments under given issue
+- [ ] track manually closed advisory issues
+- [ ] track advices changes, thus improvements, since last check
+- [ ] show in issue change tendency since last check
+- [ ] show basic info about project in issue (related to handle INFO advices)
+- [ ] support auto-remediation, including apply all, PR, config changes
+- [ ] allow per-repo customization
+- [ ] allow dismissing specific advices
+- [ ] support custom rules supplied as external JARs
+- [ ] reopen existing issue when about to give advice instead of creating new
+- [ ] add comment to existing issue with changes since last update, if any
+- [ ] (consider) find better way to supply advice messages (e.g. db, yaml?)
+- [ ] verify performance and improve it
+- [ ] mention project owners in issue, so they are aware of it
