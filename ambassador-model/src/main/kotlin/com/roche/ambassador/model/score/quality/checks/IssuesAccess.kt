@@ -11,5 +11,4 @@ internal object IssuesAccess : PermissionCheck() {
     override fun description(): String = "Issues access"
 
     override fun targetDescription(): String = "issues"
-
 }

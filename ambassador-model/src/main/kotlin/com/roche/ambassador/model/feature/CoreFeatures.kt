@@ -18,7 +18,11 @@ import java.util.stream.Collectors
 
 val parser = MarkdownParser()
 
-internal suspend fun <T> verifyPermissionsAndRead(permission: Permissions.Permission, valueReader: suspend () -> T, emptyProvider: () -> T): T {
+internal suspend fun <T> verifyPermissionsAndRead(
+    permission: Permissions.Permission,
+    valueReader: suspend () -> T,
+    emptyProvider: () -> T
+): T {
     return if (permission.isEnabled()) {
         valueReader()
     } else {
@@ -26,11 +30,17 @@ internal suspend fun <T> verifyPermissionsAndRead(permission: Permissions.Permis
     }
 }
 
-internal suspend fun <T> verifyPermissionsAndReadList(permission: Permissions.Permission, valueReader: suspend () -> List<T>): List<T> {
+internal suspend fun <T> verifyPermissionsAndReadList(
+    permission: Permissions.Permission,
+    valueReader: suspend () -> List<T>
+): List<T> {
     return verifyPermissionsAndRead(permission, valueReader) { listOf() }
 }
 
-internal suspend fun verifyPermissionsAndReadTimeline(permission: Permissions.Permission, valueReader: suspend () -> Timeline): Timeline {
+internal suspend fun verifyPermissionsAndReadTimeline(
+    permission: Permissions.Permission,
+    valueReader: suspend () -> Timeline
+): Timeline {
     return verifyPermissionsAndRead(permission, valueReader) { Timeline() }
 }
 
@@ -217,7 +227,6 @@ class PullRequestsFeature(value: PullRequests) : AbstractFeature<PullRequests>(v
                 source.readPullRequests(project.id.toString()).sortedByDescending { it.end ?: it.start }
             }
             PullRequestsFeature(PullRequests(pullRequests))
-
         }
     }
 }
