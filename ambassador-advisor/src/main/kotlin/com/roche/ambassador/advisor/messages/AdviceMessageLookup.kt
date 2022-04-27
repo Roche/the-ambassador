@@ -20,11 +20,10 @@ class AdviceMessageLookup(
     companion object {
         private val log by LoggerDelegate()
         private const val KEY_PREFIX = "advice"
-        private const val NAME_KEY = "name"
         private const val REASON_KEY = "reason"
         private const val DETAILS_KEY = "details"
         private const val REMEDIATION_KEY = "remediation"
-        private const val PRIORITY_KEY = "priority"
+        private const val SEVERITY_KEY = "severity"
     }
 
     fun readRaw(key: String): Optional<String> {
@@ -43,20 +42,25 @@ class AdviceMessageLookup(
             .map { it.trim() }
     }
 
-    fun get(key: AdviceKey): AdviceMessage {
-        val reason = messageSource.getAdviceMessagePart(key, REASON_KEY)
-        val details = messageSource.getAdviceMessagePart(key, DETAILS_KEY)
-        val remediation = messageSource.getAdviceMessagePart(key, REMEDIATION_KEY)
-        val severityStr = messageSource.getAdviceMessagePart(key, PRIORITY_KEY).uppercase()
-        val severity = AdviceMessage.AdviceSeverity.valueOf(severityStr)
-        return AdviceMessage(
-            name = key.key,
-            details = details,
-            reason = reason,
-            remediation = remediation,
-            severity = severity,
-            severityBadge = badgeProvider.getBadgeAsMarkdown(Badge(severityStr, label = "", color = severity.color))
-        )
+    fun get(key: AdviceKey): Optional<AdviceMessage> {
+        try {
+            val reason = messageSource.getAdviceMessagePart(key, REASON_KEY)
+            val details = messageSource.getAdviceMessagePart(key, DETAILS_KEY)
+            val remediation = messageSource.getAdviceMessagePart(key, REMEDIATION_KEY)
+            val severityStr = messageSource.getAdviceMessagePart(key, SEVERITY_KEY).uppercase()
+            val severity = AdviceMessage.AdviceSeverity.valueOf(severityStr)
+            val message = AdviceMessage(
+                name = key.key,
+                details = details,
+                reason = reason,
+                remediation = remediation,
+                severity = severity,
+                severityBadge = badgeProvider.getBadgeAsMarkdown(Badge(severityStr, label = "", color = severity.color))
+            )
+            return Optional.of(message)
+        } catch (e: AdviceMessageNotFoundException) {
+            return Optional.empty()
+        }
     }
 
     private fun MessageSource.getAdviceMessagePart(adviceKey: AdviceKey, vararg parts: String): String {

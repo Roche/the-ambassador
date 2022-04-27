@@ -25,6 +25,9 @@ class Has<T> internal constructor(
     }
 
     override infix fun then(adviceKey: String): Then {
+        if (adviceKey.isBlank()) {
+            return thenDoNothing()
+        }
         val then = Then.adviceMessage(adviceKey, rulesBuilder)
         this.action = then
         return then

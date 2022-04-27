@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.ListAssert
 import org.assertj.core.api.ObjectAssert
+import java.util.*
 import java.util.function.Function
 
 val source = FakeSource(GenerationSpec(100))
@@ -58,7 +59,7 @@ fun testAdvise(
     val lookup: AdviceMessageLookup = mockk()
     every { lookup.get(any()) } answers {
         val key = args[0] as AdviceKey
-        lookupAnswerProvider(project, key)
+        Optional.of(lookupAnswerProvider(project, key))
     }
     val context = createContext(project, lookup, mockk(), mapOf(), RulesProperties())
     Dsl.advise(advice, context, builder)

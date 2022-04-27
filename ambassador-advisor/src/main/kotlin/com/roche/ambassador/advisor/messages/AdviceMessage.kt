@@ -15,6 +15,7 @@ data class AdviceMessage(
         CRITICAL(0, Color.RED),
         HIGH(1, Color.ORANGE),
         MEDIUM(2, Color.YELLOW),
-        LOW(3, Color.BLUE)
+        LOW(3, Color.BLUE),
+        INFO(Int.MAX_VALUE, Color.LIGHTGRAY)
     }
 }

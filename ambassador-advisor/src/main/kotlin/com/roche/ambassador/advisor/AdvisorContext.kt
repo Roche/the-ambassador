@@ -41,7 +41,7 @@ class AdvisorContext(
         return advice
     }
 
-    fun getAdviceConfig(key: AdviceKey): AdviceMessage = adviceMessageLookup.get(key)
+    fun getAdviceConfig(key: AdviceKey): Optional<AdviceMessage> = adviceMessageLookup.get(key)
 
     fun markGiven(
         advice: Advice<*>,

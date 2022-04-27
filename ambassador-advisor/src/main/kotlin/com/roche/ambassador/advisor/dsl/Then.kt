@@ -1,5 +1,7 @@
 package com.roche.ambassador.advisor.dsl
 
+import com.roche.ambassador.advisor.messages.AdviceMessage
+import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.project.Project
 
 sealed interface Then : Invokable {
@@ -41,6 +43,10 @@ internal class ThenAdviceMessage(
     val rulesBuilder: RulesBuilder
 ) : Then {
 
+    companion object {
+        private val log by LoggerDelegate()
+    }
+
     private val args: MutableList<Any> = mutableListOf()
 
     override infix fun with(args: Iterable<Any>) {
@@ -66,8 +72,9 @@ internal class ThenAdviceMessage(
     override fun invoke(): Boolean {
         with(rulesBuilder) {
             val key = AdviceKey(adviceKey, args)
-            val config = context.getAdviceConfig(key)
-            buildableAdvice.apply(config)
+            context.getAdviceConfig(key)
+                .filter { it.severity != AdviceMessage.AdviceSeverity.INFO } // TODO(x) get rid of filter and handle info advices
+                .ifPresent { buildableAdvice.apply(it) }
         }
         return true
     }
