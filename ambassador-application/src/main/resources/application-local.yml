@@ -6,4 +6,10 @@ spring:
 
 ambassador:
   security:
-    enabled: false
+    enabled: true
+    cors:
+      allowedOrigins:
+        - http://localhost:8080
+        - http://localhost:8000
+    allowedRedirectUris:
+      - http://localhost:8000/projects
