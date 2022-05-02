@@ -20,6 +20,13 @@ object BaseRepositoryRules : RepositoryRule {
                 that { this >= config.pullRequest.closeSpeed.med } then "pullrequest.close-speed.very-low" with { listOf(getCloseSpeed(), config.pullRequest.closeSpeed.med.toHumanReadable()) }
                 that { this >= config.pullRequest.closeSpeed.low } then "pullrequest.close-speed.low" with { listOf(getCloseSpeed(), config.pullRequest.closeSpeed.low.toHumanReadable()) }
             }
+            matchFirst({ getDefaultBranchProtection().orElse(null) }) {
+                that { this == null } then "branches.protection.default.missing" with { defaultBranch!! }
+                that { canForcePush || !canSomeoneMerge } then "branches.protection.default.misconfigured.tier1" with { defaultBranch!! }
+                that { !canDeveloperMerge || canDeveloperPush } then "branches.protection.default.misconfigured.tier2" with { defaultBranch!! }
+                that { !codeReviewRequired } then "branches.protection.default.misconfigured.tier3" with { defaultBranch!! }
+                that { canAdminPush } then "branches.protection.default.misconfigured.tier4" with { defaultBranch!! }
+            }
         }
 
         matchFirst({ stats.repositorySize ?: -1 }) {

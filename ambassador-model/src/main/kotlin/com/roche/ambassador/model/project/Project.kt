@@ -7,11 +7,13 @@ import com.roche.ambassador.model.Scorecard
 import com.roche.ambassador.model.Visibility
 import com.roche.ambassador.model.feature.Features
 import com.roche.ambassador.model.feature.LanguagesFeature
+import com.roche.ambassador.model.feature.ProtectedBranchesFeature
 import com.roche.ambassador.model.group.Group
 import com.roche.ambassador.model.score.Scores
 import com.roche.ambassador.model.source.ProjectSource
 import com.roche.ambassador.model.stats.Statistics
 import java.time.LocalDate
+import java.util.*
 
 @JsonPropertyOrder("id", "name", "fullName", "description", "url", "createdDate", "lastActivityDate")
 data class Project(
@@ -66,5 +68,12 @@ data class Project(
             .map { data -> data.maxByOrNull { it.value } }
             .map { it!!.key }
             .orElse(null)
+    }
+
+    @JsonIgnore
+    fun getDefaultBranchProtection(): Optional<ProtectedBranch> {
+        val defaultBranchProtection = features.findValue(ProtectedBranchesFeature::class).orElseGet { listOf() }
+            .firstOrNull { it.name.equals(defaultBranch, ignoreCase = true) }
+        return Optional.ofNullable(defaultBranchProtection)
     }
 }

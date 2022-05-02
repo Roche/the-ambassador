@@ -13,3 +13,4 @@
 - [ ] (consider) find better way to supply advice messages (e.g. db, yaml?)
 - [ ] verify performance and improve it
 - [ ] mention project owners in issue, so they are aware of it
+- [ ] don't create advices when issues are disabled
