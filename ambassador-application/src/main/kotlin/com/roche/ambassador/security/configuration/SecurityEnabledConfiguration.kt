@@ -13,46 +13,44 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException
-import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.WebFilterExchange
 import org.springframework.security.web.server.authentication.DelegatingServerAuthenticationSuccessHandler
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
+import org.springframework.security.web.server.savedrequest.ServerRequestCache
 import reactor.core.publisher.Mono
 
 @Configuration
-@EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
+@EnableWebFluxSecurity
 @EnableConfigurationProperties(SessionProperties::class)
 @ConditionalOnProperty(prefix = "ambassador.security", name = ["enabled"], havingValue = "true", matchIfMissing = true)
-internal class SecurityConfiguration {
+internal class SecurityEnabledConfiguration(
+    configurers: List<SecurityConfigurer>,
+    private val securityProperties: SecurityProperties,
+    private val sessionProperties: SessionProperties,
+    private val projectSourcesProperties: ProjectSourcesProperties,
+    private val projectSources: ProjectSources
+) : BaseSecurityConfiguration(configurers) {
 
-    private val log by LoggerDelegate()
+    companion object {
+        private val log by LoggerDelegate()
+    }
 
     @Bean
-    fun reactiveClientRegistrationRepository(
-        projectSourcesProperties: ProjectSourcesProperties,
-        projectSources: ProjectSources
-    ): InMemoryReactiveClientRegistrationRepository {
+    fun reactiveClientRegistrationRepository(): InMemoryReactiveClientRegistrationRepository {
         val registrar = ClientRegistrationRegistrar(projectSourcesProperties)
         return registrar.createRegistrations(listOf(*projectSources.getAll().toTypedArray()))
     }
 
     @Bean
-    fun ambassadorUserDetailsService(
-        repository: InMemoryReactiveClientRegistrationRepository,
-        projectSources: ProjectSources
-    ): AmbassadorUserService {
+    fun ambassadorUserDetailsService(repository: InMemoryReactiveClientRegistrationRepository): AmbassadorUserService {
         // TODO make it more friendly to create holder and create mapping of registration to source
         val holder = OAuth2ProvidersHolder()
         for (registration in repository) {
-            projectSources.getByName(registration.clientName)
-                .ifPresent { holder.add(registration, it) }
+            projectSources.getByName(registration.clientName).ifPresent { holder.add(registration, it) }
         }
         if (holder.isEmpty()) {
             throw IllegalStateException("Unable to find any matching project source for registrations")
@@ -60,53 +58,32 @@ internal class SecurityConfiguration {
         return AmbassadorUserService(holder)
     }
 
-    @Bean
-    fun springWebFilterChain(
-        http: ServerHttpSecurity,
-        sessionProperties: SessionProperties,
-        reactiveClientRegistrationRepository: ReactiveClientRegistrationRepository
-    ): SecurityWebFilterChain {
-        log.info("Enabling web security...")
-        // @formatter:off
-        return http
-            .csrf().disable()
-            .cors().configure()
-            .httpBasic().disable()
-            .formLogin().disable()
+    override fun configure(http: ServerHttpSecurity) {
+        log.info("Enabling web security")
+        val requestCache = RedirectUriAwareCookieServerRequestCache(securityProperties.allowedRedirectUris)
+        //@formatter:off
+        http
+            .requestCache().requestCache(requestCache).and()
             .authorizeExchange()
-            .pathMatchers("/actuator/health/**").permitAll()
+                .pathMatchers("/actuator/health/**").permitAll()
             .anyExchange().authenticated().and()
             .oauth2Login()
-            .authenticationSuccessHandler(buildSuccessHandler(sessionProperties))
-            .authenticationFailureHandler(AmbassadorAuthenticationFailureHandler())
-            .clientRegistrationRepository(reactiveClientRegistrationRepository)
-            .and()
-            .build()
-        // @formatter:on
+                .authenticationSuccessHandler(buildSuccessHandler(sessionProperties, requestCache))
+                .authenticationFailureHandler(AmbassadorAuthenticationFailureHandler)
+        //@formatter:on
     }
 
-    private fun buildSuccessHandler(sessionProperties: SessionProperties): ServerAuthenticationSuccessHandler {
+    private fun buildSuccessHandler(sessionProperties: SessionProperties, requestCache: ServerRequestCache): ServerAuthenticationSuccessHandler {
+        val redirectSuccessHandler = RedirectServerAuthenticationSuccessHandler()
+        redirectSuccessHandler.setRequestCache(requestCache)
         return DelegatingServerAuthenticationSuccessHandler(
             SessionConfiguringAuthenticationSuccessHandler(sessionProperties),
             LoggingAuthenticationSuccessHandler,
-            RedirectServerAuthenticationSuccessHandler() // keep this one always, otherwise redirect from OAuth login would not work
+            redirectSuccessHandler // keep this one always, otherwise redirect from OAuth login would not work
         )
     }
 
-    private fun ServerHttpSecurity.CorsSpec.configure(): ServerHttpSecurity {
-        val corsConfig = UrlBasedCorsConfigurationSource()
-        val cors = with(CorsConfiguration()) {
-            allowedOrigins = listOf("*")
-            allowedMethods = listOf("*")
-            allowedHeaders = listOf("*")
-            allowCredentials = true
-            this
-        }
-        corsConfig.registerCorsConfiguration("/**", cors)
-        return configurationSource(corsConfig).and()
-    }
-
-    private class AmbassadorAuthenticationFailureHandler : RedirectServerAuthenticationFailureHandler("/login?error") {
+    private object AmbassadorAuthenticationFailureHandler : RedirectServerAuthenticationFailureHandler("/login?error") {
 
         private val log by LoggerDelegate()
 
