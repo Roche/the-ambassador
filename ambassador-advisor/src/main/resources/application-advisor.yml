@@ -1,7 +1,10 @@
 ambassador:
   advisor:
-    mode: dry_run # FIXME currently run by default only in dry-run mode until stable version released
-    enabledForPrivateProjects: true
+    mode: normal # FIXME currently run by default only in dry-run mode until stable version released
+    enabledForProjects:
+      - 238
+    enabledForGroups:
+      - filipowm
 
   badges:
     provider: shields

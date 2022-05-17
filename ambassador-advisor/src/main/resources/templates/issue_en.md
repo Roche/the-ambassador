@@ -1,14 +1,23 @@
 Hi!
 
+{{#ifEmpty problems}}
+
+**Awesome!!! You fixed all problems.** :tada: :clap:
+
+{{else}}
+
 During analysis of this project (**{{projectName}}**) I found some issues,
 which impede it's transparency, discoverability, security or durability.
 
 ## Problems found
 
-| Priority | Reason | Details | Remediation |
-|----------|--------|---------|-------------|
-{{#each problems}}| {{priorityBadge}} | {{reason}} | {{details}} | {{remediation}} |
+| Severity         | Reason     | Details     | Remediation     |
+|------------------|------------|-------------|-----------------|
+{{#each problems}}
+| {{severityBadge}} | {{reason}} | {{details}} | {{remediation}} |
 {{/each}}
+
+{{/ifEmpty}}
 
 ## What next?
 

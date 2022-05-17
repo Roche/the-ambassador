@@ -5,6 +5,10 @@ import com.roche.ambassador.advisor.configuration.AdvisorProperties
 import com.roche.ambassador.advisor.messages.AdviceMessage
 import com.roche.ambassador.advisor.model.Advice
 import com.roche.ambassador.advisor.model.IssueAdvice
+import com.roche.ambassador.advisor.rules.AdvisoryRules
+import com.roche.ambassador.advisor.rules.BaseCiRules
+import com.roche.ambassador.advisor.rules.BaseRepositoryRules
+import com.roche.ambassador.advisor.rules.ProjectConfigurationRules
 import com.roche.ambassador.exceptions.AmbassadorException
 import com.roche.ambassador.extensions.LoggerDelegate
 import com.roche.ambassador.model.source.Issue
@@ -16,18 +20,23 @@ import java.time.LocalDateTime
 internal class IssueAdvisor(advisorProperties: AdvisorProperties) : Advisor {
 
     private val issueAdviceGiver: IssueAdviceGiver = IssueAdviceGiver.forMode(advisorProperties.mode)
+    private val advisoryRules: AdvisoryRules = AdvisoryRules(
+        listOf(BaseCiRules),
+        listOf(BaseRepositoryRules),
+        listOf(ProjectConfigurationRules),
+    )
 
     companion object {
         private val log by LoggerDelegate()
     }
 
     override suspend fun getAdvices(context: AdvisorContext): List<AdviceMessage> {
-        val issueAdvice = IssueAdvisoryRules.verify(context)
+        val issueAdvice = advisoryRules.verify(context)
         return issueAdvice.getProblems()
     }
 
     override suspend fun advise(context: AdvisorContext) {
-        val issueAdvice = IssueAdvisoryRules.verify(context)
+        val issueAdvice = advisoryRules.verify(context)
         issueAdviceGiver.giveAdvise(context, issueAdvice)
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.roche.ambassador.extensions.firstAsOptional
 import com.roche.ambassador.model.project.Project
 import com.roche.ambassador.model.score.ScoreBuilder
 import java.util.*
@@ -146,7 +147,7 @@ abstract class AbstractScore(
     override fun isExperimental(): Boolean = experimental
 
     fun getSubScoreByName(name: String): Optional<Score> {
-        return Optional.ofNullable(subScores.firstOrNull { it.name().equals(name, ignoreCase = true) })
+        return subScores.firstAsOptional { it.name().equals(name, ignoreCase = true) }
     }
 
     fun getSubScoreValueByNameOrZero(name: String): Double {
