@@ -2,6 +2,7 @@ package com.roche.ambassador.model.project
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.roche.ambassador.extensions.firstAsOptional
 import com.roche.ambassador.model.FeatureReader
 import com.roche.ambassador.model.Scorecard
 import com.roche.ambassador.model.Visibility
@@ -72,8 +73,8 @@ data class Project(
 
     @JsonIgnore
     fun getDefaultBranchProtection(): Optional<ProtectedBranch> {
-        val defaultBranchProtection = features.findValue(ProtectedBranchesFeature::class).orElseGet { listOf() }
-            .firstOrNull { it.name.equals(defaultBranch, ignoreCase = true) }
-        return Optional.ofNullable(defaultBranchProtection)
+        return features.findValue(ProtectedBranchesFeature::class)
+            .orElseGet { listOf() }
+            .firstAsOptional { it.name.equals(defaultBranch, ignoreCase = true) }
     }
 }

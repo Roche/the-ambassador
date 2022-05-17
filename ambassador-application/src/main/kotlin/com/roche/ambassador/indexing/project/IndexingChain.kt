@@ -1,6 +1,7 @@
 package com.roche.ambassador.indexing.project
 
 import com.roche.ambassador.extensions.LoggerDelegate
+import com.roche.ambassador.extensions.firstAsOptional
 import com.roche.ambassador.indexing.project.steps.IndexingStep
 import java.util.*
 import kotlin.reflect.KClass
@@ -52,7 +53,7 @@ class IndexingChain(private val steps: List<IndexingStep>) {
         }
 
         private fun List<IndexingStep>.findByType(stepType: KClass<out IndexingStep>): Optional<IndexingStep> {
-            return Optional.ofNullable(firstOrNull { it::class.isSubclassOf(stepType) })
+            return firstAsOptional { it::class.isSubclassOf(stepType) }
         }
 
         fun build(): IndexingChain = IndexingChain(steps.toList())
