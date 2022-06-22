@@ -12,8 +12,10 @@ import kotlinx.coroutines.reactor.asMono
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.ReactiveHealthIndicator
 import reactor.core.publisher.Mono
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.ceil
 
 internal class PingableHealthIndicator(
     private val pingable: Pingable,
@@ -24,6 +26,7 @@ internal class PingableHealthIndicator(
     private val lastPingedAt: AtomicLong = AtomicLong(0)
     private val lastStatus: AtomicReference<Health> = AtomicReference(UP)
     private val gracePeriodMillis = gracePeriodSeconds * 1000
+    private val tracer: PingTracer = PingTracer()
 
     companion object {
         private val log by LoggerDelegate()
@@ -40,12 +43,13 @@ internal class PingableHealthIndicator(
             if (currentTime - gracePeriodMillis > lastPinged) {
                 lastPingedAt.set(currentTime)
                 pingable.ping()
+                tracer.healthy()
                 UP
             } else {
                 lastStatus.get()
             }
         } catch (ex: UnhealthyComponentException) {
-            log.trace("Component is unhealthy. Status: {}", ex.status, ex)
+            tracer.unhealthy(ex)
             when (ex.status) {
                 UNAVAILABLE -> Health.outOfService().withException(ex)
                 UNKNOWN -> Health.unknown().withException(ex)
@@ -56,5 +60,38 @@ internal class PingableHealthIndicator(
         }
         lastStatus.set(health)
         return health
+    }
+
+    /**
+     * Log failures every 1 minute and restore to healthy
+     */
+    private inner class PingTracer {
+
+        private val lastWasHealthy = AtomicBoolean(false)
+        private val unhealthyCount = AtomicLong(0)
+        private val logAttemptsEachTimes: Int = with(60_000 / gracePeriodMillis.toDouble()) {
+            if (this > 1) {
+                ceil(this).toInt()
+            } else {
+                1
+            }
+        }
+
+        fun healthy() {
+            if (!lastWasHealthy.compareAndExchange(false, true)) {
+                val previousFailuresCount = unhealthyCount.getAndSet(0)
+                log.info("Component '{}' became healthy again after {} failures", pingable.name(), previousFailuresCount)
+            } else {
+                log.trace("Component '{}' is healthy", pingable.name())
+            }
+        }
+
+        fun unhealthy(ex: UnhealthyComponentException) {
+            val count = unhealthyCount.incrementAndGet()
+            if (count == 1L) {
+                log.error("Component '{}' became unhealthy. Status: {}", pingable.name(), ex.status, ex)
+            } else if (count % logAttemptsEachTimes == 0L)
+                log.warn("Component '{}' is unhealthy. Status: {}", pingable.name(), ex.status, ex)
+        }
     }
 }
