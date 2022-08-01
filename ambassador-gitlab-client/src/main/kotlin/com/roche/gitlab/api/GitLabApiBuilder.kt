@@ -15,6 +15,7 @@ import com.roche.gitlab.api.auth.AnonymousAuthProvider
 import com.roche.gitlab.api.auth.PrivateTokenAuthProvider
 import com.roche.gitlab.api.client.GitLabHttpClient
 import com.roche.gitlab.api.client.RetryIntervalProvider
+import com.roche.gitlab.api.client.RetryLogger
 import com.roche.gitlab.api.exceptions.ExceptionHandler
 import com.roche.gitlab.api.exceptions.Exceptions
 import com.roche.gitlab.api.utils.jackson.GitLabModule
@@ -136,7 +137,7 @@ class GitLabApiBuilder internal constructor() {
         }
 
         fun build(): GitLabApiBuilder {
-            val intervalProvider = RetryIntervalProvider(initialInterval, intervalFunctionSupplier)
+            val intervalProvider = RetryLogger(RetryIntervalProvider(initialInterval, intervalFunctionSupplier))
             gitLabApiBuilder.retryConfigBuilder
                 .intervalBiFunction(intervalProvider)
                 .maxAttempts(maxAttempts)
