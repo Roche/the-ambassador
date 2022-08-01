@@ -6,7 +6,7 @@ import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
 @Component
-internal class PostIndexingAnalysisInitializer(private val analysisService: AnalysisService) {
+internal class PostIndexingAnalysisInitializer(private val analysisService: ProjectScoringAnalysisService) {
 
     companion object {
         private val log by LoggerDelegate()
