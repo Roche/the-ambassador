@@ -67,9 +67,10 @@ internal class ProjectScoringAnalysisService(
     private fun analyze(entity: ProjectEntity, progressMonitor: ProgressMonitor) {
         analysisScope.launch {
             try {
-                entity.project = analyze(entity.project)
-                entity.updateScore(entity.project)
+                val analyzedProject = analyze(entity.project)
                 transactionTemplate.executeWithoutResult {
+                    entity.project = analyzedProject
+                    entity.updateScore(analyzedProject)
                     val savedEntity = projectEntityRepository.save(entity)
                     val historyEntry = ProjectStatisticsHistory.from(savedEntity)
                     val entryDate = historyEntry.date.toLocalDate().atStartOfDay()
