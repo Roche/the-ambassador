@@ -1,7 +1,6 @@
 package com.roche.ambassador.security.configuration
 
 import com.roche.ambassador.extensions.LoggerDelegate
-import org.springframework.http.HttpCookie
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseCookie
@@ -15,7 +14,7 @@ import java.net.URI
 import java.time.Duration
 import java.util.*
 
-class RedirectUriAwareCookieServerRequestCache(private val allowedRedirectUris: List<String> = listOf()) : ServerRequestCache {
+internal class RedirectUriAwareCookieServerRequestCache(private val allowedRedirectUris: List<String> = listOf()) : ServerRequestCache {
 
     companion object {
         const val REDIRECT_URI_COOKIE_NAME: String = "REDIRECT_URI"
@@ -43,7 +42,7 @@ class RedirectUriAwareCookieServerRequestCache(private val allowedRedirectUris: 
     override fun getRedirectUri(exchange: ServerWebExchange): Mono<URI> {
         val cookieMap = exchange.request.cookies
         return Mono.justOrEmpty(cookieMap.getFirst(REDIRECT_URI_COOKIE_NAME))
-            .map { obj: HttpCookie -> obj.value }
+            .map { it.value }
             .map { decodeCookie(it) }
             .onErrorResume(IllegalArgumentException::class.java) { Mono.empty() }
             .map { URI.create(it) }
@@ -67,7 +66,7 @@ class RedirectUriAwareCookieServerRequestCache(private val allowedRedirectUris: 
             .map { URI(it.scheme, it.authority, it.path, null, it.fragment).toString() }
             .firstOrNull()
 
-        val redirectUri = if (redirectUriParamWithoutQuery != null && redirectUriParamWithoutQuery in allowedRedirectUris) {
+        val redirectUri = if (redirectUriParamWithoutQuery != null && (redirectUriParamWithoutQuery.startsWith("/") || redirectUriParamWithoutQuery in allowedRedirectUris)) {
             redirectUriParam.first()
         } else {
             path + if (query != null) "?$query" else ""
@@ -105,4 +104,7 @@ class RedirectUriAwareCookieServerRequestCache(private val allowedRedirectUris: 
         return AndServerWebExchangeMatcher(get, notFavicon, html)
     }
 
+    private fun noneMatcher(): ServerWebExchangeMatcher = ServerWebExchangeMatcher {
+        ServerWebExchangeMatcher.MatchResult.notMatch()
+    }
 }

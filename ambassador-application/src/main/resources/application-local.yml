@@ -6,10 +6,15 @@ spring:
 
 ambassador:
   security:
-    enabled: true
+    enabled: false
+    redirectOnUnauthenticated: true
     cors:
       allowedOrigins:
         - http://localhost:8080
         - http://localhost:8000
     allowedRedirectUris:
       - http://localhost:8000/projects
+
+logging:
+  level:
+    org.jooq.tools.LoggerListener: DEBUG
