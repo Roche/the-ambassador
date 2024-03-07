@@ -17,7 +17,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinCoroutinesVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.github.jknack:handlebars:4.3.0")
+    implementation("com.github.jknack:handlebars:4.4.0")
     implementation("com.github.jknack:handlebars-helpers:4.3.0")
 
     implementation("io.github.filipowm:spring-api-starter:$springApiVersion")
